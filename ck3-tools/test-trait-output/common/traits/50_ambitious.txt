@@ -1,0 +1,14 @@
+# Generated from template: personality_trait
+
+ambitious = {
+	category = personality
+
+	diplomacy = 2
+
+	ruler_designer_cost = 20
+
+	# AI evaluation
+	ai_value = {
+	}
+}
+

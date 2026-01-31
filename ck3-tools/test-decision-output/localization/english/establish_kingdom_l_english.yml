@@ -1,0 +1,5 @@
+﻿l_english:
+ decision_establish_kingdom:0 "Establish Kingdom"
+ decision_establish_kingdom_desc:0 "A major decision that will significantly impact your realm."
+ decision_establish_kingdom_confirm:0 "Proceed"
+ decision_establish_kingdom_tooltip:0 "This action will cost 500 gold and 200 prestige."

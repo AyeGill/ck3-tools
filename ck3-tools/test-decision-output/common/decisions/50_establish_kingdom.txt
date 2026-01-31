@@ -1,0 +1,72 @@
+# Generated from template: major_decision
+
+establish_kingdom = {
+	major = yes
+
+	sort_order = 100
+
+	is_shown = {
+		is_adult = yes
+		is_ruler = yes
+	}
+
+	is_valid_showing_failures_only = {
+		is_imprisoned = no
+		is_at_war = no
+	}
+
+	is_valid = {
+		gold_check = {
+			text = "Needs 500 gold"
+
+			condition = "gold >= 500"
+
+		}
+
+		prestige_check = {
+			text = "Needs 200 prestige"
+
+			condition = "prestige >= 200"
+
+		}
+
+	}
+
+	cost = {
+		gold = 500
+		prestige = 200
+		piety = 0
+	}
+
+	cooldown = {
+		years = 10
+	}
+
+	effect = {
+		add_prestige = 500
+		trigger_event = establish_kingdom_events.0001
+	}
+
+	ai_check_interval = 60
+
+	ai_potential = {
+		gold >= 1500
+		is_at_war = no
+	}
+
+	ai_will_do = {
+		base = 50
+
+		modifier = {
+			add = 50
+			has_trait = ambitious
+		}
+
+		modifier = {
+			factor = 0
+			has_trait = content
+		}
+
+	}
+}
+

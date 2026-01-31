@@ -1,0 +1,14 @@
+# Generated from template: personality_trait
+
+brave = {
+	category = personality
+
+	martial = 3
+
+	ruler_designer_cost = 20
+
+	# AI evaluation
+	ai_value = {
+	}
+}
+

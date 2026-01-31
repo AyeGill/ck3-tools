@@ -1,0 +1,68 @@
+name: lifestyle_trait
+description: Lifestyle trait with XP progression tracks
+category: trait
+version: 1.0
+
+parameters:
+  name:
+    type: string
+    required: true
+    description: Trait name
+
+  lifestyle:
+    type: enum
+    values: [diplomacy, martial, stewardship, intrigue, learning]
+    required: true
+    description: Associated lifestyle
+
+  base_stat:
+    type: integer
+    default: 1
+    description: Base stat bonus
+
+  track_name:
+    type: string
+    default: ""
+    description: Track name (defaults to trait name)
+
+  threshold1:
+    type: integer
+    default: 30
+    description: First threshold XP
+
+  threshold2:
+    type: integer
+    default: 60
+    description: Second threshold XP
+
+  threshold3:
+    type: integer
+    default: 100
+    description: Third threshold XP
+
+  stat_per_level:
+    type: integer
+    default: 2
+    description: Stat bonus per threshold
+
+structure:
+  category: lifestyle
+
+  "{{lifestyle}}": "{{base_stat}}"
+
+  tracks:
+    "{{#if track_name}}{{track_name}}{{else}}{{name}}{{/if}}":
+      "{{threshold1}}":
+        "{{lifestyle}}": "{{stat_per_level}}"
+      "{{threshold2}}":
+        "{{lifestyle}}": "{{stat_per_level}}"
+      "{{threshold3}}":
+        "{{lifestyle}}": "{{stat_per_level}}"
+
+  ruler_designer_cost: "{{multiply base_stat 30}}"
+
+  ai_value: 60
+
+localization:
+  name_template: "{{capitalize (format_name name)}}"
+  desc_template: "This character has developed the {{format_name name}} lifestyle trait, improving their {{format_name lifestyle}} capabilities."

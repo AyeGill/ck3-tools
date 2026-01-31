@@ -1,0 +1,64 @@
+name: education_trait
+description: Leveled education trait (4 levels)
+category: trait
+version: 1.0
+
+parameters:
+  name:
+    type: string
+    required: true
+    description: Trait base name (e.g., education_learning)
+
+  levels:
+    type: integer
+    default: 4
+    min: 1
+    max: 5
+    description: Number of trait levels
+
+  primary_stat:
+    type: enum
+    values: [diplomacy, martial, stewardship, intrigue, learning]
+    required: true
+    description: Primary stat to boost
+
+  base_stat:
+    type: integer
+    default: 2
+    description: Stat value for level 1
+
+  stat_increment:
+    type: integer
+    default: 2
+    description: How much stat increases per level
+
+  monthly_xp:
+    type: float
+    default: 0.1
+    description: Base monthly lifestyle XP multiplier
+
+  xp_increment:
+    type: float
+    default: 0.1
+    description: XP increase per level
+
+structure:
+  category: education
+  minimum_age: 16
+
+  "{{primary_stat}}": "{{add base_stat (multiply (subtract level 1) stat_increment)}}"
+
+  "monthly_{{primary_stat}}_lifestyle_xp_gain_mult": "{{to_fixed (add monthly_xp (multiply (subtract level 1) xp_increment)) 1}}"
+
+  ruler_designer_cost: "{{multiply (multiply level 10) level}}"
+
+  group: "{{name}}"
+  level: "{{level}}"
+
+  flag: "level_{{level}}_education"
+
+  ai_value: "{{subtract 100 (multiply level 10)}}"
+
+localization:
+  name_template: "{{tier}} {{capitalize (format_name name)}}"
+  desc_template: "This character has {{tier_lower}} education in {{format_name (replace name 'education_' '')}}, providing strong {{format_name primary_stat}} abilities."

@@ -1,0 +1,28 @@
+{
+  "name": "ck3-tools",
+  "version": "0.1.0",
+  "description": "Code generation and validation tools for Crusader Kings 3 modding",
+  "main": "dist/index.js",
+  "bin": {
+    "ck3gen": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/cli.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["ck3", "crusader-kings", "modding", "generator"],
+  "author": "",
+  "license": "MIT",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/node": "^25.1.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "commander": "^14.0.3",
+    "handlebars": "^4.7.8",
+    "yaml": "^2.8.2"
+  }
+}

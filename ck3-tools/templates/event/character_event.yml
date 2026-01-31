@@ -1,0 +1,88 @@
+name: character_event
+description: Character event with multiple options
+category: event
+version: 1.0
+
+parameters:
+  namespace:
+    type: string
+    required: true
+    description: Event namespace (e.g., my_events)
+
+  event_id:
+    type: integer
+    required: true
+    description: Event ID number
+
+  title_key:
+    type: string
+    default: ""
+    description: Localization key for title (defaults to namespace.event_id)
+
+  desc_key:
+    type: string
+    default: ""
+    description: Localization key for description (defaults to namespace.event_id_desc)
+
+  theme:
+    type: enum
+    values: [realm, war, diplomacy, intrigue, faith, learning, family, friendly, unfriendly, party]
+    default: realm
+    description: Event theme/style
+
+  option1_effect:
+    type: enum
+    values: [prestige, piety, gold, stress]
+    default: prestige
+    description: Effect for first option
+
+  option1_value:
+    type: integer
+    default: 50
+    description: Value for first option effect
+
+  option2_effect:
+    type: enum
+    values: [prestige, piety, gold, stress]
+    default: piety
+    description: Effect for second option
+
+  option2_value:
+    type: integer
+    default: 50
+    description: Value for second option effect
+
+structure:
+  event_type: character_event
+  namespace: "{{namespace}}"
+  id: "{{namespace}}.{{event_id}}"
+
+  title: "{{#if title_key}}{{title_key}}{{else}}{{namespace}}.{{event_id}}{{/if}}"
+  desc: "{{#if desc_key}}{{desc_key}}{{else}}{{namespace}}.{{event_id}}_desc{{/if}}"
+
+  theme: "{{theme}}"
+
+  left_portrait: root
+
+  immediate: ""
+
+  option:
+    - name: "{{#if title_key}}{{title_key}}{{else}}{{namespace}}.{{event_id}}{{/if}}.a"
+      effect: |
+        {{#if (eq option1_effect 'prestige')}}add_prestige = {{option1_value}}{{/if}}
+        {{#if (eq option1_effect 'piety')}}add_piety = {{option1_value}}{{/if}}
+        {{#if (eq option1_effect 'gold')}}add_gold = {{option1_value}}{{/if}}
+        {{#if (eq option1_effect 'stress')}}add_stress = {{option1_value}}{{/if}}
+
+    - name: "{{#if title_key}}{{title_key}}{{else}}{{namespace}}.{{event_id}}{{/if}}.b"
+      effect: |
+        {{#if (eq option2_effect 'prestige')}}add_prestige = {{option2_value}}{{/if}}
+        {{#if (eq option2_effect 'piety')}}add_piety = {{option2_value}}{{/if}}
+        {{#if (eq option2_effect 'gold')}}add_gold = {{option2_value}}{{/if}}
+        {{#if (eq option2_effect 'stress')}}add_stress = {{option2_value}}{{/if}}
+
+localization:
+  title: "Event Title"
+  desc: "Event description with [CHARACTER.GetTitledFirstName] and other localization tags."
+  option_a: "First choice"
+  option_b: "Second choice"
