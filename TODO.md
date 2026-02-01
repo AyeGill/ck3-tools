@@ -57,7 +57,10 @@ So for example prompting for skill modifications in a trait template makes littl
   - [x] Parser script to import effects/triggers from game data
     - `parseOldEnt.ts` can fetch from OldEnt's repo or parse local `script_docs` output
     - Generated **1343 effects** and **1145 triggers** with scope metadata
-  - [ ] Scope tracking for nested blocks (detect scope-changing effects like `every_vassal`, `liege`, and update current scope accordingly)
+  - [x] Scope tracking for nested blocks (detect scope-changing effects like `every_vassal`, `liege`, and update current scope accordingly)
+    - **DONE**: `analyzeBlockContext()` walks block path and tracks scope via `outputScope` from effects/triggers
+    - **DONE**: Merged manual scope changers (`liege`, `father`, `primary_title`, etc.) with auto-generated data
+    - **DONE**: Added tests for scope tracking (65 tests total)
   - [ ] Entity-specific contexts (traits, decisions, buildings have different allowed effects in their modifier blocks)
   - [ ] Modifier category awareness (character modifiers vs county modifiers vs province modifiers)
   - [ ] Validation and diagnostics (mark invalid effects/triggers in wrong scope context)
@@ -91,4 +94,6 @@ So for example prompting for skill modifications in a trait template makes littl
   - **FIXED**: Created [CK3HoverProvider](vscode-ck3-tools/src/providers/ck3HoverProvider.ts) that works for all 212 entity types
   - Registered hover provider for events, decisions, buildings, interactions, and all other CK3 file types
   - Now hovering over any field name in any CK3 entity file will show documentation
-- [ ] When inserting an event, if I use a namespace that already exists in the same file, the extension should put the new event under the existing ones in that namespace (and move the cursor there), and not write a new namespace = ... line.
+- [x] When inserting an event, if I use a namespace that already exists in the same file, the extension should put the new event under the existing ones in that namespace (and move the cursor there), and not write a new namespace = ... line.
+  - **FIXED**: Updated `addEvent.ts` to detect existing namespaces
+  - Strips namespace line, auto-increments event ID, inserts after last event, moves cursor

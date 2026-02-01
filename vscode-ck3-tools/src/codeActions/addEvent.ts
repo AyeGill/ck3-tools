@@ -1,6 +1,108 @@
 import * as vscode from 'vscode';
 import { TemplateGenerator } from '../lib/templateGenerator';
 
+/**
+ * Find if a namespace already exists in the document
+ * Returns the line number of the namespace declaration, or -1 if not found
+ */
+function findNamespaceInDocument(document: vscode.TextDocument, namespace: string): number {
+  const text = document.getText();
+  const pattern = new RegExp(`^\\s*namespace\\s*=\\s*${namespace}\\s*$`, 'm');
+  const match = pattern.exec(text);
+
+  if (match) {
+    const position = document.positionAt(match.index);
+    return position.line;
+  }
+  return -1;
+}
+
+/**
+ * Find the best insertion point for a new event in an existing namespace
+ * This finds the end of the last top-level block (event definition)
+ */
+function findInsertionPoint(document: vscode.TextDocument, namespace: string): vscode.Position {
+  const text = document.getText();
+  const lines = text.split('\n');
+
+  // Find all events in this namespace (pattern: namespace.XXXX = {)
+  const eventPattern = new RegExp(`^\\s*${namespace}\\.\\d+\\s*=\\s*\\{`, 'gm');
+  let lastEventStart = -1;
+  let match;
+
+  while ((match = eventPattern.exec(text)) !== null) {
+    const pos = document.positionAt(match.index);
+    lastEventStart = pos.line;
+  }
+
+  if (lastEventStart === -1) {
+    // No events found, insert at end of file
+    return new vscode.Position(lines.length, 0);
+  }
+
+  // Find the closing brace of this event by counting braces
+  let braceCount = 0;
+  let foundOpen = false;
+  let lastEventEnd = lastEventStart;
+
+  for (let i = lastEventStart; i < lines.length; i++) {
+    const line = lines[i];
+    for (const char of line) {
+      if (char === '{') {
+        braceCount++;
+        foundOpen = true;
+      } else if (char === '}') {
+        braceCount--;
+      }
+    }
+
+    if (foundOpen && braceCount === 0) {
+      lastEventEnd = i;
+      break;
+    }
+  }
+
+  // Insert after the closing brace, with a blank line
+  return new vscode.Position(lastEventEnd + 1, 0);
+}
+
+/**
+ * Find the highest event ID in use for a namespace
+ */
+function findHighestEventId(document: vscode.TextDocument, namespace: string): number {
+  const text = document.getText();
+  const eventPattern = new RegExp(`${namespace}\\.(\\d+)\\s*=`, 'g');
+  let highest = 0;
+  let match;
+
+  while ((match = eventPattern.exec(text)) !== null) {
+    const id = parseInt(match[1], 10);
+    if (id > highest) {
+      highest = id;
+    }
+  }
+
+  return highest;
+}
+
+/**
+ * Strip the namespace declaration line from generated code
+ */
+function stripNamespaceLine(code: string, namespace: string): string {
+  // Remove the "namespace = X" line and any following blank lines
+  const pattern = new RegExp(`^\\s*namespace\\s*=\\s*${namespace}\\s*\\n+`, 'm');
+  return code.replace(pattern, '');
+}
+
+/**
+ * Replace event ID in generated code
+ */
+function replaceEventId(code: string, namespace: string, oldId: string, newId: string): string {
+  // Replace all occurrences of namespace.oldId with namespace.newId
+  const pattern = new RegExp(`${namespace}\\.${oldId}`, 'g');
+  return code.replace(pattern, `${namespace}.${newId}`);
+}
+
 export function registerAddEventCommand(
   context: vscode.ExtensionContext,
   generator: TemplateGenerator
@@ -40,19 +142,60 @@ export function registerAddEventCommand(
       if (!name) return;
 
       // Generate code
-      const code = await generator.generateCode({
+      let code = await generator.generateCode({
         template,
         category: 'event',
         name
       });
 
-      // Insert at cursor
-      editor.edit((editBuilder) => {
-        const position = editor.selection.active;
-        editBuilder.insert(position, code);
+      // Check if namespace already exists in the document
+      const document = editor.document;
+      const existingNamespaceLine = findNamespaceInDocument(document, name);
+
+      let insertPosition: vscode.Position;
+
+      if (existingNamespaceLine !== -1) {
+        // Namespace exists - strip namespace line and find insertion point
+        code = stripNamespaceLine(code, name);
+
+        // Find highest existing event ID and increment
+        const highestId = findHighestEventId(document, name);
+        if (highestId > 0) {
+          // Replace the default 0001 with the next available ID
+          const newId = String(highestId + 1).padStart(4, '0');
+          code = replaceEventId(code, name, '0001', newId);
+        }
+
+        // Find where to insert (after last event in this namespace)
+        insertPosition = findInsertionPoint(document, name);
+
+        // Ensure there's a blank line before the new event
+        if (insertPosition.line > 0) {
+          const prevLine = document.lineAt(insertPosition.line - 1).text.trim();
+          if (prevLine !== '' && !code.startsWith('\n')) {
+            code = '\n' + code;
+          }
+        }
+      } else {
+        // New namespace - insert at cursor position
+        insertPosition = editor.selection.active;
+      }
+
+      // Insert the code
+      await editor.edit((editBuilder) => {
+        editBuilder.insert(insertPosition, code);
       });
 
-      vscode.window.showInformationMessage(`Added ${name} events`);
+      // Move cursor to the inserted position
+      const newPosition = new vscode.Position(insertPosition.line + 1, 0);
+      editor.selection = new vscode.Selection(newPosition, newPosition);
+      editor.revealRange(new vscode.Range(newPosition, newPosition));
+
+      if (existingNamespaceLine !== -1) {
+        vscode.window.showInformationMessage(`Added event to existing ${name} namespace`);
+      } else {
+        vscode.window.showInformationMessage(`Added ${name} events`);
+      }
     } catch (error) {
       vscode.window.showErrorMessage(`Failed to add event: ${error}`);
       console.error('Add event error:', error);

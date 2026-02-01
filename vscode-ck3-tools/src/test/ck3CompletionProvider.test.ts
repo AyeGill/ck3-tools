@@ -149,9 +149,12 @@ test.0001 = {
       );
 
       const labels = getCompletionLabels(result);
-      // Directly inside option, should get option schema fields
+      // Directly inside option, should get BOTH option schema fields AND effects
       expect(labels).toContain('name');
       expect(labels).toContain('trigger');
+      // Effects should also be available since you write them directly in option blocks
+      expect(labels).toContain('add_prestige');
+      expect(labels).toContain('add_gold');
     });
 
     it('should offer effect completions inside nested block within option', () => {
@@ -203,6 +206,57 @@ test.0001 = {
       // Should have character-scope effects
       expect(labels).toContain('add_prestige');
       expect(labels).toContain('add_trait');
+    });
+
+    it('should offer effect completions inside liege scope changer', () => {
+      const content = `namespace = test
+test.0001 = {
+	immediate = {
+		liege = {
+
+		}
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/events/test_events.txt');
+      const position = new Position(4, 3); // Inside liege block
+
+      const result = provider.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      // liege changes scope to character, should have character-scope effects
+      expect(labels).toContain('add_prestige');
+      expect(labels).toContain('add_trait');
+      expect(labels).toContain('add_gold');
+    });
+
+    it('should offer title-scope completions inside primary_title scope changer', () => {
+      const content = `namespace = test
+test.0001 = {
+	immediate = {
+		primary_title = {
+
+		}
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/events/test_events.txt');
+      const position = new Position(4, 3); // Inside primary_title block
+
+      const result = provider.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      // primary_title changes scope to landed_title, should have title-scope effects
+      expect(labels).toContain('set_de_jure_liege_title');
+      // Should NOT have character-only effects like add_prestige
     });
 
     it('should offer internal fields inside add_opinion = { }', () => {

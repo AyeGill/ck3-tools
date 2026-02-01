@@ -1987,9 +1987,6 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
           return eventSchema;
         }
         const lastBlock = blockPath[blockPath.length - 1];
-        if (lastBlock === 'option') {
-          return eventOptionSchema;
-        }
         if (['left_portrait', 'right_portrait', 'center_portrait', 'lower_left_portrait', 'lower_center_portrait', 'lower_right_portrait'].includes(lastBlock)) {
           return portraitBlockSchema;
         }
@@ -2000,6 +1997,11 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
           const internalFields = getInternalFieldSchema(blockPath, blockContext.type);
           if (internalFields) {
             return internalFields;
+          }
+          // If we're directly inside an option block, combine option fields with effect completions
+          if (lastBlock === 'option') {
+            const effectSchema = getSchemaForBlockContext({ ...blockContext, type: 'effect' });
+            return [...eventOptionSchema, ...effectSchema];
           }
           if (blockContext.type !== 'unknown') {
             return getSchemaForBlockContext(blockContext);

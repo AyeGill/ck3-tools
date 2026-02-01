@@ -1,0 +1,103 @@
+name: example_building
+description: Documented building example with explanatory comments
+category: building
+version: 1.0
+
+parameters:
+  name:
+    type: string
+    required: true
+    description: Building base name (lowercase_with_underscores)
+
+structure: |
+  # Buildings have levels, each defined separately
+  # Level naming: buildingname_01, buildingname_02, etc.
+  # next_building links levels together
+
+  {{name}}_01 = {
+  	# --- Construction requirements ---
+  	construction_time = 730
+
+  	# Where can this be built?
+  	can_construct_potential = {
+  		# building_requirement_castle_city_church = yes  # Castle, city, or temple
+  		# building_requirement_tribal = no  # Not in tribal holdings
+  		always = yes
+  	}
+
+  	# Hard requirements (shown as red text when not met)
+  	can_construct_showing_failures_only = {
+  		# scope:holder.culture = { has_innovation = innovation_windmills }
+  	}
+
+  	# --- Cost ---
+  	cost_gold = 200
+
+  	# --- Modifiers ---
+  	# county_modifier - affects entire county
+  	county_modifier = {
+  		monthly_county_control_growth_add = 0.1
+  		# tax_mult = 0.05
+  		# levy_size = 0.05
+  	}
+
+  	# province_modifier - affects this province only
+  	# province_modifier = {
+  	# 	monthly_income = 0.5
+  	# 	levy_size = 50
+  	# }
+
+  	# character_modifier - affects the holder
+  	# character_modifier = {
+  	# 	stewardship = 1
+  	# }
+
+  	# --- Chain to next level ---
+  	next_building = {{name}}_02
+
+  	# --- Visuals ---
+  	type_icon = "icon_building_farm.dds"
+
+  	# --- AI evaluation ---
+  	ai_value = {
+  		base = 10
+  		modifier = {
+  			add = 5
+  			scope:holder = { stewardship >= 12 }
+  		}
+  	}
+  }
+
+  {{name}}_02 = {
+  	construction_time = 730
+  	can_construct_potential = { always = yes }
+  	cost_gold = 400
+
+  	county_modifier = {
+  		monthly_county_control_growth_add = 0.2
+  	}
+
+  	next_building = {{name}}_03
+
+  	type_icon = "icon_building_farm.dds"
+  	ai_value = { base = 8 }
+  }
+
+  {{name}}_03 = {
+  	construction_time = 1095
+  	can_construct_potential = { always = yes }
+  	cost_gold = 800
+
+  	county_modifier = {
+  		monthly_county_control_growth_add = 0.3
+  	}
+
+  	# No next_building - this is the final level
+
+  	type_icon = "icon_building_farm.dds"
+  	ai_value = { base = 5 }
+  }
+
+localization:
+  name_template: "{{capitalize (format_name name)}}"
+  desc_template: "A building providing various benefits."

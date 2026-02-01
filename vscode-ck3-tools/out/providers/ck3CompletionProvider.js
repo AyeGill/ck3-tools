@@ -1291,9 +1291,6 @@ class CK3CompletionProvider {
                     return eventSchema_1.eventSchema;
                 }
                 const lastBlock = blockPath[blockPath.length - 1];
-                if (lastBlock === 'option') {
-                    return eventSchema_1.eventOptionSchema;
-                }
                 if (['left_portrait', 'right_portrait', 'center_portrait', 'lower_left_portrait', 'lower_center_portrait', 'lower_right_portrait'].includes(lastBlock)) {
                     return eventSchema_1.portraitBlockSchema;
                 }
@@ -1304,6 +1301,11 @@ class CK3CompletionProvider {
                     const internalFields = getInternalFieldSchema(blockPath, blockContext.type);
                     if (internalFields) {
                         return internalFields;
+                    }
+                    // If we're directly inside an option block, combine option fields with effect completions
+                    if (lastBlock === 'option') {
+                        const effectSchema = getSchemaForBlockContext({ ...blockContext, type: 'effect' });
+                        return [...eventSchema_1.eventOptionSchema, ...effectSchema];
                     }
                     if (blockContext.type !== 'unknown') {
                         return getSchemaForBlockContext(blockContext);

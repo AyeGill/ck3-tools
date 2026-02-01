@@ -1,0 +1,108 @@
+name: example_decision
+description: Documented decision example with explanatory comments
+category: decision
+version: 1.0
+
+parameters:
+  name:
+    type: string
+    required: true
+    description: Decision name (lowercase_with_underscores)
+
+structure: |
+  {{name}} = {
+  	# --- UI Configuration ---
+  	picture = "gfx/interface/illustrations/decisions/decision_misc.dds"
+  	# major = yes  # Makes it appear in major decisions tab
+  	# sort_order = 100  # Higher = lower in list
+
+  	desc = {{name}}_desc  # Localization key for description
+  	# selection_tooltip = {{name}}_tooltip  # Custom tooltip
+
+  	# --- Visibility: when does this decision appear? ---
+  	is_shown = {
+  		is_ruler = yes
+  		# Add conditions for when decision should be visible
+  	}
+
+  	# --- Validity: can this decision be taken? ---
+  	# Soft requirements (shown with explanation when not met)
+  	is_valid = {
+  		# prestige >= 500
+  		# gold >= 100
+  	}
+
+  	# --- Hard requirements (shown as red text) ---
+  	is_valid_showing_failures_only = {
+  		is_imprisoned = no
+  		is_incapable = no
+  	}
+
+  	# --- Cost ---
+  	cost = {
+  		gold = 100
+  		# prestige = 200
+  		# piety = 100
+  	}
+
+  	# --- Minimum cost (for AI evaluation) ---
+  	# minimum_cost = { gold = 50 }
+
+  	# --- Cooldown ---
+  	# cooldown = { years = 10 }
+
+  	# --- Effects when taken ---
+  	effect = {
+  		# Add effects here
+  		add_prestige = 100
+
+  		# Trigger a follow-up event
+  		# trigger_event = {
+  		# 	id = my_events.0001
+  		# 	days = 3
+  		# }
+
+  		# Iterate over vassals
+  		# every_vassal = {
+  		# 	limit = { is_adult = yes }
+  		# 	add_opinion = {
+  		# 		target = root
+  		# 		modifier = impressed_opinion
+  		# 		opinion = 10
+  		# 	}
+  		# }
+  	}
+
+  	# --- AI behavior ---
+  	ai_potential = {
+  		# When will AI consider this decision?
+  		always = yes
+  		# prestige >= 1000
+  	}
+
+  	ai_will_do = {
+  		base = 100
+  		# Modifiers affect AI likelihood
+  		modifier = {
+  			factor = 0
+  			has_trait = content
+  		}
+  		modifier = {
+  			add = 50
+  			has_trait = ambitious
+  		}
+  	}
+
+  	# --- Widget (for confirmation dialogs) ---
+  	# widget = {
+  	# 	gui = "decision_view_widget_generic"
+  	# 	controller = decision_option_list_controller
+  	# }
+
+  	# --- Confirmation (show dialog before executing) ---
+  	# confirm_click_sound = "event:/SFX/UI/Generic/sfx_ui_generic_confirm"
+  }
+
+localization:
+  name_template: "{{capitalize (format_name name)}}"
+  desc_template: "Description for {{format_name name}} decision."

@@ -1,0 +1,90 @@
+name: example_event
+description: Documented event example with explanatory comments
+category: event
+version: 1.0
+
+parameters:
+  name:
+    type: string
+    required: true
+    description: Event namespace (e.g., my_events)
+
+structure: |
+  namespace = {{name}}
+
+  {{name}}.0001 = {
+  	type = character_event
+  	title = {{name}}.0001.t
+  	desc = {{name}}.0001.desc
+  	theme = diplomacy
+
+  	# --- Event types ---
+  	# character_event - most common, fires for a character
+  	# court_event - for court events
+  	# duel_event - for duels
+
+  	# --- Themes (affects visuals) ---
+  	# diplomacy, intrigue, martial, stewardship, learning
+  	# unfriendly, friendly, faith, death, war, dread
+  	# witchcraft, realm, seduction, torture, corruption
+
+  	# --- Portraits ---
+  	left_portrait = {
+  		character = root
+  		animation = idle
+  		# animation options: idle, personality_bold, personality_honorable,
+  		# happiness, sadness, anger, fear, disgust, shock, boredom, etc.
+  	}
+  	# right_portrait = { character = scope:target animation = idle }
+  	# lower_left_portrait = { ... }
+  	# lower_center_portrait = { ... }
+  	# lower_right_portrait = { ... }
+
+  	# --- When can this event fire? ---
+  	trigger = {
+  		# Add conditions here
+  		is_adult = yes
+  	}
+
+  	# --- Immediate effects (before player sees event) ---
+  	immediate = {
+  		# save_scope_as = my_scope  # Save root for later reference
+  		# random_vassal = { save_scope_as = target }  # Save another character
+  	}
+
+  	# --- Options ---
+  	option = {
+  		name = {{name}}.0001.a
+  		# Effects when this option is chosen
+  		add_prestige = 50
+  	}
+
+  	option = {
+  		name = {{name}}.0001.b
+  		# Different choice
+  		add_piety = 50
+  	}
+
+  	# --- Option with trigger (conditional visibility) ---
+  	# option = {
+  	# 	name = {{name}}.0001.c
+  	# 	trigger = { has_trait = ambitious }
+  	# 	add_prestige = 100
+  	# }
+
+  	# --- Chain to another event ---
+  	# option = {
+  	# 	name = {{name}}.0001.d
+  	# 	trigger_event = {
+  	# 		id = {{name}}.0002
+  	# 		days = { 3 7 }  # Random delay
+  	# 	}
+  	# }
+
+  	# --- After block (runs after any option is picked) ---
+  	# after = { }
+  }
+
+localization:
+  name_template: "{{capitalize (format_name name)}} event"
+  desc_template: "Event description."
