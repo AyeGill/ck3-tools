@@ -632,4 +632,74 @@ test.0001 = {
       expect(labels).toContain('value');
     });
   });
+
+  describe('Modifier context completions', () => {
+    it('should offer character modifiers inside trait track XP blocks', () => {
+      const content = `my_trait = {
+	track = {
+		50 = {
+
+		}
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/common/traits/test.txt');
+      const position = new Position(3, 3); // Inside 50 = { }
+
+      const result = provider.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      // Should get character modifiers inside XP track blocks
+      expect(labels).toContain('learning');
+      expect(labels).toContain('diplomacy');
+      expect(labels).toContain('fertility');
+    });
+
+    it('should offer county modifiers inside county_modifier block', () => {
+      const content = `my_building = {
+	county_modifier = {
+
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/common/buildings/test.txt');
+      const position = new Position(2, 2); // Inside county_modifier = { }
+
+      const result = provider.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      // Should get county modifiers
+      expect(labels).toContain('levy_reinforcement_rate');
+      expect(labels).toContain('building_slot_add');
+    });
+
+    it('should offer province modifiers inside province_modifier block', () => {
+      const content = `my_building = {
+	province_modifier = {
+
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/common/buildings/test.txt');
+      const position = new Position(2, 2); // Inside province_modifier = { }
+
+      const result = provider.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      // Should get province modifiers
+      expect(labels).toContain('stationed_maa_damage_add');
+    });
+  });
 });

@@ -3,12 +3,13 @@
  * Schema definition for CK3 traits - powers autocomplete and hover documentation
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.triggerBlockSchemaMap = exports.validDescListSchemaMap = exports.triggeredDescSchemaMap = exports.descriptionBlockSchemaMap = exports.triggerBlockSchema = exports.validDescListSchema = exports.triggeredDescSchema = exports.descriptionBlockSchema = exports.traitSchemaMap = exports.traitSchema = exports.INHERITANCE_BLOCKER_VALUES = exports.SEX_VALUES = exports.STATS = exports.TRAIT_CATEGORIES = void 0;
+exports.modifierBlockSchemaMap = exports.provinceModifierValuesSchema = exports.countyModifierValuesSchema = exports.modifierBlockSchema = exports.triggerBlockSchemaMap = exports.validDescListSchemaMap = exports.triggeredDescSchemaMap = exports.descriptionBlockSchemaMap = exports.triggerBlockSchema = exports.validDescListSchema = exports.triggeredDescSchema = exports.descriptionBlockSchema = exports.traitSchemaMap = exports.traitSchema = exports.INHERITANCE_BLOCKER_VALUES = exports.SEX_VALUES = exports.STATS = exports.TRAIT_CATEGORIES = void 0;
 exports.getSchemaForContext = getSchemaForContext;
 exports.getSchemaMapForContext = getSchemaMapForContext;
 exports.getTraitFieldNames = getTraitFieldNames;
 exports.getFieldValues = getFieldValues;
 exports.getFieldDocumentation = getFieldDocumentation;
+const data_1 = require("../data");
 exports.TRAIT_CATEGORIES = [
     'personality',
     'education',
@@ -486,6 +487,19 @@ exports.traitSchema = [
         description: 'Modifier to AI religious zeal.',
         example: 'ai_zeal = 20',
     },
+    // Include all character modifiers at the top level
+    // These can be used directly in traits (e.g., fertility = 0.1, attraction_opinion = 10)
+    ...data_1.characterModifiers
+        .filter(mod => !['diplomacy', 'martial', 'stewardship', 'intrigue', 'learning', 'prowess',
+        'monthly_prestige', 'monthly_piety', 'ai_boldness', 'ai_compassion',
+        'ai_greed', 'ai_honor', 'ai_rationality', 'ai_sociability',
+        'ai_vengefulness', 'ai_zeal', 'ai_energy'].includes(mod.name)) // Avoid duplicates
+        .map(mod => ({
+        name: mod.name,
+        type: 'float',
+        description: `Character modifier: ${mod.name.replace(/_/g, ' ')}`,
+        example: `${mod.name} = 0.1`,
+    })),
 ];
 // Map for quick lookup
 exports.traitSchemaMap = new Map(exports.traitSchema.map((field) => [field.name, field]));
@@ -660,6 +674,51 @@ exports.triggeredDescSchemaMap = new Map(exports.triggeredDescSchema.map((field)
 exports.validDescListSchemaMap = new Map(exports.validDescListSchema.map((field) => [field.name, field]));
 exports.triggerBlockSchemaMap = new Map(exports.triggerBlockSchema.map((field) => [field.name, field]));
 /**
+ * Schema for modifier blocks (character modifiers used in traits)
+ * Generated from OldEnt's modifier data
+ */
+exports.modifierBlockSchema = data_1.characterModifiers.map(mod => ({
+    name: mod.name,
+    type: 'float',
+    description: `Character modifier: ${mod.name.replace(/_/g, ' ')}`,
+    example: `${mod.name} = 0.1`,
+}));
+/**
+ * Schema for county modifier VALUES (the stat modifiers inside county_modifier blocks)
+ */
+exports.countyModifierValuesSchema = data_1.countyModifiers.map(mod => ({
+    name: mod.name,
+    type: 'float',
+    description: `County modifier: ${mod.name.replace(/_/g, ' ')}`,
+    example: `${mod.name} = 0.1`,
+}));
+/**
+ * Schema for province modifier VALUES (the stat modifiers inside province_modifier blocks)
+ */
+exports.provinceModifierValuesSchema = data_1.provinceModifiers.map(mod => ({
+    name: mod.name,
+    type: 'float',
+    description: `Province modifier: ${mod.name.replace(/_/g, ' ')}`,
+    example: `${mod.name} = 0.1`,
+}));
+exports.modifierBlockSchemaMap = new Map(exports.modifierBlockSchema.map((field) => [field.name, field]));
+/**
+ * Check if a block name is a numeric XP threshold (e.g., "50", "100")
+ */
+function isNumericBlock(block) {
+    return /^\d+$/.test(block);
+}
+/**
+ * Blocks that establish a character modifier context
+ */
+const MODIFIER_CONTEXT_BLOCKS = new Set([
+    'modifier',
+    'character_modifier',
+    'culture_modifier',
+    'faith_modifier',
+    'track', // XP track blocks contain modifiers
+]);
+/**
  * Get the appropriate schema for a given block context
  * @param blockPath Array of field names representing the nesting path (e.g., ['desc', 'first_valid'])
  * @returns The schema to use for completions in this context
@@ -669,6 +728,26 @@ function getSchemaForContext(blockPath) {
         return exports.traitSchema;
     }
     const currentBlock = blockPath[blockPath.length - 1];
+    // Check for modifier context by walking the path
+    // If any ancestor block establishes modifier context, and we're inside it
+    // (possibly inside numeric XP threshold blocks), return modifier schema
+    let inModifierContext = false;
+    for (const block of blockPath) {
+        if (MODIFIER_CONTEXT_BLOCKS.has(block)) {
+            inModifierContext = true;
+        }
+        // Numeric blocks (XP thresholds) inside a modifier context stay in that context
+        if (isNumericBlock(block) && inModifierContext) {
+            continue;
+        }
+        // Trigger/potential blocks exit modifier context
+        if (block === 'trigger' || block === 'potential') {
+            inModifierContext = false;
+        }
+    }
+    if (inModifierContext) {
+        return exports.modifierBlockSchema;
+    }
     // Check what kind of block we're in
     switch (currentBlock) {
         case 'desc':

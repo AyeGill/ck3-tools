@@ -154,4 +154,6 @@ exports.effectsMap = new Map(exports.allEffects.map(e => [e.name, e]));
  * Build a map for quick lookup (includes scope changers)
  */
 exports.triggersMap = new Map(exports.allTriggers.map(t => [t.name, t]));
+// Export modifiers
+__exportStar(require("./modifiers.generated"), exports);
 //# sourceMappingURL=index.js.map

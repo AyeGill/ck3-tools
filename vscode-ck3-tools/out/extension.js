@@ -47,8 +47,7 @@ const addActivity_1 = require("./codeActions/addActivity");
 const addScheme_1 = require("./codeActions/addScheme");
 const generateLocalization_1 = require("./localization/generateLocalization");
 const navigationProvider_1 = require("./localization/navigationProvider");
-const traitCompletionProvider_1 = require("./providers/traitCompletionProvider");
-const traitHoverProvider_1 = require("./providers/traitHoverProvider");
+// TraitCompletionProvider and TraitHoverProvider removed - using unified providers instead
 const ck3HoverProvider_1 = require("./providers/ck3HoverProvider");
 const ck3CompletionProvider_1 = require("./providers/ck3CompletionProvider");
 let generator;
@@ -1146,17 +1145,12 @@ function activate(context) {
     (0, addScheme_1.registerAddSchemeCommand)(context, generator);
     (0, generateLocalization_1.registerGenerateLocalizationCommand)(context, generator);
     (0, navigationProvider_1.registerGoToLocalizationCommand)(context);
-    // Register trait-specific providers for autocomplete and hover
-    const traitCompletionProvider = new traitCompletionProvider_1.TraitCompletionProvider();
-    const traitHoverProvider = new traitHoverProvider_1.TraitHoverProvider();
-    context.subscriptions.push(vscode.languages.registerCompletionItemProvider(TRAIT_FILE_SELECTOR, traitCompletionProvider, '=', ' ' // Trigger on = and space
-    ));
-    context.subscriptions.push(vscode.languages.registerHoverProvider(TRAIT_FILE_SELECTOR, traitHoverProvider));
-    // Register unified completion provider for other entity types
+    // Register unified completion and hover providers for all entity types
     const ck3CompletionProvider = new ck3CompletionProvider_1.CK3CompletionProvider();
-    // Register unified hover provider for all entity types
     const ck3HoverProvider = new ck3HoverProvider_1.CK3HoverProvider();
+    // Build selector for all CK3 files (including traits)
     const ALL_CK3_FILES = []
+        .concat(TRAIT_FILE_SELECTOR)
         .concat(EVENT_FILE_SELECTOR)
         .concat(DECISION_FILE_SELECTOR)
         .concat(INTERACTION_FILE_SELECTOR)
@@ -1178,8 +1172,11 @@ function activate(context) {
         .concat(DYNASTY_LEGACY_FILE_SELECTOR)
         .concat(MODIFIER_FILE_SELECTOR)
         .concat(LAW_FILE_SELECTOR)
-        .concat(GOVERNMENT_FILE_SELECTOR);
+        .concat(GOVERNMENT_FILE_SELECTOR)
+        .concat(ACTIVITY_FILE_SELECTOR);
     context.subscriptions.push(vscode.languages.registerHoverProvider(ALL_CK3_FILES, ck3HoverProvider));
+    // Traits
+    context.subscriptions.push(vscode.languages.registerCompletionItemProvider(TRAIT_FILE_SELECTOR, ck3CompletionProvider, '=', ' '));
     // Events
     context.subscriptions.push(vscode.languages.registerCompletionItemProvider(EVENT_FILE_SELECTOR, ck3CompletionProvider, '=', ' '));
     // Decisions

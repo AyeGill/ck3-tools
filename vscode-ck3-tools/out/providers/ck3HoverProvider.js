@@ -35,11 +35,12 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CK3HoverProvider = void 0;
 const vscode = __importStar(require("vscode"));
+const traitSchema_1 = require("../schemas/traitSchema");
 // Import effect and trigger data
 const data_1 = require("../data");
 const data_2 = require("../data");
 // Import all schema maps
-const traitSchema_1 = require("../schemas/traitSchema");
+const traitSchema_2 = require("../schemas/traitSchema");
 const eventSchema_1 = require("../schemas/eventSchema");
 const decisionSchema_1 = require("../schemas/decisionSchema");
 const interactionSchema_1 = require("../schemas/interactionSchema");
@@ -59,6 +60,7 @@ const dynastyLegacySchema_1 = require("../schemas/dynastyLegacySchema");
 const modifierSchema_1 = require("../schemas/modifierSchema");
 const lawSchema_1 = require("../schemas/lawSchema");
 const governmentSchema_1 = require("../schemas/governmentSchema");
+const activitySchema_1 = require("../schemas/activitySchema");
 /**
  * Provides hover information for CK3 entity fields across all file types
  */
@@ -93,6 +95,25 @@ class CK3HoverProvider {
             const field = schemaMap.get(word);
             if (field) {
                 return this.getFieldHover(word, schemaMap);
+            }
+        }
+        // Trait-specific hovers (categories and stats)
+        if (fileType === 'trait') {
+            if (traitSchema_1.TRAIT_CATEGORIES.includes(word)) {
+                return this.getTraitCategoryHover(word);
+            }
+            if (traitSchema_1.STATS.includes(word)) {
+                // Check if this is a stat value (after =) or just the stat name
+                const valueMatch = lineText.match(/^\s*(\w+)\s*=\s*(\S+)/);
+                if (valueMatch && valueMatch[1] === word) {
+                    // This is the field name, not a value
+                    return this.getStatHover(word);
+                }
+                if (valueMatch && traitSchema_1.STATS.includes(valueMatch[1]) && valueMatch[2] === word) {
+                    // This is a stat value
+                    return this.getStatValueHover(valueMatch[1], word);
+                }
+                return this.getStatHover(word);
             }
         }
         // Always check for effects and triggers (works in any CK3 file)
@@ -154,11 +175,13 @@ class CK3HoverProvider {
             return 'law';
         if (normalizedPath.includes('/common/governments/'))
             return 'government';
+        if (normalizedPath.includes('/common/activities/'))
+            return 'activity';
         return 'unknown';
     }
     getSchemaMapForFileType(fileType) {
         switch (fileType) {
-            case 'trait': return traitSchema_1.traitSchemaMap;
+            case 'trait': return traitSchema_2.traitSchemaMap;
             case 'event': return eventSchema_1.eventSchemaMap;
             case 'decision': return decisionSchema_1.decisionSchemaMap;
             case 'interaction': return interactionSchema_1.interactionSchemaMap;
@@ -182,6 +205,7 @@ class CK3HoverProvider {
             case 'modifier': return modifierSchema_1.modifierSchemaMap;
             case 'law': return lawSchema_1.lawSchemaMap;
             case 'government': return governmentSchema_1.governmentSchemaMap;
+            case 'activity': return activitySchema_1.activitySchemaMap;
             default: return null;
         }
     }
@@ -319,6 +343,76 @@ class CK3HoverProvider {
         // Show syntax example
         if (trigger.syntax) {
             markdown.appendMarkdown(`**Syntax:**\n\`\`\`\n${trigger.syntax}\n\`\`\`\n`);
+        }
+        return new vscode.Hover(markdown);
+    }
+    /**
+     * Get hover for trait category values
+     */
+    getTraitCategoryHover(category) {
+        const descriptions = {
+            personality: 'Core personality traits that define character behavior. Generated with characters and affect AI decisions.',
+            education: 'Education traits representing the character\'s upbringing. One per character, acquired at age 16.',
+            childhood: 'Child personality traits that grow into adult traits when the character comes of age.',
+            commander: 'Combat leadership traits that affect battlefield performance.',
+            winter_commander: 'Specialized commander traits for winter warfare.',
+            lifestyle: 'Traits gained through lifestyle focus progress.',
+            court_type: 'Royal court type traits (requires Royal Court DLC).',
+            fame: 'Fame and prestige-related traits.',
+            health: 'Health conditions and physical states.',
+        };
+        const markdown = new vscode.MarkdownString();
+        markdown.appendMarkdown(`## Category: ${category}\n\n`);
+        markdown.appendMarkdown(descriptions[category] || 'A trait category.');
+        return new vscode.Hover(markdown);
+    }
+    /**
+     * Get hover for stat names (diplomacy, martial, etc.)
+     */
+    getStatHover(stat) {
+        const descriptions = {
+            diplomacy: 'Diplomacy affects relations, vassals, and negotiation. Used for diplomatic actions and schemes.',
+            martial: 'Martial affects military performance, levy size, and army effectiveness.',
+            stewardship: 'Stewardship affects domain limit, tax income, and economic actions.',
+            intrigue: 'Intrigue affects schemes, secrets, and covert actions.',
+            learning: 'Learning affects research speed, piety, and religious/cultural actions.',
+            prowess: 'Prowess affects personal combat ability in duels and battles.',
+        };
+        const markdown = new vscode.MarkdownString();
+        markdown.appendMarkdown(`## ${stat.charAt(0).toUpperCase() + stat.slice(1)}\n\n`);
+        markdown.appendMarkdown(descriptions[stat] || 'A character stat.');
+        return new vscode.Hover(markdown);
+    }
+    /**
+     * Get hover for stat values (shows magnitude interpretation)
+     */
+    getStatValueHover(stat, value) {
+        const numValue = parseInt(value);
+        const markdown = new vscode.MarkdownString();
+        markdown.appendMarkdown(`## ${stat} modifier: ${value}\n\n`);
+        if (!isNaN(numValue)) {
+            if (numValue > 0) {
+                markdown.appendMarkdown(`Grants **+${numValue}** to ${stat}.\n\n`);
+            }
+            else if (numValue < 0) {
+                markdown.appendMarkdown(`Reduces ${stat} by **${Math.abs(numValue)}**.\n\n`);
+            }
+            else {
+                markdown.appendMarkdown(`No effect on ${stat}.\n\n`);
+            }
+            // Context for the value
+            if (Math.abs(numValue) <= 1) {
+                markdown.appendMarkdown('*Minor modifier*');
+            }
+            else if (Math.abs(numValue) <= 3) {
+                markdown.appendMarkdown('*Moderate modifier*');
+            }
+            else if (Math.abs(numValue) <= 5) {
+                markdown.appendMarkdown('*Significant modifier*');
+            }
+            else {
+                markdown.appendMarkdown('*Major modifier*');
+            }
         }
         return new vscode.Hover(markdown);
     }

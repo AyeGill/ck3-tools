@@ -12,11 +12,33 @@
     "Programming Languages"
   ],
   "activationEvents": [
-    "onLanguage:plaintext",
     "workspaceContains:**/descriptor.mod"
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "languages": [
+      {
+        "id": "ck3",
+        "aliases": ["CK3 Script", "ck3"],
+        "extensions": [],
+        "filenames": [],
+        "filenamePatterns": [
+          "**/common/**/*.txt",
+          "**/events/**/*.txt",
+          "**/history/**/*.txt",
+          "**/map_data/**/*.txt",
+          "**/localization/**/*.yml"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "ck3",
+        "scopeName": "source.ck3",
+        "path": "./syntaxes/ck3.tmLanguage.json"
+      }
+    ],
     "commands": [
       {
         "command": "ck3-tools.addTrait",

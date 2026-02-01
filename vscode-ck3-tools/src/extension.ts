@@ -10,8 +10,7 @@ import { registerAddActivityCommand } from './codeActions/addActivity';
 import { registerAddSchemeCommand } from './codeActions/addScheme';
 import { registerGenerateLocalizationCommand } from './localization/generateLocalization';
 import { registerGoToLocalizationCommand } from './localization/navigationProvider';
-import { TraitCompletionProvider } from './providers/traitCompletionProvider';
-import { TraitHoverProvider } from './providers/traitHoverProvider';
+// TraitCompletionProvider and TraitHoverProvider removed - using unified providers instead
 import { CK3HoverProvider } from './providers/ck3HoverProvider';
 import { CK3CompletionProvider } from './providers/ck3CompletionProvider';
 
@@ -1330,31 +1329,13 @@ export function activate(context: vscode.ExtensionContext) {
   registerGenerateLocalizationCommand(context, generator);
   registerGoToLocalizationCommand(context);
 
-  // Register trait-specific providers for autocomplete and hover
-  const traitCompletionProvider = new TraitCompletionProvider();
-  const traitHoverProvider = new TraitHoverProvider();
-
-  context.subscriptions.push(
-    vscode.languages.registerCompletionItemProvider(
-      TRAIT_FILE_SELECTOR,
-      traitCompletionProvider,
-      '=', ' ' // Trigger on = and space
-    )
-  );
-
-  context.subscriptions.push(
-    vscode.languages.registerHoverProvider(
-      TRAIT_FILE_SELECTOR,
-      traitHoverProvider
-    )
-  );
-
-  // Register unified completion provider for other entity types
+  // Register unified completion and hover providers for all entity types
   const ck3CompletionProvider = new CK3CompletionProvider();
-
-  // Register unified hover provider for all entity types
   const ck3HoverProvider = new CK3HoverProvider();
+
+  // Build selector for all CK3 files (including traits)
   const ALL_CK3_FILES: vscode.DocumentSelector = ([] as vscode.DocumentFilter[])
+    .concat(TRAIT_FILE_SELECTOR as vscode.DocumentFilter[])
     .concat(EVENT_FILE_SELECTOR as vscode.DocumentFilter[])
     .concat(DECISION_FILE_SELECTOR as vscode.DocumentFilter[])
     .concat(INTERACTION_FILE_SELECTOR as vscode.DocumentFilter[])
@@ -1376,12 +1357,22 @@ export function activate(context: vscode.ExtensionContext) {
     .concat(DYNASTY_LEGACY_FILE_SELECTOR as vscode.DocumentFilter[])
     .concat(MODIFIER_FILE_SELECTOR as vscode.DocumentFilter[])
     .concat(LAW_FILE_SELECTOR as vscode.DocumentFilter[])
-    .concat(GOVERNMENT_FILE_SELECTOR as vscode.DocumentFilter[]);
+    .concat(GOVERNMENT_FILE_SELECTOR as vscode.DocumentFilter[])
+    .concat(ACTIVITY_FILE_SELECTOR as vscode.DocumentFilter[]);
 
   context.subscriptions.push(
     vscode.languages.registerHoverProvider(
       ALL_CK3_FILES,
       ck3HoverProvider
+    )
+  );
+
+  // Traits
+  context.subscriptions.push(
+    vscode.languages.registerCompletionItemProvider(
+      TRAIT_FILE_SELECTOR,
+      ck3CompletionProvider,
+      '=', ' '
     )
   );
 

@@ -5,6 +5,9 @@ import {
   getSchemaForContext as getTraitSchemaForContext,
   getSchemaMapForContext as getTraitSchemaMapForContext,
   FieldSchema,
+  modifierBlockSchema,
+  countyModifierValuesSchema,
+  provinceModifierValuesSchema,
 } from '../schemas/traitSchema';
 import {
   getEffectsForScope,
@@ -939,10 +942,83 @@ const EFFECT_BLOCKS = new Set([
   'on_send', 'on_auto_accept', 'option', 'hidden_effect',
 ]);
 
+/**
+ * Known modifier block names - these establish a modifier context
+ * The value indicates the modifier category (character, county, province)
+ */
+const MODIFIER_BLOCKS: Map<string, 'character' | 'county' | 'province'> = new Map([
+  // Character modifier blocks
+  ['modifier', 'character'],           // Generic modifier block in traits
+  ['character_modifier', 'character'], // Explicit character modifier
+  ['culture_modifier', 'character'],   // Culture-specific character modifier
+  ['faith_modifier', 'character'],     // Faith-specific character modifier
+  ['track', 'character'],              // XP track blocks contain modifiers
+
+  // County modifier blocks
+  ['county_modifier', 'county'],
+  ['duchy_capital_county_modifier', 'county'],
+
+  // Province modifier blocks
+  ['province_modifier', 'province'],
+]);
+
+/**
+ * Check if a block name is numeric (e.g., "50" in track = { 50 = { } })
+ */
+function isNumericBlock(block: string): boolean {
+  return /^\d+$/.test(block);
+}
+
 type BlockContext = {
   type: 'trigger' | 'effect' | 'unknown';
   scope: ScopeType;
 };
+
+type ModifierContext = {
+  inModifierBlock: boolean;
+  modifierCategory: 'character' | 'county' | 'province' | null;
+};
+
+/**
+ * Analyze blockPath to determine if we're in a modifier context.
+ * Walks through the block path looking for modifier-establishing blocks.
+ *
+ * @param blockPath Array of block names from outermost to innermost
+ * @returns Object indicating if we're in a modifier block and what category
+ */
+function analyzeModifierContext(blockPath: string[]): ModifierContext {
+  let modifierCategory: 'character' | 'county' | 'province' | null = null;
+
+  for (const block of blockPath) {
+    // Check if this block establishes a modifier context
+    const category = MODIFIER_BLOCKS.get(block);
+    if (category) {
+      modifierCategory = category;
+      // Don't break - a later block might override (e.g., nested modifiers)
+    }
+
+    // Numeric blocks inside a modifier context stay in that context
+    // (e.g., track = { 50 = { learning = 2 } })
+    if (isNumericBlock(block) && modifierCategory) {
+      // Stay in modifier context
+      continue;
+    }
+
+    // If we hit a trigger or effect block, we leave modifier context
+    if (TRIGGER_BLOCKS.has(block) || EFFECT_BLOCKS.has(block)) {
+      // Check if this is 'modifier' which is special - it's both a trigger container
+      // AND a modifier context depending on usage
+      if (block !== 'modifier') {
+        modifierCategory = null;
+      }
+    }
+  }
+
+  return {
+    inModifierBlock: modifierCategory !== null,
+    modifierCategory,
+  };
+}
 
 /**
  * Analyze blockPath to determine the current context type and scope.
@@ -1936,27 +2012,37 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
   ): { depth: number; blockPath: string[] } {
     let depth = 0;
     const blockStack: string[] = [];
-    let pendingFieldName: string | null = null;
 
     for (let i = 0; i <= position.line; i++) {
       const line = document.lineAt(i).text;
       const endChar = i === position.line ? position.character : line.length;
 
-      // Check for field = { pattern
-      const fieldMatch = line.match(/^\s*(\w+)\s*=\s*\{/);
-      if (fieldMatch) {
-        pendingFieldName = fieldMatch[1];
+      // Track positions of all "field = {" patterns on this line
+      // so we know which field name corresponds to which opening brace
+      const fieldPositions: { name: string; bracePos: number }[] = [];
+      const fieldPattern = /(\w+)\s*=\s*\{/g;
+      let fieldMatch;
+      while ((fieldMatch = fieldPattern.exec(line)) !== null) {
+        // Find the position of the '{' in this match
+        const bracePos = fieldMatch.index + fieldMatch[0].length - 1;
+        if (bracePos < endChar) {
+          fieldPositions.push({ name: fieldMatch[1], bracePos });
+        }
       }
 
+      let fieldPosIndex = 0;
       for (let j = 0; j < endChar; j++) {
         if (line[j] === '#') break; // Skip comments
 
         if (line[j] === '{') {
           depth++;
-          if (depth > 1 && pendingFieldName) {
-            blockStack.push(pendingFieldName);
+          // Check if this brace has an associated field name
+          if (fieldPosIndex < fieldPositions.length && fieldPositions[fieldPosIndex].bracePos === j) {
+            if (depth > 1) {
+              blockStack.push(fieldPositions[fieldPosIndex].name);
+            }
+            fieldPosIndex++;
           }
-          pendingFieldName = null;
         }
         if (line[j] === '}') {
           depth--;
@@ -1964,10 +2050,6 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
             blockStack.pop();
           }
         }
-      }
-
-      if (!line.includes('{')) {
-        pendingFieldName = null;
       }
     }
 
@@ -1978,6 +2060,19 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
    * Get schema for a file type and context
    */
   private getSchemaForContext(fileType: CK3FileType, blockPath: string[]): FieldSchema[] {
+    // Check for modifier context first (works across many file types)
+    const modifierContext = analyzeModifierContext(blockPath);
+    if (modifierContext.inModifierBlock) {
+      switch (modifierContext.modifierCategory) {
+        case 'character':
+          return modifierBlockSchema;
+        case 'county':
+          return countyModifierValuesSchema;
+        case 'province':
+          return provinceModifierValuesSchema;
+      }
+    }
+
     switch (fileType) {
       case 'trait':
         return getTraitSchemaForContext(blockPath);
@@ -2051,7 +2146,7 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
         return getSchemaWithTriggerEffectBlocks(blockPath, schemeSchema);
 
       case 'building':
-        // Buildings can have province scope for some effects
+        // Modifier blocks are handled globally above
         return getSchemaWithTriggerEffectBlocks(blockPath, buildingSchema);
 
       case 'men_at_arms':

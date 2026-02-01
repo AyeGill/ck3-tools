@@ -2,6 +2,8 @@
  * Schema definition for CK3 traits - powers autocomplete and hover documentation
  */
 
+import { characterModifiers, countyModifiers, provinceModifiers } from '../data';
+
 export interface FieldSchema {
   name: string;
   type: 'boolean' | 'integer' | 'float' | 'string' | 'enum' | 'block' | 'trigger' | 'effect' | 'modifier' | 'list';
@@ -512,6 +514,20 @@ export const traitSchema: FieldSchema[] = [
     description: 'Modifier to AI religious zeal.',
     example: 'ai_zeal = 20',
   },
+
+  // Include all character modifiers at the top level
+  // These can be used directly in traits (e.g., fertility = 0.1, attraction_opinion = 10)
+  ...characterModifiers
+    .filter(mod => !['diplomacy', 'martial', 'stewardship', 'intrigue', 'learning', 'prowess',
+                     'monthly_prestige', 'monthly_piety', 'ai_boldness', 'ai_compassion',
+                     'ai_greed', 'ai_honor', 'ai_rationality', 'ai_sociability',
+                     'ai_vengefulness', 'ai_zeal', 'ai_energy'].includes(mod.name)) // Avoid duplicates
+    .map(mod => ({
+      name: mod.name,
+      type: 'float' as const,
+      description: `Character modifier: ${mod.name.replace(/_/g, ' ')}`,
+      example: `${mod.name} = 0.1`,
+    })),
 ];
 
 // Map for quick lookup
@@ -706,6 +722,59 @@ export const triggerBlockSchemaMap = new Map<string, FieldSchema>(
 );
 
 /**
+ * Schema for modifier blocks (character modifiers used in traits)
+ * Generated from OldEnt's modifier data
+ */
+export const modifierBlockSchema: FieldSchema[] = characterModifiers.map(mod => ({
+  name: mod.name,
+  type: 'float' as const,
+  description: `Character modifier: ${mod.name.replace(/_/g, ' ')}`,
+  example: `${mod.name} = 0.1`,
+}));
+
+/**
+ * Schema for county modifier VALUES (the stat modifiers inside county_modifier blocks)
+ */
+export const countyModifierValuesSchema: FieldSchema[] = countyModifiers.map(mod => ({
+  name: mod.name,
+  type: 'float' as const,
+  description: `County modifier: ${mod.name.replace(/_/g, ' ')}`,
+  example: `${mod.name} = 0.1`,
+}));
+
+/**
+ * Schema for province modifier VALUES (the stat modifiers inside province_modifier blocks)
+ */
+export const provinceModifierValuesSchema: FieldSchema[] = provinceModifiers.map(mod => ({
+  name: mod.name,
+  type: 'float' as const,
+  description: `Province modifier: ${mod.name.replace(/_/g, ' ')}`,
+  example: `${mod.name} = 0.1`,
+}));
+
+export const modifierBlockSchemaMap = new Map<string, FieldSchema>(
+  modifierBlockSchema.map((field) => [field.name, field])
+);
+
+/**
+ * Check if a block name is a numeric XP threshold (e.g., "50", "100")
+ */
+function isNumericBlock(block: string): boolean {
+  return /^\d+$/.test(block);
+}
+
+/**
+ * Blocks that establish a character modifier context
+ */
+const MODIFIER_CONTEXT_BLOCKS = new Set([
+  'modifier',
+  'character_modifier',
+  'culture_modifier',
+  'faith_modifier',
+  'track',  // XP track blocks contain modifiers
+]);
+
+/**
  * Get the appropriate schema for a given block context
  * @param blockPath Array of field names representing the nesting path (e.g., ['desc', 'first_valid'])
  * @returns The schema to use for completions in this context
@@ -716,6 +785,28 @@ export function getSchemaForContext(blockPath: string[]): FieldSchema[] {
   }
 
   const currentBlock = blockPath[blockPath.length - 1];
+
+  // Check for modifier context by walking the path
+  // If any ancestor block establishes modifier context, and we're inside it
+  // (possibly inside numeric XP threshold blocks), return modifier schema
+  let inModifierContext = false;
+  for (const block of blockPath) {
+    if (MODIFIER_CONTEXT_BLOCKS.has(block)) {
+      inModifierContext = true;
+    }
+    // Numeric blocks (XP thresholds) inside a modifier context stay in that context
+    if (isNumericBlock(block) && inModifierContext) {
+      continue;
+    }
+    // Trigger/potential blocks exit modifier context
+    if (block === 'trigger' || block === 'potential') {
+      inModifierContext = false;
+    }
+  }
+
+  if (inModifierContext) {
+    return modifierBlockSchema;
+  }
 
   // Check what kind of block we're in
   switch (currentBlock) {

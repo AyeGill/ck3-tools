@@ -166,3 +166,6 @@ export const effectsMap = new Map<string, EffectDefinition>(
 export const triggersMap = new Map<string, TriggerDefinition>(
   allTriggers.map(t => [t.name, t])
 );
+
+// Export modifiers
+export * from './modifiers.generated';
