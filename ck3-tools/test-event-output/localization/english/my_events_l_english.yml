@@ -1,5 +1,0 @@
-﻿l_english:
- my_events.1:0 "Event Title"
- my_events.1_desc:0 "Event description with [CHARACTER.GetTitledFirstName] and other localization tags."
- my_events.1.a:0 "First choice"
- my_events.1.b:0 "Second choice"

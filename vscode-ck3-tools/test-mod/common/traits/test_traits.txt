@@ -1,0 +1,62 @@
+# Test trait file for CK3 Modding Tools extension
+# This file demonstrates the autocomplete and hover features
+
+example_personality_trait = {
+    category = personality
+
+    # Stats
+    diplomacy = 2
+    intrigue = -1
+
+    # Monthly modifiers
+    monthly_prestige = 0.1
+
+    # Opinion
+    same_opinion = 10
+    opposite_opinion = -10
+
+    # Incompatible traits
+    opposites = {
+        content
+        lazy
+    }
+
+    # AI behavior
+    ai_value = 100
+    ai_boldness = 20
+
+    # Ruler designer
+    ruler_designer_cost = 30
+}
+
+example_education_trait = {
+    category = education
+    minimum_age = 16
+
+    # Group for education traits
+    group = education_diplomacy
+    level = 1
+
+    diplomacy = 2
+    monthly_prestige = 0.1
+
+    ruler_designer_cost = 50
+}
+
+example_genetic_trait = {
+    category = health
+
+    # Genetic inheritance
+    genetic = yes
+    good = yes
+    inherit_chance = 30
+
+    # Portrait effect
+    genetic_constraint_all = beauty
+
+    # Stat bonus
+    diplomacy = 1
+    attraction_opinion = 15
+
+    ruler_designer_cost = 40
+}

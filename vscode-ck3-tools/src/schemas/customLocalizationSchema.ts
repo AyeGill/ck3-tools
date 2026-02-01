@@ -1,0 +1,91 @@
+/**
+ * Schema definition for CK3 Customizable Localization - powers autocomplete and hover documentation
+ */
+
+import { FieldSchema } from './traitSchema';
+
+export const customLocalizationSchema: FieldSchema[] = [
+  // Type
+  {
+    name: 'type',
+    type: 'enum',
+    description: 'The scope type this localization applies to.',
+    values: ['character', 'title', 'province', 'faith', 'culture', 'dynasty', 'none'],
+    example: 'type = character',
+  },
+
+  // Text blocks
+  {
+    name: 'text',
+    type: 'block',
+    description: 'A text option with optional trigger.',
+    example: `text = {
+    trigger = { is_female = yes }
+    localization_key = "LADY_TITLE"
+}`,
+  },
+  {
+    name: 'localization_key',
+    type: 'string',
+    description: 'The localization key to use.',
+    example: 'localization_key = "LORD_TITLE"',
+  },
+  {
+    name: 'trigger',
+    type: 'trigger',
+    description: 'Conditions for this text option.',
+    example: `trigger = {
+    is_ruler = yes
+}`,
+  },
+  {
+    name: 'fallback',
+    type: 'boolean',
+    description: 'Whether this is the fallback option.',
+    default: false,
+    example: 'fallback = yes',
+  },
+
+  // Random selection
+  {
+    name: 'random_valid',
+    type: 'boolean',
+    description: 'Select randomly from valid options.',
+    default: false,
+    example: 'random_valid = yes',
+  },
+
+  // Parent reference
+  {
+    name: 'parent',
+    type: 'string',
+    description: 'Parent custom localization to inherit from.',
+    example: 'parent = "GetTitleTier"',
+  },
+];
+
+// Map for quick lookup
+export const customLocalizationSchemaMap = new Map<string, FieldSchema>(
+  customLocalizationSchema.map((field) => [field.name, field])
+);
+
+export function getCustomLocalizationFieldNames(): string[] {
+  return customLocalizationSchema.map((field) => field.name);
+}
+
+export function getCustomLocalizationFieldDocumentation(fieldName: string): string | undefined {
+  const field = customLocalizationSchemaMap.get(fieldName);
+  if (!field) return undefined;
+
+  let doc = field.description;
+  if (field.type === 'enum' && field.values) {
+    doc += `\n\nValid values: ${field.values.join(', ')}`;
+  }
+  if (field.default !== undefined) {
+    doc += `\n\nDefault: ${field.default}`;
+  }
+  if (field.example) {
+    doc += `\n\nExample:\n\`\`\`\n${field.example}\n\`\`\``;
+  }
+  return doc;
+}

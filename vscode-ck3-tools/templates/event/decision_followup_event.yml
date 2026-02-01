@@ -1,0 +1,92 @@
+name: decision_followup_event
+description: Event triggered after a decision is taken
+category: event
+version: 1.0
+
+parameters:
+  namespace:
+    type: string
+    required: true
+    description: Event namespace
+
+  event_id:
+    type: integer
+    required: true
+    description: Event ID
+
+  decision_name:
+    type: string
+    required: false
+    default: my_decision
+    description: Decision that triggered this
+
+  outcome_type:
+    type: enum
+    values: [success, neutral, failure, mixed]
+    default: success
+    required: false
+    description: Outcome type
+
+  success_prestige:
+    type: integer
+    default: 100
+    description: Prestige gain on success
+
+  success_opinion:
+    type: integer
+    default: 15
+    description: Opinion gain with vassals on success
+
+structure:
+  event_type: character_event
+  namespace: "{{namespace}}"
+  id: "{{namespace}}.{{event_id}}"
+
+  title: "{{namespace}}.{{event_id}}"
+  desc: "{{namespace}}.{{event_id}}_desc"
+
+  theme: realm
+
+  left_portrait: root
+
+  immediate: |
+    {{#if (eq outcome_type 'success')}}
+    # Success outcome
+    add_prestige = {{success_prestige}}
+    {{/if}}
+
+  option:
+    - name: "{{namespace}}.{{event_id}}.a"
+      effect: |
+        {{#if (eq outcome_type 'success')}}
+        # Vassals are pleased with the success
+        every_vassal = {
+          limit = {
+            is_adult = yes
+          }
+          add_opinion = {
+            target = root
+            modifier = successful_{{decision_name}}
+            opinion = {{success_opinion}}
+          }
+        }
+        {{else}}
+        # Standard outcome
+        add_prestige = 50
+        {{/if}}
+
+    - name: "{{namespace}}.{{event_id}}.b"
+      effect: |
+        {{#if (eq outcome_type 'mixed')}}
+        # Alternative response for mixed outcome
+        add_prestige = {{divide success_prestige 2}}
+        {{else}}
+        # Default second option
+        add_prestige = 25
+        {{/if}}
+
+localization:
+  title: "Outcome: {{capitalize decision_name}}"
+  desc: "The decision '{{decision_name}}' has concluded with a {{outcome_type}} outcome."
+  option_a: "Excellent"
+  option_b: "I see"

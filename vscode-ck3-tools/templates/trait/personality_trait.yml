@@ -1,0 +1,76 @@
+name: personality_trait
+description: Simple personality trait with stat modifiers
+category: trait
+version: 1.0
+
+parameters:
+  name:
+    type: string
+    required: true
+    description: Trait name
+
+  primary_stat:
+    type: enum
+    values: [diplomacy, martial, stewardship, intrigue, learning, prowess]
+    required: true
+    description: Primary stat to modify
+
+  stat_value:
+    type: integer
+    default: 2
+    min: -5
+    max: 10
+    description: Amount to modify stat by
+
+  secondary_stat:
+    type: enum
+    values: [diplomacy, martial, stewardship, intrigue, learning, prowess, none]
+    default: none
+    description: Optional secondary stat
+
+  secondary_value:
+    type: integer
+    default: 1
+    description: Amount for secondary stat
+
+  monthly_modifier:
+    type: enum
+    values: [prestige, piety, gold, none]
+    default: none
+    description: Monthly resource modifier
+
+  monthly_value:
+    type: float
+    default: 0.1
+    description: Monthly modifier value
+
+  opposite_trait:
+    type: string
+    default: ""
+    description: Opposite trait name (optional)
+
+  ruler_designer_cost:
+    type: integer
+    default: 20
+    description: Cost in ruler designer
+
+structure:
+  category: personality
+
+  opposites: "{{#if opposite_trait}}{ {{opposite_trait}} }{{/if}}"
+
+  "{{primary_stat}}": "{{stat_value}}"
+  {{#if (ne secondary_stat 'none')}}
+  "{{secondary_stat}}": "{{secondary_value}}"
+  {{/if}}
+  {{#if (ne monthly_modifier 'none')}}
+  "monthly_{{monthly_modifier}}": "{{monthly_value}}"
+  {{/if}}
+
+  ruler_designer_cost: "{{ruler_designer_cost}}"
+
+  ai_value: 50
+
+localization:
+  name_template: "{{capitalize (format_name name)}}"
+  desc_template: "This character exhibits the {{format_name name}} trait."

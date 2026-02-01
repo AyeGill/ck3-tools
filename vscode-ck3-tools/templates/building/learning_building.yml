@@ -1,0 +1,76 @@
+name: learning_building
+description: Building focused on learning and piety
+category: building
+version: 1.0
+
+parameters:
+  name:
+    type: string
+    required: true
+    description: Building base name
+
+  levels:
+    type: integer
+    default: 3
+    min: 1
+    max: 8
+    description: Number of building levels
+
+  base_cost:
+    type: integer
+    default: 200
+    description: Base construction cost in gold
+
+  cost_scaling:
+    type: float
+    default: 2.0
+    description: Multiplier for each level
+
+  construction_time:
+    type: integer
+    default: 730
+    description: Construction time in days
+
+structure:
+  construction_time: "{{construction_time}}"
+
+  can_construct_potential:
+    building_requirement_castle_city_church: yes
+
+  can_construct_showing_failures_only:
+    building_requirement_tribal: no
+
+  cost_gold: "{{floor (multiply base_cost (power cost_scaling (subtract level 1)))}}"
+
+  character_modifier:
+    monthly_piety: "{{to_fixed (multiply 0.2 level) 1}}"
+    learning: "{{level}}"
+
+  province_modifier:
+    monthly_income: "{{to_fixed (multiply 0.15 level) 2}}"
+    levy_size: "{{multiply 50 level}}"
+
+  county_modifier:
+    development_growth: "{{to_fixed (multiply 0.05 level) 2}}"
+
+  next_building: "{{name}}_0{{add level 1}}"
+
+  type_icon: '"icon_building_{{name}}.dds"'
+
+  flag: "{{name}}"
+
+  ai_value:
+    base: "{{subtract 20 level}}"
+    modifiers:
+      - add: 30
+        condition: "scope:holder = { learning >= {{add 12 (multiply level 2)}} }"
+      - add: 15
+        condition: "scope:holder = { has_trait = scholar }"
+      - factor: 0.1
+        condition: "scope:holder = { is_at_war = yes }"
+      - factor: 0.25
+        condition: "free_building_slots > 0"
+
+localization:
+  name_template: "{{tier}} {{formatted_name}}"
+  desc_template: "A {{tier_lower}} center of learning that provides knowledge and spiritual guidance."
