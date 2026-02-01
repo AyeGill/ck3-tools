@@ -1,0 +1,54 @@
+# Example trait for testing autocomplete and hover
+example_trait = {
+	index = 1
+	category = personality
+
+	# Attribute modifiers
+	diplomacy = 2
+	martial = -1
+	stewardship = 0
+	intrigue = 1
+	learning = 0
+
+	# Other modifiers
+	opposite_opinion = -10
+	same_opinion = 5
+	attraction_opinion = 10
+
+	# AI behavior
+	ai_boldness = 25
+	ai_compassion = -25
+	ai_rationality = 10
+
+	# Track for leveled traits
+	# track = { }
+
+	# When this trait is valid
+	potential = {
+		is_adult = yes
+	}
+
+	# Character modifier block
+	character_modifier = {
+		monthly_prestige = 0.5
+		stress_gain_mult = -0.1
+	}
+
+	# Triggered modifiers based on conditions
+	triggered_opinion = {
+		opinion_modifier = same_faith_opinion
+		parameter = same_faith
+		check_missing = no
+	}
+
+	# Description that can be conditional
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { is_ruler = yes }
+				desc = example_trait_desc_ruler
+			}
+			desc = example_trait_desc
+		}
+	}
+}

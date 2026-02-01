@@ -6,41 +6,52 @@
  */
 
 export type ScopeType =
-  | 'none'           // Global/any scope (no specific context required)
+  | 'none'              // Global/any scope (no specific context required)
   | 'character'
   | 'landed_title'
   | 'province'
   | 'combat'
   | 'combat_side'
   | 'faith'
-  | 'religion'       // Religion family (parent of faiths)
+  | 'religion'          // Religion family (parent of faiths)
   | 'dynasty'
-  | 'dynasty_house'  // Cadet branches
+  | 'dynasty_house'     // Cadet branches
   | 'faction'
   | 'culture'
   | 'culture_group'
+  | 'culture_pillar'    // Heritage, language, etc.
+  | 'culture_tradition' // Cultural traditions
   | 'army'
-  | 'regiment'       // Part of an army
+  | 'regiment'          // Part of an army
   | 'holy_order'
   | 'mercenary_company'
   | 'artifact'
   | 'inspiration'
   | 'scheme'
   | 'secret'
-  | 'story'          // Story cycles
+  | 'story'             // Story cycles
   | 'war'
   | 'casus_belli'
   | 'activity'
+  | 'activity_type'     // Activity type definition
   | 'travel_plan'
   | 'council_task'
   | 'great_holy_war'
+  | 'ghw'               // Alias for great holy war
   | 'struggle'
   | 'legend'
   | 'legend_seed'
   | 'accolade'
   | 'accolade_type'
   | 'epidemic'
-  | 'geographical_region';
+  | 'geographical_region'
+  | 'trait'                   // Trait scope (for trait-targeting effects)
+  | 'character_memory'        // Memory scope
+  | 'decision'                // Decision scope
+  | 'doctrine'                // Faith doctrine scope
+  | 'government_type'         // Government type scope
+  | 'vassal_contract'         // Feudal contract scope
+  | 'title_and_vassal_change';// Title transfer change scope
 
 /**
  * Common scope aliases used in documentation

@@ -1,6 +1,10 @@
 import * as vscode from 'vscode';
 import { FieldSchema } from '../schemas/traitSchema';
 
+// Import effect and trigger data
+import { effectsMap, EffectDefinition } from '../data';
+import { triggersMap, TriggerDefinition } from '../data';
+
 // Import all schema maps
 import { traitSchemaMap } from '../schemas/traitSchema';
 import { eventSchemaMap } from '../schemas/eventSchema';
@@ -51,32 +55,41 @@ export class CK3HoverProvider implements vscode.HoverProvider {
     const lineText = document.lineAt(position).text;
     const fileType = this.getFileType(document.fileName);
 
-    if (fileType === 'unknown') {
-      return null;
-    }
-
-    // Get the appropriate schema map for this file type
+    // Get the appropriate schema map for this file type (may be null)
     const schemaMap = this.getSchemaMapForFileType(fileType);
-    if (!schemaMap) {
-      return null;
+
+    // Check schema fields first (if we have a schema)
+    if (schemaMap) {
+      // Check if this is a field name (before =)
+      const fieldMatch = lineText.match(/^\s*(\w+)\s*=/);
+      if (fieldMatch && fieldMatch[1] === word) {
+        const fieldHover = this.getFieldHover(word, schemaMap);
+        if (fieldHover) return fieldHover;
+      }
+
+      // Check if this is a value (after =)
+      const valueMatch = lineText.match(/^\s*(\w+)\s*=\s*(\S+)/);
+      if (valueMatch && valueMatch[2] === word) {
+        const valueHover = this.getValueHover(valueMatch[1], word, schemaMap);
+        if (valueHover) return valueHover;
+      }
+
+      // Generic field lookup
+      const field = schemaMap.get(word);
+      if (field) {
+        return this.getFieldHover(word, schemaMap);
+      }
     }
 
-    // Check if this is a field name (before =)
-    const fieldMatch = lineText.match(/^\s*(\w+)\s*=/);
-    if (fieldMatch && fieldMatch[1] === word) {
-      return this.getFieldHover(word, schemaMap);
+    // Always check for effects and triggers (works in any CK3 file)
+    const effectHover = this.getEffectHover(word);
+    if (effectHover) {
+      return effectHover;
     }
 
-    // Check if this is a value (after =)
-    const valueMatch = lineText.match(/^\s*(\w+)\s*=\s*(\S+)/);
-    if (valueMatch && valueMatch[2] === word) {
-      return this.getValueHover(valueMatch[1], word, schemaMap);
-    }
-
-    // Generic field lookup
-    const field = schemaMap.get(word);
-    if (field) {
-      return this.getFieldHover(word, schemaMap);
+    const triggerHover = this.getTriggerHover(word);
+    if (triggerHover) {
+      return triggerHover;
     }
 
     return null;
@@ -218,5 +231,95 @@ export class CK3HoverProvider implements vscode.HoverProvider {
     }
 
     return null;
+  }
+
+  /**
+   * Get hover documentation for an effect
+   */
+  private getEffectHover(name: string): vscode.Hover | null {
+    const effect = effectsMap.get(name);
+    if (!effect) return null;
+
+    const markdown = new vscode.MarkdownString();
+
+    markdown.appendMarkdown(`## ${name}\n\n`);
+    markdown.appendMarkdown(`**Effect** · `);
+
+    if (effect.isIterator) {
+      markdown.appendMarkdown(`*Iterator*\n\n`);
+    } else {
+      markdown.appendMarkdown(`*Command*\n\n`);
+    }
+
+    markdown.appendMarkdown(`${effect.description}\n\n`);
+
+    // Show supported scopes
+    const scopes = effect.supportedScopes.join(', ');
+    markdown.appendMarkdown(`**Scopes:** \`${scopes}\`\n\n`);
+
+    // Show supported targets for iterators
+    if (effect.supportedTargets && effect.supportedTargets.length > 0) {
+      const targets = effect.supportedTargets.join(', ');
+      markdown.appendMarkdown(`**Targets:** \`${targets}\`\n\n`);
+    }
+
+    // Show output scope if it changes scope
+    if (effect.outputScope) {
+      markdown.appendMarkdown(`**Output scope:** \`${effect.outputScope}\`\n\n`);
+    }
+
+    // Show syntax example
+    if (effect.syntax) {
+      markdown.appendMarkdown(`**Syntax:**\n\`\`\`\n${effect.syntax}\n\`\`\`\n`);
+    }
+
+    return new vscode.Hover(markdown);
+  }
+
+  /**
+   * Get hover documentation for a trigger
+   */
+  private getTriggerHover(name: string): vscode.Hover | null {
+    const trigger = triggersMap.get(name);
+    if (!trigger) return null;
+
+    const markdown = new vscode.MarkdownString();
+
+    markdown.appendMarkdown(`## ${name}\n\n`);
+    markdown.appendMarkdown(`**Trigger** · `);
+
+    if (trigger.isIterator) {
+      markdown.appendMarkdown(`*Iterator*\n\n`);
+    } else if (trigger.valueType === 'boolean') {
+      markdown.appendMarkdown(`*Boolean*\n\n`);
+    } else if (trigger.valueType === 'comparison') {
+      markdown.appendMarkdown(`*Comparison*\n\n`);
+    } else {
+      markdown.appendMarkdown(`*Condition*\n\n`);
+    }
+
+    markdown.appendMarkdown(`${trigger.description}\n\n`);
+
+    // Show supported scopes
+    const scopes = trigger.supportedScopes.join(', ');
+    markdown.appendMarkdown(`**Scopes:** \`${scopes}\`\n\n`);
+
+    // Show supported targets for iterators
+    if (trigger.supportedTargets && trigger.supportedTargets.length > 0) {
+      const targets = trigger.supportedTargets.join(', ');
+      markdown.appendMarkdown(`**Targets:** \`${targets}\`\n\n`);
+    }
+
+    // Show output scope if it changes scope
+    if (trigger.outputScope) {
+      markdown.appendMarkdown(`**Output scope:** \`${trigger.outputScope}\`\n\n`);
+    }
+
+    // Show syntax example
+    if (trigger.syntax) {
+      markdown.appendMarkdown(`**Syntax:**\n\`\`\`\n${trigger.syntax}\n\`\`\`\n`);
+    }
+
+    return new vscode.Hover(markdown);
   }
 }

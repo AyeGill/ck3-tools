@@ -1,0 +1,71 @@
+# Example decision for testing autocomplete and hover
+example_decision = {
+	picture = "gfx/interface/illustrations/decisions/decision_misc.dds"
+	major = yes
+
+	desc = example_decision_desc
+	selection_tooltip = example_decision_tooltip
+
+	is_shown = {
+		is_ruler = yes
+		is_adult = yes
+	}
+
+	is_valid = {
+		prestige >= 500
+		gold >= 100
+		any_vassal = {
+			count >= 3
+			is_adult = yes
+		}
+	}
+
+	is_valid_showing_failures_only = {
+		is_imprisoned = no
+		is_at_war = no
+	}
+
+	cost = {
+		gold = 100
+		prestige = 500
+	}
+
+	ai_potential = {
+		prestige >= 1000
+		gold >= 500
+	}
+
+	ai_will_do = {
+		base = 100
+		modifier = {
+			factor = 0
+			has_trait = content
+		}
+		modifier = {
+			add = 50
+			has_trait = ambitious
+		}
+	}
+
+	effect = {
+		add_prestige = 250
+		add_character_flag = {
+			flag = made_important_decision
+			years = 5
+		}
+		trigger_event = {
+			id = test_events.0001
+			days = { 3 7 }
+		}
+		every_vassal = {
+			limit = {
+				is_adult = yes
+			}
+			add_opinion = {
+				target = root
+				modifier = impressed_opinion
+				opinion = 15
+			}
+		}
+	}
+}

@@ -1,0 +1,2834 @@
+[
+  {
+    "name": "$SCHEME_TYPE$_scheme_resistance_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_$LIFESTYLE$_xp_gain_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$FAITH$_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "dynasty_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$SCHEME_TYPE$_scheme_power_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_construction_prestige_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_development_growth_factor",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "$CULTURE$_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_construction_gold_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "ai_boldness",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "ai_compassion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_travel_danger",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "$GOVERNMENT_TYPE$_vassal_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$SCHEME_TYPE$_scheme_resistance_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "same_faith_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$MEN_AT_ARMS_TYPE$_toughness_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "scheme_power_against_$SCRIPTED_RELATION$_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$VASSAL_STANCE$_same_culture_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$RELIGIOUS$_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$VASSAL_STANCE$_levy_contribution_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "diplomatic_range_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_advantage",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$TRAIT_TRACK$_xp_gain_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "owned_hostile_scheme_success_chance_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "build_piety_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "$MEN_AT_ARMS_TYPE$_screen_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$MEN_AT_ARMS_TYPE$_max_size_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "scheme_power_against_$SCRIPTED_RELATION$_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stationed_$MEN_AT_ARMS_TYPE$_toughness_add",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "stationed_$MEN_AT_ARMS_TYPE$_pursuit_add",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "$MEN_AT_ARMS_TYPE$_screen_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$MEN_AT_ARMS_TYPE$_maintenance_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "happy_powerful_vassal_tax_contribution_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "personal_scheme_power_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_supply_limit_mult",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "intrigue_per_stress_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stationed_maa_screen_add",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "ignore_different_faith_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_tax_mult",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "random_advantage",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$TRAIT_TRACK$_xp_loss_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$MEN_AT_ARMS_TYPE$_recruitment_cost_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "personal_scheme_resistance_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$MEN_AT_ARMS_TYPE$_damage_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_max_combat_roll",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stationed_$MEN_AT_ARMS_TYPE$_damage_mult",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "$MEN_AT_ARMS_TYPE$_pursuit_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "mercenary_hire_cost_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_attrition_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "fellow_vassal_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "independent_primary_defender_advantage_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$HOLDING_TYPE$_holding_build_gold_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "$GOVERNMENT_TYPE$_levy_contribution_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "army_damage_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "opinion_of_female_rulers",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_holding_construction_gold_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "revolting_siege_morale_loss_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "revolting_siege_morale_loss_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stationed_$MEN_AT_ARMS_TYPE$_damage_add",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "$GOVERNMENT_TYPE$_opinion_same_faith",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_holding_construction_prestige_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "$HOLDING_TYPE$_holding_build_speed",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "$GOVERNMENT_TYPE$_levy_contribution_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_development_growth",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "$SCHEME_TYPE$_scheme_power_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$VASSAL_STANCE$_tax_contribution_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$HOLDING_TYPE$_holding_build_prestige_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "max_$SCHEME_TYPE$_schemes_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "vassal_tax_contribution_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$LIFESTYLE$_xp_gain_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "hard_casualty_modifier",
+    "useAreas": [
+      "character and terrain"
+    ]
+  },
+  {
+    "name": "monthly_county_control_change_factor_even_if_baron",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "naval_movement_speed_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_prestige_gain_per_dread_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "intimidated_vassal_levy_contribution_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$VASSAL_STANCE$_same_faith_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$MEN_AT_ARMS_TYPE$_siege_value_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stationed_$MEN_AT_ARMS_TYPE$_toughness_mult",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "hostile_scheme_resistance_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "advantage",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stationed_$MEN_AT_ARMS_TYPE$_pursuit_mult",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "dynasty_house_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$MEN_AT_ARMS_TYPE$_pursuit_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "prowess",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "learning_per_stress_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stationed_maa_damage_add",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "monthly_income_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "maa_toughness_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "domain_tax_different_faith_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_min_combat_roll",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "faith_conversion_piety_cost_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_income_per_stress_level_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_prestige_gain_per_knight_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "opinion_of_same_faith",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_levy_size",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_supply_limit",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "close_relative_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_prestige",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "courtier_and_guest_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$MEN_AT_ARMS_TYPE$_toughness_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "diplomacy_scheme_resistance",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stationed_$MEN_AT_ARMS_TYPE$_siege_value_add",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "negate_diplomacy_penalty_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "raid_speed",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "levy_screen",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "accolade_glory_gain_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "knight_effectiveness_per_tyranny",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$VASSAL_STANCE$_different_faith_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$HOLDING_TYPE$_holding_build_piety_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "character_travel_speed",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$GOVERNMENT_TYPE$_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$GOVERNMENT_TYPE$_tax_contribution_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "levy_reinforcement_rate",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_holding_construction_piety_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "max_combat_roll",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "different_faith_county_opinion_mult_even_if_baron",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$VASSAL_STANCE$_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$MEN_AT_ARMS_TYPE$_siege_value_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_piety_gain_per_happy_powerful_vassal_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "inbreeding_chance",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "build_prestige_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "cultural_acceptance_gain_mult",
+    "useAreas": [
+      "culture"
+    ]
+  },
+  {
+    "name": "prestige_level_impact_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "building_slot_add",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "stationed_$MEN_AT_ARMS_TYPE$_siege_value_mult",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "hostage_renown_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stationed_maa_toughness_mult",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "monthly_tyranny",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "winter_advantage",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "hostile_scheme_resistance_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "different_faith_liege_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$GOVERNMENT_TYPE$_tax_contribution_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "army_toughness_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$HOLDING_TYPE$_build_speed",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "$MEN_AT_ARMS_TYPE$_damage_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "travel_speed_mult",
+    "useAreas": [
+      "travel_plan"
+    ]
+  },
+  {
+    "name": "direct_vassal_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "levy_siege",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "cowed_vassal_tax_contribution_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$MEN_AT_ARMS_TYPE$_max_size_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_lifestyle_xp_gain_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "intimidated_vassal_tax_contribution_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "tyranny_loss_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$VASSAL_STANCE$_different_culture_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "levy_reinforcement_rate_same_faith_even_if_baron",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_cancel_negative_supply",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_prestige_gain_per_dread_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "prowess_per_piety_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "hostile_scheme_power_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "intrigue",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "cultural_head_acceptance_gain_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_prestige_gain_per_happy_powerful_vassal_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "hostage_income_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_construction_piety_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "stress_gain_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_prestige_gain_per_knight_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$HOLDING_TYPE$_build_piety_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "no_prowess_loss_from_age",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "army_siege_value_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "cultural_head_fascination_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$TRAIT_TRACK$_xp_degradation_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "player_heir_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_piety_from_buildings_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "intrigue_scheme_resistance",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stationed_$MEN_AT_ARMS_TYPE$_screen_add",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "learning_scheme_power",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "same_culture_holy_order_hire_cost_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "negate_learning_penalty_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "levy_attack",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stress_loss_per_piety_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "opinion_of_same_culture",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$HOLDING_TYPE$_build_gold_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "character_travel_safety_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "scheme_power",
+    "useAreas": [
+      "scheme"
+    ]
+  },
+  {
+    "name": "owned_scheme_secrecy_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "domain_tax_different_faith_mult_even_if_baron",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$VASSAL_STANCE$_tax_contribution_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "men_at_arms_maintenance",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "defender_advantage",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_piety_gain_per_happy_powerful_vassal_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "prowess_per_prestige_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "maa_screen_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "defender_holding_advantage",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "dread_per_tyranny_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "general_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_prestige_from_buildings_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "prowess_scheme_resistance",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "negate_prowess_penalty_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "army_pursuit_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stationed_$MEN_AT_ARMS_TYPE$_screen_mult",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "counter_resistance",
+    "useAreas": [
+      "character and terrain"
+    ]
+  },
+  {
+    "name": "independent_ruler_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "strife_opinion_gain_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_dynasty_prestige",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "opinion_of_parents",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "tyranny_gain_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "levy_reinforcement_rate_different_faith_even_if_baron",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "different_faith_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "intrigue_per_piety_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_county_control_change_at_war_mult",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "maa_damage_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "cowed_vassal_levy_contribution_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "coastal_advantage",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "mercenary_count_mult",
+    "useAreas": [
+      "culture"
+    ]
+  },
+  {
+    "name": "$VASSAL_STANCE$_levy_contribution_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "hostile_scheme_power_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$RELIGIOUS_FAMILY$_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "powerful_vassal_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "prisoner_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$HOLDING_TYPE$_build_prestige_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "supply_limit",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "ai_war_cooldown",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "holding_build_gold_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "$GEOGRAPHICAL_REGION$_development_growth",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "levy_toughness",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "happy_powerful_vassal_tax_contribution_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "ai_zeal",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_county_control_change_add_even_if_baron",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_dread",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_piety_gain_per_dread_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "dread_gain_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "martial",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "maa_siege_value_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "learning_per_prestige_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "martial_per_piety_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "maa_damage_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "scheme_success_chance",
+    "useAreas": [
+      "scheme"
+    ]
+  },
+  {
+    "name": "stationed_maa_siege_value_mult",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "martial_per_stress_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stationed_maa_damage_mult",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "opinion_of_different_faith_liege",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "active_accolades",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "dread_per_tyranny_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "title_creation_cost_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_prestige_gain_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_piety",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "siege_phase_time",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "opinion_of_different_faith",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "faith_creation_piety_cost_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "martial_scheme_resistance",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "prowess_scheme_power",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "vassal_limit",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "supply_duration",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "uncontrolled_province_advantage",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "character_travel_safety",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "health",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$GEOGRAPHICAL_REGION$_development_growth_factor",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "ai_amenity_spending",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_dynasty_prestige_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stewardship_per_piety_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stewardship_per_prestige_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "martial_per_prestige_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "hostage_prestige_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "pursue_efficiency",
+    "useAreas": [
+      "character and terrain"
+    ]
+  },
+  {
+    "name": "life_expectancy",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "movement_speed_land_raiding",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "domain_tax_same_faith_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_piety_gain_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "knight_effectiveness_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "dread_decay_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "eligible_child_except_player_heir_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "ai_war_chance",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "religious_head_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "advantage_against_coreligionists",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "holding_build_speed",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "travel_safety",
+    "useAreas": [
+      "travel_plan"
+    ]
+  },
+  {
+    "name": "tax_mult",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "county_opinion_add",
+    "useAreas": [
+      "character and county"
+    ]
+  },
+  {
+    "name": "ai_greed",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "ignore_negative_opinion_of_culture",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "twin_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "min_combat_roll",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "intimidated_vassal_tax_contribution_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "attacker_advantage",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "artifact_decay_reduction_mult",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "county_opinion_add_even_if_baron",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "men_at_arms_recruitment_cost",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "diplomacy_per_piety_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "fort_level",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "domain_limit",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "maa_pursuit_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_war_income_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "culture_tradition_max_add",
+    "useAreas": [
+      "culture"
+    ]
+  },
+  {
+    "name": "supply_capacity_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stationed_maa_toughness_add",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "garrison_size",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "led_by_owner_extra_advantage_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "controlled_province_advantage",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "max_loot_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "holding_build_piety_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "scheme_discovery_chance_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "negate_fertility_penalty_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "supply_loss_winter",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "levy_reinforcement_rate_even_if_baron",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "knight_limit",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_prestige_gain_per_happy_powerful_vassal_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_piety_gain_per_dread_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "diplomacy_per_prestige_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "genetic_trait_strengthen_chance",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "counter_efficiency",
+    "useAreas": [
+      "character and terrain"
+    ]
+  },
+  {
+    "name": "hostile_county_attrition_raiding",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "dread_baseline_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "eligible_child_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "same_culture_holy_order_hire_cost_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_income",
+    "useAreas": [
+      "character and province"
+    ]
+  },
+  {
+    "name": "negative_random_genetic_chance",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "travel_danger",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "different_culture_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "opinion_of_liege",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "dread_loss_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "short_reign_duration_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "enemy_terrain_advantage",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "domain_tax_same_faith_mult_even_if_baron",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "build_speed",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "scheme_secrecy",
+    "useAreas": [
+      "scheme"
+    ]
+  },
+  {
+    "name": "vassal_levy_contribution_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "owned_personal_scheme_success_chance_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stationed_maa_pursuit_add",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "councillor_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "maa_screen_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_piety_gain_per_knight_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "prowess_per_stress_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "levy_reinforcement_rate_friendly_territory",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "long_reign_bonus_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "levy_size",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "ignore_negative_culture_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "cultural_head_fascination_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "child_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "defender_winter_advantage",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "holding_build_prestige_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "learning_scheme_resistance",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "same_culture_mercenary_hire_cost_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "levy_pursuit",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "ai_energy",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "embarkation_cost_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "diplomacy",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stewardship",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "intrigue_per_prestige_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "piety_level_impact_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "movement_speed",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "dread_decay_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "guest_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "ai_amenity_target_baseline",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "same_culture_mercenary_hire_cost_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "army_screen_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "scheme_resistance",
+    "useAreas": [
+      "scheme"
+    ]
+  },
+  {
+    "name": "knight_effectiveness_per_dread",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "opinion_of_different_culture",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "travel_companion_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "travel_safety_mult",
+    "useAreas": [
+      "travel_plan"
+    ]
+  },
+  {
+    "name": "ai_honor",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "happy_powerful_vassal_levy_contribution_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "retreat_losses",
+    "useAreas": [
+      "character and terrain"
+    ]
+  },
+  {
+    "name": "build_gold_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "max_hostile_schemes_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_income_per_stress_level_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "maa_toughness_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stationed_maa_siege_value_add",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "faith_creation_piety_cost_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "ai_sociability",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "title_creation_cost",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "travel_speed",
+    "useAreas": [
+      "travel_plan"
+    ]
+  },
+  {
+    "name": "religious_vassal_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "vassal_tax_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "same_culture_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "enemy_hard_casualty_modifier",
+    "useAreas": [
+      "character and terrain"
+    ]
+  },
+  {
+    "name": "cowed_vassal_tax_contribution_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "hostage_piety_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "prowess_no_portrait",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "personal_scheme_power_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stewardship_per_stress_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "levy_reinforcement_rate_different_faith",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "happy_powerful_vassal_levy_contribution_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "clergy_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "courtier_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "holy_order_hire_cost_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "diplomacy_scheme_power",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stewardship_scheme_power",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "negate_intrigue_penalty_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "negate_health_penalty_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "negative_inactive_inheritance_chance",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "positive_inactive_inheritance_chance",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "different_faith_county_opinion_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "spouse_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "domain_tax_mult_even_if_baron",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "strife_opinion_loss_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "men_at_arms_limit",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_war_income_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_county_control_change_at_war_add",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "tolerance_advantage_mod",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "development_growth",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "diplomacy_per_stress_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_piety_gain_per_knight_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "maa_pursuit_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_county_control_change_factor",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "years_of_fertility",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "realm_priest_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "supply_capacity_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "opinion_of_vassal",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_court_grandeur_change_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "child_except_player_heir_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "no_disembark_penalty",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stress_loss_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "levy_maintenance",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "opinion_of_male_rulers",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "positive_random_genetic_chance",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "domain_tax_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "attraction_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "hostile_raid_time",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "ignore_opinion_of_different_faith",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "ai_vengefulness",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "men_at_arms_cap",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "vassal_levy_contribution_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "no_water_crossing_penalty",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "max_personal_schemes_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "supply_limit_mult",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "personal_scheme_resistance_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "enemy_personal_scheme_success_chance_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stationed_maa_pursuit_mult",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "levy_reinforcement_rate_same_faith",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_court_grandeur_change_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "learning",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "holy_order_hire_cost_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "mercenary_hire_cost_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "hard_casualty_winter",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "stress_loss_per_prestige_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "siege_morale_loss",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "martial_scheme_power",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "intrigue_scheme_power",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stewardship_scheme_resistance",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "fertility",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "negate_stewardship_penalty_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "court_grandeur_baseline_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "ai_rationality",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "cowed_vassal_levy_contribution_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "intimidated_vassal_levy_contribution_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "army_maintenance_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "vassal_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "additional_fort_level",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "hostile_county_attrition",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "enemy_hostile_scheme_success_chance_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "vassal_tax_contribution_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "development_growth_factor",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "learning_per_piety_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "character_capital_county_monthly_development_growth_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stationed_maa_screen_mult",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "men_at_arms_maintenance_per_dread_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "maa_siege_value_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_county_control_change_add",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "faith_conversion_piety_cost_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "same_heritage_county_advantage_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "liege_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "winter_movement_speed",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "negate_martial_penalty_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "character_travel_speed_mult",
+    "useAreas": [
+      "character"
+    ]
+  }
+]

@@ -6,6 +6,9 @@
  * - Scopes (context types like character, title, etc.)
  * - Effects (commands that modify game state)
  * - Triggers (conditions that evaluate to true/false)
+ *
+ * Data is auto-generated from OldEnt's documentation repository.
+ * Run `npx ts-node src/data/parser/parseOldEnt.ts` to regenerate.
  */
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -23,6 +26,6 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./scopes"), exports);
-__exportStar(require("./effects"), exports);
-__exportStar(require("./triggers"), exports);
+__exportStar(require("./effects.generated"), exports);
+__exportStar(require("./triggers.generated"), exports);
 //# sourceMappingURL=index.js.map

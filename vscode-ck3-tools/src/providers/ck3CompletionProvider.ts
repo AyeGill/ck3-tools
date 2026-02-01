@@ -11,6 +11,9 @@ import {
   getTriggersForScope,
   EffectDefinition,
   TriggerDefinition,
+  triggersMap,
+  effectsMap,
+  ScopeType,
 } from '../data';
 import {
   eventSchema,
@@ -907,15 +910,248 @@ function triggerToFieldSchema(trigger: TriggerDefinition): FieldSchema {
 /**
  * Get effect completions as FieldSchema array
  */
-function getEffectSchemaForScope(scope: 'character' | 'landed_title' | 'none' = 'character'): FieldSchema[] {
+function getEffectSchemaForScope(scope: ScopeType = 'character'): FieldSchema[] {
   return getEffectsForScope(scope).map(effectToFieldSchema);
 }
 
 /**
  * Get trigger completions as FieldSchema array
  */
-function getTriggerSchemaForScope(scope: 'character' | 'landed_title' | 'none' = 'character'): FieldSchema[] {
+function getTriggerSchemaForScope(scope: ScopeType = 'character'): FieldSchema[] {
   return getTriggersForScope(scope).map(triggerToFieldSchema);
+}
+
+/**
+ * Known trigger block names (entry points into trigger context)
+ */
+const TRIGGER_BLOCKS = new Set([
+  'trigger', 'is_shown', 'is_valid', 'is_valid_showing_failures_only',
+  'ai_potential', 'ai_will_do', 'can_be_picked', 'can_pick',
+  'is_highlighted', 'auto_accept', 'can_send', 'can_be_picked_artifact',
+  'limit', 'modifier', // limit and modifier inside effects also contain triggers
+]);
+
+/**
+ * Known effect block names (entry points into effect context)
+ */
+const EFFECT_BLOCKS = new Set([
+  'immediate', 'effect', 'after', 'on_accept', 'on_decline',
+  'on_send', 'on_auto_accept', 'option', 'hidden_effect',
+]);
+
+type BlockContext = {
+  type: 'trigger' | 'effect' | 'unknown';
+  scope: ScopeType;
+};
+
+/**
+ * Analyze blockPath to determine the current context type and scope.
+ * Walks through the block path, tracking scope changes from iterators.
+ *
+ * @param blockPath Array of block names from outermost to innermost
+ * @param initialScope The scope to start with (typically 'character' for events)
+ * @returns Object with context type ('trigger' or 'effect') and current scope
+ */
+function analyzeBlockContext(blockPath: string[], initialScope: ScopeType = 'character'): BlockContext {
+  let contextType: 'trigger' | 'effect' | 'unknown' = 'unknown';
+  let currentScope: ScopeType = initialScope;
+
+  for (const block of blockPath) {
+    // Check if this block establishes a trigger or effect context
+    if (TRIGGER_BLOCKS.has(block)) {
+      contextType = 'trigger';
+    } else if (EFFECT_BLOCKS.has(block)) {
+      contextType = 'effect';
+    }
+
+    // Check if this block is a scope-changing trigger or effect
+    // Look up in triggers first (for any_* iterators in trigger blocks)
+    const trigger = triggersMap.get(block);
+    if (trigger?.outputScope) {
+      currentScope = trigger.outputScope;
+      continue;
+    }
+
+    // Look up in effects (for every_* iterators in effect blocks)
+    const effect = effectsMap.get(block);
+    if (effect?.outputScope) {
+      currentScope = effect.outputScope;
+    }
+  }
+
+  return { type: contextType, scope: currentScope };
+}
+
+/**
+ * Get completions for a block context - triggers or effects filtered by scope
+ */
+function getSchemaForBlockContext(context: BlockContext): FieldSchema[] {
+  if (context.type === 'trigger') {
+    return getTriggerSchemaForScope(context.scope);
+  } else if (context.type === 'effect') {
+    return getEffectSchemaForScope(context.scope);
+  }
+  return [];
+}
+
+/**
+ * Internal field schemas for specific triggers that take block values
+ * These are triggers that aren't iterators but have their own internal structure
+ */
+const TRIGGER_INTERNAL_FIELDS: Map<string, FieldSchema[]> = new Map([
+  ['opinion', [
+    { name: 'target', type: 'string', description: 'The character to check opinion of (scope reference)', required: true },
+    { name: 'value', type: 'integer', description: 'Opinion threshold (e.g., value >= 50, value <= -20, value = { 10 50 })' },
+  ]],
+  ['reverse_opinion', [
+    { name: 'target', type: 'string', description: 'The character whose opinion to check (scope reference)', required: true },
+    { name: 'value', type: 'integer', description: 'Opinion threshold (e.g., value >= 50)' },
+  ]],
+  ['has_opinion_modifier', [
+    { name: 'target', type: 'string', description: 'The character to check opinion modifier on (scope reference)' },
+    { name: 'modifier', type: 'string', description: 'The opinion modifier to check for', required: true },
+    { name: 'value', type: 'integer', description: 'Optional value comparison' },
+  ]],
+  ['reverse_has_opinion_modifier', [
+    { name: 'target', type: 'string', description: 'The character to check opinion modifier on (scope reference)' },
+    { name: 'modifier', type: 'string', description: 'The opinion modifier to check for', required: true },
+    { name: 'value', type: 'integer', description: 'Optional value comparison' },
+  ]],
+  ['is_at_war_with', [
+    { name: 'target', type: 'string', description: 'The character to check war status with (scope reference)', required: true },
+  ]],
+  ['has_relation_flag', [
+    { name: 'target', type: 'string', description: 'The character to check relation with (scope reference)', required: true },
+    { name: 'flag', type: 'string', description: 'The relation flag to check for', required: true },
+  ]],
+  ['has_secret', [
+    { name: 'type', type: 'string', description: 'The secret type' },
+    { name: 'target', type: 'string', description: 'Target of the secret (scope reference)' },
+  ]],
+  ['can_join_faction', [
+    { name: 'faction', type: 'string', description: 'The faction type', required: true },
+    { name: 'target', type: 'string', description: 'Target character for the faction (scope reference)' },
+  ]],
+  ['has_character_flag', [
+    { name: 'flag', type: 'string', description: 'The flag name', required: true },
+    { name: 'days', type: 'integer', description: 'Minimum days the flag has been set' },
+  ]],
+  ['time_of_year', [
+    { name: 'month', type: 'integer', description: 'Month (1-12)' },
+    { name: 'day', type: 'integer', description: 'Day of month' },
+  ]],
+]);
+
+/**
+ * Internal field schemas for specific effects that take block values
+ */
+const EFFECT_INTERNAL_FIELDS: Map<string, FieldSchema[]> = new Map([
+  ['add_opinion', [
+    { name: 'target', type: 'string', description: 'The character to modify opinion of (scope reference)', required: true },
+    { name: 'modifier', type: 'string', description: 'The opinion modifier to add', required: true },
+    { name: 'opinion', type: 'integer', description: 'Opinion value (if not using modifier)' },
+    { name: 'years', type: 'integer', description: 'Duration in years' },
+    { name: 'months', type: 'integer', description: 'Duration in months' },
+    { name: 'days', type: 'integer', description: 'Duration in days' },
+  ]],
+  ['reverse_add_opinion', [
+    { name: 'target', type: 'string', description: 'The character whose opinion to modify (scope reference)', required: true },
+    { name: 'modifier', type: 'string', description: 'The opinion modifier to add', required: true },
+    { name: 'opinion', type: 'integer', description: 'Opinion value (if not using modifier)' },
+  ]],
+  ['remove_opinion', [
+    { name: 'target', type: 'string', description: 'The character to remove opinion modifier from (scope reference)', required: true },
+    { name: 'modifier', type: 'string', description: 'The opinion modifier to remove', required: true },
+  ]],
+  ['save_scope_as', [
+    { name: 'name', type: 'string', description: 'Name to save the scope as (access via scope:name)' },
+  ]],
+  ['save_temporary_scope_as', [
+    { name: 'name', type: 'string', description: 'Name to save the scope as temporarily' },
+  ]],
+  ['set_variable', [
+    { name: 'name', type: 'string', description: 'Variable name', required: true },
+    { name: 'value', type: 'integer', description: 'Value to set', required: true },
+    { name: 'days', type: 'integer', description: 'Duration in days before expiring' },
+    { name: 'years', type: 'integer', description: 'Duration in years before expiring' },
+    { name: 'months', type: 'integer', description: 'Duration in months before expiring' },
+  ]],
+  ['change_variable', [
+    { name: 'name', type: 'string', description: 'Variable name', required: true },
+    { name: 'add', type: 'integer', description: 'Value to add' },
+    { name: 'subtract', type: 'integer', description: 'Value to subtract' },
+    { name: 'multiply', type: 'integer', description: 'Value to multiply by' },
+    { name: 'divide', type: 'integer', description: 'Value to divide by' },
+  ]],
+  ['trigger_event', [
+    { name: 'id', type: 'string', description: 'Event ID to trigger', required: true },
+    { name: 'days', type: 'integer', description: 'Delay in days' },
+    { name: 'months', type: 'integer', description: 'Delay in months' },
+    { name: 'years', type: 'integer', description: 'Delay in years' },
+    { name: 'on_action', type: 'string', description: 'On action to trigger instead of specific event' },
+  ]],
+  ['add_character_flag', [
+    { name: 'flag', type: 'string', description: 'Flag name', required: true },
+    { name: 'days', type: 'integer', description: 'Duration in days' },
+    { name: 'months', type: 'integer', description: 'Duration in months' },
+    { name: 'years', type: 'integer', description: 'Duration in years' },
+  ]],
+  ['remove_character_flag', [
+    { name: 'flag', type: 'string', description: 'Flag name to remove', required: true },
+  ]],
+  ['create_character', [
+    { name: 'name', type: 'string', description: 'Character name' },
+    { name: 'age', type: 'integer', description: 'Age in years' },
+    { name: 'gender', type: 'enum', description: 'male or female', values: ['male', 'female'] },
+    { name: 'culture', type: 'string', description: 'Culture scope reference' },
+    { name: 'faith', type: 'string', description: 'Faith scope reference' },
+    { name: 'dynasty', type: 'string', description: 'Dynasty to assign (scope reference)' },
+    { name: 'father', type: 'string', description: 'Father character (scope reference)' },
+    { name: 'mother', type: 'string', description: 'Mother character (scope reference)' },
+    { name: 'employer', type: 'string', description: 'Employer - makes them a courtier (scope reference)' },
+    { name: 'location', type: 'string', description: 'Province location (scope reference)' },
+    { name: 'save_scope_as', type: 'string', description: 'Save reference as scope' },
+    { name: 'trait', type: 'string', description: 'Trait to add' },
+  ]],
+  ['death', [
+    { name: 'death_reason', type: 'string', description: 'Death reason identifier', required: true },
+    { name: 'killer', type: 'string', description: 'Character who killed them (scope reference)' },
+  ]],
+  ['add_trait', [
+    { name: 'trait', type: 'string', description: 'Trait to add', required: true },
+    { name: 'track', type: 'string', description: 'Track for the trait (if applicable)' },
+    { name: 'value', type: 'integer', description: 'Track value' },
+  ]],
+  ['if', [
+    { name: 'limit', type: 'trigger', description: 'Trigger conditions for this branch', required: true },
+  ]],
+  ['else_if', [
+    { name: 'limit', type: 'trigger', description: 'Trigger conditions for this branch', required: true },
+  ]],
+]);
+
+/**
+ * Check if we're inside a trigger/effect that has internal fields
+ * Returns the internal field schema if found, null otherwise
+ */
+function getInternalFieldSchema(blockPath: string[], contextType: 'trigger' | 'effect' | 'unknown'): FieldSchema[] | null {
+  if (blockPath.length === 0) return null;
+
+  const lastBlock = blockPath[blockPath.length - 1];
+
+  // Check trigger internal fields
+  if (contextType === 'trigger' || contextType === 'unknown') {
+    const triggerFields = TRIGGER_INTERNAL_FIELDS.get(lastBlock);
+    if (triggerFields) return triggerFields;
+  }
+
+  // Check effect internal fields
+  if (contextType === 'effect' || contextType === 'unknown') {
+    const effectFields = EFFECT_INTERNAL_FIELDS.get(lastBlock);
+    if (effectFields) return effectFields;
+  }
+
+  return null;
 }
 
 /**
@@ -1722,17 +1958,27 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
         if (['left_portrait', 'right_portrait', 'center_portrait', 'lower_left_portrait', 'lower_center_portrait', 'lower_right_portrait'].includes(lastBlock)) {
           return portraitBlockSchema;
         }
-        if (lastBlock === 'trigger') {
-          // Inside a trigger block - show triggers valid for character scope
-          return getTriggerSchemaForScope('character');
+        // Analyze the block path for scope-aware completions
+        {
+          const blockContext = analyzeBlockContext(blockPath, 'character');
+          // Check for internal field schemas first (e.g., opinion = { target = ... value = ... })
+          const internalFields = getInternalFieldSchema(blockPath, blockContext.type);
+          if (internalFields) {
+            return internalFields;
+          }
+          if (blockContext.type !== 'unknown') {
+            return getSchemaForBlockContext(blockContext);
+          }
         }
-        if (lastBlock === 'immediate' || lastBlock === 'after') {
-          // Inside an effect block - show effects valid for character scope
-          return getEffectSchemaForScope('character');
-        }
-        // Check if we're inside an option's effect (options contain effects)
+        // Check if we're inside an option (options contain effects)
         if (blockPath.includes('option') && blockPath.length > 1) {
-          return getEffectSchemaForScope('character');
+          const blockContext = analyzeBlockContext(blockPath, 'character');
+          // Check for internal field schemas first
+          const internalFields = getInternalFieldSchema(blockPath, blockContext.type);
+          if (internalFields) {
+            return internalFields;
+          }
+          return getSchemaForBlockContext({ ...blockContext, type: 'effect' });
         }
         return eventSchema;
 
@@ -1744,13 +1990,17 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
         if (decisionLastBlock === 'cost' || decisionLastBlock === 'minimum_cost') {
           return costBlockSchema;
         }
-        // Trigger blocks in decisions
-        if (['is_shown', 'is_valid', 'is_valid_showing_failures_only', 'ai_potential'].includes(decisionLastBlock)) {
-          return getTriggerSchemaForScope('character');
-        }
-        // Effect blocks in decisions
-        if (decisionLastBlock === 'effect') {
-          return getEffectSchemaForScope('character');
+        // Analyze the block path for scope-aware completions
+        {
+          const blockContext = analyzeBlockContext(blockPath, 'character');
+          // Check for internal field schemas first (e.g., opinion = { target = ... value = ... })
+          const internalFields = getInternalFieldSchema(blockPath, blockContext.type);
+          if (internalFields) {
+            return internalFields;
+          }
+          if (blockContext.type !== 'unknown') {
+            return getSchemaForBlockContext(blockContext);
+          }
         }
         return decisionSchema;
 

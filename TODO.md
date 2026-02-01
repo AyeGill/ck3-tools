@@ -47,6 +47,14 @@ So for example prompting for skill modifications in a trait template makes littl
   - Events (add templates for other common types of events, event chains, scheme events? etc)
 - [ ] Add a more comprehensive intellisense/code actions system when inside an effect scope specifically
   - More generally, somehow there should be a more comprehensive list of possible fields in each slot. For example, the engine should know that stationed_pikemen_damage_mult is a valid county modifier but not (I think?) a valid character modifier, add_piety is a valid effect of an event but not a valid effect of a trait, when you're writing a condition it should autocomplete to things that are valid conditions, and so on.
+  - **IN PROGRESS**: Created data layer (`src/data/`) with scope-aware effects and triggers
+  - [x] Basic MVP: completions work inside trigger/effect blocks for events and decisions (~180 items)
+  - [ ] Parser script to expand from ~180 items to full ~700 effects/triggers from OldEnt's data
+  - [ ] Scope tracking for nested blocks (detect scope-changing effects like `every_vassal`, `liege`, and update current scope accordingly)
+  - [ ] Entity-specific contexts (traits, decisions, buildings have different allowed effects in their modifier blocks)
+  - [ ] Modifier category awareness (character modifiers vs county modifiers vs province modifiers)
+  - [ ] Complete data coverage (all ~400 effects, ~300 triggers from game data)
+  - [ ] Validation and diagnostics (mark invalid effects/triggers in wrong scope context)
 - The following are the main priorities for adding support for other types:
   - [ ] Character interactions
 - [x] Reorganize the project so we don't have so many different directories, todo files etc.

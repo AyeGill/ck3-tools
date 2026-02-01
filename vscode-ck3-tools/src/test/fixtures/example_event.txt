@@ -1,0 +1,52 @@
+# Example event for testing autocomplete and hover
+namespace = test_events
+
+test_events.0001 = {
+	type = character_event
+	title = test_events.0001.t
+	desc = test_events.0001.desc
+	theme = diplomacy
+
+	trigger = {
+		is_adult = yes
+		any_vassal = {
+			is_adult = yes
+			opinion = {
+				target = root
+				value <= -50
+			}
+		}
+	}
+
+	immediate = {
+		random_vassal = {
+			limit = {
+				is_adult = yes
+				opinion = {
+					target = root
+					value <= -50
+				}
+			}
+			save_scope_as = disgruntled_vassal
+		}
+	}
+
+	option = {
+		name = test_events.0001.a
+		scope:disgruntled_vassal = {
+			add_opinion = {
+				target = root
+				modifier = pleased_opinion
+				opinion = 25
+			}
+		}
+	}
+
+	option = {
+		name = test_events.0001.b
+		trigger_event = {
+			id = test_events.0002
+			days = 30
+		}
+	}
+}
