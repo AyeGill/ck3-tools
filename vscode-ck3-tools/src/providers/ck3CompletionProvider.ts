@@ -995,6 +995,41 @@ function getSchemaForBlockContext(context: BlockContext): FieldSchema[] {
 }
 
 /**
+ * Helper function to get schema for a file type that has trigger/effect blocks.
+ * This handles the common pattern of checking for trigger/effect context within any entity.
+ *
+ * @param blockPath The current block path
+ * @param topLevelSchema The schema to return at the top level
+ * @param initialScope The scope to start with (default: 'character')
+ * @returns The appropriate schema for the current context
+ */
+function getSchemaWithTriggerEffectBlocks(
+  blockPath: string[],
+  topLevelSchema: FieldSchema[],
+  initialScope: ScopeType = 'character'
+): FieldSchema[] {
+  if (blockPath.length === 0) {
+    return topLevelSchema;
+  }
+
+  const blockContext = analyzeBlockContext(blockPath, initialScope);
+
+  // Check for internal field schemas first (e.g., opinion = { target = ... value = ... })
+  const internalFields = getInternalFieldSchema(blockPath, blockContext.type);
+  if (internalFields) {
+    return internalFields;
+  }
+
+  // If we're in a trigger or effect context, return appropriate completions
+  if (blockContext.type !== 'unknown') {
+    return getSchemaForBlockContext(blockContext);
+  }
+
+  // Fall back to top-level schema
+  return topLevelSchema;
+}
+
+/**
  * Internal field schemas for specific triggers that take block values
  * These are triggers that aren't iterators but have their own internal structure
  */
@@ -1209,7 +1244,7 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
     if (filePath.includes('/common/character_interactions/') || filePath.includes('\\common\\character_interactions\\')) {
       return 'interaction';
     }
-    if (filePath.includes('/common/on_action/') || filePath.includes('\\common\\on_action\\')) {
+    if (filePath.includes('/common/on_actions/') || filePath.includes('\\common\\on_actions\\')) {
       return 'on_action';
     }
     if (filePath.includes('/common/schemes/') || filePath.includes('\\common\\schemes\\')) {
@@ -2005,28 +2040,29 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
         return decisionSchema;
 
       case 'interaction':
-        return interactionSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, interactionSchema);
 
       case 'on_action':
-        return onActionSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, onActionSchema);
 
       case 'scheme':
-        return schemeSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, schemeSchema);
 
       case 'building':
-        return buildingSchema;
+        // Buildings can have province scope for some effects
+        return getSchemaWithTriggerEffectBlocks(blockPath, buildingSchema);
 
       case 'men_at_arms':
-        return menAtArmsSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, menAtArmsSchema);
 
       case 'casus_belli':
-        return casusBelliSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, casusBelliSchema);
 
       case 'culture':
-        return cultureSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, cultureSchema);
 
       case 'tradition':
-        return traditionSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, traditionSchema);
 
       case 'religion':
         // Religion files can contain both religions and faiths
@@ -2034,67 +2070,95 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
         if (blockPath.length > 0) {
           const parent = blockPath[blockPath.length - 1];
           if (parent === 'faiths') {
-            return faithSchema;
+            return getSchemaWithTriggerEffectBlocks(blockPath, faithSchema);
           }
         }
-        return religionSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, religionSchema);
 
       case 'scripted_effect':
-        return scriptedEffectSchema;
+        // Scripted effects: the body is effects, not schema fields
+        if (blockPath.length === 0) {
+          return scriptedEffectSchema;
+        }
+        {
+          // Inside a scripted effect, we're always in effect context
+          const blockContext = analyzeBlockContext(blockPath, 'character');
+          const internalFields = getInternalFieldSchema(blockPath, 'effect');
+          if (internalFields) {
+            return internalFields;
+          }
+          // Default to effects (the body of a scripted effect is effects)
+          return getEffectSchemaForScope(blockContext.scope);
+        }
 
       case 'scripted_trigger':
-        return scriptedTriggerSchema;
+        // Scripted triggers: the body is triggers, not schema fields
+        if (blockPath.length === 0) {
+          return scriptedTriggerSchema;
+        }
+        {
+          // Inside a scripted trigger, we're always in trigger context
+          const blockContext = analyzeBlockContext(blockPath, 'character');
+          const internalFields = getInternalFieldSchema(blockPath, 'trigger');
+          if (internalFields) {
+            return internalFields;
+          }
+          // Default to triggers (the body of a scripted trigger is triggers)
+          return getTriggerSchemaForScope(blockContext.scope);
+        }
 
       case 'artifact':
-        return artifactSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, artifactSchema);
 
       case 'court_position':
-        return courtPositionSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, courtPositionSchema);
 
       case 'lifestyle':
-        return lifestyleSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, lifestyleSchema);
 
       case 'focus':
-        return focusSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, focusSchema);
 
       case 'perk':
-        return perkSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, perkSchema);
 
       case 'dynasty_legacy':
-        return dynastyLegacySchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, dynastyLegacySchema);
 
       case 'modifier':
-        return modifierSchema;
+        // Modifiers are mostly stat definitions, but can have triggers
+        return getSchemaWithTriggerEffectBlocks(blockPath, modifierSchema);
 
       case 'law':
-        return lawSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, lawSchema);
 
       case 'government':
-        return governmentSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, governmentSchema);
 
       case 'faction':
-        return factionSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, factionSchema);
 
       case 'council_task':
-        return councilTaskSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, councilTaskSchema);
 
       case 'opinion_modifier':
         return opinionModifierSchema;
 
       case 'secret':
-        return secretSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, secretSchema);
 
       case 'nickname':
-        return nicknameSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, nicknameSchema);
 
       case 'script_value':
-        return scriptValueSchema;
+        // Script values use triggers for conditional math
+        return getSchemaWithTriggerEffectBlocks(blockPath, scriptValueSchema);
 
       case 'hook':
         return hookSchema;
 
       case 'activity':
-        return activitySchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, activitySchema);
 
       case 'game_rule':
         return gameRuleSchema;
@@ -2103,46 +2167,46 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
         return bookmarkSchema;
 
       case 'story_cycle':
-        return storyCycleSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, storyCycleSchema);
 
       case 'important_action':
-        return importantActionSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, importantActionSchema);
 
       case 'vassal_contract':
-        return vassalContractSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, vassalContractSchema);
 
       case 'landed_title':
-        return landedTitleSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, landedTitleSchema);
 
       case 'coat_of_arms':
         return coatOfArmsSchema;
 
       case 'innovation':
-        return innovationSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, innovationSchema);
 
       case 'doctrine':
-        return doctrineSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, doctrineSchema);
 
       case 'holy_site':
-        return holySiteSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, holySiteSchema);
 
       case 'holding':
-        return holdingSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, holdingSchema);
 
       case 'dynasty':
         return dynastySchema;
 
       case 'character_history':
-        return characterHistorySchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, characterHistorySchema);
 
       case 'terrain':
         return terrainSchema;
 
       case 'scripted_gui':
-        return scriptedGuiSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, scriptedGuiSchema);
 
       case 'custom_localization':
-        return customLocalizationSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, customLocalizationSchema);
 
       case 'flavorization':
         return flavorizationSchema;
@@ -2151,7 +2215,7 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
         return deathreasonsSchema;
 
       case 'succession_election':
-        return successionElectionSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, successionElectionSchema);
 
       case 'scripted_relation':
         return scriptedRelationSchema;
@@ -2163,76 +2227,76 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
         return eventBackgroundSchema;
 
       case 'pool_selector':
-        return poolSelectorSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, poolSelectorSchema);
 
       case 'scripted_modifier':
-        return scriptedModifierSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, scriptedModifierSchema);
 
       case 'scripted_rules':
-        return scriptedRulesSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, scriptedRulesSchema);
 
       case 'game_concept':
         return gameConceptSchema;
 
       case 'message':
-        return messageSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, messageSchema);
 
       case 'scripted_list':
-        return scriptedListSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, scriptedListSchema);
 
       case 'title_history':
-        return titleHistorySchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, titleHistorySchema);
 
       case 'accolade_type':
-        return accoladeTypeSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, accoladeTypeSchema);
 
       case 'character_memory':
-        return characterMemorySchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, characterMemorySchema);
 
       case 'court_amenity':
-        return courtAmenitySchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, courtAmenitySchema);
 
       case 'dynasty_house':
         return dynastyHouseSchema;
 
       case 'legend':
-        return legendSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, legendSchema);
 
       case 'travel':
-        return travelSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, travelSchema);
 
       case 'struggle':
-        return struggleSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, struggleSchema);
 
       case 'inspiration':
-        return inspirationSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, inspirationSchema);
 
       case 'diarchy':
-        return diarchySchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, diarchySchema);
 
       case 'domicile':
-        return domicileSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, domicileSchema);
 
       case 'great_project':
-        return greatProjectSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, greatProjectSchema);
 
       case 'epidemic':
-        return epidemicSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, epidemicSchema);
 
       case 'house_unity':
-        return houseUnitySchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, houseUnitySchema);
 
       case 'legitimacy':
-        return legitimacySchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, legitimacySchema);
 
       case 'tax_slot':
-        return taxSlotSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, taxSlotSchema);
 
       case 'vassal_stance':
-        return vassalStanceSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, vassalStanceSchema);
 
       case 'suggestion':
-        return suggestionSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, suggestionSchema);
 
       case 'scripted_cost':
         return scriptedCostSchema;
@@ -2241,7 +2305,7 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
         return scriptedAnimationSchema;
 
       case 'scripted_character_template':
-        return scriptedCharacterTemplateSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, scriptedCharacterTemplateSchema);
 
       case 'event_theme':
         return eventThemeSchema;
@@ -2250,31 +2314,31 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
         return casusBelliGroupSchema;
 
       case 'ai_war_stance':
-        return aiWarStanceSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, aiWarStanceSchema);
 
       case 'combat_phase_event':
-        return combatPhaseEventSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, combatPhaseEventSchema);
 
       case 'bookmark_portrait':
         return bookmarkPortraitSchema;
 
       case 'guest_system':
-        return guestSystemSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, guestSystemSchema);
 
       case 'courtier_guest_management':
-        return courtierGuestManagementSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, courtierGuestManagementSchema);
 
       case 'task_contract':
-        return taskContractSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, taskContractSchema);
 
       case 'subject_contract':
-        return subjectContractSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, subjectContractSchema);
 
       case 'lease_contract':
-        return leaseContractSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, leaseContractSchema);
 
       case 'character_background':
-        return characterBackgroundSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, characterBackgroundSchema);
 
       case 'dna_data':
         return dnaDataSchema;

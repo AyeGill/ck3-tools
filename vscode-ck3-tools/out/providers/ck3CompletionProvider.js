@@ -345,6 +345,32 @@ function getSchemaForBlockContext(context) {
     return [];
 }
 /**
+ * Helper function to get schema for a file type that has trigger/effect blocks.
+ * This handles the common pattern of checking for trigger/effect context within any entity.
+ *
+ * @param blockPath The current block path
+ * @param topLevelSchema The schema to return at the top level
+ * @param initialScope The scope to start with (default: 'character')
+ * @returns The appropriate schema for the current context
+ */
+function getSchemaWithTriggerEffectBlocks(blockPath, topLevelSchema, initialScope = 'character') {
+    if (blockPath.length === 0) {
+        return topLevelSchema;
+    }
+    const blockContext = analyzeBlockContext(blockPath, initialScope);
+    // Check for internal field schemas first (e.g., opinion = { target = ... value = ... })
+    const internalFields = getInternalFieldSchema(blockPath, blockContext.type);
+    if (internalFields) {
+        return internalFields;
+    }
+    // If we're in a trigger or effect context, return appropriate completions
+    if (blockContext.type !== 'unknown') {
+        return getSchemaForBlockContext(blockContext);
+    }
+    // Fall back to top-level schema
+    return topLevelSchema;
+}
+/**
  * Internal field schemas for specific triggers that take block values
  * These are triggers that aren't iterators but have their own internal structure
  */
@@ -1316,107 +1342,136 @@ class CK3CompletionProvider {
                 }
                 return decisionSchema_1.decisionSchema;
             case 'interaction':
-                return interactionSchema_1.interactionSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, interactionSchema_1.interactionSchema);
             case 'on_action':
-                return onActionSchema_1.onActionSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, onActionSchema_1.onActionSchema);
             case 'scheme':
-                return schemeSchema_1.schemeSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, schemeSchema_1.schemeSchema);
             case 'building':
-                return buildingSchema_1.buildingSchema;
+                // Buildings can have province scope for some effects
+                return getSchemaWithTriggerEffectBlocks(blockPath, buildingSchema_1.buildingSchema);
             case 'men_at_arms':
-                return menAtArmsSchema_1.menAtArmsSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, menAtArmsSchema_1.menAtArmsSchema);
             case 'casus_belli':
-                return casusBelliSchema_1.casusBelliSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, casusBelliSchema_1.casusBelliSchema);
             case 'culture':
-                return cultureSchema_1.cultureSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, cultureSchema_1.cultureSchema);
             case 'tradition':
-                return cultureSchema_1.traditionSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, cultureSchema_1.traditionSchema);
             case 'religion':
                 // Religion files can contain both religions and faiths
                 // Check block path to determine context
                 if (blockPath.length > 0) {
                     const parent = blockPath[blockPath.length - 1];
                     if (parent === 'faiths') {
-                        return faithSchema_1.faithSchema;
+                        return getSchemaWithTriggerEffectBlocks(blockPath, faithSchema_1.faithSchema);
                     }
                 }
-                return faithSchema_1.religionSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, faithSchema_1.religionSchema);
             case 'scripted_effect':
-                return scriptedEffectsSchema_1.scriptedEffectSchema;
+                // Scripted effects: the body is effects, not schema fields
+                if (blockPath.length === 0) {
+                    return scriptedEffectsSchema_1.scriptedEffectSchema;
+                }
+                {
+                    // Inside a scripted effect, we're always in effect context
+                    const blockContext = analyzeBlockContext(blockPath, 'character');
+                    const internalFields = getInternalFieldSchema(blockPath, 'effect');
+                    if (internalFields) {
+                        return internalFields;
+                    }
+                    // Default to effects (the body of a scripted effect is effects)
+                    return getEffectSchemaForScope(blockContext.scope);
+                }
             case 'scripted_trigger':
-                return scriptedTriggersSchema_1.scriptedTriggerSchema;
+                // Scripted triggers: the body is triggers, not schema fields
+                if (blockPath.length === 0) {
+                    return scriptedTriggersSchema_1.scriptedTriggerSchema;
+                }
+                {
+                    // Inside a scripted trigger, we're always in trigger context
+                    const blockContext = analyzeBlockContext(blockPath, 'character');
+                    const internalFields = getInternalFieldSchema(blockPath, 'trigger');
+                    if (internalFields) {
+                        return internalFields;
+                    }
+                    // Default to triggers (the body of a scripted trigger is triggers)
+                    return getTriggerSchemaForScope(blockContext.scope);
+                }
             case 'artifact':
-                return artifactSchema_1.artifactSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, artifactSchema_1.artifactSchema);
             case 'court_position':
-                return courtPositionSchema_1.courtPositionSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, courtPositionSchema_1.courtPositionSchema);
             case 'lifestyle':
-                return lifestyleSchema_1.lifestyleSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, lifestyleSchema_1.lifestyleSchema);
             case 'focus':
-                return lifestyleSchema_1.focusSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, lifestyleSchema_1.focusSchema);
             case 'perk':
-                return lifestyleSchema_1.perkSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, lifestyleSchema_1.perkSchema);
             case 'dynasty_legacy':
-                return dynastyLegacySchema_1.dynastyLegacySchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, dynastyLegacySchema_1.dynastyLegacySchema);
             case 'modifier':
-                return modifierSchema_1.modifierSchema;
+                // Modifiers are mostly stat definitions, but can have triggers
+                return getSchemaWithTriggerEffectBlocks(blockPath, modifierSchema_1.modifierSchema);
             case 'law':
-                return lawSchema_1.lawSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, lawSchema_1.lawSchema);
             case 'government':
-                return governmentSchema_1.governmentSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, governmentSchema_1.governmentSchema);
             case 'faction':
-                return factionSchema_1.factionSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, factionSchema_1.factionSchema);
             case 'council_task':
-                return councilTaskSchema_1.councilTaskSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, councilTaskSchema_1.councilTaskSchema);
             case 'opinion_modifier':
                 return opinionModifierSchema_1.opinionModifierSchema;
             case 'secret':
-                return secretSchema_1.secretSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, secretSchema_1.secretSchema);
             case 'nickname':
-                return nicknameSchema_1.nicknameSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, nicknameSchema_1.nicknameSchema);
             case 'script_value':
-                return scriptValueSchema_1.scriptValueSchema;
+                // Script values use triggers for conditional math
+                return getSchemaWithTriggerEffectBlocks(blockPath, scriptValueSchema_1.scriptValueSchema);
             case 'hook':
                 return hookSchema_1.hookSchema;
             case 'activity':
-                return activitySchema_1.activitySchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, activitySchema_1.activitySchema);
             case 'game_rule':
                 return gameRuleSchema_1.gameRuleSchema;
             case 'bookmark':
                 return bookmarkSchema_1.bookmarkSchema;
             case 'story_cycle':
-                return storyCycleSchema_1.storyCycleSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, storyCycleSchema_1.storyCycleSchema);
             case 'important_action':
-                return importantActionSchema_1.importantActionSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, importantActionSchema_1.importantActionSchema);
             case 'vassal_contract':
-                return vassalContractSchema_1.vassalContractSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, vassalContractSchema_1.vassalContractSchema);
             case 'landed_title':
-                return landedTitleSchema_1.landedTitleSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, landedTitleSchema_1.landedTitleSchema);
             case 'coat_of_arms':
                 return coatOfArmsSchema_1.coatOfArmsSchema;
             case 'innovation':
-                return innovationSchema_1.innovationSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, innovationSchema_1.innovationSchema);
             case 'doctrine':
-                return doctrineSchema_1.doctrineSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, doctrineSchema_1.doctrineSchema);
             case 'holy_site':
-                return holySiteSchema_1.holySiteSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, holySiteSchema_1.holySiteSchema);
             case 'holding':
-                return holdingSchema_1.holdingSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, holdingSchema_1.holdingSchema);
             case 'dynasty':
                 return dynastySchema_1.dynastySchema;
             case 'character_history':
-                return characterHistorySchema_1.characterHistorySchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, characterHistorySchema_1.characterHistorySchema);
             case 'terrain':
                 return terrainSchema_1.terrainSchema;
             case 'scripted_gui':
-                return scriptedGuiSchema_1.scriptedGuiSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, scriptedGuiSchema_1.scriptedGuiSchema);
             case 'custom_localization':
-                return customLocalizationSchema_1.customLocalizationSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, customLocalizationSchema_1.customLocalizationSchema);
             case 'flavorization':
                 return flavorizationSchema_1.flavorizationSchema;
             case 'deathreasons':
                 return deathreasonsSchema_1.deathreasonsSchema;
             case 'succession_election':
-                return successionElectionSchema_1.successionElectionSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, successionElectionSchema_1.successionElectionSchema);
             case 'scripted_relation':
                 return scriptedRelationSchema_1.scriptedRelationSchema;
             case 'named_colors':
@@ -1424,81 +1479,81 @@ class CK3CompletionProvider {
             case 'event_background':
                 return eventBackgroundSchema_1.eventBackgroundSchema;
             case 'pool_selector':
-                return poolSelectorSchema_1.poolSelectorSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, poolSelectorSchema_1.poolSelectorSchema);
             case 'scripted_modifier':
-                return scriptedModifierSchema_1.scriptedModifierSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, scriptedModifierSchema_1.scriptedModifierSchema);
             case 'scripted_rules':
-                return scriptedRulesSchema_1.scriptedRulesSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, scriptedRulesSchema_1.scriptedRulesSchema);
             case 'game_concept':
                 return gameConceptSchema_1.gameConceptSchema;
             case 'message':
-                return messageSchema_1.messageSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, messageSchema_1.messageSchema);
             case 'scripted_list':
-                return scriptedListSchema_1.scriptedListSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, scriptedListSchema_1.scriptedListSchema);
             case 'title_history':
-                return titleHistorySchema_1.titleHistorySchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, titleHistorySchema_1.titleHistorySchema);
             case 'accolade_type':
-                return accoladeTypeSchema_1.accoladeTypeSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, accoladeTypeSchema_1.accoladeTypeSchema);
             case 'character_memory':
-                return characterMemorySchema_1.characterMemorySchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, characterMemorySchema_1.characterMemorySchema);
             case 'court_amenity':
-                return courtAmenitySchema_1.courtAmenitySchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, courtAmenitySchema_1.courtAmenitySchema);
             case 'dynasty_house':
                 return dynastyHouseSchema_1.dynastyHouseSchema;
             case 'legend':
-                return legendSchema_1.legendSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, legendSchema_1.legendSchema);
             case 'travel':
-                return travelSchema_1.travelSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, travelSchema_1.travelSchema);
             case 'struggle':
-                return struggleSchema_1.struggleSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, struggleSchema_1.struggleSchema);
             case 'inspiration':
-                return inspirationSchema_1.inspirationSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, inspirationSchema_1.inspirationSchema);
             case 'diarchy':
-                return diarchySchema_1.diarchySchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, diarchySchema_1.diarchySchema);
             case 'domicile':
-                return domicileSchema_1.domicileSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, domicileSchema_1.domicileSchema);
             case 'great_project':
-                return greatProjectSchema_1.greatProjectSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, greatProjectSchema_1.greatProjectSchema);
             case 'epidemic':
-                return epidemicSchema_1.epidemicSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, epidemicSchema_1.epidemicSchema);
             case 'house_unity':
-                return houseUnitySchema_1.houseUnitySchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, houseUnitySchema_1.houseUnitySchema);
             case 'legitimacy':
-                return legitimacySchema_1.legitimacySchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, legitimacySchema_1.legitimacySchema);
             case 'tax_slot':
-                return taxSlotSchema_1.taxSlotSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, taxSlotSchema_1.taxSlotSchema);
             case 'vassal_stance':
-                return vassalStanceSchema_1.vassalStanceSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, vassalStanceSchema_1.vassalStanceSchema);
             case 'suggestion':
-                return suggestionSchema_1.suggestionSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, suggestionSchema_1.suggestionSchema);
             case 'scripted_cost':
                 return scriptedCostSchema_1.scriptedCostSchema;
             case 'scripted_animation':
                 return scriptedAnimationSchema_1.scriptedAnimationSchema;
             case 'scripted_character_template':
-                return scriptedCharacterTemplateSchema_1.scriptedCharacterTemplateSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, scriptedCharacterTemplateSchema_1.scriptedCharacterTemplateSchema);
             case 'event_theme':
                 return eventThemeSchema_1.eventThemeSchema;
             case 'casus_belli_group':
                 return casusBelliGroupSchema_1.casusBelliGroupSchema;
             case 'ai_war_stance':
-                return aiWarStanceSchema_1.aiWarStanceSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, aiWarStanceSchema_1.aiWarStanceSchema);
             case 'combat_phase_event':
-                return combatPhaseEventSchema_1.combatPhaseEventSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, combatPhaseEventSchema_1.combatPhaseEventSchema);
             case 'bookmark_portrait':
                 return bookmarkPortraitSchema_1.bookmarkPortraitSchema;
             case 'guest_system':
-                return guestSystemSchema_1.guestSystemSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, guestSystemSchema_1.guestSystemSchema);
             case 'courtier_guest_management':
-                return courtierGuestManagementSchema_1.courtierGuestManagementSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, courtierGuestManagementSchema_1.courtierGuestManagementSchema);
             case 'task_contract':
-                return taskContractSchema_1.taskContractSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, taskContractSchema_1.taskContractSchema);
             case 'subject_contract':
-                return subjectContractSchema_1.subjectContractSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, subjectContractSchema_1.subjectContractSchema);
             case 'lease_contract':
-                return leaseContractSchema_1.leaseContractSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, leaseContractSchema_1.leaseContractSchema);
             case 'character_background':
-                return characterBackgroundSchema_1.characterBackgroundSchema;
+                return getSchemaWithTriggerEffectBlocks(blockPath, characterBackgroundSchema_1.characterBackgroundSchema);
             case 'dna_data':
                 return dnaDataSchema_1.dnaDataSchema;
             case 'portrait_modifier':

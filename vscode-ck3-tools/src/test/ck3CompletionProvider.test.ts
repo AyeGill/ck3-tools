@@ -405,6 +405,117 @@ test.0001 = {
     });
   });
 
+  describe('Interaction completions', () => {
+    it('should offer trigger completions inside is_shown = { }', () => {
+      const content = `my_interaction = {
+	is_shown = {
+
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/common/character_interactions/test.txt');
+      const position = new Position(2, 2);
+
+      const result = provider.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      expect(labels).toContain('is_adult');
+      expect(labels).toContain('prestige');
+    });
+
+    it('should offer effect completions inside on_accept = { }', () => {
+      const content = `my_interaction = {
+	on_accept = {
+
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/common/character_interactions/test.txt');
+      const position = new Position(2, 2);
+
+      const result = provider.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      expect(labels).toContain('add_prestige');
+      expect(labels).toContain('trigger_event');
+    });
+  });
+
+  describe('On Action completions', () => {
+    it('should offer effect completions inside effect = { }', () => {
+      const content = `on_game_start = {
+	effect = {
+
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/common/on_actions/test.txt');
+      const position = new Position(2, 2);
+
+      const result = provider.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      expect(labels).toContain('add_prestige');
+      expect(labels).toContain('every_vassal');
+    });
+  });
+
+  describe('Scripted effect completions', () => {
+    it('should offer effect completions inside scripted effect body', () => {
+      const content = `my_scripted_effect = {
+
+}`;
+      const doc = createMockDocument(content, '/mod/common/scripted_effects/test.txt');
+      const position = new Position(1, 1);
+
+      const result = provider.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      expect(labels).toContain('add_prestige');
+      expect(labels).toContain('add_gold');
+      expect(labels).toContain('trigger_event');
+    });
+  });
+
+  describe('Scripted trigger completions', () => {
+    it('should offer trigger completions inside scripted trigger body', () => {
+      const content = `my_scripted_trigger = {
+
+}`;
+      const doc = createMockDocument(content, '/mod/common/scripted_triggers/test.txt');
+      const position = new Position(1, 1);
+
+      const result = provider.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      expect(labels).toContain('is_adult');
+      expect(labels).toContain('prestige');
+      expect(labels).toContain('any_vassal');
+    });
+  });
+
   describe('Edge cases', () => {
     it('should handle empty document', () => {
       const doc = createMockDocument('', '/mod/events/test.txt');
