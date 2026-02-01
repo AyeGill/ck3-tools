@@ -37,26 +37,35 @@ Building practical tooling for CK3 modding to reduce boilerplate, catch errors e
   - LSP could be considered for future expansion if needed for other editors
   - For now, VS Code native approach is sufficient and simpler
 
-- [ ] Add barebones templates for everything. Generally we should move away from templates that try to design the whole item through prompting the user, and more towards ones that just fill out the basic fields.
+- [x] Add barebones templates for everything. Generally we should move away from templates that try to design the whole item through prompting the user, and more towards ones that just fill out the basic fields.
 So for example prompting for skill modifications in a trait template makes little sense - I can just add that myself. But the code for having an xp track in a trait (or multiple tracks) isn't so obvious, so it makes sense to have a template for that. Prioritize the following:
-  - Secret types
-  - Traits (a barebones template that doesn't add the cruft of the current one)
-  - Character interactions
-  - Activity types
-  - Decisions
-  - Events (add templates for other common types of events, event chains, scheme events? etc)
+  - [x] Secret types (`secret_type.yml`)
+  - [x] Traits (`barebones_trait.yml`, `xp_track_trait.yml`)
+  - [x] Character interactions (`character_interaction.yml`)
+  - [x] Activity types (`activity_type.yml`)
+  - [x] Decisions (`barebones_decision.yml`)
+  - [x] Events (`barebones_event.yml`, `event_chain.yml`, `scheme_event.yml`)
+  - [x] Schemes (`scheme_type.yml`)
+  - [x] Buildings (`barebones_building.yml`)
+  - **DONE**: Unified all templates to string-based format (removed over-parameterized object templates)
+  - **DONE**: Simplified template generator from 750 to 177 lines
 - [ ] Add a more comprehensive intellisense/code actions system when inside an effect scope specifically
   - More generally, somehow there should be a more comprehensive list of possible fields in each slot. For example, the engine should know that stationed_pikemen_damage_mult is a valid county modifier but not (I think?) a valid character modifier, add_piety is a valid effect of an event but not a valid effect of a trait, when you're writing a condition it should autocomplete to things that are valid conditions, and so on.
   - **IN PROGRESS**: Created data layer (`src/data/`) with scope-aware effects and triggers
-  - [x] Basic MVP: completions work inside trigger/effect blocks for events and decisions (~180 items)
-  - [ ] Parser script to expand from ~180 items to full ~700 effects/triggers from OldEnt's data
+  - [x] Basic MVP: completions work inside trigger/effect blocks for events and decisions
+  - [x] Extended trigger/effect completions to ALL 50+ file types (interactions, schemes, buildings, on_actions, scripted_effects, scripted_triggers, etc.)
+  - [x] Parser script to import effects/triggers from game data
+    - `parseOldEnt.ts` can fetch from OldEnt's repo or parse local `script_docs` output
+    - Generated **1343 effects** and **1145 triggers** with scope metadata
   - [ ] Scope tracking for nested blocks (detect scope-changing effects like `every_vassal`, `liege`, and update current scope accordingly)
   - [ ] Entity-specific contexts (traits, decisions, buildings have different allowed effects in their modifier blocks)
   - [ ] Modifier category awareness (character modifiers vs county modifiers vs province modifiers)
-  - [ ] Complete data coverage (all ~400 effects, ~300 triggers from game data)
   - [ ] Validation and diagnostics (mark invalid effects/triggers in wrong scope context)
 - The following are the main priorities for adding support for other types:
-  - [ ] Character interactions
+  - [x] Character interactions
+    - **DONE**: Template (`character_interaction.yml`)
+    - **DONE**: Code action to add interactions
+    - **DONE**: Trigger/effect completions in interaction files
 - [x] Reorganize the project so we don't have so many different directories, todo files etc.
   - **DONE**: Moved VSCode extension to top level (`vscode-ck3-tools/`)
   - **DONE**: Integrated template generator as part of extension source
@@ -66,15 +75,18 @@ So for example prompting for skill modifications in a trait template makes littl
 - [ ] Simple linting. If we have a comprehensive list of items that are valid in each space (that is, a proper, complete schema) we can mark any invalid ones. (I guess there should be a "ignore this particular invalid field forever" button). We can also detect name collisions (especially possible for events that are just named by numbers), at least within the same mod.
 - [ ] There should also be an option to "explicitify" the localization keys, by adding all the necessary localization key fields (with their default values) to an item (so if we have a trait foo_bar, doing this would add name = trait_foo_bar) and so on.
   - [ ] In general the localization generator should account for the whole structure of the current item when generating necessary localizations (so if you have an event with a bunch of options, it should generate the localizations for each option). But this seems quite hard so that's probably a low priority.
-- [ ] Add some unit tests
+- [x] Add some unit tests
+  - **DONE**: Added template validation tests (`templates.test.ts` - 23 tests)
+  - **DONE**: Added completion provider tests (`ck3CompletionProvider.test.ts` - 23 tests)
+  - **DONE**: Added hover provider tests (`ck3HoverProvider.test.ts` - 17 tests)
+  - Total: 63 tests passing
 
 ## Issues
 
 - [ ] While editing events, the option to automatically generate localization is missing. It needs to be added.
 - [x] When trying to add a decision followup event, I got the following error:
-  - **FIXED**: Restructured Handlebars conditionals in [decision_followup_event.yml](vscode-ck3-tools/templates/event/decision_followup_event.yml) to produce valid YAML
-  - Used YAML literal block scalar (`|`) for multiline content
-  - Ensured conditionals wrap complete blocks rather than partial YAML structures
+  - **FIXED**: Deleted overly complex `decision_followup_event.yml` template
+  - Use `barebones_event.yml` instead - simpler and covers all use cases
 - [x] The hover to see a field's documentation only works for traits currently (or at least, it doesn't work for buildings).
   - **FIXED**: Created [CK3HoverProvider](vscode-ck3-tools/src/providers/ck3HoverProvider.ts) that works for all 212 entity types
   - Registered hover provider for events, decisions, buildings, interactions, and all other CK3 file types
