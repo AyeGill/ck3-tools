@@ -35,6 +35,22 @@
         "title": "CK3: Add Decision from Template"
       },
       {
+        "command": "ck3-tools.addSecret",
+        "title": "CK3: Add Secret Type from Template"
+      },
+      {
+        "command": "ck3-tools.addInteraction",
+        "title": "CK3: Add Character Interaction from Template"
+      },
+      {
+        "command": "ck3-tools.addActivity",
+        "title": "CK3: Add Activity Type from Template"
+      },
+      {
+        "command": "ck3-tools.addScheme",
+        "title": "CK3: Add Scheme Type from Template"
+      },
+      {
         "command": "ck3-tools.generateLocalization",
         "title": "CK3: Generate Localization for Current File"
       },
@@ -63,6 +79,26 @@
         {
           "command": "ck3-tools.addDecision",
           "when": "resourcePath =~ /\\/common\\/decisions\\//",
+          "group": "ck3-tools@1"
+        },
+        {
+          "command": "ck3-tools.addSecret",
+          "when": "resourcePath =~ /\\/common\\/secret_types\\//",
+          "group": "ck3-tools@1"
+        },
+        {
+          "command": "ck3-tools.addInteraction",
+          "when": "resourcePath =~ /\\/common\\/character_interactions\\//",
+          "group": "ck3-tools@1"
+        },
+        {
+          "command": "ck3-tools.addActivity",
+          "when": "resourcePath =~ /\\/common\\/activities\\//",
+          "group": "ck3-tools@1"
+        },
+        {
+          "command": "ck3-tools.addScheme",
+          "when": "resourcePath =~ /\\/common\\/schemes\\//",
           "group": "ck3-tools@1"
         },
         {

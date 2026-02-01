@@ -278,6 +278,77 @@ test.0001 = {
             (0, vitest_1.expect)(labels).toContain('is_titular');
         });
     });
+    (0, vitest_1.describe)('Interaction completions', () => {
+        (0, vitest_1.it)('should offer trigger completions inside is_shown = { }', () => {
+            const content = `my_interaction = {
+	is_shown = {
+
+	}
+}`;
+            const doc = (0, vscode_1.createMockDocument)(content, '/mod/common/character_interactions/test.txt');
+            const position = new vscode_1.Position(2, 2);
+            const result = provider.provideCompletionItems(doc, position, vscode_1.CancellationToken, { triggerKind: vscode_1.CompletionTriggerKind.Invoke });
+            const labels = getCompletionLabels(result);
+            (0, vitest_1.expect)(labels).toContain('is_adult');
+            (0, vitest_1.expect)(labels).toContain('prestige');
+        });
+        (0, vitest_1.it)('should offer effect completions inside on_accept = { }', () => {
+            const content = `my_interaction = {
+	on_accept = {
+
+	}
+}`;
+            const doc = (0, vscode_1.createMockDocument)(content, '/mod/common/character_interactions/test.txt');
+            const position = new vscode_1.Position(2, 2);
+            const result = provider.provideCompletionItems(doc, position, vscode_1.CancellationToken, { triggerKind: vscode_1.CompletionTriggerKind.Invoke });
+            const labels = getCompletionLabels(result);
+            (0, vitest_1.expect)(labels).toContain('add_prestige');
+            (0, vitest_1.expect)(labels).toContain('trigger_event');
+        });
+    });
+    (0, vitest_1.describe)('On Action completions', () => {
+        (0, vitest_1.it)('should offer effect completions inside effect = { }', () => {
+            const content = `on_game_start = {
+	effect = {
+
+	}
+}`;
+            const doc = (0, vscode_1.createMockDocument)(content, '/mod/common/on_actions/test.txt');
+            const position = new vscode_1.Position(2, 2);
+            const result = provider.provideCompletionItems(doc, position, vscode_1.CancellationToken, { triggerKind: vscode_1.CompletionTriggerKind.Invoke });
+            const labels = getCompletionLabels(result);
+            (0, vitest_1.expect)(labels).toContain('add_prestige');
+            (0, vitest_1.expect)(labels).toContain('every_vassal');
+        });
+    });
+    (0, vitest_1.describe)('Scripted effect completions', () => {
+        (0, vitest_1.it)('should offer effect completions inside scripted effect body', () => {
+            const content = `my_scripted_effect = {
+
+}`;
+            const doc = (0, vscode_1.createMockDocument)(content, '/mod/common/scripted_effects/test.txt');
+            const position = new vscode_1.Position(1, 1);
+            const result = provider.provideCompletionItems(doc, position, vscode_1.CancellationToken, { triggerKind: vscode_1.CompletionTriggerKind.Invoke });
+            const labels = getCompletionLabels(result);
+            (0, vitest_1.expect)(labels).toContain('add_prestige');
+            (0, vitest_1.expect)(labels).toContain('add_gold');
+            (0, vitest_1.expect)(labels).toContain('trigger_event');
+        });
+    });
+    (0, vitest_1.describe)('Scripted trigger completions', () => {
+        (0, vitest_1.it)('should offer trigger completions inside scripted trigger body', () => {
+            const content = `my_scripted_trigger = {
+
+}`;
+            const doc = (0, vscode_1.createMockDocument)(content, '/mod/common/scripted_triggers/test.txt');
+            const position = new vscode_1.Position(1, 1);
+            const result = provider.provideCompletionItems(doc, position, vscode_1.CancellationToken, { triggerKind: vscode_1.CompletionTriggerKind.Invoke });
+            const labels = getCompletionLabels(result);
+            (0, vitest_1.expect)(labels).toContain('is_adult');
+            (0, vitest_1.expect)(labels).toContain('prestige');
+            (0, vitest_1.expect)(labels).toContain('any_vassal');
+        });
+    });
     (0, vitest_1.describe)('Edge cases', () => {
         (0, vitest_1.it)('should handle empty document', () => {
             const doc = (0, vscode_1.createMockDocument)('', '/mod/events/test.txt');

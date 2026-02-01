@@ -33,10 +33,10 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.registerAddBuildingCommand = registerAddBuildingCommand;
+exports.registerAddActivityCommand = registerAddActivityCommand;
 const vscode = __importStar(require("vscode"));
-function registerAddBuildingCommand(context, generator) {
-    const disposable = vscode.commands.registerCommand('ck3-tools.addBuilding', async () => {
+function registerAddActivityCommand(context, generator) {
+    const disposable = vscode.commands.registerCommand('ck3-tools.addActivity', async () => {
         const editor = vscode.window.activeTextEditor;
         if (!editor) {
             vscode.window.showErrorMessage('No active editor');
@@ -44,23 +44,23 @@ function registerAddBuildingCommand(context, generator) {
         }
         try {
             // Select template
-            const templates = await generator.listTemplates('building');
+            const templates = await generator.listTemplates('activity');
             const template = await vscode.window.showQuickPick(templates, {
-                placeHolder: 'Select building template',
-                title: 'Add Building'
+                placeHolder: 'Select activity template',
+                title: 'Add Activity Type'
             });
             if (!template)
                 return;
-            // Get building name
+            // Get activity name
             const name = await vscode.window.showInputBox({
-                prompt: 'Building name (e.g., grand_library)',
-                placeHolder: 'grand_library',
+                prompt: 'Activity name (e.g., grand_tournament, pilgrimage)',
+                placeHolder: 'grand_tournament',
                 validateInput: (value) => {
                     if (!value || value.trim().length === 0) {
-                        return 'Building name is required';
+                        return 'Activity name is required';
                     }
                     if (!/^[a-z_][a-z0-9_]*$/.test(value)) {
-                        return 'Building name must be lowercase with underscores only';
+                        return 'Activity name must be lowercase with underscores only';
                     }
                     return null;
                 }
@@ -70,7 +70,7 @@ function registerAddBuildingCommand(context, generator) {
             // Generate code
             const code = await generator.generateCode({
                 template,
-                category: 'building',
+                category: 'activity',
                 name
             });
             // Insert at cursor
@@ -78,13 +78,13 @@ function registerAddBuildingCommand(context, generator) {
                 const position = editor.selection.active;
                 editBuilder.insert(position, code);
             });
-            vscode.window.showInformationMessage(`Added ${name} building`);
+            vscode.window.showInformationMessage(`Added ${name} activity`);
         }
         catch (error) {
-            vscode.window.showErrorMessage(`Failed to add building: ${error}`);
-            console.error('Add building error:', error);
+            vscode.window.showErrorMessage(`Failed to add activity: ${error}`);
+            console.error('Add activity error:', error);
         }
     });
     context.subscriptions.push(disposable);
 }
-//# sourceMappingURL=addBuilding.js.map
+//# sourceMappingURL=addActivity.js.map

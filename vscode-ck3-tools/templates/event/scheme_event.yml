@@ -1,0 +1,234 @@
+name: scheme_event
+description: Scheme event - events that fire during schemes
+category: event
+version: 1.0
+
+parameters:
+  name:
+    type: string
+    required: true
+    description: Scheme event namespace (e.g., my_scheme)
+
+structure: |
+  # Scheme events fire during the execution of schemes
+  # Key scopes in scheme events:
+  #   scope:scheme - the scheme itself
+  #   scope:owner - character running the scheme
+  #   scope:target - target of the scheme
+  #   scope:agent - a scheme agent (in agent events)
+  #
+  # Schemes have on_actions that fire these events:
+  #   on_scheme_monthly_X - fires each month
+  #   on_scheme_success_X - when scheme succeeds
+  #   on_scheme_discovery_X - when scheme is discovered
+  #   on_scheme_agent_join_X - when agent joins
+  #   on_scheme_agent_leave_X - when agent leaves
+
+  namespace = {{name}}
+
+  # --- MONTHLY SCHEME EVENT ---
+  # Triggered via on_actions/scheme_on_actions.txt
+  # on_scheme_monthly_your_scheme_type = {
+  #     trigger_event = { id = {{name}}.0001 days = 1 }
+  # }
+
+  {{name}}.0001 = {
+  	type = character_event
+  	title = {{name}}.0001.t
+  	desc = {{name}}.0001.desc
+  	theme = intrigue
+
+  	trigger = {
+  		# scope:scheme - the scheme
+  		# scope:owner - scheme owner (usually root)
+  		# scope:target - scheme target
+  		exists = scope:scheme
+  		scope:scheme = {
+  			scheme_is_ongoing = yes
+  		}
+  	}
+
+  	# Show scheme participants
+  	left_portrait = {
+  		character = scope:owner
+  		animation = scheme
+  	}
+  	right_portrait = {
+  		character = scope:target
+  		animation = idle
+  	}
+
+  	immediate = {
+  		# Setup for the event
+  	}
+
+  	# Option that progresses the scheme
+  	option = {
+  		name = {{name}}.0001.a
+  		# Add progress to the scheme
+  		scope:scheme = {
+  			add_scheme_progress = 10
+  		}
+  	}
+
+  	# Option that gives scheme power instead
+  	option = {
+  		name = {{name}}.0001.b
+  		# Add scheme power (affects success chance)
+  		scope:scheme = {
+  			add_scheme_power = 5
+  		}
+  	}
+
+  	# Risky option
+  	option = {
+  		name = {{name}}.0001.c
+  		# Risk exposure for bigger progress
+  		scope:scheme = {
+  			add_scheme_progress = 25
+  			expose_scheme = yes  # Might get discovered!
+  		}
+  	}
+  }
+
+  # --- SUCCESS EVENT ---
+  # Triggered when scheme succeeds
+  # on_scheme_success_your_scheme_type = {
+  #     trigger_event = { id = {{name}}.0010 }
+  # }
+
+  {{name}}.0010 = {
+  	type = character_event
+  	title = {{name}}.0010.t
+  	desc = {{name}}.0010.desc
+  	theme = intrigue
+
+  	left_portrait = {
+  		character = scope:owner
+  		animation = happiness
+  	}
+  	right_portrait = {
+  		character = scope:target
+  		animation = shock
+  	}
+
+  	option = {
+  		name = {{name}}.0010.a
+  		# Success effects - what the scheme actually does
+  		scope:owner = {
+  			add_intrigue_skill = 1
+  		}
+  		scope:target = {
+  			# Effect on target
+  			add_stress = 50
+  		}
+  	}
+  }
+
+  # --- DISCOVERY EVENT ---
+  # Triggered when scheme is discovered
+  # on_scheme_discovery_your_scheme_type = {
+  #     trigger_event = { id = {{name}}.0020 }
+  # }
+
+  {{name}}.0020 = {
+  	type = character_event
+  	title = {{name}}.0020.t
+  	desc = {{name}}.0020.desc
+  	theme = intrigue
+
+  	# This fires for the target who discovered the scheme
+  	# scope:owner = scheme owner
+  	# scope:target = who discovered it (usually root)
+
+  	left_portrait = {
+  		character = root
+  		animation = anger
+  	}
+  	right_portrait = {
+  		character = scope:owner
+  		animation = fear
+  	}
+
+  	# Confront the schemer
+  	option = {
+  		name = {{name}}.0020.a
+  		# Add opinion penalty
+  		add_opinion = {
+  			target = scope:owner
+  			modifier = schemed_against_me_opinion
+  			opinion = -30
+  		}
+  	}
+
+  	# Pretend not to notice
+  	option = {
+  		name = {{name}}.0020.b
+  		stress_impact = {
+  			base = 10
+  		}
+  	}
+  }
+
+  # --- AGENT EVENT ---
+  # Events involving scheme agents
+  # on_scheme_agent_join_your_scheme_type = {
+  #     trigger_event = { id = {{name}}.0030 }
+  # }
+
+  {{name}}.0030 = {
+  	type = character_event
+  	title = {{name}}.0030.t
+  	desc = {{name}}.0030.desc
+  	theme = intrigue
+
+  	trigger = {
+  		exists = scope:agent
+  	}
+
+  	left_portrait = {
+  		character = scope:owner
+  		animation = scheme
+  	}
+  	right_portrait = {
+  		character = scope:agent
+  		animation = personality_dishonorable
+  	}
+
+  	option = {
+  		name = {{name}}.0030.a
+  		# Welcome the agent
+  		scope:scheme = {
+  			add_scheme_power = 3  # Agent contribution
+  		}
+  		scope:agent = {
+  			add_opinion = {
+  				target = scope:owner
+  				modifier = fellow_schemer_opinion
+  				opinion = 10
+  			}
+  		}
+  	}
+  }
+
+  # --- Don't forget to register events in on_actions! ---
+  # File: common/on_actions/scheme_on_actions.txt
+  #
+  # on_scheme_monthly_your_scheme_type = {
+  #     random_events = {
+  #         chance_to_happen = 30
+  #         100 = {{name}}.0001
+  #     }
+  # }
+  #
+  # on_scheme_success_your_scheme_type = {
+  #     trigger_event = { id = {{name}}.0010 }
+  # }
+  #
+  # on_scheme_discovery_your_scheme_type = {
+  #     trigger_event = { id = {{name}}.0020 }
+  # }
+
+localization:
+  name_template: "{{capitalize (format_name name)}} scheme events"
+  desc_template: "Scheme events for {{format_name name}}"

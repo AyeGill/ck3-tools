@@ -1,0 +1,163 @@
+name: character_interaction
+description: Character interaction - request/proposal between characters
+category: interaction
+version: 1.0
+
+parameters:
+  name:
+    type: string
+    required: true
+    description: Interaction name (e.g., my_request_interaction)
+
+structure: |
+  # Character interactions allow one character (actor) to make a request of another (recipient)
+  # The recipient can accept, decline, or be forced depending on configuration
+  # Scopes: scope:actor (initiator), scope:recipient (target)
+
+  {{name}} = {
+  	# --- UI Configuration ---
+  	# Category determines where it appears in the interaction menu
+  	# Options: interaction_category_diplomacy, interaction_category_friendly,
+  	#          interaction_category_hostile, interaction_category_vassal,
+  	#          interaction_category_religion, interaction_category_prison,
+  	#          interaction_category_scheme, interaction_category_uncategorized
+  	category = interaction_category_friendly
+
+  	# icon = icon_diplomacy  # Optional: custom icon
+  	desc = {{name}}_desc  # Localization key for description
+
+  	# Greeting affects AI willingness: positive, negative, neutral
+  	greeting = positive
+
+  	# --- Targeting ---
+  	# Use actor/recipient from interface, or define custom targets:
+  	# interface_priority = 100  # Higher = appears earlier in list
+  	# common_interaction = yes  # Makes it a "common" interaction
+  	# use_diplomatic_range = yes  # Requires characters to be in diplomatic range
+
+  	# --- Who can the actor target? ---
+  	# target_type = character
+  	# target_filter = all  # Options: all, neighboring_rulers, realm_characters,
+  	#                      # courtiers, dynasty_members, vassals, etc.
+
+  	# --- Visibility: when does this interaction appear? ---
+  	is_shown = {
+  		# Always check basic validity
+  		scope:actor = { is_ruler = yes }
+  		scope:recipient = {
+  			NOT = { this = scope:actor }
+  			is_ruler = yes
+  		}
+  	}
+
+  	# --- Validity: can this interaction be initiated? ---
+  	is_valid = {
+  		# Soft requirements (shown with explanation)
+  		scope:actor = {
+  			# gold >= 100
+  		}
+  	}
+
+  	# --- Hard requirements (shown as red text) ---
+  	is_valid_showing_failures_only = {
+  		scope:actor = {
+  			is_at_war = no
+  		}
+  		scope:recipient = {
+  			is_imprisoned = no
+  		}
+  	}
+
+  	# --- Can recipient decline? ---
+  	# If false, acceptance is forced
+  	can_be_blocked = yes
+
+  	# AI decides whether to accept based on ai_accept value
+  	# can_be_blocked = {
+  	# 	scope:recipient = {
+  	# 		is_ai = yes  # AI can't refuse
+  	# 	}
+  	# }
+
+  	# --- Cooldown ---
+  	# cooldown = { years = 5 }
+  	# cooldown_against_recipient = { years = 1 }
+
+  	# --- Cost to initiate ---
+  	cost = {
+  		gold = 50
+  		# prestige = 100
+  		# piety = 50
+  	}
+
+  	# --- AI acceptance calculation ---
+  	# Positive = more likely to accept, negative = more likely to decline
+  	ai_accept = {
+  		base = 0
+
+  		# Opinion affects willingness
+  		opinion_modifier = {
+  			opinion_target = scope:actor
+  			multiplier = 0.5  # Each point of opinion adds 0.5 to acceptance
+  		}
+
+  		# Modifiers
+  		modifier = {
+  			add = 50
+  			desc = "FRIENDLY_TRAIT"
+  			scope:recipient = { has_trait = gregarious }
+  		}
+  		modifier = {
+  			add = -100
+  			desc = "AT_WAR"
+  			scope:recipient = { is_at_war_with = scope:actor }
+  		}
+  	}
+
+  	# --- Effects on acceptance ---
+  	on_accept = {
+  		scope:actor = {
+  			# Actor effects
+  			add_prestige = 50
+  		}
+  		scope:recipient = {
+  			# Recipient effects
+  			add_opinion = {
+  				target = scope:actor
+  				modifier = grateful_opinion
+  				opinion = 20
+  			}
+  		}
+  	}
+
+  	# --- Effects on decline ---
+  	on_decline = {
+  		scope:actor = {
+  			add_opinion = {
+  				target = scope:recipient
+  				modifier = rejected_request_opinion
+  				opinion = -10
+  			}
+  		}
+  	}
+
+  	# --- Auto-accept (no popup for recipient) ---
+  	# auto_accept = yes  # Skip recipient decision entirely
+
+  	# --- AI behavior ---
+  	# ai_potential = { always = yes }  # When will AI initiate this?
+  	# ai_frequency = 24  # Check every X months
+  	# ai_targets = { ... }  # Who will AI target?
+
+  	# --- Send options (gifts, etc.) ---
+  	# send_option = {
+  	# 	flag = send_gold
+  	# 	localization = SEND_GOLD_OPTION
+  	# 	is_shown = { ... }
+  	# 	is_valid = { ... }
+  	# }
+  }
+
+localization:
+  name_template: "{{capitalize (format_name name)}}"
+  desc_template: "Interaction: {{format_name name}}"

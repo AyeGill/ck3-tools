@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
 import { TemplateGenerator } from '../lib/templateGenerator';
 
-export function registerAddDecisionCommand(
+export function registerAddInteractionCommand(
   context: vscode.ExtensionContext,
   generator: TemplateGenerator
 ) {
-  const disposable = vscode.commands.registerCommand('ck3-tools.addDecision', async () => {
+  const disposable = vscode.commands.registerCommand('ck3-tools.addInteraction', async () => {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
       vscode.window.showErrorMessage('No active editor');
@@ -14,24 +14,24 @@ export function registerAddDecisionCommand(
 
     try {
       // Select template
-      const templates = await generator.listTemplates('decision');
+      const templates = await generator.listTemplates('interaction');
       const template = await vscode.window.showQuickPick(templates, {
-        placeHolder: 'Select decision template',
-        title: 'Add Decision'
+        placeHolder: 'Select interaction template',
+        title: 'Add Character Interaction'
       });
 
       if (!template) return;
 
-      // Get decision name
+      // Get interaction name
       const name = await vscode.window.showInputBox({
-        prompt: 'Decision name (e.g., hold_feast)',
-        placeHolder: 'hold_feast',
+        prompt: 'Interaction name (e.g., demand_tribute, propose_alliance)',
+        placeHolder: 'demand_tribute',
         validateInput: (value) => {
           if (!value || value.trim().length === 0) {
-            return 'Decision name is required';
+            return 'Interaction name is required';
           }
           if (!/^[a-z_][a-z0-9_]*$/.test(value)) {
-            return 'Decision name must be lowercase with underscores only';
+            return 'Interaction name must be lowercase with underscores only';
           }
           return null;
         }
@@ -42,7 +42,7 @@ export function registerAddDecisionCommand(
       // Generate code
       const code = await generator.generateCode({
         template,
-        category: 'decision',
+        category: 'interaction',
         name
       });
 
@@ -52,10 +52,10 @@ export function registerAddDecisionCommand(
         editBuilder.insert(position, code);
       });
 
-      vscode.window.showInformationMessage(`Added ${name} decision`);
+      vscode.window.showInformationMessage(`Added ${name} interaction`);
     } catch (error) {
-      vscode.window.showErrorMessage(`Failed to add decision: ${error}`);
-      console.error('Add decision error:', error);
+      vscode.window.showErrorMessage(`Failed to add interaction: ${error}`);
+      console.error('Add interaction error:', error);
     }
   });
 

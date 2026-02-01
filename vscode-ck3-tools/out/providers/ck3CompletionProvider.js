@@ -568,7 +568,7 @@ class CK3CompletionProvider {
         if (filePath.includes('/common/character_interactions/') || filePath.includes('\\common\\character_interactions\\')) {
             return 'interaction';
         }
-        if (filePath.includes('/common/on_action/') || filePath.includes('\\common\\on_action\\')) {
+        if (filePath.includes('/common/on_actions/') || filePath.includes('\\common\\on_actions\\')) {
             return 'on_action';
         }
         if (filePath.includes('/common/schemes/') || filePath.includes('\\common\\schemes\\')) {

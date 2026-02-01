@@ -15,67 +15,17 @@ export class TemplateGenerator {
   }
 
   /**
-   * Generate trait code (returns formatted string, doesn't write to disk)
+   * Generate code from a template (returns formatted string, doesn't write to disk)
    */
-  async generateTraitCode(params: {
+  async generateCode(params: {
     template: string;
+    category: string;
     name: string;
     [key: string]: any;
   }): Promise<string> {
     const result = await this.generator.generate({
       templateName: params.template,
-      category: 'trait',
-      parameters: params,
-      outputPath: '/tmp' // We won't actually write, just generate
-    });
-    return result.content;
-  }
-
-  /**
-   * Generate building code
-   */
-  async generateBuildingCode(params: {
-    template: string;
-    name: string;
-    [key: string]: any;
-  }): Promise<string> {
-    const result = await this.generator.generate({
-      templateName: params.template,
-      category: 'building',
-      parameters: params,
-      outputPath: '/tmp'
-    });
-    return result.content;
-  }
-
-  /**
-   * Generate event code
-   */
-  async generateEventCode(params: {
-    template: string;
-    name: string;
-    [key: string]: any;
-  }): Promise<string> {
-    const result = await this.generator.generate({
-      templateName: params.template,
-      category: 'event',
-      parameters: params,
-      outputPath: '/tmp'
-    });
-    return result.content;
-  }
-
-  /**
-   * Generate decision code
-   */
-  async generateDecisionCode(params: {
-    template: string;
-    name: string;
-    [key: string]: any;
-  }): Promise<string> {
-    const result = await this.generator.generate({
-      templateName: params.template,
-      category: 'decision',
+      category: params.category,
       parameters: params,
       outputPath: '/tmp'
     });
@@ -85,7 +35,7 @@ export class TemplateGenerator {
   /**
    * List available templates for a category
    */
-  async listTemplates(category: 'trait' | 'building' | 'event' | 'decision'): Promise<string[]> {
+  async listTemplates(category: string): Promise<string[]> {
     return this.generator.listTemplates(category);
   }
 

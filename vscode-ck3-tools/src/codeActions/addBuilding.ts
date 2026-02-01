@@ -39,26 +39,11 @@ export function registerAddBuildingCommand(
 
       if (!name) return;
 
-      // Get levels
-      const levels = await vscode.window.showInputBox({
-        prompt: 'Number of levels (1-8)',
-        value: '3',
-        validateInput: (value) => {
-          const num = parseInt(value);
-          if (isNaN(num) || num < 1 || num > 8) {
-            return 'Levels must be between 1 and 8';
-          }
-          return null;
-        }
-      });
-
-      if (!levels) return;
-
       // Generate code
-      const code = await generator.generateBuildingCode({
+      const code = await generator.generateCode({
         template,
-        name,
-        levels: parseInt(levels)
+        category: 'building',
+        name
       });
 
       // Insert at cursor
@@ -67,7 +52,7 @@ export function registerAddBuildingCommand(
         editBuilder.insert(position, code);
       });
 
-      vscode.window.showInformationMessage(`Added ${name} building with ${levels} levels`);
+      vscode.window.showInformationMessage(`Added ${name} building`);
     } catch (error) {
       vscode.window.showErrorMessage(`Failed to add building: ${error}`);
       console.error('Add building error:', error);

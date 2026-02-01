@@ -22,8 +22,8 @@ export function registerAddEventCommand(
 
       if (!template) return;
 
-      // Get namespace
-      const namespace = await vscode.window.showInputBox({
+      // Get event namespace
+      const name = await vscode.window.showInputBox({
         prompt: 'Event namespace (e.g., my_events)',
         placeHolder: 'my_events',
         validateInput: (value) => {
@@ -37,30 +37,13 @@ export function registerAddEventCommand(
         }
       });
 
-      if (!namespace) return;
-
-      // Get event ID
-      const eventIdStr = await vscode.window.showInputBox({
-        prompt: 'Event ID (e.g., 1, 1001)',
-        value: '1',
-        validateInput: (value) => {
-          const num = parseInt(value);
-          if (isNaN(num) || num < 0) {
-            return 'Event ID must be a positive number';
-          }
-          return null;
-        }
-      });
-
-      if (!eventIdStr) return;
-      const event_id = parseInt(eventIdStr);
+      if (!name) return;
 
       // Generate code
-      const code = await generator.generateEventCode({
+      const code = await generator.generateCode({
         template,
-        name: namespace,
-        namespace,
-        event_id
+        category: 'event',
+        name
       });
 
       // Insert at cursor
@@ -69,7 +52,7 @@ export function registerAddEventCommand(
         editBuilder.insert(position, code);
       });
 
-      vscode.window.showInformationMessage(`Added event ${namespace}.${event_id}`);
+      vscode.window.showInformationMessage(`Added ${name} events`);
     } catch (error) {
       vscode.window.showErrorMessage(`Failed to add event: ${error}`);
       console.error('Add event error:', error);

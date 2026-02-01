@@ -4,6 +4,10 @@ import { registerAddTraitCommand } from './codeActions/addTrait';
 import { registerAddBuildingCommand } from './codeActions/addBuilding';
 import { registerAddEventCommand } from './codeActions/addEvent';
 import { registerAddDecisionCommand } from './codeActions/addDecision';
+import { registerAddSecretCommand } from './codeActions/addSecret';
+import { registerAddInteractionCommand } from './codeActions/addInteraction';
+import { registerAddActivityCommand } from './codeActions/addActivity';
+import { registerAddSchemeCommand } from './codeActions/addScheme';
 import { registerGenerateLocalizationCommand } from './localization/generateLocalization';
 import { registerGoToLocalizationCommand } from './localization/navigationProvider';
 import { TraitCompletionProvider } from './providers/traitCompletionProvider';
@@ -1319,6 +1323,10 @@ export function activate(context: vscode.ExtensionContext) {
   registerAddBuildingCommand(context, generator);
   registerAddEventCommand(context, generator);
   registerAddDecisionCommand(context, generator);
+  registerAddSecretCommand(context, generator);
+  registerAddInteractionCommand(context, generator);
+  registerAddActivityCommand(context, generator);
+  registerAddSchemeCommand(context, generator);
   registerGenerateLocalizationCommand(context, generator);
   registerGoToLocalizationCommand(context);
 

@@ -46,48 +46,12 @@ class TemplateGenerator {
         this.generator = new template_based_1.TemplateGenerator(this.templatesDir);
     }
     /**
-     * Generate trait code (returns formatted string, doesn't write to disk)
+     * Generate code from a template (returns formatted string, doesn't write to disk)
      */
-    async generateTraitCode(params) {
+    async generateCode(params) {
         const result = await this.generator.generate({
             templateName: params.template,
-            category: 'trait',
-            parameters: params,
-            outputPath: '/tmp' // We won't actually write, just generate
-        });
-        return result.content;
-    }
-    /**
-     * Generate building code
-     */
-    async generateBuildingCode(params) {
-        const result = await this.generator.generate({
-            templateName: params.template,
-            category: 'building',
-            parameters: params,
-            outputPath: '/tmp'
-        });
-        return result.content;
-    }
-    /**
-     * Generate event code
-     */
-    async generateEventCode(params) {
-        const result = await this.generator.generate({
-            templateName: params.template,
-            category: 'event',
-            parameters: params,
-            outputPath: '/tmp'
-        });
-        return result.content;
-    }
-    /**
-     * Generate decision code
-     */
-    async generateDecisionCode(params) {
-        const result = await this.generator.generate({
-            templateName: params.template,
-            category: 'decision',
+            category: params.category,
             parameters: params,
             outputPath: '/tmp'
         });

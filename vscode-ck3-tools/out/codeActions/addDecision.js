@@ -68,8 +68,9 @@ function registerAddDecisionCommand(context, generator) {
             if (!name)
                 return;
             // Generate code
-            const code = await generator.generateDecisionCode({
+            const code = await generator.generateCode({
                 template,
+                category: 'decision',
                 name
             });
             // Insert at cursor

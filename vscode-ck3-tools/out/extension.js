@@ -41,6 +41,10 @@ const addTrait_1 = require("./codeActions/addTrait");
 const addBuilding_1 = require("./codeActions/addBuilding");
 const addEvent_1 = require("./codeActions/addEvent");
 const addDecision_1 = require("./codeActions/addDecision");
+const addSecret_1 = require("./codeActions/addSecret");
+const addInteraction_1 = require("./codeActions/addInteraction");
+const addActivity_1 = require("./codeActions/addActivity");
+const addScheme_1 = require("./codeActions/addScheme");
 const generateLocalization_1 = require("./localization/generateLocalization");
 const navigationProvider_1 = require("./localization/navigationProvider");
 const traitCompletionProvider_1 = require("./providers/traitCompletionProvider");
@@ -1136,6 +1140,10 @@ function activate(context) {
     (0, addBuilding_1.registerAddBuildingCommand)(context, generator);
     (0, addEvent_1.registerAddEventCommand)(context, generator);
     (0, addDecision_1.registerAddDecisionCommand)(context, generator);
+    (0, addSecret_1.registerAddSecretCommand)(context, generator);
+    (0, addInteraction_1.registerAddInteractionCommand)(context, generator);
+    (0, addActivity_1.registerAddActivityCommand)(context, generator);
+    (0, addScheme_1.registerAddSchemeCommand)(context, generator);
     (0, generateLocalization_1.registerGenerateLocalizationCommand)(context, generator);
     (0, navigationProvider_1.registerGoToLocalizationCommand)(context);
     // Register trait-specific providers for autocomplete and hover

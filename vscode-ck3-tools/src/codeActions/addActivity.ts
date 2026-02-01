@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
 import { TemplateGenerator } from '../lib/templateGenerator';
 
-export function registerAddDecisionCommand(
+export function registerAddActivityCommand(
   context: vscode.ExtensionContext,
   generator: TemplateGenerator
 ) {
-  const disposable = vscode.commands.registerCommand('ck3-tools.addDecision', async () => {
+  const disposable = vscode.commands.registerCommand('ck3-tools.addActivity', async () => {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
       vscode.window.showErrorMessage('No active editor');
@@ -14,24 +14,24 @@ export function registerAddDecisionCommand(
 
     try {
       // Select template
-      const templates = await generator.listTemplates('decision');
+      const templates = await generator.listTemplates('activity');
       const template = await vscode.window.showQuickPick(templates, {
-        placeHolder: 'Select decision template',
-        title: 'Add Decision'
+        placeHolder: 'Select activity template',
+        title: 'Add Activity Type'
       });
 
       if (!template) return;
 
-      // Get decision name
+      // Get activity name
       const name = await vscode.window.showInputBox({
-        prompt: 'Decision name (e.g., hold_feast)',
-        placeHolder: 'hold_feast',
+        prompt: 'Activity name (e.g., grand_tournament, pilgrimage)',
+        placeHolder: 'grand_tournament',
         validateInput: (value) => {
           if (!value || value.trim().length === 0) {
-            return 'Decision name is required';
+            return 'Activity name is required';
           }
           if (!/^[a-z_][a-z0-9_]*$/.test(value)) {
-            return 'Decision name must be lowercase with underscores only';
+            return 'Activity name must be lowercase with underscores only';
           }
           return null;
         }
@@ -42,7 +42,7 @@ export function registerAddDecisionCommand(
       // Generate code
       const code = await generator.generateCode({
         template,
-        category: 'decision',
+        category: 'activity',
         name
       });
 
@@ -52,10 +52,10 @@ export function registerAddDecisionCommand(
         editBuilder.insert(position, code);
       });
 
-      vscode.window.showInformationMessage(`Added ${name} decision`);
+      vscode.window.showInformationMessage(`Added ${name} activity`);
     } catch (error) {
-      vscode.window.showErrorMessage(`Failed to add decision: ${error}`);
-      console.error('Add decision error:', error);
+      vscode.window.showErrorMessage(`Failed to add activity: ${error}`);
+      console.error('Add activity error:', error);
     }
   });
 

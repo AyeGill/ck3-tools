@@ -1,0 +1,177 @@
+name: activity_type
+description: Activity type - multi-day event with guests and phases
+category: activity
+version: 1.0
+
+parameters:
+  name:
+    type: string
+    required: true
+    description: Activity name (e.g., activity_my_feast)
+
+structure: |
+  # Activities are multi-day events where the host invites guests
+  # They have phases, events that trigger during them, and completion effects
+  # The host is 'root' or 'scope:host', guests can be accessed via iterators
+
+  {{name}} = {
+  	# --- UI Configuration ---
+  	icon = "gfx/interface/icons/activities/activity_feast.dds"
+  	background = "gfx/interface/illustrations/activities/feast.dds"
+
+  	# --- Visibility ---
+  	is_shown = {
+  		is_ruler = yes
+  		highest_held_title_tier >= tier_county
+  	}
+
+  	# --- Start conditions ---
+  	can_start = {
+  		is_available = yes
+  		gold >= 100
+  	}
+
+  	can_start_showing_failures_only = {
+  		is_imprisoned = no
+  		is_incapable = no
+  	}
+
+  	# --- Validity during activity ---
+  	is_valid = {
+  		is_alive = yes
+  		is_imprisoned = no
+  	}
+
+  	# --- Cost ---
+  	cost = {
+  		gold = {
+  			value = 100
+  			# multiply = some_value  # Can scale with script values
+  		}
+  		# prestige = 50
+  	}
+
+  	# --- Duration ---
+  	# Either use min/max_days or phases with durations
+  	# min_days = 14
+  	# max_days = 30
+
+  	# --- Location selection ---
+  	# Where can this activity be held?
+  	province_filter = {
+  		is_sea = no
+  		# barony.holder = root  # Only in own holdings
+  	}
+
+  	# AI score for picking location
+  	ai_province_score = {
+  		value = 100
+  		if = {
+  			limit = { this = root.capital_province }
+  			add = 100
+  		}
+  	}
+
+  	# --- Guest configuration ---
+  	min_guests = 3
+  	max_guests = 20
+
+  	# Guest invitation rules - defines default invites
+  	guest_invite_rules = {
+  		rules = {
+  			# Priority 1 = most important to invite
+  			1 = activity_invite_rule_spouse
+  			2 = activity_invite_rule_children
+  			3 = activity_invite_rule_close_family
+  			4 = activity_invite_rule_friends
+  			5 = activity_invite_rule_vassals
+  			6 = activity_invite_rule_courtiers
+  		}
+  	}
+
+  	# --- Activity phases ---
+  	# Activities can have multiple phases with different durations
+  	phases = {
+  		# Travel/preparation phase
+  		travel = {
+  			is_predefined = yes  # Built-in travel phase
+  		}
+
+  		# Main activity phase
+  		main_phase = {
+  			duration = { days = 14 }
+
+  			on_phase_start = {
+  				# Effects when this phase begins
+  				trigger_event = { id = {{name}}_events.0001 }
+  			}
+
+  			on_phase_end = {
+  				# Effects when this phase ends
+  			}
+
+  			# Events that can fire during this phase
+  			# on_monthly = { }
+  		}
+
+  		return = {
+  			is_predefined = yes  # Built-in return phase
+  		}
+  	}
+
+  	# --- Lifecycle effects ---
+  	on_start = {
+  		# When activity begins
+  		add_character_flag = {
+  			flag = hosting_{{name}}
+  			days = 60
+  		}
+  	}
+
+  	on_complete = {
+  		# When activity successfully completes
+  		add_prestige = 100
+  		stress_impact = {
+  			base = -20
+  		}
+  	}
+
+  	on_invalidated = {
+  		# When activity is cancelled/invalidated
+  		remove_character_flag = hosting_{{name}}
+  	}
+
+  	# --- Special options ---
+  	# Options the host can select when starting
+  	special_options = {
+  		# elaborate_feast = {
+  		# 	cost = { gold = 100 }
+  		# 	on_start = { ... }
+  		# }
+  	}
+
+  	# --- AI behavior ---
+  	ai_will_do = {
+  		value = 100
+  		# Modifiers affect AI likelihood to host
+  		if = {
+  			limit = { gold < 200 }
+  			multiply = 0.5
+  		}
+  	}
+  	ai_check_interval = 60  # Days between AI checks
+
+  	# --- Guest acceptance (AI) ---
+  	# ai_will_guest_accept = { value = 100 }
+
+  	# --- Travel options ---
+  	# travel_entourage_selection = { ... }
+  	# travel_danger = { value = 0 }
+  }
+
+  # Don't forget to create the associated events in:
+  # events/{{name}}_events.txt
+
+localization:
+  name_template: "{{capitalize (format_name name)}}"
+  desc_template: "Activity: {{format_name name}}"

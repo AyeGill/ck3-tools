@@ -1,0 +1,61 @@
+name: barebones_trait
+description: Minimal trait skeleton - edit fields as needed
+category: trait
+version: 1.0
+
+parameters:
+  name:
+    type: string
+    required: true
+    description: Trait name (lowercase_with_underscores)
+
+structure: |
+  {{name}} = {
+  	# --- Basic properties ---
+  	# category options: personality, education, lifestyle, health, fame, commander, court, descendant, childhood
+  	category = personality
+
+  	# --- Stat modifiers (remove unused) ---
+  	# diplomacy = 2
+  	# martial = 2
+  	# stewardship = 2
+  	# intrigue = 2
+  	# learning = 2
+  	# prowess = 2
+
+  	# --- Monthly modifiers (remove unused) ---
+  	# monthly_prestige = 0.5
+  	# monthly_piety = 0.5
+  	# monthly_gold = 0.5
+
+  	# --- Interaction modifiers ---
+  	# attraction_opinion = 10
+  	# same_opinion = 15
+  	# opposite_opinion = -15
+  	# general_opinion = 5
+  	# vassal_opinion = 5
+  	# clergy_opinion = 5
+
+  	# --- Opposites (traits that can't coexist) ---
+  	# opposites = { cowardly }
+
+  	# --- Compatibility (for spouse matching) ---
+  	# compatibility = { brave just }
+
+  	# --- Ruler designer cost (for character creation) ---
+  	ruler_designer_cost = 20
+
+  	# --- AI behavior ---
+  	ai_rationality = 0
+  	ai_boldness = 0
+  	ai_compassion = 0
+  	ai_greed = 0
+  	ai_honor = 0
+  	ai_energy = 0
+  	ai_vengefulness = 0
+  	ai_zeal = 0
+  }
+
+localization:
+  name_template: "{{capitalize (format_name name)}}"
+  desc_template: "Description for the {{format_name name}} trait."

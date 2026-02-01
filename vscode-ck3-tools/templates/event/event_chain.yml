@@ -1,0 +1,205 @@
+name: event_chain
+description: Event chain - multiple related events with saved scopes
+category: event
+version: 1.0
+
+parameters:
+  name:
+    type: string
+    required: true
+    description: Event chain namespace (e.g., my_chain)
+
+structure: |
+  # Event chains are series of related events
+  # Key concepts:
+  # 1. Save scopes to preserve references between events
+  # 2. Use trigger_event to chain events together
+  # 3. Use on_actions for events triggered by game state changes
+  # 4. Character flags help track state across the chain
+
+  namespace = {{name}}
+
+  # --- STARTING EVENT ---
+  # This event initiates the chain (triggered from decision, on_action, etc.)
+  {{name}}.0001 = {
+  	type = character_event
+  	title = {{name}}.0001.t
+  	desc = {{name}}.0001.desc
+  	theme = intrigue
+
+  	# When can this event fire?
+  	trigger = {
+  		is_ruler = yes
+  		is_adult = yes
+  		# Add your conditions here
+  	}
+
+  	# Set up the chain - save important scopes for later events
+  	immediate = {
+  		# Save the root character for reference in later events
+  		save_scope_as = chain_protagonist
+
+  		# Find and save a target character (example: a vassal)
+  		random_vassal = {
+  			limit = {
+  				is_adult = yes
+  				opinion = { target = root value < 0 }
+  			}
+  			save_scope_as = chain_target
+  		}
+
+  		# Set a flag to track the chain state
+  		add_character_flag = {
+  			flag = in_{{name}}_chain
+  			days = 365
+  		}
+  	}
+
+  	# Options lead to different branches
+  	option = {
+  		name = {{name}}.0001.a
+  		# Branch A - continue to event 2
+  		trigger_event = {
+  			id = {{name}}.0002
+  			days = { 7 14 }  # Random delay between 7-14 days
+  		}
+  		# Save which branch was chosen
+  		add_character_flag = chain_chose_option_a
+  	}
+
+  	option = {
+  		name = {{name}}.0001.b
+  		# Branch B - continue to event 3
+  		trigger_event = {
+  			id = {{name}}.0003
+  			days = { 7 14 }
+  		}
+  		add_character_flag = chain_chose_option_b
+  	}
+
+  	option = {
+  		name = {{name}}.0001.c
+  		# Option to exit the chain
+  		custom_tooltip = {{name}}_end_chain_tt
+  		remove_character_flag = in_{{name}}_chain
+  	}
+  }
+
+  # --- BRANCH A: SECOND EVENT ---
+  {{name}}.0002 = {
+  	type = character_event
+  	title = {{name}}.0002.t
+  	desc = {{name}}.0002.desc
+  	theme = intrigue
+
+  	trigger = {
+  		# Check the chain is still active
+  		has_character_flag = in_{{name}}_chain
+  		# Verify saved scopes are still valid
+  		exists = scope:chain_target
+  		scope:chain_target = { is_alive = yes }
+  	}
+
+  	immediate = {
+  		# Can access scopes saved in previous event!
+  		# scope:chain_protagonist = the original character
+  		# scope:chain_target = the vassal we saved
+  	}
+
+  	# Show the saved character in the event
+  	left_portrait = {
+  		character = root
+  		animation = idle
+  	}
+  	right_portrait = {
+  		character = scope:chain_target
+  		animation = personality_dishonorable
+  	}
+
+  	option = {
+  		name = {{name}}.0002.a
+  		# Continue to resolution
+  		trigger_event = {
+  			id = {{name}}.0010  # Resolution event
+  			days = { 14 30 }
+  		}
+  	}
+  }
+
+  # --- BRANCH B: ALTERNATIVE PATH ---
+  {{name}}.0003 = {
+  	type = character_event
+  	title = {{name}}.0003.t
+  	desc = {{name}}.0003.desc
+  	theme = intrigue
+
+  	trigger = {
+  		has_character_flag = in_{{name}}_chain
+  	}
+
+  	option = {
+  		name = {{name}}.0003.a
+  		# Different path to resolution
+  		trigger_event = {
+  			id = {{name}}.0010
+  			days = { 14 30 }
+  		}
+  	}
+  }
+
+  # --- RESOLUTION EVENT ---
+  {{name}}.0010 = {
+  	type = character_event
+  	title = {{name}}.0010.t
+  	desc = {{name}}.0010.desc
+  	theme = intrigue
+
+  	trigger = {
+  		has_character_flag = in_{{name}}_chain
+  	}
+
+  	immediate = {
+  		# Clean up the chain
+  		remove_character_flag = in_{{name}}_chain
+  		remove_character_flag = chain_chose_option_a
+  		remove_character_flag = chain_chose_option_b
+  	}
+
+  	# Show different desc based on path taken
+  	desc = {
+  		desc = {{name}}.0010.desc_intro
+  		triggered_desc = {
+  			trigger = { has_character_flag = chain_chose_option_a }
+  			desc = {{name}}.0010.desc_path_a
+  		}
+  		triggered_desc = {
+  			trigger = { has_character_flag = chain_chose_option_b }
+  			desc = {{name}}.0010.desc_path_b
+  		}
+  	}
+
+  	option = {
+  		name = {{name}}.0010.a
+  		# Final effects
+  		if = {
+  			limit = { has_character_flag = chain_chose_option_a }
+  			add_prestige = 100
+  		}
+  		else = {
+  			add_piety = 100
+  		}
+
+  		# Optional: target character gets effects too
+  		scope:chain_target = {
+  			add_opinion = {
+  				target = root
+  				modifier = scheme_discovered_opinion
+  				opinion = -20
+  			}
+  		}
+  	}
+  }
+
+localization:
+  name_template: "{{capitalize (format_name name)}} events"
+  desc_template: "Event chain: {{format_name name}}"

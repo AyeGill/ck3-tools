@@ -1,0 +1,76 @@
+name: xp_track_trait
+description: Trait with experience track (levels up over time)
+category: trait
+version: 1.0
+
+parameters:
+  name:
+    type: string
+    required: true
+    description: Base trait name (will have _1, _2, _3 etc. appended)
+
+structure: |
+  # XP Track Traits - characters gain XP and level up through tiers
+  # Example: warrior_1 -> warrior_2 -> warrior_3
+  # Uses lifestyle_xp system for progression
+
+  {{name}}_1 = {
+  	category = lifestyle
+
+  	# Which lifestyle track this uses (or create custom)
+  	# Options: diplomacy_lifestyle, martial_lifestyle, stewardship_lifestyle, intrigue_lifestyle, learning_lifestyle
+  	lifestyle = martial_lifestyle
+
+  	# Stat bonuses for this level
+  	martial = 1
+  	prowess = 2
+
+  	# XP track configuration
+  	# track = { character flag to track XP }
+  	# max = { maximum XP before leveling up }
+  	track = {{name}}_xp_track
+  	xp_track_max = 100
+
+  	# What happens at max XP
+  	levelup_trait = {{name}}_2
+
+  	ruler_designer_cost = 10
+  }
+
+  {{name}}_2 = {
+  	category = lifestyle
+  	lifestyle = martial_lifestyle
+
+  	martial = 2
+  	prowess = 4
+
+  	track = {{name}}_xp_track
+  	xp_track_max = 200
+  	levelup_trait = {{name}}_3
+
+  	ruler_designer_cost = 30
+  }
+
+  {{name}}_3 = {
+  	category = lifestyle
+  	lifestyle = martial_lifestyle
+
+  	martial = 3
+  	prowess = 6
+
+  	# Final tier - no levelup_trait
+  	track = {{name}}_xp_track
+
+  	ruler_designer_cost = 50
+  }
+
+  # --- To give XP, use in effects: ---
+  # add_trait_xp = {
+  # 	trait = {{name}}_1  # or whichever level they have
+  # 	track = {{name}}_xp_track
+  # 	value = 25
+  # }
+
+localization:
+  name_template: "{{capitalize (format_name name)}}"
+  desc_template: "{{format_name name}} trait with experience progression."

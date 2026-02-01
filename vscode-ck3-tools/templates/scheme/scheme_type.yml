@@ -1,0 +1,221 @@
+name: scheme_type
+description: Scheme type - long-running plots against targets
+category: scheme
+version: 1.0
+
+parameters:
+  name:
+    type: string
+    required: true
+    description: Scheme type name (e.g., my_scheme)
+
+structure: |
+  # Schemes are long-running plots that progress over time
+  # They require agents, have success/discovery chances, and fire events
+  # Key scopes: scope:owner, scope:target, scope:scheme
+
+  {{name}} = {
+  	# --- Core Configuration ---
+  	# Which skill determines scheme power
+  	skill = intrigue
+
+  	# Category: hostile, personal, friendly
+  	category = hostile
+
+  	# Is scheme secret until discovered?
+  	is_secret = yes
+
+  	# Target type (usually character)
+  	target_type = character
+
+  	# --- UI ---
+  	icon = icon_scheme_murder
+  	illustration = "gfx/interface/illustrations/event_scenes/corridor.dds"
+  	desc = {{name}}_desc
+  	success_desc = {{name}}_success_desc
+  	discovery_desc = {{name}}_discovery_desc
+
+  	# --- Progress & Speed ---
+  	# Progress goal - how much progress to complete scheme
+  	base_progress_goal = 100
+
+  	# Speed modifiers (how fast progress accumulates)
+  	speed_per_skill_point = 1  # Per owner skill point
+  	speed_per_target_skill_point = -0.5  # Per target skill (negative = slower)
+
+  	# --- Success & Secrecy ---
+  	# Maximum success chance (even with perfect setup)
+  	base_maximum_success = 95
+  	maximum_secrecy = 95
+
+  	# Growth per skill point
+  	success_chance_growth_per_skill_point = 2
+
+  	# --- Agents ---
+  	uses_agents = yes
+  	phases_per_agent_charge = 1
+  	# maximum_agents = 10
+
+  	# Who can be an agent?
+  	agent_valid = {
+  		# scope:target = scheme target
+  		# this = potential agent
+  		NOT = { this = scope:target }
+  		is_adult = yes
+  		# Can access the target somehow
+  		OR = {
+  			is_courtier_of = scope:target
+  			is_vassal_of = scope:target
+  			any_close_family_member = { this = scope:target }
+  		}
+  	}
+
+  	# Why would they join?
+  	agent_join_chance = {
+  		base = 0
+
+  		# Hate the target
+  		modifier = {
+  			add = 50
+  			opinion = { target = scope:target value < -50 }
+  		}
+
+  		# Dread makes them afraid to refuse
+  		modifier = {
+  			add = 25
+  			scope:owner = { dread >= 50 }
+  		}
+
+  		# Friends with scheme owner
+  		modifier = {
+  			add = 30
+  			has_relation_friend = scope:owner
+  		}
+  	}
+
+  	# --- Breaches (discovery chances) ---
+  	maximum_breaches = 5
+
+  	# --- Availability ---
+  	# Can this scheme be started?
+  	allow = {
+  		is_adult = yes
+  		is_imprisoned = no
+  		NOT = { this = scope:target }
+  	}
+
+  	# Is target valid?
+  	valid_target = {
+  		scope:target = {
+  			is_alive = yes
+  			NOT = { this = scope:owner }
+  		}
+  	}
+
+  	# Conditions that keep scheme valid
+  	valid = {
+  		# Scheme remains valid as long as...
+  		is_alive = yes
+  		scope:target = { is_alive = yes }
+  	}
+
+  	# --- Cooldowns ---
+  	cooldown = { years = 5 }
+
+  	# --- Power Modifiers ---
+  	# Scheme power affects success chance
+  	power_modifier = {
+  		# Spymaster bonus
+  		if = {
+  			limit = {
+  				exists = cp:councillor_spymaster
+  				cp:councillor_spymaster = {
+  					has_council_position = councillor_spymaster
+  				}
+  			}
+  			add = {
+  				value = cp:councillor_spymaster.intrigue
+  				multiply = 0.5
+  			}
+  		}
+  	}
+
+  	# --- Resistance Modifiers ---
+  	# Target's resistance (affects discovery and countering)
+  	resistance_modifier = {
+  		# Target's spymaster
+  		if = {
+  			limit = {
+  				scope:target = {
+  					exists = cp:councillor_spymaster
+  				}
+  			}
+  			add = {
+  				value = scope:target.cp:councillor_spymaster.intrigue
+  				multiply = 0.5
+  			}
+  		}
+  	}
+
+  	# --- On Success ---
+  	on_succeed = {
+  		# What happens when scheme succeeds
+  		# Usually triggers an event
+  		# scope:owner = scheme owner
+  		# scope:target = scheme target
+
+  		# Trigger success event
+  		# trigger_event = { id = {{name}}_events.0010 }
+
+  		# Or apply effects directly
+  		scope:owner = {
+  			add_intrigue_skill = 1
+  		}
+  	}
+
+  	# --- On Discovery ---
+  	on_expose = {
+  		# What happens when scheme is discovered
+  		# scope:owner = scheme owner
+  		# scope:target = who discovered
+
+  		# Trigger discovery event
+  		# trigger_event = { id = {{name}}_events.0020 }
+
+  		scope:target = {
+  			add_opinion = {
+  				target = scope:owner
+  				modifier = schemer_exposed_opinion
+  				opinion = -40
+  			}
+  		}
+  	}
+
+  	# --- AI ---
+  	ai_will_do = {
+  		base = 100
+  		# When will AI pursue this scheme?
+  		modifier = {
+  			factor = 0
+  			has_trait = just
+  		}
+  		modifier = {
+  			factor = 2
+  			opinion = { target = scope:target value < -50 }
+  		}
+  	}
+  }
+
+  # --- Don't forget associated on_actions! ---
+  # File: common/on_actions/scheme_on_actions.txt
+  #
+  # on_scheme_monthly_{{name}} = {
+  #     random_events = {
+  #         chance_to_happen = 30
+  #         100 = {{name}}_events.0001
+  #     }
+  # }
+
+localization:
+  name_template: "{{capitalize (format_name name)}} scheme"
+  desc_template: "Scheme type: {{format_name name}}"
