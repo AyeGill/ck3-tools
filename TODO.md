@@ -47,7 +47,6 @@ So for example prompting for skill modifications in a trait template makes littl
   - Events (add templates for other common types of events, event chains, scheme events? etc)
 - [ ] Add a more comprehensive intellisense/code actions system when inside an effect scope specifically
   - More generally, somehow there should be a more comprehensive list of possible fields in each slot. For example, the engine should know that stationed_pikemen_damage_mult is a valid county modifier but not (I think?) a valid character modifier, add_piety is a valid effect of an event but not a valid effect of a trait, when you're writing a condition it should autocomplete to things that are valid conditions, and so on.
-
 - The following are the main priorities for adding support for other types:
   - [ ] Character interactions
 - [x] Reorganize the project so we don't have so many different directories, todo files etc.
@@ -59,6 +58,7 @@ So for example prompting for skill modifications in a trait template makes littl
 - [ ] Simple linting. If we have a comprehensive list of items that are valid in each space (that is, a proper, complete schema) we can mark any invalid ones. (I guess there should be a "ignore this particular invalid field forever" button). We can also detect name collisions (especially possible for events that are just named by numbers), at least within the same mod.
 - [ ] There should also be an option to "explicitify" the localization keys, by adding all the necessary localization key fields (with their default values) to an item (so if we have a trait foo_bar, doing this would add name = trait_foo_bar) and so on.
   - [ ] In general the localization generator should account for the whole structure of the current item when generating necessary localizations (so if you have an event with a bunch of options, it should generate the localizations for each option). But this seems quite hard so that's probably a low priority.
+- [ ] Add some unit tests
 
 ## Issues
 

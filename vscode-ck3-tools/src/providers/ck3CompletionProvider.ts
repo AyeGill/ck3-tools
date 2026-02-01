@@ -7,6 +7,12 @@ import {
   FieldSchema,
 } from '../schemas/traitSchema';
 import {
+  getEffectsForScope,
+  getTriggersForScope,
+  EffectDefinition,
+  TriggerDefinition,
+} from '../data';
+import {
   eventSchema,
   eventSchemaMap,
   eventOptionSchema,
@@ -875,6 +881,44 @@ import {
 type CK3FileType = 'trait' | 'event' | 'decision' | 'interaction' | 'on_action' | 'scheme' | 'building' | 'men_at_arms' | 'casus_belli' | 'culture' | 'tradition' | 'religion' | 'scripted_effect' | 'scripted_trigger' | 'artifact' | 'court_position' | 'lifestyle' | 'focus' | 'perk' | 'dynasty_legacy' | 'modifier' | 'law' | 'government' | 'faction' | 'council_task' | 'opinion_modifier' | 'secret' | 'nickname' | 'script_value' | 'hook' | 'activity' | 'game_rule' | 'bookmark' | 'story_cycle' | 'important_action' | 'vassal_contract' | 'landed_title' | 'coat_of_arms' | 'innovation' | 'doctrine' | 'holy_site' | 'holding' | 'dynasty' | 'character_history' | 'terrain' | 'scripted_gui' | 'custom_localization' | 'flavorization' | 'deathreasons' | 'succession_election' | 'scripted_relation' | 'named_colors' | 'event_background' | 'pool_selector' | 'scripted_modifier' | 'scripted_rules' | 'game_concept' | 'message' | 'scripted_list' | 'title_history' | 'accolade_type' | 'character_memory' | 'court_amenity' | 'dynasty_house' | 'legend' | 'travel' | 'struggle' | 'inspiration' | 'diarchy' | 'domicile' | 'great_project' | 'epidemic' | 'house_unity' | 'legitimacy' | 'tax_slot' | 'vassal_stance' | 'suggestion' | 'scripted_cost' | 'scripted_animation' | 'scripted_character_template' | 'event_theme' | 'casus_belli_group' | 'ai_war_stance' | 'combat_phase_event' | 'bookmark_portrait' | 'guest_system' | 'courtier_guest_management' | 'task_contract' | 'subject_contract' | 'lease_contract' | 'character_background' | 'dna_data' | 'portrait_modifier' | 'nickname_rule' | 'succession_law' | 'war_goal' | 'scripted_illustration' | 'map_mode' | 'province_history' | 'region' | 'scripted_score_value' | 'ai_personality' | 'defines' | 'scripted_loc_value' | 'interaction_category' | 'county_culture' | 'playable_difficulty' | 'province_setup' | 'scripted_spawn' | 'court_position_category' | 'activity_locale' | 'culture_era' | 'name_list' | 'relation_flag' | 'terrain_type' | 'holding_type' | 'men_at_arms_type' | 'combat_phase' | 'inspiration_type' | 'court_type' | 'culture_pillar' | 'heritage' | 'language' | 'martial_custom' | 'ethos' | 'scripted_gfx' | 'game_start' | 'character_template' | 'trigger_locale' | 'effect_locale' | 'music' | 'sound_effect' | 'portrait_camera' | 'gene' | 'accessory' | 'coa_template' | 'achievement' | 'scripted_test' | 'tutorial' | 'map_object' | 'loading_tip' | 'gui_type' | 'localization' | 'regiment' | 'title_color' | 'character_interaction_category' | 'dlc_feature' | 'ai_budget' | 'special_building' | 'triggered_text' | 'pool_generation_rule' | 'ai_task' | 'artifact_template' | 'coa_pattern' | 'coa_emblem' | 'culture_name_list' | 'artifact_visual' | 'artifact_rarity' | 'climate' | 'terrain_modifier' | 'succession_voting' | 'character_flag' | 'title_flag' | 'province_modifier' | 'lifestyle_perk_tree' | 'building_slot' | 'artifact_slot' | 'mercenary_company' | 'holy_order' | 'war_contribution' | 'army_template' | 'combat_effect' | 'vassal_obligation' | 'triggered_outfit' | 'portrait_type' | 'court_grandeur_level' | 'amenity_level' | 'artifact_feature' | 'execution_method' | 'punishment' | 'struggle_catalyst' | 'travel_danger_type' | 'travel_option' | 'hostage_type' | 'diarchy_mandate' | 'levy_definition' | 'title_rank' | 'ethnic_group' | 'culture_aesthetic' | 'coa_color' | 'succession_parameter' | 'domicile_building' | 'traveler_type' | 'struggle_phase' | 'legend_type' | 'administrative_division' | 'culture_tradition_category' | 'imperial_administration' | 'court_event' | 'culture_parameter' | 'title_naming' | 'siege_type' | 'commander_trait' | 'realm_law_category' | 'government_modifier' | 'artifact_modifier' | 'dynasty_perk' | 'chronicle_entry' | 'vassal_power' | 'realm_succession' | 'government_type_modifier' | 'economy_modifier' | 'culture_group' | 'pilgrimage_type' | 'casus_belli_type' | 'unknown';
 
 /**
+ * Convert EffectDefinition to FieldSchema for completion provider compatibility
+ */
+function effectToFieldSchema(effect: EffectDefinition): FieldSchema {
+  return {
+    name: effect.name,
+    type: effect.isIterator ? 'block' : (effect.outputScope ? 'block' : 'effect'),
+    description: effect.description,
+    example: effect.syntax,
+  };
+}
+
+/**
+ * Convert TriggerDefinition to FieldSchema for completion provider compatibility
+ */
+function triggerToFieldSchema(trigger: TriggerDefinition): FieldSchema {
+  return {
+    name: trigger.name,
+    type: trigger.valueType === 'block' || trigger.isIterator ? 'block' : 'trigger',
+    description: trigger.description,
+    example: trigger.syntax,
+  };
+}
+
+/**
+ * Get effect completions as FieldSchema array
+ */
+function getEffectSchemaForScope(scope: 'character' | 'landed_title' | 'none' = 'character'): FieldSchema[] {
+  return getEffectsForScope(scope).map(effectToFieldSchema);
+}
+
+/**
+ * Get trigger completions as FieldSchema array
+ */
+function getTriggerSchemaForScope(scope: 'character' | 'landed_title' | 'none' = 'character'): FieldSchema[] {
+  return getTriggersForScope(scope).map(triggerToFieldSchema);
+}
+
+/**
  * Unified completion provider for all CK3 file types
  */
 export class CK3CompletionProvider implements vscode.CompletionItemProvider {
@@ -1678,8 +1722,17 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
         if (['left_portrait', 'right_portrait', 'center_portrait', 'lower_left_portrait', 'lower_center_portrait', 'lower_right_portrait'].includes(lastBlock)) {
           return portraitBlockSchema;
         }
-        if (lastBlock === 'trigger' || lastBlock === 'immediate' || lastBlock === 'after') {
-          return []; // Triggers/effects - would need a separate schema
+        if (lastBlock === 'trigger') {
+          // Inside a trigger block - show triggers valid for character scope
+          return getTriggerSchemaForScope('character');
+        }
+        if (lastBlock === 'immediate' || lastBlock === 'after') {
+          // Inside an effect block - show effects valid for character scope
+          return getEffectSchemaForScope('character');
+        }
+        // Check if we're inside an option's effect (options contain effects)
+        if (blockPath.includes('option') && blockPath.length > 1) {
+          return getEffectSchemaForScope('character');
         }
         return eventSchema;
 
@@ -1687,8 +1740,17 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
         if (blockPath.length === 0) {
           return decisionSchema;
         }
-        if (blockPath[blockPath.length - 1] === 'cost' || blockPath[blockPath.length - 1] === 'minimum_cost') {
+        const decisionLastBlock = blockPath[blockPath.length - 1];
+        if (decisionLastBlock === 'cost' || decisionLastBlock === 'minimum_cost') {
           return costBlockSchema;
+        }
+        // Trigger blocks in decisions
+        if (['is_shown', 'is_valid', 'is_valid_showing_failures_only', 'ai_potential'].includes(decisionLastBlock)) {
+          return getTriggerSchemaForScope('character');
+        }
+        // Effect blocks in decisions
+        if (decisionLastBlock === 'effect') {
+          return getEffectSchemaForScope('character');
         }
         return decisionSchema;
 

@@ -36,6 +36,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CK3CompletionProvider = void 0;
 const vscode = __importStar(require("vscode"));
 const traitSchema_1 = require("../schemas/traitSchema");
+const data_1 = require("../data");
 const eventSchema_1 = require("../schemas/eventSchema");
 const decisionSchema_1 = require("../schemas/decisionSchema");
 const interactionSchema_1 = require("../schemas/interactionSchema");
@@ -247,6 +248,40 @@ const economyModifierSchema_1 = require("../schemas/economyModifierSchema");
 const cultureGroupSchema_1 = require("../schemas/cultureGroupSchema");
 const pilgrimageTypeSchema_1 = require("../schemas/pilgrimageTypeSchema");
 const casusBelliTypeSchema_1 = require("../schemas/casusBelliTypeSchema");
+/**
+ * Convert EffectDefinition to FieldSchema for completion provider compatibility
+ */
+function effectToFieldSchema(effect) {
+    return {
+        name: effect.name,
+        type: effect.isIterator ? 'block' : (effect.outputScope ? 'block' : 'effect'),
+        description: effect.description,
+        example: effect.syntax,
+    };
+}
+/**
+ * Convert TriggerDefinition to FieldSchema for completion provider compatibility
+ */
+function triggerToFieldSchema(trigger) {
+    return {
+        name: trigger.name,
+        type: trigger.valueType === 'block' || trigger.isIterator ? 'block' : 'trigger',
+        description: trigger.description,
+        example: trigger.syntax,
+    };
+}
+/**
+ * Get effect completions as FieldSchema array
+ */
+function getEffectSchemaForScope(scope = 'character') {
+    return (0, data_1.getEffectsForScope)(scope).map(effectToFieldSchema);
+}
+/**
+ * Get trigger completions as FieldSchema array
+ */
+function getTriggerSchemaForScope(scope = 'character') {
+    return (0, data_1.getTriggersForScope)(scope).map(triggerToFieldSchema);
+}
 /**
  * Unified completion provider for all CK3 file types
  */
@@ -1018,16 +1053,34 @@ class CK3CompletionProvider {
                 if (['left_portrait', 'right_portrait', 'center_portrait', 'lower_left_portrait', 'lower_center_portrait', 'lower_right_portrait'].includes(lastBlock)) {
                     return eventSchema_1.portraitBlockSchema;
                 }
-                if (lastBlock === 'trigger' || lastBlock === 'immediate' || lastBlock === 'after') {
-                    return []; // Triggers/effects - would need a separate schema
+                if (lastBlock === 'trigger') {
+                    // Inside a trigger block - show triggers valid for character scope
+                    return getTriggerSchemaForScope('character');
+                }
+                if (lastBlock === 'immediate' || lastBlock === 'after') {
+                    // Inside an effect block - show effects valid for character scope
+                    return getEffectSchemaForScope('character');
+                }
+                // Check if we're inside an option's effect (options contain effects)
+                if (blockPath.includes('option') && blockPath.length > 1) {
+                    return getEffectSchemaForScope('character');
                 }
                 return eventSchema_1.eventSchema;
             case 'decision':
                 if (blockPath.length === 0) {
                     return decisionSchema_1.decisionSchema;
                 }
-                if (blockPath[blockPath.length - 1] === 'cost' || blockPath[blockPath.length - 1] === 'minimum_cost') {
+                const decisionLastBlock = blockPath[blockPath.length - 1];
+                if (decisionLastBlock === 'cost' || decisionLastBlock === 'minimum_cost') {
                     return decisionSchema_1.costBlockSchema;
+                }
+                // Trigger blocks in decisions
+                if (['is_shown', 'is_valid', 'is_valid_showing_failures_only', 'ai_potential'].includes(decisionLastBlock)) {
+                    return getTriggerSchemaForScope('character');
+                }
+                // Effect blocks in decisions
+                if (decisionLastBlock === 'effect') {
+                    return getEffectSchemaForScope('character');
                 }
                 return decisionSchema_1.decisionSchema;
             case 'interaction':

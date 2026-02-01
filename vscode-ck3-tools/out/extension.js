@@ -1148,7 +1148,6 @@ function activate(context) {
     const ck3CompletionProvider = new ck3CompletionProvider_1.CK3CompletionProvider();
     // Register unified hover provider for all entity types
     const ck3HoverProvider = new ck3HoverProvider_1.CK3HoverProvider();
-    
     const ALL_CK3_FILES = []
         .concat(EVENT_FILE_SELECTOR)
         .concat(DECISION_FILE_SELECTOR)
