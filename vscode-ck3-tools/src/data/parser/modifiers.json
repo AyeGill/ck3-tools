@@ -1,36 +1,54 @@
 [
   {
-    "name": "$SCHEME_TYPE$_scheme_resistance_add",
-    "useAreas": [
-      "character"
-    ]
-  },
-  {
-    "name": "monthly_$LIFESTYLE$_xp_gain_mult",
-    "useAreas": [
-      "character"
-    ]
-  },
-  {
-    "name": "$FAITH$_opinion",
-    "useAreas": [
-      "character"
-    ]
-  },
-  {
     "name": "dynasty_opinion",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "$SCHEME_TYPE$_scheme_power_add",
+    "name": "stationed_$MEN_AT_ARMS_TYPE$_damage_mult",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "$TRAIT_TRACK$_xp_degradation_mult",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "$TERRAIN_TYPE$_construction_prestige_cost",
+    "name": "subject_salary_expense_$SUBJECT_SALARY$_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$SCHEME_TYPE$_scheme_phase_duration_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "legitimacy_loss_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "subject_salary_income_influence_$SUBJECT_SALARY$_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "intimidated_vassal_piety_contribution_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$GEOGRAPHICAL_REGION$_development_growth_factor",
     "useAreas": [
       "character",
       "province",
@@ -38,11 +56,15 @@
     ]
   },
   {
-    "name": "$TERRAIN_TYPE$_development_growth_factor",
+    "name": "max_$SCHEME_TYPE$_schemes_add",
     "useAreas": [
-      "character",
-      "province",
-      "county"
+      "character"
+    ]
+  },
+  {
+    "name": "$RELIGIOUS$_opinion",
+    "useAreas": [
+      "character"
     ]
   },
   {
@@ -52,11 +74,23 @@
     ]
   },
   {
-    "name": "$TERRAIN_TYPE$_construction_gold_cost",
+    "name": "$TERRAIN_TYPE$_barter_goods_mult",
     "useAreas": [
       "character",
       "province",
       "county"
+    ]
+  },
+  {
+    "name": "$MEN_AT_ARMS_TYPE$_siege_value_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "vassal_herd_contribution_add",
+    "useAreas": [
+      "character"
     ]
   },
   {
@@ -72,21 +106,7 @@
     ]
   },
   {
-    "name": "$TERRAIN_TYPE$_travel_danger",
-    "useAreas": [
-      "character",
-      "province",
-      "county"
-    ]
-  },
-  {
-    "name": "$GOVERNMENT_TYPE$_vassal_opinion",
-    "useAreas": [
-      "character"
-    ]
-  },
-  {
-    "name": "$SCHEME_TYPE$_scheme_resistance_mult",
+    "name": "$FAITH$_opinion",
     "useAreas": [
       "character"
     ]
@@ -98,31 +118,89 @@
     ]
   },
   {
-    "name": "$MEN_AT_ARMS_TYPE$_toughness_mult",
+    "name": "$VASSAL_STANCE$_ai_rationality",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "scheme_power_against_$SCRIPTED_RELATION$_add",
+    "name": "$TERRAIN_TYPE$_supply_limit",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "$GOVERNMENT_TYPE$_tax_contribution_add",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "$VASSAL_STANCE$_same_culture_opinion",
+    "name": "subject_salary_income_gold_$SUBJECT_SALARY$_add",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "$RELIGIOUS$_opinion",
+    "name": "stationed_$MEN_AT_ARMS_TYPE$_screen_mult",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "subject_salary_expense_herd_$SUBJECT_SALARY$_mult",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "$VASSAL_STANCE$_levy_contribution_mult",
+    "name": "stationed_$MEN_AT_ARMS_TYPE$_siege_value_mult",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "$TRAIT_TRACK$_xp_loss_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_fertility_decline_add",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "stationed_$MEN_AT_ARMS_TYPE$_toughness_mult",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "monthly_merit_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$MEN_AT_ARMS_TYPE$_damage_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "subject_salary_expense_$SUBJECT_SALARY$_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$VASSAL_STANCE$_ai_boldness",
     "useAreas": [
       "character"
     ]
@@ -134,13 +212,39 @@
     ]
   },
   {
-    "name": "$TERRAIN_TYPE$_advantage",
+    "name": "subject_salary_income_barter_goods_$SUBJECT_SALARY$_add",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "$TRAIT_TRACK$_xp_gain_mult",
+    "name": "$MEN_AT_ARMS_TYPE$_pursuit_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_prestige_gain_per_legitimacy_level_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_fertility_growth_mult",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "stationed_$MEN_AT_ARMS_TYPE$_toughness_add",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "$GOVERNMENT_TYPE$_levy_contribution_add",
     "useAreas": [
       "character"
     ]
@@ -160,43 +264,103 @@
     ]
   },
   {
-    "name": "$MEN_AT_ARMS_TYPE$_screen_mult",
+    "name": "$GOVERNMENT_TYPE$_levy_contribution_mult",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "$MEN_AT_ARMS_TYPE$_max_size_add",
+    "name": "$TERRAIN_TYPE$_levy_size",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "$SCHEME_TYPE$_enemy_scheme_phase_duration_add",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "scheme_power_against_$SCRIPTED_RELATION$_mult",
+    "name": "$TERRAIN_TYPE$_fertility_growth_add",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_holding_construction_gold_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "$TRAIT_TRACK$_xp_gain_mult",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "stationed_$MEN_AT_ARMS_TYPE$_toughness_add",
+    "name": "$TERRAIN_TYPE$_development_growth",
     "useAreas": [
-      "province"
+      "character",
+      "province",
+      "county"
     ]
   },
   {
-    "name": "stationed_$MEN_AT_ARMS_TYPE$_pursuit_add",
+    "name": "$TERRAIN_TYPE$_development_growth_factor",
     "useAreas": [
-      "province"
+      "character",
+      "province",
+      "county"
     ]
   },
   {
-    "name": "$MEN_AT_ARMS_TYPE$_screen_add",
+    "name": "provisions_gain_mult",
+    "useAreas": [
+      "character and terrain"
+    ]
+  },
+  {
+    "name": "$GOVERNMENT_TYPE$_prestige_contribution_mult",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "$MEN_AT_ARMS_TYPE$_maintenance_mult",
+    "name": "subject_salary_expense_prestige_$SUBJECT_SALARY$_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_fertility_decline_mult",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "$MEN_AT_ARMS_TYPE$_recruitment_cost_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "owned_political_scheme_success_chance_growth_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$GOVERNMENT_TYPE$_opinion_same_faith",
     "useAreas": [
       "character"
     ]
@@ -208,17 +372,21 @@
     ]
   },
   {
-    "name": "personal_scheme_power_add",
+    "name": "personal_scheme_phase_duration_add",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "$TERRAIN_TYPE$_supply_limit_mult",
+    "name": "$RELIGIOUS_FAMILY$_opinion",
     "useAreas": [
-      "character",
-      "province",
-      "county"
+      "character"
+    ]
+  },
+  {
+    "name": "scheme_phase_duration_against_$SCRIPTED_RELATION$_add",
+    "useAreas": [
+      "character"
     ]
   },
   {
@@ -234,13 +402,43 @@
     ]
   },
   {
+    "name": "$VASSAL_STANCE$_levy_contribution_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "ignore_different_faith_opinion",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "$TERRAIN_TYPE$_tax_mult",
+    "name": "$VASSAL_STANCE$_different_culture_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "subject_salary_income_barter_goods_$SUBJECT_SALARY$_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_cancel_negative_supply",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$LIFESTYLE$_xp_gain_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_travel_danger",
     "useAreas": [
       "character",
       "province",
@@ -248,51 +446,75 @@
     ]
   },
   {
-    "name": "random_advantage",
+    "name": "subject_salary_income_piety_$SUBJECT_SALARY$_mult",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "$TRAIT_TRACK$_xp_loss_mult",
+    "name": "knight_effectiveness_per_martial",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "$MEN_AT_ARMS_TYPE$_recruitment_cost_mult",
+    "name": "$TERRAIN_TYPE$_construction_piety_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "owned_personal_scheme_success_chance_max_add",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "personal_scheme_resistance_mult",
+    "name": "$MEN_AT_ARMS_TYPE$_max_size_mult",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "$MEN_AT_ARMS_TYPE$_damage_mult",
-    "useAreas": [
-      "character"
-    ]
-  },
-  {
-    "name": "$TERRAIN_TYPE$_max_combat_roll",
-    "useAreas": [
-      "character"
-    ]
-  },
-  {
-    "name": "stationed_$MEN_AT_ARMS_TYPE$_damage_mult",
+    "name": "stationed_$MEN_AT_ARMS_TYPE$_damage_add",
     "useAreas": [
       "province"
     ]
   },
   {
-    "name": "$MEN_AT_ARMS_TYPE$_pursuit_mult",
+    "name": "$TERRAIN_TYPE$_advantage",
     "useAreas": [
       "character"
+    ]
+  },
+  {
+    "name": "owned_personal_scheme_success_chance_growth_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "cowed_vassal_prestige_contribution_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$SITUATION_TYPE$_supply_limit_mult",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_holding_construction_piety_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
     ]
   },
   {
@@ -302,7 +524,25 @@
     ]
   },
   {
-    "name": "$TERRAIN_TYPE$_attrition_mult",
+    "name": "$GOVERNMENT_TYPE$_vassal_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "treasury_ministry_budget_allocation",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stationed_$MEN_AT_ARMS_TYPE$_siege_value_add",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "$MEN_AT_ARMS_TYPE$_pursuit_mult",
     "useAreas": [
       "character"
     ]
@@ -320,17 +560,11 @@
     ]
   },
   {
-    "name": "$HOLDING_TYPE$_holding_build_gold_cost",
+    "name": "$HOLDING_TYPE$_holding_build_piety_cost",
     "useAreas": [
       "character",
       "province",
       "county"
-    ]
-  },
-  {
-    "name": "$GOVERNMENT_TYPE$_levy_contribution_add",
-    "useAreas": [
-      "character"
     ]
   },
   {
@@ -340,17 +574,45 @@
     ]
   },
   {
-    "name": "opinion_of_female_rulers",
+    "name": "$LIFESTYLE$_xp_gain_mult",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "$TERRAIN_TYPE$_holding_construction_gold_cost",
+    "name": "$VASSAL_STANCE$_prestige_contribution_add",
     "useAreas": [
-      "character",
-      "province",
-      "county"
+      "character"
+    ]
+  },
+  {
+    "name": "stationed_$MEN_AT_ARMS_TYPE$_pursuit_add",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "$GOVERNMENT_TYPE$_herd_contribution_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "enemy_personal_scheme_phase_duration_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$VASSAL_STANCE$_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "opinion_of_female_rulers",
+    "useAreas": [
+      "character"
     ]
   },
   {
@@ -366,13 +628,183 @@
     ]
   },
   {
-    "name": "stationed_$MEN_AT_ARMS_TYPE$_damage_add",
+    "name": "provisions_use_mult",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "$VASSAL_STANCE$_ai_compassion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "subject_salary_expense_influence_$SUBJECT_SALARY$_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$MEN_AT_ARMS_TYPE$_toughness_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "subject_salary_income_renown_$SUBJECT_SALARY$_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "subject_salary_expense_treasury_or_gold_$SUBJECT_SALARY$_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_min_combat_roll",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "culture_innovation_progress_chance_from_spread_add",
+    "useAreas": [
+      "culture"
+    ]
+  },
+  {
+    "name": "$GEOGRAPHICAL_REGION$_development_growth",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "subject_salary_expense_treasury_$SUBJECT_SALARY$_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stationed_$MEN_AT_ARMS_TYPE$_pursuit_mult",
     "useAreas": [
       "province"
     ]
   },
   {
-    "name": "$GOVERNMENT_TYPE$_opinion_same_faith",
+    "name": "$HOLDING_TYPE$_build_prestige_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "$MEN_AT_ARMS_TYPE$_siege_value_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$HOLDING_TYPE$_build_piety_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "$VASSAL_STANCE$_tax_contribution_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$MEN_AT_ARMS_TYPE$_maintenance_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$VASSAL_STANCE$_ai_energy",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "vassal_tax_contribution_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "subject_salary_income_merit_$SUBJECT_SALARY$_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$MEN_AT_ARMS_TYPE$_max_size_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$MEN_AT_ARMS_TYPE$_damage_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$MEN_AT_ARMS_TYPE$_toughness_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "enemy_contract_scheme_success_chance_max_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "subject_salary_income_$SUBJECT_SALARY$_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "herd_capacity_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "hard_casualty_modifier",
+    "useAreas": [
+      "character and terrain"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_max_combat_roll",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_county_control_growth_factor_even_if_baron",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "naval_movement_speed_mult",
     "useAreas": [
       "character"
     ]
@@ -386,79 +818,7 @@
     ]
   },
   {
-    "name": "$HOLDING_TYPE$_holding_build_speed",
-    "useAreas": [
-      "character",
-      "province",
-      "county"
-    ]
-  },
-  {
-    "name": "$GOVERNMENT_TYPE$_levy_contribution_mult",
-    "useAreas": [
-      "character"
-    ]
-  },
-  {
-    "name": "$TERRAIN_TYPE$_development_growth",
-    "useAreas": [
-      "character",
-      "province",
-      "county"
-    ]
-  },
-  {
-    "name": "$SCHEME_TYPE$_scheme_power_mult",
-    "useAreas": [
-      "character"
-    ]
-  },
-  {
-    "name": "$VASSAL_STANCE$_tax_contribution_mult",
-    "useAreas": [
-      "character"
-    ]
-  },
-  {
-    "name": "$HOLDING_TYPE$_holding_build_prestige_cost",
-    "useAreas": [
-      "character",
-      "province",
-      "county"
-    ]
-  },
-  {
-    "name": "max_$SCHEME_TYPE$_schemes_add",
-    "useAreas": [
-      "character"
-    ]
-  },
-  {
-    "name": "vassal_tax_contribution_mult",
-    "useAreas": [
-      "character"
-    ]
-  },
-  {
-    "name": "$LIFESTYLE$_xp_gain_mult",
-    "useAreas": [
-      "character"
-    ]
-  },
-  {
-    "name": "hard_casualty_modifier",
-    "useAreas": [
-      "character and terrain"
-    ]
-  },
-  {
-    "name": "monthly_county_control_change_factor_even_if_baron",
-    "useAreas": [
-      "character"
-    ]
-  },
-  {
-    "name": "naval_movement_speed_mult",
+    "name": "monthly_war_influence_income_mult",
     "useAreas": [
       "character"
     ]
@@ -476,25 +836,37 @@
     ]
   },
   {
-    "name": "$VASSAL_STANCE$_same_faith_opinion",
+    "name": "provisions_loss_mult",
+    "useAreas": [
+      "character and terrain"
+    ]
+  },
+  {
+    "name": "subject_salary_income_$SUBJECT_SALARY$_mult",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "$MEN_AT_ARMS_TYPE$_siege_value_mult",
+    "name": "character_max_merit_level_add",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "stationed_$MEN_AT_ARMS_TYPE$_toughness_mult",
+    "name": "$TERRAIN_TYPE$_attrition_mult",
     "useAreas": [
-      "province"
+      "character"
     ]
   },
   {
-    "name": "hostile_scheme_resistance_add",
+    "name": "$VASSAL_STANCE$_different_faith_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$GOVERNMENT_TYPE$_tax_contribution_mult",
     "useAreas": [
       "character"
     ]
@@ -506,19 +878,13 @@
     ]
   },
   {
-    "name": "stationed_$MEN_AT_ARMS_TYPE$_pursuit_mult",
-    "useAreas": [
-      "province"
-    ]
-  },
-  {
     "name": "dynasty_house_opinion",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "$MEN_AT_ARMS_TYPE$_pursuit_add",
+    "name": "subject_salary_expense_gold_$SUBJECT_SALARY$_add",
     "useAreas": [
       "character"
     ]
@@ -536,9 +902,29 @@
     ]
   },
   {
+    "name": "$TERRAIN_TYPE$_supply_limit_mult",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "subject_salary_income_merit_$SUBJECT_SALARY$_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "stationed_maa_damage_add",
     "useAreas": [
       "province"
+    ]
+  },
+  {
+    "name": "subject_salary_expense_barter_goods_$SUBJECT_SALARY$_add",
+    "useAreas": [
+      "character"
     ]
   },
   {
@@ -554,13 +940,19 @@
     ]
   },
   {
+    "name": "prowess_per_influence_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "domain_tax_different_faith_mult",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "$TERRAIN_TYPE$_min_combat_roll",
+    "name": "monthly_$LIFESTYLE$_xp_gain_mult",
     "useAreas": [
       "character"
     ]
@@ -584,13 +976,31 @@
     ]
   },
   {
-    "name": "opinion_of_same_faith",
+    "name": "subject_salary_income_piety_$SUBJECT_SALARY$_add",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "$TERRAIN_TYPE$_levy_size",
+    "name": "$GOVERNMENT_TYPE$_tributary_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$GOVERNMENT_TYPE$_prestige_contribution_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "domain_limit_min",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "development_decline_factor",
     "useAreas": [
       "character",
       "province",
@@ -598,7 +1008,41 @@
     ]
   },
   {
-    "name": "$TERRAIN_TYPE$_supply_limit",
+    "name": "$TERRAIN_TYPE$_tax_mult",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "opinion_of_same_faith",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "knight_effectiveness_per_intrigue",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "vassal_herder_contribution_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$HOLDING_TYPE$_build_gold_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "$HOLDING_TYPE$_build_speed",
     "useAreas": [
       "character",
       "province",
@@ -624,9 +1068,43 @@
     ]
   },
   {
-    "name": "$MEN_AT_ARMS_TYPE$_toughness_add",
+    "name": "monthly_barter_goods",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "$VASSAL_STANCE$_prestige_contribution_mult",
     "useAreas": [
       "character"
+    ]
+  },
+  {
+    "name": "happy_powerful_vassal_prestige_contribution_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "subject_salary_income_renown_$SUBJECT_SALARY$_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "subject_salary_expense_influence_$SUBJECT_SALARY$_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_construction_prestige_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
     ]
   },
   {
@@ -636,9 +1114,9 @@
     ]
   },
   {
-    "name": "stationed_$MEN_AT_ARMS_TYPE$_siege_value_add",
+    "name": "cowed_vassal_barter_goods_contribution_mult",
     "useAreas": [
-      "province"
+      "character"
     ]
   },
   {
@@ -660,6 +1138,14 @@
     ]
   },
   {
+    "name": "$HOLDING_TYPE$_holding_build_speed",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
     "name": "accolade_glory_gain_mult",
     "useAreas": [
       "character"
@@ -672,33 +1158,13 @@
     ]
   },
   {
-    "name": "$VASSAL_STANCE$_different_faith_opinion",
+    "name": "$MEN_AT_ARMS_TYPE$_screen_add",
     "useAreas": [
       "character"
-    ]
-  },
-  {
-    "name": "$HOLDING_TYPE$_holding_build_piety_cost",
-    "useAreas": [
-      "character",
-      "province",
-      "county"
     ]
   },
   {
     "name": "character_travel_speed",
-    "useAreas": [
-      "character"
-    ]
-  },
-  {
-    "name": "$GOVERNMENT_TYPE$_opinion",
-    "useAreas": [
-      "character"
-    ]
-  },
-  {
-    "name": "$GOVERNMENT_TYPE$_tax_contribution_mult",
     "useAreas": [
       "character"
     ]
@@ -712,15 +1178,25 @@
     ]
   },
   {
-    "name": "$TERRAIN_TYPE$_holding_construction_piety_cost",
+    "name": "max_combat_roll",
     "useAreas": [
-      "character",
-      "province",
-      "county"
+      "character"
     ]
   },
   {
-    "name": "max_combat_roll",
+    "name": "$VASSAL_STANCE$_ai_honor",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "character_capital_monthly_county_fertility_decline_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "owned_contract_scheme_success_chance_add",
     "useAreas": [
       "character"
     ]
@@ -732,19 +1208,49 @@
     ]
   },
   {
-    "name": "$VASSAL_STANCE$_opinion",
+    "name": "monthly_war_piety_income_add",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "$MEN_AT_ARMS_TYPE$_siege_value_add",
+    "name": "subject_salary_income_treasury_$SUBJECT_SALARY$_add",
     "useAreas": [
       "character"
+    ]
+  },
+  {
+    "name": "$VASSAL_STANCE$_ai_greed",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "cowed_vassal_herd_contribution_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stationed_$MEN_AT_ARMS_TYPE$_screen_add",
+    "useAreas": [
+      "province"
     ]
   },
   {
     "name": "monthly_piety_gain_per_happy_powerful_vassal_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_prestige_gain_per_legitimacy_level_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "subject_salary_expense_barter_goods_$SUBJECT_SALARY$_mult",
     "useAreas": [
       "character"
     ]
@@ -784,9 +1290,9 @@
     ]
   },
   {
-    "name": "stationed_$MEN_AT_ARMS_TYPE$_siege_value_mult",
+    "name": "subject_salary_income_prestige_$SUBJECT_SALARY$_mult",
     "useAreas": [
-      "province"
+      "character"
     ]
   },
   {
@@ -808,13 +1314,39 @@
     ]
   },
   {
+    "name": "blood_brother_prestige_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_lifestyle_xp_gain_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "winter_advantage",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "hostile_scheme_resistance_mult",
+    "name": "$SITUATION_TYPE$_supply_limit_add",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "subject_salary_expense_renown_$SUBJECT_SALARY$_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "cowed_vassal_prestige_contribution_mult",
     "useAreas": [
       "character"
     ]
@@ -826,7 +1358,7 @@
     ]
   },
   {
-    "name": "$GOVERNMENT_TYPE$_tax_contribution_add",
+    "name": "owned_hostile_scheme_success_chance_max_add",
     "useAreas": [
       "character"
     ]
@@ -838,7 +1370,7 @@
     ]
   },
   {
-    "name": "$HOLDING_TYPE$_build_speed",
+    "name": "$HOLDING_TYPE$_holding_build_gold_cost",
     "useAreas": [
       "character",
       "province",
@@ -846,7 +1378,27 @@
     ]
   },
   {
-    "name": "$MEN_AT_ARMS_TYPE$_damage_add",
+    "name": "$HOLDING_TYPE$_holding_build_prestige_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "scheme_success_chance_max",
+    "useAreas": [
+      "scheme"
+    ]
+  },
+  {
+    "name": "$VASSAL_STANCE$_ai_vengefulness",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "vassal_barter_goods_contribution_add",
     "useAreas": [
       "character"
     ]
@@ -858,13 +1410,45 @@
     ]
   },
   {
+    "name": "subject_salary_expense_renown_$SUBJECT_SALARY$_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "subject_salary_expense_treasury_or_gold_$SUBJECT_SALARY$_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "direct_vassal_opinion",
     "useAreas": [
       "character"
     ]
   },
   {
+    "name": "monthly_county_control_decline_at_war_factor",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
     "name": "levy_siege",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "legitimacy_gain_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$MEN_AT_ARMS_TYPE$_screen_mult",
     "useAreas": [
       "character"
     ]
@@ -876,7 +1460,13 @@
     ]
   },
   {
-    "name": "$MEN_AT_ARMS_TYPE$_max_size_mult",
+    "name": "subject_salary_income_herd_$SUBJECT_SALARY$_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$VASSAL_STANCE$_ai_zeal",
     "useAreas": [
       "character"
     ]
@@ -885,6 +1475,14 @@
     "name": "monthly_lifestyle_xp_gain_mult",
     "useAreas": [
       "character"
+    ]
+  },
+  {
+    "name": "county_fertility_decline_mult",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
     ]
   },
   {
@@ -900,7 +1498,31 @@
     ]
   },
   {
-    "name": "$VASSAL_STANCE$_different_culture_opinion",
+    "name": "great_project_build_speed",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "subject_salary_expense_merit_$SUBJECT_SALARY$_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "enemy_contract_scheme_phase_duration_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "character_max_piety_level_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "subject_salary_income_treasury_or_gold_$SUBJECT_SALARY$_mult",
     "useAreas": [
       "character"
     ]
@@ -912,7 +1534,7 @@
     ]
   },
   {
-    "name": "$TERRAIN_TYPE$_cancel_negative_supply",
+    "name": "$VASSAL_STANCE$_same_culture_opinion",
     "useAreas": [
       "character"
     ]
@@ -924,13 +1546,33 @@
     ]
   },
   {
+    "name": "capital_fort_level",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
     "name": "prowess_per_piety_level",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "hostile_scheme_power_add",
+    "name": "hostile_scheme_phase_duration_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$VASSAL_STANCE$_same_faith_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "subject_salary_income_gold_$SUBJECT_SALARY$_mult",
     "useAreas": [
       "character"
     ]
@@ -954,17 +1596,33 @@
     ]
   },
   {
+    "name": "fellow_tributary_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "subject_salary_income_prestige_$SUBJECT_SALARY$_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "hostage_income_mult",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "$TERRAIN_TYPE$_construction_piety_cost",
+    "name": "blood_brother_piety_mult",
     "useAreas": [
-      "character",
-      "province",
-      "county"
+      "character"
+    ]
+  },
+  {
+    "name": "political_scheme_phase_duration_add",
+    "useAreas": [
+      "character"
     ]
   },
   {
@@ -974,17 +1632,15 @@
     ]
   },
   {
-    "name": "monthly_prestige_gain_per_knight_add",
+    "name": "subject_salary_expense_piety_$SUBJECT_SALARY$_mult",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "$HOLDING_TYPE$_build_piety_cost",
+    "name": "monthly_prestige_gain_per_knight_add",
     "useAreas": [
-      "character",
-      "province",
-      "county"
+      "character"
     ]
   },
   {
@@ -1006,7 +1662,7 @@
     ]
   },
   {
-    "name": "$TRAIT_TRACK$_xp_degradation_mult",
+    "name": "domicile_build_speed",
     "useAreas": [
       "character"
     ]
@@ -1018,7 +1674,19 @@
     ]
   },
   {
+    "name": "happy_powerful_vassal_prestige_contribution_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "monthly_piety_from_buildings_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "subject_salary_income_influence_$SUBJECT_SALARY$_mult",
     "useAreas": [
       "character"
     ]
@@ -1030,13 +1698,13 @@
     ]
   },
   {
-    "name": "stationed_$MEN_AT_ARMS_TYPE$_screen_add",
+    "name": "learning_scheme_phase_duration",
     "useAreas": [
-      "province"
+      "character"
     ]
   },
   {
-    "name": "learning_scheme_power",
+    "name": "subject_salary_income_treasury_$SUBJECT_SALARY$_mult",
     "useAreas": [
       "character"
     ]
@@ -1060,7 +1728,19 @@
     ]
   },
   {
+    "name": "monthly_county_control_decline_factor_even_if_baron",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "stress_loss_per_piety_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$VASSAL_STANCE$_tax_contribution_mult",
     "useAreas": [
       "character"
     ]
@@ -1072,7 +1752,7 @@
     ]
   },
   {
-    "name": "$HOLDING_TYPE$_build_gold_cost",
+    "name": "$TERRAIN_TYPE$_construction_gold_cost",
     "useAreas": [
       "character",
       "province",
@@ -1086,7 +1766,31 @@
     ]
   },
   {
-    "name": "scheme_power",
+    "name": "tax_per_piety_level",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "subject_salary_expense_merit_$SUBJECT_SALARY$_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$VASSAL_STANCE$_ai_sociability",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "character_max_prestige_level_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "scheme_phase_duration",
     "useAreas": [
       "scheme"
     ]
@@ -1104,13 +1808,31 @@
     ]
   },
   {
-    "name": "$VASSAL_STANCE$_tax_contribution_add",
+    "name": "monthly_war_piety_income_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "happy_powerful_vassal_herd_contribution_add",
     "useAreas": [
       "character"
     ]
   },
   {
     "name": "men_at_arms_maintenance",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$GOVERNMENT_TYPE$_herd_contribution_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "herd_capacity_mult",
     "useAreas": [
       "character"
     ]
@@ -1140,6 +1862,42 @@
     ]
   },
   {
+    "name": "prowess_per_merit_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_treasury_from_liege_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_$LIFESTYLE$_xp_gain_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "enemy_political_scheme_phase_duration_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_piety_gain_per_court_position_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "different_faith_suzerain_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "defender_holding_advantage",
     "useAreas": [
       "character",
@@ -1148,7 +1906,31 @@
     ]
   },
   {
+    "name": "domicile_monthly_prestige_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "subject_salary_expense_piety_$SUBJECT_SALARY$_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "enemy_political_scheme_success_chance_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "dread_per_tyranny_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stewardship_per_influence_level",
     "useAreas": [
       "character"
     ]
@@ -1160,7 +1942,31 @@
     ]
   },
   {
+    "name": "intimidated_vassal_prestige_contribution_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "monthly_prestige_from_buildings_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "enemy_hostile_scheme_phase_duration_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$GOVERNMENT_TYPE$_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "enemy_personal_scheme_success_chance_max_add",
     "useAreas": [
       "character"
     ]
@@ -1184,9 +1990,15 @@
     ]
   },
   {
-    "name": "stationed_$MEN_AT_ARMS_TYPE$_screen_mult",
+    "name": "elderly_health",
     "useAreas": [
-      "province"
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_county_control_decline_add_even_if_baron",
+    "useAreas": [
+      "character"
     ]
   },
   {
@@ -1197,6 +2009,18 @@
   },
   {
     "name": "independent_ruler_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "max_contract_schemes_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "intimidated_vassal_piety_contribution_add",
     "useAreas": [
       "character"
     ]
@@ -1215,6 +2039,52 @@
   },
   {
     "name": "opinion_of_parents",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "stationed_maa_toughness_mult_per_piety_level",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "character_max_influence_level_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "subject_salary_expense_treasury_$SUBJECT_SALARY$_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$TERRAIN_TYPE$_provisions_use_mult",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "vassal_herd_contribution_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "county_fertility_growth_mult",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "subject_salary_expense_herd_$SUBJECT_SALARY$_add",
     "useAreas": [
       "character"
     ]
@@ -1244,7 +2114,21 @@
     ]
   },
   {
-    "name": "monthly_county_control_change_at_war_mult",
+    "name": "monthly_merit",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_county_control_growth_at_war_factor",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "capital_additional_fort_level",
     "useAreas": [
       "character",
       "province",
@@ -1270,25 +2154,31 @@
     ]
   },
   {
+    "name": "opinion_of_suzerain",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "subject_salary_expense_prestige_$SUBJECT_SALARY$_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "mercenary_count_mult",
     "useAreas": [
       "culture"
     ]
   },
   {
-    "name": "$VASSAL_STANCE$_levy_contribution_add",
+    "name": "intrigue_per_influence_level",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "hostile_scheme_power_mult",
-    "useAreas": [
-      "character"
-    ]
-  },
-  {
-    "name": "$RELIGIOUS_FAMILY$_opinion",
+    "name": "child_health",
     "useAreas": [
       "character"
     ]
@@ -1300,17 +2190,33 @@
     ]
   },
   {
+    "name": "knight_effectiveness_per_learning",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_prestige_gain_per_court_position_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "prisoner_opinion",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "$HOLDING_TYPE$_build_prestige_cost",
+    "name": "monthly_treasury_from_military_budget_mult",
     "useAreas": [
-      "character",
-      "province",
-      "county"
+      "character"
+    ]
+  },
+  {
+    "name": "vassal_barter_goods_contribution_mult",
+    "useAreas": [
+      "character"
     ]
   },
   {
@@ -1322,7 +2228,33 @@
     ]
   },
   {
+    "name": "monthly_merit_per_title_maa_value",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "title_creation_piety_cost_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "ai_war_cooldown",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_war_barter_goods_income_add",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "monthly_treasury_from_vassals",
     "useAreas": [
       "character"
     ]
@@ -1336,11 +2268,9 @@
     ]
   },
   {
-    "name": "$GEOGRAPHICAL_REGION$_development_growth",
+    "name": "subject_salary_income_treasury_or_gold_$SUBJECT_SALARY$_add",
     "useAreas": [
-      "character",
-      "province",
-      "county"
+      "character"
     ]
   },
   {
@@ -1362,13 +2292,25 @@
     ]
   },
   {
-    "name": "monthly_county_control_change_add_even_if_baron",
+    "name": "cowed_vassal_piety_contribution_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_county_control_growth_add_even_if_baron",
     "useAreas": [
       "character"
     ]
   },
   {
     "name": "monthly_dread",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "herd_conversion",
     "useAreas": [
       "character"
     ]
@@ -1381,6 +2323,12 @@
   },
   {
     "name": "dread_gain_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "subject_salary_expense_gold_$SUBJECT_SALARY$_mult",
     "useAreas": [
       "character"
     ]
@@ -1404,13 +2352,13 @@
     ]
   },
   {
-    "name": "martial_per_piety_level",
+    "name": "maa_damage_add",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "maa_damage_add",
+    "name": "martial_per_piety_level",
     "useAreas": [
       "character"
     ]
@@ -1419,6 +2367,24 @@
     "name": "scheme_success_chance",
     "useAreas": [
       "scheme"
+    ]
+  },
+  {
+    "name": "learning_per_influence_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_prestige_gain_per_court_position_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "domicile_monthly_herd_add",
+    "useAreas": [
+      "character"
     ]
   },
   {
@@ -1446,7 +2412,25 @@
     ]
   },
   {
+    "name": "enemy_political_scheme_success_chance_growth_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "owned_legend_spread_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "active_accolades",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "knight_effectiveness_per_diplomacy",
     "useAreas": [
       "character"
     ]
@@ -1470,7 +2454,25 @@
     ]
   },
   {
+    "name": "domain_limit_max",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "enemy_hostile_scheme_success_chance_max_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "monthly_piety",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "intimidated_vassal_prestige_contribution_mult",
     "useAreas": [
       "character"
     ]
@@ -1478,7 +2480,7 @@
   {
     "name": "siege_phase_time",
     "useAreas": [
-      "character"
+      "character and province"
     ]
   },
   {
@@ -1494,13 +2496,25 @@
     ]
   },
   {
+    "name": "intimidated_vassal_barter_goods_contribution_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "martial_scheme_resistance",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "prowess_scheme_power",
+    "name": "prowess_scheme_phase_duration",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "tributary_piety_contribution_mult",
     "useAreas": [
       "character"
     ]
@@ -1530,17 +2544,35 @@
     ]
   },
   {
+    "name": "subject_salary_income_herd_$SUBJECT_SALARY$_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "health",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "$GEOGRAPHICAL_REGION$_development_growth_factor",
+    "name": "monthly_county_control_decline_factor",
     "useAreas": [
       "character",
       "province",
       "county"
+    ]
+  },
+  {
+    "name": "contract_scheme_phase_duration_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "cowed_vassal_piety_contribution_mult",
+    "useAreas": [
+      "character"
     ]
   },
   {
@@ -1556,7 +2588,37 @@
     ]
   },
   {
+    "name": "intimidated_vassal_herd_contribution_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "opinion_of_different_faith_suzerain",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "stewardship_per_piety_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_piety_gain_per_legitimacy_level_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "horde_conversion_cost",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_influence_mult",
     "useAreas": [
       "character"
     ]
@@ -1580,6 +2642,12 @@
     ]
   },
   {
+    "name": "mercenary_hire_time_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "pursue_efficiency",
     "useAreas": [
       "character and terrain"
@@ -1587,6 +2655,12 @@
   },
   {
     "name": "life_expectancy",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "domicile_travel_speed",
     "useAreas": [
       "character"
     ]
@@ -1604,6 +2678,12 @@
     ]
   },
   {
+    "name": "domicile_monthly_gold_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "monthly_piety_gain_mult",
     "useAreas": [
       "character"
@@ -1616,13 +2696,39 @@
     ]
   },
   {
+    "name": "men_at_arms_title_cap",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "dread_decay_add",
     "useAreas": [
       "character"
     ]
   },
   {
+    "name": "development_decline",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
     "name": "eligible_child_except_player_heir_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_treasury_from_military_budget_base",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "happy_powerful_vassal_barter_goods_contribution_mult",
     "useAreas": [
       "character"
     ]
@@ -1635,6 +2741,12 @@
   },
   {
     "name": "religious_head_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_merit_per_liege_tax",
     "useAreas": [
       "character"
     ]
@@ -1654,6 +2766,12 @@
     ]
   },
   {
+    "name": "monthly_legitimacy_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "travel_safety",
     "useAreas": [
       "travel_plan"
@@ -1670,7 +2788,9 @@
   {
     "name": "county_opinion_add",
     "useAreas": [
-      "character and county"
+      "character",
+      "province",
+      "county"
     ]
   },
   {
@@ -1718,13 +2838,37 @@
     ]
   },
   {
+    "name": "stewardship_per_merit_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "vassal_piety_contribution_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "county_opinion_add_even_if_baron",
     "useAreas": [
       "character"
     ]
   },
   {
+    "name": "character_opinion_from_low_prowess_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "men_at_arms_recruitment_cost",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "cowed_vassal_herd_contribution_add",
     "useAreas": [
       "character"
     ]
@@ -1750,6 +2894,12 @@
     ]
   },
   {
+    "name": "suzerain_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "maa_pursuit_mult",
     "useAreas": [
       "character"
@@ -1762,9 +2912,27 @@
     ]
   },
   {
+    "name": "domicile_monthly_piety_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "culture_tradition_max_add",
     "useAreas": [
       "culture"
+    ]
+  },
+  {
+    "name": "domicile_external_slots_capacity_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "enemy_political_scheme_success_chance_max_add",
+    "useAreas": [
+      "character"
     ]
   },
   {
@@ -1788,13 +2956,37 @@
     ]
   },
   {
+    "name": "owned_hostile_scheme_success_chance_growth_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_treasury_from_ministry_budget_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "led_by_owner_extra_advantage_add",
     "useAreas": [
       "character"
     ]
   },
   {
+    "name": "knight_effectiveness_per_prowess",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "controlled_province_advantage",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "title_creation_piety_cost",
     "useAreas": [
       "character"
     ]
@@ -1832,6 +3024,24 @@
     ]
   },
   {
+    "name": "stationed_maa_damage_mult_per_piety_level",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "monthly_treasury_from_non_vassals_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "happy_powerful_vassal_piety_contribution_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "levy_reinforcement_rate_even_if_baron",
     "useAreas": [
       "character"
@@ -1839,6 +3049,36 @@
   },
   {
     "name": "knight_limit",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "happy_powerful_vassal_herd_contribution_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "can_vassals_be_attacked",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_war_prestige_income_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "owned_contract_scheme_success_chance_max_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "learning_per_merit_level",
     "useAreas": [
       "character"
     ]
@@ -1856,7 +3096,19 @@
     ]
   },
   {
+    "name": "monthly_piety_gain_per_legitimacy_level_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "diplomacy_per_prestige_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_income_from_herd_mult",
     "useAreas": [
       "character"
     ]
@@ -1868,19 +3120,51 @@
     ]
   },
   {
-    "name": "counter_efficiency",
-    "useAreas": [
-      "character and terrain"
-    ]
-  },
-  {
     "name": "hostile_county_attrition_raiding",
     "useAreas": [
       "character"
     ]
   },
   {
+    "name": "counter_efficiency",
+    "useAreas": [
+      "character and terrain"
+    ]
+  },
+  {
+    "name": "martial_per_influence_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "provisions_capacity_mult",
+    "useAreas": [
+      "character and terrain"
+    ]
+  },
+  {
+    "name": "owned_legend_spread_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "dread_baseline_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_barter_goods_mult",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "enemy_scheme_secrecy_add",
     "useAreas": [
       "character"
     ]
@@ -1919,6 +3203,12 @@
   },
   {
     "name": "different_culture_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "happy_powerful_vassal_piety_contribution_mult",
     "useAreas": [
       "character"
     ]
@@ -2010,6 +3300,12 @@
     ]
   },
   {
+    "name": "monthly_treasury_from_liege_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "levy_reinforcement_rate_friendly_territory",
     "useAreas": [
       "character",
@@ -2032,6 +3328,18 @@
     ]
   },
   {
+    "name": "enemy_personal_scheme_success_chance_growth_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "treasury_military_budget_allocation",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "ignore_negative_culture_opinion",
     "useAreas": [
       "character"
@@ -2039,6 +3347,12 @@
   },
   {
     "name": "cultural_head_fascination_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_treasury_from_ministry_budget_base",
     "useAreas": [
       "character"
     ]
@@ -2053,6 +3367,12 @@
     "name": "defender_winter_advantage",
     "useAreas": [
       "province"
+    ]
+  },
+  {
+    "name": "monthly_treasury_from_non_vassals",
+    "useAreas": [
+      "character"
     ]
   },
   {
@@ -2088,7 +3408,19 @@
     ]
   },
   {
+    "name": "enemy_contract_scheme_success_chance_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "embarkation_cost_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_war_prestige_income_mult",
     "useAreas": [
       "character"
     ]
@@ -2100,13 +3432,31 @@
     ]
   },
   {
+    "name": "character_capital_county_monthly_control_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "stewardship",
     "useAreas": [
       "character"
     ]
   },
   {
+    "name": "character_opinion_from_high_prowess_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "intrigue_per_prestige_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "$VASSAL_STANCE$_levy_contribution_add",
     "useAreas": [
       "character"
     ]
@@ -2119,6 +3469,18 @@
   },
   {
     "name": "movement_speed",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "domicile_monthly_gold_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "influence_level_impact_mult",
     "useAreas": [
       "character"
     ]
@@ -2172,6 +3534,12 @@
     ]
   },
   {
+    "name": "tax_slot_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "travel_companion_opinion",
     "useAreas": [
       "character"
@@ -2191,6 +3559,24 @@
   },
   {
     "name": "happy_powerful_vassal_levy_contribution_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "intimidated_vassal_herd_contribution_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_war_merit_income_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "diplomacy_per_merit_level",
     "useAreas": [
       "character"
     ]
@@ -2222,7 +3608,49 @@
     ]
   },
   {
+    "name": "domicile_monthly_prestige_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "max_migration_distance_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_influence",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "maa_toughness_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "domicile_monthly_influence_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "domicile_build_gold_cost",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "vassal_herder_contribution_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "enemy_hostile_scheme_success_chance_growth_add",
     "useAreas": [
       "character"
     ]
@@ -2252,6 +3680,18 @@
     ]
   },
   {
+    "name": "men_at_arms_title_limit",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_treasury_from_salary_budget_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "travel_speed",
     "useAreas": [
       "travel_plan"
@@ -2270,7 +3710,47 @@
     ]
   },
   {
+    "name": "county_fertility_growth_add",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
     "name": "same_culture_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "character_innovation_progress_chance_from_fascination_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_county_control_decline_add",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "owned_contract_scheme_success_chance_growth_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "martial_per_merit_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "herd_gain_mult",
     "useAreas": [
       "character"
     ]
@@ -2288,7 +3768,25 @@
     ]
   },
   {
+    "name": "vassal_piety_contribution_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "opinion_of_tributary",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "hostage_piety_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "house_relation_change_mult",
     "useAreas": [
       "character"
     ]
@@ -2300,7 +3798,13 @@
     ]
   },
   {
-    "name": "personal_scheme_power_mult",
+    "name": "owned_political_scheme_success_chance_max_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "adult_health",
     "useAreas": [
       "character"
     ]
@@ -2324,6 +3828,12 @@
     ]
   },
   {
+    "name": "vassal_limit_max",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "clergy_opinion",
     "useAreas": [
       "character"
@@ -2336,19 +3846,27 @@
     ]
   },
   {
+    "name": "monthly_war_barter_goods_income_mult",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
     "name": "holy_order_hire_cost_mult",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "diplomacy_scheme_power",
+    "name": "diplomacy_scheme_phase_duration",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "stewardship_scheme_power",
+    "name": "stewardship_scheme_phase_duration",
     "useAreas": [
       "character"
     ]
@@ -2366,7 +3884,21 @@
     ]
   },
   {
+    "name": "epidemic_travel_danger",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
     "name": "negative_inactive_inheritance_chance",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "happy_powerful_vassal_barter_goods_contribution_add",
     "useAreas": [
       "character"
     ]
@@ -2390,7 +3922,19 @@
     ]
   },
   {
+    "name": "monthly_treasury_from_vassals_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "domain_tax_mult_even_if_baron",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_war_merit_income_mult",
     "useAreas": [
       "character"
     ]
@@ -2414,7 +3958,13 @@
     ]
   },
   {
-    "name": "monthly_county_control_change_at_war_add",
+    "name": "intrigue_per_merit_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_county_control_growth_at_war_add",
     "useAreas": [
       "character",
       "province",
@@ -2454,7 +4004,13 @@
     ]
   },
   {
-    "name": "monthly_county_control_change_factor",
+    "name": "domicile_monthly_herd_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_county_control_growth_factor",
     "useAreas": [
       "character",
       "province",
@@ -2463,6 +4019,24 @@
   },
   {
     "name": "years_of_fertility",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "diplomacy_per_influence_level",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "domicile_monthly_influence_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "vassal_limit_min",
     "useAreas": [
       "character"
     ]
@@ -2498,7 +4072,19 @@
     ]
   },
   {
+    "name": "vassal_prestige_contribution_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "no_disembark_penalty",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_treasury_from_salary_budget_base",
     "useAreas": [
       "character"
     ]
@@ -2522,13 +4108,33 @@
     ]
   },
   {
+    "name": "independent_primary_attacker_advantage_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "positive_random_genetic_chance",
     "useAreas": [
       "character"
     ]
   },
   {
+    "name": "monthly_county_control_decline_at_war_add",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
     "name": "domain_tax_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "intimidated_vassal_barter_goods_contribution_mult",
     "useAreas": [
       "character"
     ]
@@ -2572,6 +4178,12 @@
     ]
   },
   {
+    "name": "character_capital_monthly_county_fertility_growth_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "no_water_crossing_penalty",
     "useAreas": [
       "character"
@@ -2592,13 +4204,25 @@
     ]
   },
   {
-    "name": "personal_scheme_resistance_add",
+    "name": "tributary_tax_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "tributary_opinion",
     "useAreas": [
       "character"
     ]
   },
   {
     "name": "enemy_personal_scheme_success_chance_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "blood_brother_renown_mult",
     "useAreas": [
       "character"
     ]
@@ -2616,6 +4240,12 @@
     ]
   },
   {
+    "name": "knight_effectiveness_per_stewardship",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "monthly_court_grandeur_change_mult",
     "useAreas": [
       "character"
@@ -2628,6 +4258,18 @@
     ]
   },
   {
+    "name": "scheme_success_chance_growth",
+    "useAreas": [
+      "scheme"
+    ]
+  },
+  {
+    "name": "provisions_capacity_add",
+    "useAreas": [
+      "character and terrain"
+    ]
+  },
+  {
     "name": "holy_order_hire_cost_add",
     "useAreas": [
       "character"
@@ -2635,6 +4277,12 @@
   },
   {
     "name": "mercenary_hire_cost_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "treasury_salary_budget_allocation",
     "useAreas": [
       "character"
     ]
@@ -2652,19 +4300,25 @@
     ]
   },
   {
+    "name": "$TAX_SLOT_TYPE$_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "siege_morale_loss",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "martial_scheme_power",
+    "name": "martial_scheme_phase_duration",
     "useAreas": [
       "character"
     ]
   },
   {
-    "name": "intrigue_scheme_power",
+    "name": "intrigue_scheme_phase_duration",
     "useAreas": [
       "character"
     ]
@@ -2676,6 +4330,14 @@
     ]
   },
   {
+    "name": "epidemic_resistance",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
     "name": "fertility",
     "useAreas": [
       "character"
@@ -2683,6 +4345,12 @@
   },
   {
     "name": "negate_stewardship_penalty_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "cowed_vassal_barter_goods_contribution_add",
     "useAreas": [
       "character"
     ]
@@ -2712,6 +4380,14 @@
     ]
   },
   {
+    "name": "county_fertility_decline_add",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
     "name": "army_maintenance_mult",
     "useAreas": [
       "character"
@@ -2719,6 +4395,32 @@
   },
   {
     "name": "vassal_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "enemy_contract_scheme_success_chance_growth_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_income_per_piety_level",
+    "useAreas": [
+      "province"
+    ]
+  },
+  {
+    "name": "build_herd_cost",
+    "useAreas": [
+      "character",
+      "province",
+      "county"
+    ]
+  },
+  {
+    "name": "monthly_war_influence_income_add",
     "useAreas": [
       "character"
     ]
@@ -2764,7 +4466,7 @@
     ]
   },
   {
-    "name": "character_capital_county_monthly_development_growth_add",
+    "name": "merit_level_impact_mult",
     "useAreas": [
       "character"
     ]
@@ -2776,7 +4478,19 @@
     ]
   },
   {
+    "name": "character_capital_county_monthly_development_growth_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
     "name": "men_at_arms_maintenance_per_dread_mult",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_piety_gain_per_court_position_mult",
     "useAreas": [
       "character"
     ]
@@ -2788,11 +4502,35 @@
     ]
   },
   {
-    "name": "monthly_county_control_change_add",
+    "name": "domicile_monthly_piety_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "monthly_county_control_growth_add",
     "useAreas": [
       "character",
       "province",
       "county"
+    ]
+  },
+  {
+    "name": "fellow_confederation_member_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "owned_political_scheme_success_chance_add",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "max_political_schemes_add",
+    "useAreas": [
+      "character"
     ]
   },
   {
@@ -2809,6 +4547,12 @@
   },
   {
     "name": "liege_opinion",
+    "useAreas": [
+      "character"
+    ]
+  },
+  {
+    "name": "vassal_prestige_contribution_mult",
     "useAreas": [
       "character"
     ]

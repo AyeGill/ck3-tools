@@ -21,6 +21,7 @@ export type ScopeType =
   | 'culture_group'
   | 'culture_pillar'    // Heritage, language, etc.
   | 'culture_tradition' // Cultural traditions
+  | 'culture_innovation' // Cultural innovations
   | 'army'
   | 'regiment'          // Part of an army
   | 'holy_order'
@@ -32,6 +33,7 @@ export type ScopeType =
   | 'story'             // Story cycles
   | 'war'
   | 'casus_belli'
+  | 'casus_belli_type'  // CB type definition
   | 'activity'
   | 'activity_type'     // Activity type definition
   | 'travel_plan'
@@ -41,9 +43,11 @@ export type ScopeType =
   | 'struggle'
   | 'legend'
   | 'legend_seed'
+  | 'legend_type'       // Legend type definition
   | 'accolade'
   | 'accolade_type'
   | 'epidemic'
+  | 'epidemic_type'     // Epidemic type definition
   | 'geographical_region'
   | 'trait'                   // Trait scope (for trait-targeting effects)
   | 'character_memory'        // Memory scope
@@ -51,7 +55,27 @@ export type ScopeType =
   | 'doctrine'                // Faith doctrine scope
   | 'government_type'         // Government type scope
   | 'vassal_contract'         // Feudal contract scope
-  | 'title_and_vassal_change';// Title transfer change scope
+  | 'title_and_vassal_change' // Title transfer change scope
+  // Roads to Power DLC scopes
+  | 'task_contract'           // Task contracts
+  | 'task_contract_type'      // Task contract type definition
+  | 'situation'               // Situations (administrative)
+  | 'situation_sub_region'    // Situation sub-regions
+  | 'tax_slot'                // Tax slot scope
+  | 'domicile'                // Domicile scope
+  | 'domicile_type'           // Domicile type definition
+  | 'great_project'           // Great projects
+  | 'great_project_type'      // Great project type definition
+  | 'confederation'           // Confederation scope
+  | 'confederation_type'      // Confederation type definition
+  | 'house_relation'          // Dynasty house relations
+  | 'house_relation_type'     // House relation type
+  | 'house_relation_level'    // House relation level
+  | 'house_aspiration'        // House aspiration scope
+  | 'agent_slot'              // Agent slot in schemes
+  | 'court_position_type'     // Court position type definition
+  | 'holding_type'            // Holding type definition
+  | 'project_contribution';   // Great project contribution scope
 
 /**
  * Common scope aliases used in documentation

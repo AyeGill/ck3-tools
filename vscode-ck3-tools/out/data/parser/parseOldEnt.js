@@ -2,20 +2,18 @@
 /**
  * Parser for CK3 script_docs output
  *
- * Can fetch from OldEnt's repository or parse local files.
- *
  * Usage:
- *   # Fetch from OldEnt's repo (older versions only, up to ~1.10):
+ *   # Parse from local script_docs folder (default):
  *   npx ts-node src/data/parser/parseOldEnt.ts
  *
- *   # Parse local files from your CK3 logs directory:
+ *   # Parse from a custom directory:
  *   npx ts-node src/data/parser/parseOldEnt.ts /path/to/ck3/logs
  *
- * To generate logs yourself:
+ * To update the script_docs files:
  *   1. In CK3, open console (~) and run: script_docs
- *   2. Find the logs in:
- *      - Windows: %USERPROFILE%\Documents\Paradox Interactive\Crusader Kings III\logs\
+ *   2. Copy the logs to src/data/script_docs/:
  *      - macOS: ~/Documents/Paradox Interactive/Crusader Kings III/logs/
+ *      - Windows: %USERPROFILE%\Documents\Paradox Interactive\Crusader Kings III\logs\
  *      - Linux: ~/.local/share/Paradox Interactive/Crusader Kings III/logs/
  */
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -54,26 +52,6 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
-const https = __importStar(require("https"));
-const REPO_BASE = 'https://raw.githubusercontent.com/OldEnt/crusader-kings-3-triggers-modifiers-effects-event-scopes-targets-on-actions-code-revisions-list/master';
-const VERSION = '1.10.2';
-/**
- * Fetch a URL and return its content as a string
- */
-function fetchUrl(url) {
-    return new Promise((resolve, reject) => {
-        https.get(url, (res) => {
-            if (res.statusCode !== 200) {
-                reject(new Error(`HTTP ${res.statusCode} for ${url}`));
-                return;
-            }
-            let data = '';
-            res.on('data', chunk => data += chunk);
-            res.on('end', () => resolve(data));
-            res.on('error', reject);
-        }).on('error', reject);
-    });
-}
 /**
  * Parse the effects.log format
  */
@@ -232,7 +210,7 @@ function normalizeScope(scope) {
     return mapping[lower] || lower;
 }
 // Track source for generated file comments
-let sourceInfo = `OldEnt repository (version ${VERSION})`;
+let sourceInfo = 'Local script_docs files';
 /**
  * Generate TypeScript code for effects
  */
@@ -456,60 +434,47 @@ function generateTriggersCode(triggers) {
     return lines.join('\n');
 }
 /**
- * Read content from local file or fetch from URL
+ * Read content from local file
  */
-async function getContent(localDir, filename) {
-    if (localDir) {
-        const filePath = path.join(localDir, filename);
-        if (!fs.existsSync(filePath)) {
-            throw new Error(`File not found: ${filePath}`);
-        }
-        return fs.readFileSync(filePath, 'utf-8');
+function readFile(dir, filename) {
+    const filePath = path.join(dir, filename);
+    if (!fs.existsSync(filePath)) {
+        throw new Error(`File not found: ${filePath}`);
     }
-    else {
-        return fetchUrl(`${REPO_BASE}/${VERSION}_${filename}`);
-    }
+    return fs.readFileSync(filePath, 'utf-8');
 }
 /**
  * Main function
  */
 async function main() {
-    const localDir = process.argv[2] || null;
-    if (localDir) {
-        console.log(`Reading local files from: ${localDir}`);
-        if (!fs.existsSync(localDir)) {
-            console.error(`Error: Directory not found: ${localDir}`);
-            console.error('\nUsage:');
-            console.error('  npx ts-node src/data/parser/parseOldEnt.ts [/path/to/ck3/logs]');
-            console.error('\nCK3 logs directory locations:');
-            console.error('  Windows: %USERPROFILE%\\Documents\\Paradox Interactive\\Crusader Kings III\\logs\\');
-            console.error('  macOS:   ~/Documents/Paradox Interactive/Crusader Kings III/logs/');
-            console.error('  Linux:   ~/.local/share/Paradox Interactive/Crusader Kings III/logs/');
-            process.exit(1);
-        }
-        sourceInfo = `Local files from ${localDir}`;
+    // Default to the script_docs folder in this project
+    const defaultScriptDocsDir = path.join(__dirname, '..', 'script_docs');
+    const localDir = process.argv[2] || defaultScriptDocsDir;
+    console.log(`Reading local files from: ${localDir}`);
+    if (!fs.existsSync(localDir)) {
+        console.error(`Error: Directory not found: ${localDir}`);
+        console.error('\nUsage:');
+        console.error('  npx ts-node src/data/parser/parseOldEnt.ts [/path/to/ck3/logs]');
+        console.error('\nTo update script_docs files:');
+        console.error('  1. Run script_docs in CK3 console');
+        console.error('  2. Copy *.log files to src/data/script_docs/');
+        process.exit(1);
     }
-    else {
-        console.log('Fetching data from OldEnt repository (version 1.10.2)...');
-        console.log('Tip: For newer game versions, run script_docs in CK3 console and pass the logs directory as an argument.');
-    }
+    sourceInfo = `Local files from ${localDir}`;
     try {
         // Get effects
-        const effectsFile = localDir ? 'effects.log' : 'effects.log';
-        console.log(`Reading ${effectsFile}...`);
-        const effectsContent = await getContent(localDir, effectsFile);
+        console.log('Reading effects.log...');
+        const effectsContent = readFile(localDir, 'effects.log');
         const effects = parseEffects(effectsContent);
         console.log(`Parsed ${effects.length} effects`);
         // Get triggers
-        const triggersFile = localDir ? 'triggers.log' : 'triggers.log';
-        console.log(`Reading ${triggersFile}...`);
-        const triggersContent = await getContent(localDir, triggersFile);
+        console.log('Reading triggers.log...');
+        const triggersContent = readFile(localDir, 'triggers.log');
         const triggers = parseTriggers(triggersContent);
         console.log(`Parsed ${triggers.length} triggers`);
         // Get modifiers
-        const modifiersFile = localDir ? 'modifiers.log' : 'modifiers.log';
-        console.log(`Reading ${modifiersFile}...`);
-        const modifiersContent = await getContent(localDir, modifiersFile);
+        console.log('Reading modifiers.log...');
+        const modifiersContent = readFile(localDir, 'modifiers.log');
         const modifiers = parseModifiers(modifiersContent);
         console.log(`Parsed ${modifiers.length} modifiers`);
         // Generate TypeScript files
