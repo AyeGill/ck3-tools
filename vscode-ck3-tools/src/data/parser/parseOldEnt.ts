@@ -295,7 +295,9 @@ function generateEffectsCode(effects: ParsedEffect[]): string {
   // Generate arrays for each scope category
   const scopeOrder = ['character', 'landed_title', 'province', 'dynasty', 'dynasty_house',
                      'culture', 'faith', 'religion', 'army', 'scheme', 'war', 'activity',
-                     'artifact', 'none'];
+                     'artifact', 'secret', 'faction', 'holy_order', 'mercenary_company',
+                     'inspiration', 'story', 'casus_belli', 'travel_plan', 'council_task',
+                     'great_holy_war', 'struggle', 'legend', 'accolade', 'epidemic', 'none'];
 
   for (const scope of scopeOrder) {
     const scopeEffects = byScope[scope];
@@ -412,7 +414,9 @@ function generateTriggersCode(triggers: ParsedTrigger[]): string {
   // Generate arrays for each scope category
   const scopeOrder = ['character', 'landed_title', 'province', 'dynasty', 'dynasty_house',
                      'culture', 'faith', 'religion', 'army', 'scheme', 'war', 'activity',
-                     'artifact', 'none'];
+                     'artifact', 'secret', 'faction', 'holy_order', 'mercenary_company',
+                     'inspiration', 'story', 'casus_belli', 'travel_plan', 'council_task',
+                     'great_holy_war', 'struggle', 'legend', 'accolade', 'epidemic', 'none'];
 
   for (const scope of scopeOrder) {
     const scopeTriggers = byScope[scope];

@@ -4,20 +4,14 @@
 
 import { FieldSchema } from './traitSchema';
 
-export const HOOK_STRENGTHS = [
-  'weak',
-  'strong',
-] as const;
-
 export const hookSchema: FieldSchema[] = [
   // Basic Properties
   {
-    name: 'strength',
-    type: 'enum',
-    description: 'Strength of the hook (weak or strong).',
-    values: [...HOOK_STRENGTHS],
-    required: true,
-    example: 'strength = weak',
+    name: 'strong',
+    type: 'boolean',
+    description: 'Whether this is a strong hook. If no/absent, it is a weak hook.',
+    default: false,
+    example: 'strong = yes',
   },
   {
     name: 'duration',

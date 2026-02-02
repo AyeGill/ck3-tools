@@ -1173,8 +1173,11 @@ function activate(context) {
         .concat(MODIFIER_FILE_SELECTOR)
         .concat(LAW_FILE_SELECTOR)
         .concat(GOVERNMENT_FILE_SELECTOR)
-        .concat(ACTIVITY_FILE_SELECTOR);
-    context.subscriptions.push(vscode.languages.registerHoverProvider(ALL_CK3_FILES, ck3HoverProvider));
+        .concat(ACTIVITY_FILE_SELECTOR)
+        .concat(SECRET_FILE_SELECTOR);
+    // Register hover provider for ALL CK3 files (using language ID)
+    // This ensures effects/triggers get hover docs even in file types without specific schemas
+    context.subscriptions.push(vscode.languages.registerHoverProvider({ language: 'ck3' }, ck3HoverProvider));
     // Traits
     context.subscriptions.push(vscode.languages.registerCompletionItemProvider(TRAIT_FILE_SELECTOR, ck3CompletionProvider, '=', ' '));
     // Events

@@ -701,5 +701,165 @@ test.0001 = {
       // Should get province modifiers
       expect(labels).toContain('stationed_maa_damage_add');
     });
+
+    it('should offer character modifiers inside multi-track trait numeric blocks', () => {
+      // Multi-track traits use: tracks = { track_name = { 50 = { modifiers } } }
+      const content = `my_trait = {
+	tracks = {
+		my_track = {
+			50 = {
+
+			}
+		}
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/common/traits/test.txt');
+      const position = new Position(4, 4); // Inside 50 = { }
+
+      const result = provider.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      // Should get character modifiers inside multi-track XP blocks
+      expect(labels).toContain('learning');
+      expect(labels).toContain('diplomacy');
+      expect(labels).toContain('fertility');
+    });
+  });
+
+  describe('Unknown scope (scope:X) completions', () => {
+    it('should offer all effects inside scope:X blocks in events', () => {
+      const content = `namespace = test
+test.0001 = {
+	immediate = {
+		scope:my_target = {
+
+		}
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/events/test_events.txt');
+      const position = new Position(4, 3); // Inside scope:my_target block
+
+      const result = provider.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      // Should get effects from various scopes since scope is unknown
+      expect(labels).toContain('add_trait'); // character effect
+      expect(labels).toContain('every_vassal'); // character iterator
+      expect(labels).toContain('every_secret'); // secret iterator
+    });
+
+    it('should offer all triggers inside scope:X blocks in trigger context', () => {
+      const content = `namespace = test
+test.0001 = {
+	trigger = {
+		scope:secret_target = {
+
+		}
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/events/test_events.txt');
+      const position = new Position(4, 3); // Inside scope:secret_target block
+
+      const result = provider.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      // Should get triggers from various scopes since scope is unknown
+      expect(labels).toContain('is_adult'); // character trigger
+      expect(labels).toContain('any_vassal'); // character iterator
+    });
+
+    it('should offer all effects inside scope:X in secret on_discover blocks', () => {
+      const content = `my_secret = {
+	on_discover = {
+		scope:secret_target = {
+
+		}
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/common/secret_types/test.txt');
+      const position = new Position(3, 3); // Inside scope:secret_target block
+
+      const result = provider.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      // Should get effects since we're in an effect block with unknown scope
+      expect(labels).toContain('add_trait');
+      expect(labels).toContain('every_secret');
+    });
+
+    it('should resume scope tracking after known scope changer inside scope:X', () => {
+      const content = `namespace = test
+test.0001 = {
+	immediate = {
+		scope:unknown = {
+			every_vassal = {
+
+			}
+		}
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/events/test_events.txt');
+      const position = new Position(5, 4); // Inside every_vassal (which is inside scope:unknown)
+
+      const result = provider.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      // After every_vassal, scope is known again (character)
+      // Should get character-scope effects
+      expect(labels).toContain('add_trait');
+      expect(labels).toContain('add_prestige');
+    });
+
+    it('should offer secret-scoped effects inside every_secret', () => {
+      const content = `my_secret = {
+	on_discover = {
+		scope:secret_target = {
+			every_secret = {
+
+			}
+		}
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/common/secret_types/test.txt');
+      const position = new Position(4, 4); // Inside every_secret block
+
+      const result = provider.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      // every_secret changes scope to secret, should get secret-scoped effects
+      expect(labels).toContain('reveal_to');
+      expect(labels).toContain('expose_secret');
+      expect(labels).toContain('remove_secret');
+    });
   });
 });

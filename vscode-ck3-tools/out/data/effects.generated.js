@@ -9,7 +9,7 @@
  * Total effects: 1343
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.effectsMap = exports.allEffects = exports.generalEffects = exports.artifactEffects = exports.activityEffects = exports.warEffects = exports.schemeEffects = exports.armyEffects = exports.religionEffects = exports.faithEffects = exports.cultureEffects = exports.dynastyhouseEffects = exports.dynastyEffects = exports.provinceEffects = exports.landedtitleEffects = exports.characterEffects = void 0;
+exports.effectsMap = exports.allEffects = exports.generalEffects = exports.accoladeEffects = exports.struggleEffects = exports.travelplanEffects = exports.casusbelliEffects = exports.storyEffects = exports.inspirationEffects = exports.holyorderEffects = exports.factionEffects = exports.secretEffects = exports.artifactEffects = exports.activityEffects = exports.warEffects = exports.schemeEffects = exports.armyEffects = exports.religionEffects = exports.faithEffects = exports.cultureEffects = exports.dynastyhouseEffects = exports.dynastyEffects = exports.provinceEffects = exports.landedtitleEffects = exports.characterEffects = void 0;
 exports.getEffectsForScope = getEffectsForScope;
 /**
  * Effects for character scope (667 effects)
@@ -1083,6 +1083,136 @@ exports.artifactEffects = [
     { name: 'unequip_artifact_from_owner', description: 'Makes the owner of the scoped artifact unequip it.', supportedScopes: ['artifact'] },
 ];
 /**
+ * Effects for secret scope (13 effects)
+ */
+exports.secretEffects = [
+    { name: 'add_secret_participant', description: 'Adds an participant to the secret', supportedScopes: ['secret'], supportedTargets: ['character'] },
+    { name: 'disable_exposure_by', description: 'Forbids the target character from exposing the secret, disable_exposure_by = target_character', supportedScopes: ['secret'], supportedTargets: ['character'] },
+    { name: 'every_secret_knower', description: 'Iterate through all characters who know the secret', supportedScopes: ['secret'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, syntax: "every_secret_knower = { limit = { <triggers> } <effects> }" },
+    { name: 'every_secret_participant', description: 'Iterate through participants in a secret', supportedScopes: ['secret'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, syntax: "every_secret_participant = { limit = { <triggers> } <effects> }" },
+    { name: 'expose_secret', description: 'Exposes the scope secret', supportedScopes: ['secret'], supportedTargets: ['character'] },
+    { name: 'ordered_secret_knower', description: 'Iterate through all characters who know the secret', supportedScopes: ['secret'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, syntax: "ordered_secret_knower = {\nlimit = { <triggers> }\norder_by = script_value\nposition = int\nmin = int\nmax = script_value\ncheck_range_bounds = no # If you don't want an error logged if the list is smaller than the min/max\n<effects> }" },
+    { name: 'ordered_secret_participant', description: 'Iterate through participants in a secret', supportedScopes: ['secret'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, syntax: "ordered_secret_participant = {\nlimit = { <triggers> }\norder_by = script_value\nposition = int\nmin = int\nmax = script_value\ncheck_range_bounds = no # If you don't want an error logged if the list is smaller than the min/max\n<effects> }" },
+    { name: 'random_secret_knower', description: 'Iterate through all characters who know the secret', supportedScopes: ['secret'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, syntax: "random_secret_knower = { limit = { <triggers> } (optional) weight = { mtth } <effects> }" },
+    { name: 'random_secret_participant', description: 'Iterate through participants in a secret', supportedScopes: ['secret'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, syntax: "random_secret_participant = { limit = { <triggers> } (optional) weight = { mtth } <effects> }" },
+    { name: 'remove_secret', description: 'Removes the scope secret', supportedScopes: ['secret'] },
+    { name: 'reveal_to', description: 'Reveals the scope secret to the target character', supportedScopes: ['secret'], supportedTargets: ['character'] },
+    { name: 'set_secret_owner', description: 'Sets a new owner for the secret', supportedScopes: ['secret'], supportedTargets: ['character'] },
+    { name: 'spend_by', description: 'Spends the scope secret, spend_by = target_character', supportedScopes: ['secret'], supportedTargets: ['character'] },
+];
+/**
+ * Effects for faction scope (14 effects)
+ */
+exports.factionEffects = [
+    { name: 'add_faction_discontent', description: 'add_faction_discontent = X adds (or subtracts) discontent to the scope faction', supportedScopes: ['faction'] },
+    { name: 'destroy_faction', description: 'the scoped faction is destroyed [yes|no]', supportedScopes: ['faction'] },
+    { name: 'every_faction_county_member', description: 'Iterate through all faction county members', supportedScopes: ['faction'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, syntax: "every_faction_county_member = { limit = { <triggers> } <effects> }" },
+    { name: 'every_faction_member', description: 'Iterate through all faction character members', supportedScopes: ['faction'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, syntax: "every_faction_member = { limit = { <triggers> } <effects> }" },
+    { name: 'faction_remove_war', description: 'Removes the war currently associated with the faction', supportedScopes: ['faction'], syntax: "faction_remove_war = yes" },
+    { name: 'faction_start_war', description: 'The scope faction starts the war agains their target.', supportedScopes: ['faction'], syntax: "faction_start_war = {\ntitle = [optional]\n}" },
+    { name: 'ordered_faction_county_member', description: 'Iterate through all faction county members', supportedScopes: ['faction'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, syntax: "ordered_faction_county_member = {\nlimit = { <triggers> }\norder_by = script_value\nposition = int\nmin = int\nmax = script_value\ncheck_range_bounds = no # If you don't want an error logged if the list is smaller than the min/max\n<effects> }" },
+    { name: 'ordered_faction_member', description: 'Iterate through all faction character members', supportedScopes: ['faction'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, syntax: "ordered_faction_member = {\nlimit = { <triggers> }\norder_by = script_value\nposition = int\nmin = int\nmax = script_value\ncheck_range_bounds = no # If you don't want an error logged if the list is smaller than the min/max\n<effects> }" },
+    { name: 'random_faction_county_member', description: 'Iterate through all faction county members', supportedScopes: ['faction'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, syntax: "random_faction_county_member = { limit = { <triggers> } (optional) weight = { mtth } <effects> }" },
+    { name: 'random_faction_member', description: 'Iterate through all faction character members', supportedScopes: ['faction'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, syntax: "random_faction_member = { limit = { <triggers> } (optional) weight = { mtth } <effects> }" },
+    { name: 'remove_special_character', description: 'Removes the special character for the scope faction', supportedScopes: ['faction'] },
+    { name: 'remove_special_title', description: 'Removes the special character for the scope faction', supportedScopes: ['faction'] },
+    { name: 'set_special_character', description: 'Sets the special character for the scope faction', supportedScopes: ['faction'], supportedTargets: ['character'] },
+    { name: 'set_special_title', description: 'Sets the special title for the scope faction', supportedScopes: ['faction'], supportedTargets: ['landed_title'] },
+];
+/**
+ * Effects for holy_order scope (3 effects)
+ */
+exports.holyorderEffects = [
+    { name: 'every_leased_title', description: 'Iterate through all titles leased to a holy order', supportedScopes: ['holy_order'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, syntax: "every_leased_title = { limit = { <triggers> } <effects> }" },
+    { name: 'ordered_leased_title', description: 'Iterate through all titles leased to a holy order', supportedScopes: ['holy_order'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, syntax: "ordered_leased_title = {\nlimit = { <triggers> }\norder_by = script_value\nposition = int\nmin = int\nmax = script_value\ncheck_range_bounds = no # If you don't want an error logged if the list is smaller than the min/max\n<effects> }" },
+    { name: 'random_leased_title', description: 'Iterate through all titles leased to a holy order', supportedScopes: ['holy_order'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, syntax: "random_leased_title = { limit = { <triggers> } (optional) weight = { mtth } <effects> }" },
+];
+/**
+ * Effects for inspiration scope (2 effects)
+ */
+exports.inspirationEffects = [
+    { name: 'change_inspiration_progress', description: 'change_progress = int', supportedScopes: ['inspiration'], syntax: "Changes the progress of the scoped inspiration" },
+    { name: 'invest_gold', description: 'invest_gold = value', supportedScopes: ['inspiration'], syntax: "Invests gold into the scoped inspiration from its sponsor, it handles the removal of the gold from the sponsor, must be a positive value" },
+];
+/**
+ * Effects for story scope (2 effects)
+ */
+exports.storyEffects = [
+    { name: 'end_story', description: 'Ends a story and executes it\'s on_end effect, the story can no longer be accessed after this', supportedScopes: ['story'] },
+    { name: 'make_story_owner', description: '= character_target  makes the character the new owner of the story', supportedScopes: ['story'], supportedTargets: ['character'] },
+];
+/**
+ * Effects for casus_belli scope (5 effects)
+ */
+exports.casusbelliEffects = [
+    { name: 'add_from_contribution_attackers', description: 'Adds prestige, gold and piety based on contribution to allied attackers. parameters: prestige, gold, piety.', supportedScopes: ['casus_belli'] },
+    { name: 'add_from_contribution_defenders', description: 'Adds prestige, gold and piety based on contribution to allied defenders. parameters: prestige, gold, piety.', supportedScopes: ['casus_belli'] },
+    { name: 'every_target_title', description: 'Iterate through all casus belli\'s target titles', supportedScopes: ['casus_belli'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, syntax: "every_target_title = { limit = { <triggers> } <effects> }" },
+    { name: 'ordered_target_title', description: 'Iterate through all casus belli\'s target titles', supportedScopes: ['casus_belli'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, syntax: "ordered_target_title = {\nlimit = { <triggers> }\norder_by = script_value\nposition = int\nmin = int\nmax = script_value\ncheck_range_bounds = no # If you don't want an error logged if the list is smaller than the min/max\n<effects> }" },
+    { name: 'random_target_title', description: 'Iterate through all casus belli\'s target titles', supportedScopes: ['casus_belli'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, syntax: "random_target_title = { limit = { <triggers> } (optional) weight = { mtth } <effects> }" },
+];
+/**
+ * Effects for travel_plan scope (29 effects)
+ */
+exports.travelplanEffects = [
+    { name: 'abort_travel_plan', description: 'Abort the travel plan immediately - no further travelling is executed, the on_action effect \'on_travel_plan_abort\' will be run.', supportedScopes: ['travel_plan'], syntax: "abort_travel_plan = yes/no." },
+    { name: 'add_companion', description: 'Adds a character as a companion to the scoped travel plan.', supportedScopes: ['travel_plan'], supportedTargets: ['character'], syntax: "add_companion = CHARACTER" },
+    { name: 'add_destination_progress', description: 'Add X days towards the progress of the travel plan to the next destination. If the next destination is reached, excess progress is discarded.', supportedScopes: ['travel_plan'], syntax: "'on_travel_plan_movement' on_action will not be triggered for any of the provinces. 'on_travel_plan_arrival' will be triggered.\nadd_destination_progress = {\ndays/weeks/months/years = X\n}" },
+    { name: 'add_travel_option', description: 'Adds the travel option specified in the RHS to the scope travel plan.<travel_plan> = { add_travel_option = name }', supportedScopes: ['travel_plan'] },
+    { name: 'add_travel_plan_modifier', description: 'Add a modifier to a travel plan', supportedScopes: ['travel_plan'], syntax: "add_travel_plan_modifier = name\nadd_travel_plan_modifier = { modifier = name days/weeks/months/years = int }\nYou can also add an optional 'desc' field. This is a dynamic description that'll be used for your timed modifier" },
+    { name: 'add_travel_waypoint', description: 'Adds a travel waypoint just ahead of the current travel location, and change the path accordingly.', supportedScopes: ['travel_plan'], syntax: "<travel_plan> = { add_travel_waypoint = province }" },
+    { name: 'cancel_travel_plan', description: 'Cancel travel plan future path, leave any associated activities, and reroute to home.', supportedScopes: ['travel_plan'], syntax: "cancel_travel_plan = yes/no." },
+    { name: 'complete_travel_plan', description: 'Complete the travel plan immediately - no further travelling is executed, and the on_action effect \'on_travel_plan_complete\' is run.', supportedScopes: ['travel_plan'], syntax: "complete_travel_plan = yes/no" },
+    { name: 'delay_travel_plan', description: 'Delay the travel plan by specific time duration. Will pause the travel plan, and resume after the duration ends.', supportedScopes: ['travel_plan'], syntax: "Will add to any existing delay duration, unless 'add = no' is set.\ndelay_travel_plan = {\ndays/weeks/months/years = X\nadd = yes/no [optional]\n}" },
+    { name: 'every_entourage_character', description: 'Iterate through all characters travelling along with the travel plan owner. Includes travel leader, but not the travel plan owner.', supportedScopes: ['travel_plan'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, syntax: "every_entourage_character = { limit = { <triggers> } <effects> }" },
+    { name: 'every_future_path_location', description: 'Iterate through all provinces this travel plan has in its route.', supportedScopes: ['travel_plan'], supportedTargets: ['province'], outputScope: 'province', isIterator: true, syntax: "every_future_path_location = { limit = { <triggers> } <effects> }" },
+    { name: 'every_visited_location', description: 'Iterate through all provinces this travel plan has arrived at so far.', supportedScopes: ['travel_plan'], supportedTargets: ['province'], outputScope: 'province', isIterator: true, syntax: "every_visited_location = { limit = { <triggers> } <effects> }" },
+    { name: 'ordered_entourage_character', description: 'Iterate through all characters travelling along with the travel plan owner. Includes travel leader, but not the travel plan owner.', supportedScopes: ['travel_plan'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, syntax: "ordered_entourage_character = {\nlimit = { <triggers> }\norder_by = script_value\nposition = int\nmin = int\nmax = script_value\ncheck_range_bounds = no # If you don't want an error logged if the list is smaller than the min/max\n<effects> }" },
+    { name: 'ordered_future_path_location', description: 'Iterate through all provinces this travel plan has in its route.', supportedScopes: ['travel_plan'], supportedTargets: ['province'], outputScope: 'province', isIterator: true, syntax: "ordered_future_path_location = {\nlimit = { <triggers> }\norder_by = script_value\nposition = int\nmin = int\nmax = script_value\ncheck_range_bounds = no # If you don't want an error logged if the list is smaller than the min/max\n<effects> }" },
+    { name: 'ordered_visited_location', description: 'Iterate through all provinces this travel plan has arrived at so far.', supportedScopes: ['travel_plan'], supportedTargets: ['province'], outputScope: 'province', isIterator: true, syntax: "ordered_visited_location = {\nlimit = { <triggers> }\norder_by = script_value\nposition = int\nmin = int\nmax = script_value\ncheck_range_bounds = no # If you don't want an error logged if the list is smaller than the min/max\n<effects> }" },
+    { name: 'pause_travel_plan', description: 'Pause the travel plan, until explicitly resumed. Any existing pause resume date is removed.', supportedScopes: ['travel_plan'], syntax: "pause_travel_plan = yes/no." },
+    { name: 'pause_travel_plan_mp', description: 'Pause the travel plan, until resumed, if in multiplayer. Any existing pause resume date is removed.', supportedScopes: ['travel_plan'], syntax: "pause_travel_plan_mp = yes/no." },
+    { name: 'random_entourage_character', description: 'Iterate through all characters travelling along with the travel plan owner. Includes travel leader, but not the travel plan owner.', supportedScopes: ['travel_plan'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, syntax: "random_entourage_character = { limit = { <triggers> } (optional) weight = { mtth } <effects> }" },
+    { name: 'random_future_path_location', description: 'Iterate through all provinces this travel plan has in its route.', supportedScopes: ['travel_plan'], supportedTargets: ['province'], outputScope: 'province', isIterator: true, syntax: "random_future_path_location = { limit = { <triggers> } (optional) weight = { mtth } <effects> }" },
+    { name: 'random_visited_location', description: 'Iterate through all provinces this travel plan has arrived at so far.', supportedScopes: ['travel_plan'], supportedTargets: ['province'], outputScope: 'province', isIterator: true, syntax: "random_visited_location = { limit = { <triggers> } (optional) weight = { mtth } <effects> }" },
+    { name: 'remove_all_travel_plan_modifier_instances', description: 'Remove all instances of a modifier from a travel plan', supportedScopes: ['travel_plan'], syntax: "remove_all_travel_plan_modifier_instances = name" },
+    { name: 'remove_character', description: 'Remove character from a travel plan. You cannot remove the travel plan owner.', supportedScopes: ['travel_plan'], supportedTargets: ['character'], syntax: "remove_character = CHARACTER." },
+    { name: 'remove_travel_option', description: 'Removes the travel option specified in the RHS from the scope travel plan.<travel_plan> = { remove_travel_option = name }', supportedScopes: ['travel_plan'] },
+    { name: 'remove_travel_plan_modifier', description: 'Remove a modifier from a travel plan', supportedScopes: ['travel_plan'], syntax: "remove_travel_plan_modifier = name" },
+    { name: 'reroute_to_home', description: 'Remove future destinations of the travel plan and set the next destination to home (travel plan owner default location)', supportedScopes: ['travel_plan'], syntax: "reroute_to_home = yes/no." },
+    { name: 'resume_travel_plan', description: 'Resume the travel plan, if paused.', supportedScopes: ['travel_plan'], syntax: "resume_travel_plan = yes/no." },
+    { name: 'resume_travel_plan_mp', description: 'Resume the travel plan, if paused for multiplayer purposes via \'pause_travel_plan_mp\'.', supportedScopes: ['travel_plan'], syntax: "resume_travel_plan_mp = yes/no." },
+    { name: 'set_travel_leader', description: 'Set a character as the travel leader on the scoped travel plan. Any current leader is moved to be a regular companion in the entourage.', supportedScopes: ['travel_plan'], supportedTargets: ['character'], syntax: "set_travel_leader = CHARACTER" },
+    { name: 'set_travel_plan_owner', description: 'Set a character as the owner of the scoped travel plan. If they\'re already the travel leader or an entourage member, it will remove them from those positions. The current owner is moved to be a regular companion in the entourage.', supportedScopes: ['travel_plan'], supportedTargets: ['character'], syntax: "set_travel_plan_owner = CHARACTER" },
+];
+/**
+ * Effects for struggle scope (13 effects)
+ */
+exports.struggleEffects = [
+    { name: 'activate_struggle_catalyst', description: 'Activate a catalyst, activate_struggle_catalyst = { catalyst = X character = Y}where X is a catalystY is scope:character # optionalsimplified: activate_struggle_catalyst = <catalyst>', supportedScopes: ['struggle'] },
+    { name: 'change_struggle_phase', description: 'Change the phase from the current one to a listed scripted phasechange_phase = Xwhere X is a struggle phase type', supportedScopes: ['struggle'] },
+    { name: 'end_struggle', description: 'End a struggle, end_struggle = yes', supportedScopes: ['struggle'] },
+    { name: 'every_interloper_ruler', description: 'Iterate through all characters that are interloper in a struggle.', supportedScopes: ['struggle'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, syntax: "every_interloper_ruler = { limit = { <triggers> } <effects> }" },
+    { name: 'every_involved_ruler', description: 'Iterate through all characters that are involved in a struggle.', supportedScopes: ['struggle'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, syntax: "every_involved_ruler = { limit = { <triggers> } <effects> }" },
+    { name: 'ordered_interloper_ruler', description: 'Iterate through all characters that are interloper in a struggle.', supportedScopes: ['struggle'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, syntax: "ordered_interloper_ruler = {\nlimit = { <triggers> }\norder_by = script_value\nposition = int\nmin = int\nmax = script_value\ncheck_range_bounds = no # If you don't want an error logged if the list is smaller than the min/max\n<effects> }" },
+    { name: 'ordered_involved_ruler', description: 'Iterate through all characters that are involved in a struggle.', supportedScopes: ['struggle'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, syntax: "ordered_involved_ruler = {\nlimit = { <triggers> }\norder_by = script_value\nposition = int\nmin = int\nmax = script_value\ncheck_range_bounds = no # If you don't want an error logged if the list is smaller than the min/max\n<effects> }" },
+    { name: 'random_interloper_ruler', description: 'Iterate through all characters that are interloper in a struggle.', supportedScopes: ['struggle'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, syntax: "random_interloper_ruler = { limit = { <triggers> } (optional) weight = { mtth } <effects> }" },
+    { name: 'random_involved_ruler', description: 'Iterate through all characters that are involved in a struggle.', supportedScopes: ['struggle'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, syntax: "random_involved_ruler = { limit = { <triggers> } (optional) weight = { mtth } <effects> }" },
+    { name: 'set_culture_as_involved', description: 'Set a culture as involved in the scoped Struggle.', supportedScopes: ['struggle'], supportedTargets: ['culture'] },
+    { name: 'set_culture_as_uninvolved', description: 'Set a culture as involved in the scoped Struggle.', supportedScopes: ['struggle'], supportedTargets: ['culture'] },
+    { name: 'set_faith_as_involved', description: 'Set a faith as involved in the scoped Struggle.', supportedScopes: ['struggle'], supportedTargets: ['faith'] },
+    { name: 'set_faith_as_uninvolved', description: 'Set a faith as uninvolved in the scoped Struggle.', supportedScopes: ['struggle'], supportedTargets: ['faith'] },
+];
+/**
+ * Effects for accolade scope (4 effects)
+ */
+exports.accoladeEffects = [
+    { name: 'activate_accolade', description: 'Activates the scoped Accolade, if there are free slots available else it will be deactivated', supportedScopes: ['accolade'], syntax: "activate_accolade = yes" },
+    { name: 'add_glory', description: 'Add this much to the Accolades glory', supportedScopes: ['accolade'] },
+    { name: 'deactivate_accolade', description: 'Deactivates the scoped Accolade, does nothing if it\'s already inactive', supportedScopes: ['accolade'], syntax: "deactivate_accolade = yes" },
+    { name: 'remove_acclaimed_knight', description: 'Removes the acclaimed knight from this Accolade and passes it onto the successor ( if any )', supportedScopes: ['accolade'], syntax: "remove_acclaimed_knight = yes" },
+];
+/**
  * Effects for none scope (216 effects)
  */
 exports.generalEffects = [
@@ -1320,6 +1450,15 @@ exports.allEffects = [
     ...exports.warEffects,
     ...exports.activityEffects,
     ...exports.artifactEffects,
+    ...exports.secretEffects,
+    ...exports.factionEffects,
+    ...exports.holyorderEffects,
+    ...exports.inspirationEffects,
+    ...exports.storyEffects,
+    ...exports.casusbelliEffects,
+    ...exports.travelplanEffects,
+    ...exports.struggleEffects,
+    ...exports.accoladeEffects,
     ...exports.generalEffects,
 ];
 /**

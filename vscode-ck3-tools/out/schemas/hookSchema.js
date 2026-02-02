@@ -3,22 +3,17 @@
  * Schema definition for CK3 Hook Types - powers autocomplete and hover documentation
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.hookSchemaMap = exports.hookSchema = exports.HOOK_STRENGTHS = void 0;
+exports.hookSchemaMap = exports.hookSchema = void 0;
 exports.getHookFieldNames = getHookFieldNames;
 exports.getHookFieldDocumentation = getHookFieldDocumentation;
-exports.HOOK_STRENGTHS = [
-    'weak',
-    'strong',
-];
 exports.hookSchema = [
     // Basic Properties
     {
-        name: 'strength',
-        type: 'enum',
-        description: 'Strength of the hook (weak or strong).',
-        values: [...exports.HOOK_STRENGTHS],
-        required: true,
-        example: 'strength = weak',
+        name: 'strong',
+        type: 'boolean',
+        description: 'Whether this is a strong hook. If no/absent, it is a weak hook.',
+        default: false,
+        example: 'strong = yes',
     },
     {
         name: 'duration',

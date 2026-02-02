@@ -1358,11 +1358,14 @@ export function activate(context: vscode.ExtensionContext) {
     .concat(MODIFIER_FILE_SELECTOR as vscode.DocumentFilter[])
     .concat(LAW_FILE_SELECTOR as vscode.DocumentFilter[])
     .concat(GOVERNMENT_FILE_SELECTOR as vscode.DocumentFilter[])
-    .concat(ACTIVITY_FILE_SELECTOR as vscode.DocumentFilter[]);
+    .concat(ACTIVITY_FILE_SELECTOR as vscode.DocumentFilter[])
+    .concat(SECRET_FILE_SELECTOR as vscode.DocumentFilter[]);
 
+  // Register hover provider for ALL CK3 files (using language ID)
+  // This ensures effects/triggers get hover docs even in file types without specific schemas
   context.subscriptions.push(
     vscode.languages.registerHoverProvider(
-      ALL_CK3_FILES,
+      { language: 'ck3' },
       ck3HoverProvider
     )
   );

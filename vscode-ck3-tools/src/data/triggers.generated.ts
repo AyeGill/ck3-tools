@@ -1122,6 +1122,152 @@ export const artifactTriggers: TriggerDefinition[] = [
 ];
 
 /**
+ * Triggers for secret scope (11 triggers)
+ */
+export const secretTriggers: TriggerDefinition[] = [
+  { name: 'any_secret_knower', description: 'Iterate through all characters who know the secret', supportedScopes: ['secret'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_secret_knower = { <count=num/all> / <percent=fixed_point> <triggers> }" },
+  { name: 'any_secret_participant', description: 'Iterate through participants in a secret', supportedScopes: ['secret'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_secret_participant = { <count=num/all> / <percent=fixed_point> <triggers> }" },
+  { name: 'can_be_exposed_by', description: 'can the scope secret be exposed by the target character? can_be_exposed_by = target', supportedScopes: ['secret'] },
+  { name: 'is_criminal_for', description: 'is this secret criminal for the target participant? is_criminal_for = <character>', supportedScopes: ['secret'], supportedTargets: ['character'] },
+  { name: 'is_known_by', description: 'is the scope secret known by the target character?', supportedScopes: ['secret'] },
+  { name: 'is_shunned_for', description: 'is this secret shunned for the target participant? is_shunned_for = <character>', supportedScopes: ['secret'], supportedTargets: ['character'] },
+  { name: 'is_shunned_or_criminal_for', description: 'is this secret shunned or criminal for the target participant? is_shunned_or_illegal_for = <character>', supportedScopes: ['secret'], supportedTargets: ['character'] },
+  { name: 'is_spent_by', description: 'has the scope secret been spent by the target character? is_spent_by = target', supportedScopes: ['secret'] },
+  { name: 'local_player_knows_this_secret', description: 'Does the local player have knowledge about the secret?', supportedScopes: ['secret'], valueType: 'boolean', syntax: "An interface trigger, can only be used in specific places" },
+  { name: 'same_secret_type_as', description: 'Is the scope secret of the same type as the target secret?', supportedScopes: ['secret'], supportedTargets: ['secret'], syntax: "same_secret_type_as = scope:some_secret" },
+  { name: 'secret_type', description: 'Is the scope secret of the specified type?', supportedScopes: ['secret'] },
+];
+
+/**
+ * Triggers for faction scope (16 triggers)
+ */
+export const factionTriggers: TriggerDefinition[] = [
+  { name: 'any_faction_county_member', description: 'Iterate through all faction county members', supportedScopes: ['faction'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, valueType: 'block', syntax: "any_faction_county_member = { <count=num/all> / <percent=fixed_point> <triggers> }" },
+  { name: 'any_faction_member', description: 'Iterate through all faction character members', supportedScopes: ['faction'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_faction_member = { <count=num/all> / <percent=fixed_point> <triggers> }" },
+  { name: 'average_faction_opinion', description: 'Average opinion of all the characters of the faction scope target', supportedScopes: ['faction'], valueType: 'comparison' },
+  { name: 'average_faction_opinion_not_powerful_vassal', description: 'Average opinion of the character that are NOT powerful vassals of the faction scope target', supportedScopes: ['faction'], valueType: 'comparison' },
+  { name: 'average_faction_opinion_powerful_vassal', description: 'Average opinion of the character that are powerful vassals of the faction scope target', supportedScopes: ['faction'], valueType: 'comparison' },
+  { name: 'discontent_per_month', description: 'How much is the Faction\'s Discontent increasing each month?', supportedScopes: ['faction'], valueType: 'comparison' },
+  { name: 'faction_can_press_demands', description: 'Can the scope faction press demands?', supportedScopes: ['faction'], valueType: 'boolean' },
+  { name: 'faction_discontent', description: 'Current discontent of the faction', supportedScopes: ['faction'], valueType: 'comparison' },
+  { name: 'faction_is_at_war', description: 'Is the scope faction at war?', supportedScopes: ['faction'], valueType: 'boolean' },
+  { name: 'faction_is_type', description: 'Is the faction of this type?', supportedScopes: ['faction'] },
+  { name: 'faction_power', description: 'Current power of the faction', supportedScopes: ['faction'], valueType: 'comparison' },
+  { name: 'faction_power_threshold', description: 'Current power threshold of the faction', supportedScopes: ['faction'], valueType: 'comparison' },
+  { name: 'has_special_character', description: 'Has the faction a special character assigned?', supportedScopes: ['faction'], valueType: 'boolean' },
+  { name: 'has_special_title', description: 'Has the faction a special title assigned?', supportedScopes: ['faction'], valueType: 'boolean' },
+  { name: 'months_until_max_discontent', description: 'How many months until Discontent is max (100)?', supportedScopes: ['faction'], valueType: 'comparison' },
+  { name: 'number_of_faction_members_in_council', description: 'Current number of faction members in faction', supportedScopes: ['faction'], valueType: 'comparison' },
+];
+
+/**
+ * Triggers for holy_order scope (2 triggers)
+ */
+export const holyorderTriggers: TriggerDefinition[] = [
+  { name: 'any_leased_title', description: 'Iterate through all titles leased to a holy order', supportedScopes: ['holy_order'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, valueType: 'block', syntax: "any_leased_title = { <count=num/all> / <percent=fixed_point> <triggers> }" },
+  { name: 'num_leased_titles', description: 'How many holdings the holy order has under lease', supportedScopes: ['holy_order'], valueType: 'comparison' },
+];
+
+/**
+ * Triggers for mercenary_company scope (1 triggers)
+ */
+export const mercenarycompanyTriggers: TriggerDefinition[] = [
+  { name: 'mercenary_company_expiration_days', description: 'How many days are left in the mercenary contract. 0 if not hired.', supportedScopes: ['mercenary_company'], valueType: 'comparison' },
+];
+
+/**
+ * Triggers for inspiration scope (6 triggers)
+ */
+export const inspirationTriggers: TriggerDefinition[] = [
+  { name: 'base_inspiration_gold_cost', description: 'base_inspiration_gold_cost > 5', supportedScopes: ['inspiration'], valueType: 'comparison', syntax: "Gets the base gold cost of the scoped inspiration" },
+  { name: 'days_since_creation', description: 'days_since_creation > 5', supportedScopes: ['inspiration'], valueType: 'comparison', syntax: "Gets the days since creation of the scoped inspiration" },
+  { name: 'days_since_sponsorship', description: 'days_since_sponsorship > 5', supportedScopes: ['inspiration'], valueType: 'comparison', syntax: "Gets the days since sponsorship started of the scoped inspiration" },
+  { name: 'has_inspiration_type', description: 'has_inspiration_type = type', supportedScopes: ['inspiration'], syntax: "Checks if the scoped inspiration has the given inspiration database type" },
+  { name: 'inspiration_gold_invested', description: 'inspiration_gold_invested > 5', supportedScopes: ['inspiration'], valueType: 'comparison', syntax: "Gets the amount of gold invested in the scoped inspiration" },
+  { name: 'inspiration_progress', description: 'inspiration_progress > 5', supportedScopes: ['inspiration'], valueType: 'comparison', syntax: "Gets the progress of the scoped inspiration" },
+];
+
+/**
+ * Triggers for story scope (1 triggers)
+ */
+export const storyTriggers: TriggerDefinition[] = [
+  { name: 'story_type', description: 'Is the story in scope of this type?', supportedScopes: ['story'] },
+];
+
+/**
+ * Triggers for casus_belli scope (1 triggers)
+ */
+export const casusbelliTriggers: TriggerDefinition[] = [
+  { name: 'any_target_title', description: 'Iterate through all casus belli\'s target titles', supportedScopes: ['casus_belli'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, valueType: 'block', syntax: "any_target_title = { <count=num/all> / <percent=fixed_point> <triggers> }" },
+];
+
+/**
+ * Triggers for travel_plan scope (25 triggers)
+ */
+export const travelplanTriggers: TriggerDefinition[] = [
+  { name: 'any_entourage_character', description: 'Iterate through all characters travelling along with the travel plan owner. Includes travel leader, but not the travel plan owner.', supportedScopes: ['travel_plan'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_entourage_character = { <count=num/all> / <percent=fixed_point> <triggers> }" },
+  { name: 'any_future_path_location', description: 'Iterate through all provinces this travel plan has in its route.', supportedScopes: ['travel_plan'], supportedTargets: ['province'], outputScope: 'province', isIterator: true, valueType: 'block', syntax: "any_future_path_location = { <count=num/all> / <percent=fixed_point> <triggers> }" },
+  { name: 'any_visited_location', description: 'Iterate through all provinces this travel plan has arrived at so far.', supportedScopes: ['travel_plan'], supportedTargets: ['province'], outputScope: 'province', isIterator: true, valueType: 'block', syntax: "any_visited_location = { <count=num/all> / <percent=fixed_point> <triggers> }" },
+  { name: 'can_cancel', description: 'Can this travel plan be cancelled? (associated activity might disallow it)', supportedScopes: ['travel_plan'], valueType: 'boolean' },
+  { name: 'current_danger_value', description: 'Danger value of the current province the travel plan is in (-100.0 to +100.0).', supportedScopes: ['travel_plan'], valueType: 'comparison' },
+  { name: 'days_travelled', description: 'Total number of days since this travel plan started.', supportedScopes: ['travel_plan'], valueType: 'comparison' },
+  { name: 'departure_date', description: 'Compare the date the travel plan started.', supportedScopes: ['travel_plan'], valueType: 'comparison' },
+  { name: 'final_destination_arrival_date', description: 'Estimation date of arrival at the final destination', supportedScopes: ['travel_plan'], valueType: 'comparison' },
+  { name: 'final_destination_arrival_days', description: 'Estimation of days until we arrive at the final destination?', supportedScopes: ['travel_plan'], valueType: 'comparison' },
+  { name: 'final_destination_progress', description: 'Time progress (0.0 - 1.0) towards the final destination of the travel plan, compared to departure date from the very start of the Travel Plan.', supportedScopes: ['travel_plan'], valueType: 'comparison' },
+  { name: 'has_travel_option', description: 'Does the travel plan have this travel option active?', supportedScopes: ['travel_plan'], syntax: "<travel_plan> = { has_travel_option = name }" },
+  { name: 'has_travel_plan_modifier', description: 'Does the scoped travel plan have a given modifier', supportedScopes: ['travel_plan'], syntax: "has_travel_plan_modifier = name" },
+  { name: 'is_aborted', description: 'Is this travel plan aborted?', supportedScopes: ['travel_plan'], valueType: 'boolean' },
+  { name: 'is_cancelled', description: 'Is this travel plan cancelled? (manually stopped, and rerouted home)', supportedScopes: ['travel_plan'], valueType: 'boolean' },
+  { name: 'is_completed', description: 'Is this travel plan completed? (finished by arrival at final destination)', supportedScopes: ['travel_plan'], valueType: 'boolean' },
+  { name: 'is_paused', description: 'Is this travel plan paused?', supportedScopes: ['travel_plan'], valueType: 'boolean' },
+  { name: 'next_destination_arrival_date', description: 'Estimation date of arrival at the next destination', supportedScopes: ['travel_plan'], valueType: 'comparison' },
+  { name: 'next_destination_arrival_days', description: 'Estimation of days until we arrive at the next destination', supportedScopes: ['travel_plan'], valueType: 'comparison' },
+  { name: 'next_destination_progress', description: 'Time progress (0.0 - 1.0) towards the next destination of the travel plan, compared to departure date of the previous destination.', supportedScopes: ['travel_plan'], valueType: 'comparison' },
+  { name: 'num_entourage_characters', description: 'Size of the travel plan entourage.', supportedScopes: ['travel_plan'], valueType: 'comparison' },
+  { name: 'num_options', description: 'Number of travel options selected.', supportedScopes: ['travel_plan'], valueType: 'comparison' },
+  { name: 'travel_safety', description: 'Gets the current travel safety for travel', supportedScopes: ['travel_plan'], valueType: 'comparison' },
+  { name: 'travel_speed', description: 'Gets the current travel speed for travel (percentage points above 100%)', supportedScopes: ['travel_plan'], valueType: 'comparison' },
+  { name: 'was_activity_completed', description: 'If there is/was an activity attached to this travel plan, was it completed?', supportedScopes: ['travel_plan'], valueType: 'boolean' },
+  { name: 'was_activity_invalidated', description: 'If there is/was an activity attached to this travel plan, was it invalidated?', supportedScopes: ['travel_plan'], valueType: 'boolean' },
+];
+
+/**
+ * Triggers for council_task scope (1 triggers)
+ */
+export const counciltaskTriggers: TriggerDefinition[] = [
+  { name: 'can_fire_position', description: 'Check if the scope task\'s councillor can be fired. Will check both can_fire and things like it being illegal to reassing the position', supportedScopes: ['council_task'], valueType: 'boolean', syntax: "scope:task = { position_can_be_fired = yes }" },
+];
+
+/**
+ * Triggers for struggle scope (8 triggers)
+ */
+export const struggleTriggers: TriggerDefinition[] = [
+  { name: 'any_interloper_ruler', description: 'Iterate through all characters that are interloper in a struggle.', supportedScopes: ['struggle'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_interloper_ruler = { <count=num/all> / <percent=fixed_point> <triggers> }" },
+  { name: 'any_involved_ruler', description: 'Iterate through all characters that are involved in a struggle.', supportedScopes: ['struggle'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_involved_ruler = { <count=num/all> / <percent=fixed_point> <triggers> }" },
+  { name: 'has_struggle_phase_parameter', description: 'Does the given struggle\'s current phase have the given parameter? Can only check for bool parameters. has_struggle_phase_parameter = parameter_key', supportedScopes: ['struggle'] },
+  { name: 'is_culture_involved_in_struggle', description: 'is the culture involved in struggle?', supportedScopes: ['struggle'], supportedTargets: ['culture'], syntax: "is_culture_involved_in_struggle = culture:english" },
+  { name: 'is_faith_involved_in_struggle', description: 'is the faith involved in struggle?', supportedScopes: ['struggle'], supportedTargets: ['faith'], syntax: "is_faith_involved_in_struggle  = faith:baltic_pagan" },
+  { name: 'is_struggle_phase', description: 'is the scope struggle\'s current phase particular phase?', supportedScopes: ['struggle'], syntax: "is_struggle_phase = struggle_iberia_phase_opportunity" },
+  { name: 'is_struggle_type', description: 'is the scope struggle\'s type particular type?', supportedScopes: ['struggle'], syntax: "is_struggle_type = iberian_struggle" },
+  { name: 'phase_has_catalyst', description: 'Is any of the future phases affected by the given catalyst?phase_has_catalyst = catalyst_key', supportedScopes: ['struggle'] },
+];
+
+/**
+ * Triggers for accolade scope (8 triggers)
+ */
+export const accoladeTriggers: TriggerDefinition[] = [
+  { name: 'accolade_rank', description: 'How many ranks does this Accolade have unlocked?', supportedScopes: ['accolade'], valueType: 'comparison', syntax: "accolade_rank > 2" },
+  { name: 'has_accolade_category', description: 'Does any of the Accolades types have the given category flag?', supportedScopes: ['accolade'], syntax: "has_accolade_category = flag" },
+  { name: 'has_accolade_parameter', description: 'Does any of the Accolades unlocked ranks have the given parameter flag?', supportedScopes: ['accolade'], syntax: "has_accolade_parameter = flag" },
+  { name: 'has_accolade_type', description: 'Does the Accolade have the given type?', supportedScopes: ['accolade'], syntax: "has_accolade_type = key" },
+  { name: 'has_potential_accolade_successors', description: 'Does the given Accolade\'s Owner have any character in their court ( including guests ) that could act as Successor of this Accolade if made into a Knight?', supportedScopes: ['accolade'], valueType: 'boolean' },
+  { name: 'is_accolade_active', description: 'Is the scoped Accolade active, i.e. assinged by their Liege?', supportedScopes: ['accolade'], valueType: 'boolean' },
+  { name: 'primary_tier', description: 'Is the scoped Accolade\'s primary type tier equal to?', supportedScopes: ['accolade'] },
+  { name: 'secondary_tier', description: 'Is the scoped Accolade\'s secondary type tier equal to?', supportedScopes: ['accolade'] },
+];
+
+/**
  * Triggers for none scope (122 triggers)
  */
 export const generalTriggers: TriggerDefinition[] = [
@@ -1266,6 +1412,17 @@ export const allTriggers: TriggerDefinition[] = [
   ...warTriggers,
   ...activityTriggers,
   ...artifactTriggers,
+  ...secretTriggers,
+  ...factionTriggers,
+  ...holyorderTriggers,
+  ...mercenarycompanyTriggers,
+  ...inspirationTriggers,
+  ...storyTriggers,
+  ...casusbelliTriggers,
+  ...travelplanTriggers,
+  ...counciltaskTriggers,
+  ...struggleTriggers,
+  ...accoladeTriggers,
   ...generalTriggers,
 ];
 

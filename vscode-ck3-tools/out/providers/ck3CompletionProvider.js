@@ -283,6 +283,20 @@ function getTriggerSchemaForScope(scope = 'character') {
     return (0, data_1.getTriggersForScope)(scope).map(triggerToFieldSchema);
 }
 /**
+ * Get all effects as FieldSchema array (unfiltered by scope)
+ * Used for scope:X blocks where the target scope is unknown
+ */
+function getAllEffectsSchema() {
+    return data_1.allEffects.map(effectToFieldSchema);
+}
+/**
+ * Get all triggers as FieldSchema array (unfiltered by scope)
+ * Used for scope:X blocks where the target scope is unknown
+ */
+function getAllTriggersSchema() {
+    return data_1.allTriggers.map(triggerToFieldSchema);
+}
+/**
  * Known trigger block names (entry points into trigger context)
  */
 const TRIGGER_BLOCKS = new Set([
@@ -297,6 +311,8 @@ const TRIGGER_BLOCKS = new Set([
 const EFFECT_BLOCKS = new Set([
     'immediate', 'effect', 'after', 'on_accept', 'on_decline',
     'on_send', 'on_auto_accept', 'option', 'hidden_effect',
+    'on_use', 'on_expire', 'on_invalidated', // Hook effect blocks
+    'on_discover', 'on_expose', // Secret effect blocks
 ]);
 /**
  * Known modifier block names - these establish a modifier context
@@ -330,12 +346,28 @@ function isNumericBlock(block) {
  */
 function analyzeModifierContext(blockPath) {
     let modifierCategory = null;
+    let inMultiTrack = false;
+    let multiTrackDepth = 0; // How many blocks deep we are after 'tracks'
     for (const block of blockPath) {
         // Check if this block establishes a modifier context
         const category = MODIFIER_BLOCKS.get(block);
         if (category) {
             modifierCategory = category;
             // Don't break - a later block might override (e.g., nested modifiers)
+        }
+        // Handle multi-track traits: tracks = { track_name = { 50 = { modifiers } } }
+        if (block === 'tracks') {
+            inMultiTrack = true;
+            multiTrackDepth = 0;
+            continue;
+        }
+        if (inMultiTrack) {
+            multiTrackDepth++;
+            // After 'tracks', first block is track name (skip), second+ blocks if numeric are modifier contexts
+            if (multiTrackDepth >= 2 && isNumericBlock(block)) {
+                modifierCategory = 'character';
+            }
+            continue;
         }
         // Numeric blocks inside a modifier context stay in that context
         // (e.g., track = { 50 = { learning = 2 } })
@@ -358,6 +390,12 @@ function analyzeModifierContext(blockPath) {
     };
 }
 /**
+ * Check if a block name is a scope:X pattern where we can't determine the target scope
+ */
+function isScopeReference(block) {
+    return /^scope:[a-zA-Z_][a-zA-Z0-9_]*$/.test(block);
+}
+/**
  * Analyze blockPath to determine the current context type and scope.
  * Walks through the block path, tracking scope changes from iterators.
  *
@@ -368,6 +406,7 @@ function analyzeModifierContext(blockPath) {
 function analyzeBlockContext(blockPath, initialScope = 'character') {
     let contextType = 'unknown';
     let currentScope = initialScope;
+    let unknownScope = false;
     for (const block of blockPath) {
         // Check if this block establishes a trigger or effect context
         if (TRIGGER_BLOCKS.has(block)) {
@@ -376,30 +415,42 @@ function analyzeBlockContext(blockPath, initialScope = 'character') {
         else if (EFFECT_BLOCKS.has(block)) {
             contextType = 'effect';
         }
+        // Check if this is a scope:X reference - we can't determine the target scope
+        if (isScopeReference(block)) {
+            unknownScope = true;
+            continue;
+        }
         // Check if this block is a scope-changing trigger or effect
         // Look up in triggers first (for any_* iterators in trigger blocks)
         const trigger = data_1.triggersMap.get(block);
         if (trigger?.outputScope) {
             currentScope = trigger.outputScope;
+            unknownScope = false; // Known scope again
             continue;
         }
         // Look up in effects (for every_* iterators in effect blocks)
         const effect = data_1.effectsMap.get(block);
         if (effect?.outputScope) {
             currentScope = effect.outputScope;
+            unknownScope = false; // Known scope again
         }
     }
-    return { type: contextType, scope: currentScope };
+    return { type: contextType, scope: currentScope, unknownScope };
 }
 /**
  * Get completions for a block context - triggers or effects filtered by scope
+ * If unknownScope is true, returns all completions without filtering
  */
 function getSchemaForBlockContext(context) {
     if (context.type === 'trigger') {
-        return getTriggerSchemaForScope(context.scope);
+        return context.unknownScope
+            ? getAllTriggersSchema()
+            : getTriggerSchemaForScope(context.scope);
     }
     else if (context.type === 'effect') {
-        return getEffectSchemaForScope(context.scope);
+        return context.unknownScope
+            ? getAllEffectsSchema()
+            : getEffectSchemaForScope(context.scope);
     }
     return [];
 }
@@ -1311,8 +1362,9 @@ class CK3CompletionProvider {
             const endChar = i === position.line ? position.character : line.length;
             // Track positions of all "field = {" patterns on this line
             // so we know which field name corresponds to which opening brace
+            // Pattern matches: identifier, prefix:identifier (scope:X, var:X, etc.), or numeric values
             const fieldPositions = [];
-            const fieldPattern = /(\w+)\s*=\s*\{/g;
+            const fieldPattern = /((?:\w+:)?\w+)\s*=\s*\{/g;
             let fieldMatch;
             while ((fieldMatch = fieldPattern.exec(line)) !== null) {
                 // Find the position of the '{' in this match
@@ -1504,7 +1556,7 @@ class CK3CompletionProvider {
             case 'opinion_modifier':
                 return opinionModifierSchema_1.opinionModifierSchema;
             case 'secret':
-                return getSchemaWithTriggerEffectBlocks(blockPath, secretSchema_1.secretSchema);
+                return getSchemaWithTriggerEffectBlocks(blockPath, secretSchema_1.secretSchema, 'secret');
             case 'nickname':
                 return getSchemaWithTriggerEffectBlocks(blockPath, nicknameSchema_1.nicknameSchema);
             case 'script_value':
