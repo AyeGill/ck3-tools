@@ -101,6 +101,161 @@ const controlFlowEffects: EffectDefinition[] = [
 ];
 
 /**
+ * Parameter overrides for effects where generated data is incomplete
+ * These override the parameters array from effects.generated.ts
+ */
+const effectParameterOverrides: Record<string, string[]> = {
+  // Variable effects
+  'set_variable': ['name', 'value', 'days', 'months', 'weeks', 'years'],
+  'set_local_variable': ['name', 'value', 'days', 'months', 'weeks', 'years'],
+  'set_global_variable': ['name', 'value', 'days', 'months', 'weeks', 'years'],
+  'change_variable': ['name', 'add', 'subtract', 'multiply', 'divide', 'min', 'max'],
+  'change_local_variable': ['name', 'add', 'subtract', 'multiply', 'divide', 'min', 'max'],
+  'change_global_variable': ['name', 'add', 'subtract', 'multiply', 'divide', 'min', 'max'],
+
+  // Event effects
+  'trigger_event': ['id', 'on_action', 'days', 'months', 'weeks', 'years', 'delayed'],
+
+  // Random effects
+  'random': ['chance', 'modifier'],
+  'random_list': ['modifier'],
+
+  // Interface effects
+  'custom_tooltip': ['text', 'subject', 'object'],
+  'custom_description': ['text'],
+  'send_interface_message': ['type', 'title', 'desc', 'left_icon', 'right_icon', 'goto'],
+  'send_interface_toast': ['type', 'title', 'desc', 'left_icon', 'right_icon'],
+
+  // Death effect
+  'death': ['death_reason', 'killer'],
+
+  // Opinion effects
+  'add_opinion': ['target', 'modifier', 'opinion', 'years', 'months', 'days', 'weeks'],
+  'reverse_add_opinion': ['target', 'modifier', 'opinion', 'years', 'months', 'days', 'weeks'],
+
+  // List/iteration
+  'every_in_list': ['list', 'variable'],
+  'random_in_list': ['list', 'variable', 'weight'],
+  'ordered_in_list': ['list', 'variable', 'order_by', 'position', 'min', 'max', 'check_range_bounds'],
+  'any_in_list': ['list', 'variable', 'count'],
+  'add_to_list': ['list', 'variable'],
+  'add_to_temporary_list': ['list', 'variable'],
+
+  // Casus belli
+  'start_war': ['casus_belli', 'target', 'claimant', 'target_title'],
+
+  // Scheme effects
+  'start_scheme': ['type', 'target'],
+
+  // Create character
+  'create_character': ['template', 'name', 'age', 'gender', 'culture', 'faith', 'dynasty', 'location', 'employer', 'trait', 'save_scope_as'],
+
+  // Modifier effects
+  'add_scheme_modifier': ['type', 'days', 'months', 'weeks', 'years'],
+  'add_character_modifier': ['modifier', 'days', 'months', 'weeks', 'years', 'desc'],
+  'add_county_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
+  'add_province_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
+  'add_realm_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
+  'add_dynasty_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
+  'add_house_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
+  'add_culture_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
+  'add_faith_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
+  'add_activity_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
+  'add_travel_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
+
+  // Flag effects
+  'add_character_flag': ['flag', 'days', 'months', 'weeks', 'years'],
+  'add_dynasty_flag': ['flag', 'days', 'months', 'weeks', 'years'],
+  'add_house_flag': ['flag', 'days', 'months', 'weeks', 'years'],
+  'add_title_flag': ['flag', 'days', 'months', 'weeks', 'years'],
+
+  // Save scope
+  'save_scope_as': [],  // Takes just a name, not block params
+  'save_scope_value_as': ['name', 'value'],
+  'save_temporary_scope_as': [],
+  'save_temporary_scope_value_as': ['name', 'value'],
+
+  // Spawn effects
+  'spawn_army': ['name', 'levies', 'men_at_arms', 'location', 'inheritable', 'uses_supply', 'save_scope_as', 'war'],
+
+  // Truce effects
+  'add_truce_one_way': ['character', 'years', 'months', 'days', 'weeks', 'name'],
+  'add_truce_both_ways': ['character', 'years', 'months', 'days', 'weeks', 'name'],
+  'remove_truce': ['character'],
+
+  // Script value math (used inside script values)
+  'add': ['value', 'min', 'max'],
+  'subtract': ['value', 'min', 'max'],
+  'multiply': ['value', 'min', 'max'],
+  'divide': ['value', 'min', 'max'],
+  'min': ['value'],
+  'max': ['value'],
+  'floor': ['value'],
+  'round': ['value'],
+
+  // Show portrait
+  'show_portrait': ['character', 'trigger', 'animation', 'camera'],
+
+  // Assert effects (for debugging)
+  'assert_if': ['limit', 'text'],
+  'assert_read': ['target', 'text'],
+
+  // Duel effects
+  'duel': ['target', 'skill', 'value', 'on_success', 'on_fail', 'localization'],
+
+  // Dynasty effects
+  'add_dynasty_perk': ['perk'],
+  'add_dynasty_prestige': [],
+  'add_dynasty_prestige_level': [],
+
+  // Secret effects
+  'expose_secret': ['secret', 'target'],
+  'add_secret': ['type', 'target'],
+
+  // Activity effects
+  'complete_activity': [],
+  'cancel_activity': [],
+  'set_activity_location': ['province'],
+
+  // Struggle effects
+  'activate_struggle_catalyst': ['catalyst', 'character'],
+  'set_struggle_phase': ['struggle_type', 'phase'],
+
+  // Culture/faith effects
+  'set_culture': ['culture', 'save_scope_as'],
+  'set_faith': ['faith', 'save_scope_as'],
+  'convert_family_to_faith': ['faith'],
+
+  // Memory effects
+  'add_memory': ['type', 'participants', 'priority'],
+
+  // Focus effects
+  'set_focus': ['focus'],
+  'set_education_focus': ['focus'],
+
+  // Trait effects (complex form)
+  'add_trait': ['trait', 'track', 'value'],
+  'remove_trait': ['trait', 'track'],
+
+  // Court position effects
+  'appoint_court_position': ['recipient', 'court_position'],
+
+  // Inventory effects
+  'create_artifact': ['name', 'type', 'template', 'rarity', 'save_scope_as', 'modifier', 'decaying', 'history', 'visuals', 'description'],
+
+  // Title effects
+  'change_title_holder': ['holder', 'change'],
+  'create_title_and_vassal_change': ['type', 'save_scope_as', 'add_claim_on_loss'],
+
+  // More list effects
+  'every_in_local_list': ['list', 'variable'],
+  'random_in_local_list': ['list', 'variable', 'weight'],
+  'any_in_local_list': ['list', 'variable', 'count'],
+  'ordered_in_local_list': ['list', 'variable', 'order_by', 'position', 'min', 'max'],
+  'add_to_local_list': ['list', 'variable'],
+};
+
+/**
  * Logical triggers (NOT/AND/OR)
  */
 const logicalTriggers: TriggerDefinition[] = [
@@ -155,9 +310,16 @@ export function getTriggersForScope(scope: ScopeType): TriggerDefinition[] {
 
 /**
  * Build a map for quick lookup (includes scope changers)
+ * Apply parameter overrides where needed
  */
 export const effectsMap = new Map<string, EffectDefinition>(
-  allEffects.map(e => [e.name, e])
+  allEffects.map(e => {
+    const override = effectParameterOverrides[e.name];
+    if (override) {
+      return [e.name, { ...e, parameters: override }];
+    }
+    return [e.name, e];
+  })
 );
 
 /**
