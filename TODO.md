@@ -112,3 +112,15 @@ So for example prompting for skill modifications in a trait template makes littl
 - [x] When inserting an event, if I use a namespace that already exists in the same file, the extension should put the new event under the existing ones in that namespace (and move the cursor there), and not write a new namespace = ... line.
   - **FIXED**: Updated `addEvent.ts` to detect existing namespaces
   - Strips namespace line, auto-increments event ID, inserts after last event, moves cursor
+
+## Future Investigation
+
+- [ ] Review `isSpecialPattern` logic in `ck3DiagnosticsProvider.ts` (~lines 1057-1093)
+  - Handles special CK3 patterns that shouldn't be flagged as unknown triggers/effects:
+    - Script variable substitutions: `$VAR$`, `$VARIABLE$`
+    - Paths with script variables: `$INVADER$.faith.religion`
+    - Flag references: `flag:something`, `flag:$VAR$`
+    - Variable references: `var:something`
+    - Specific scope targets: `faith:catholic`, `title:k_france`, `culture:norse`
+    - Pure numeric values: `"1"`, `"50"` (used in some contexts)
+  - Could verify each pattern is still needed, check for edge cases, or validate more precisely
