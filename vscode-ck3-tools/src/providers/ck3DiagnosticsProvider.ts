@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { FieldSchema } from '../schemas/traitSchema';
+import { effectsMap, triggersMap } from '../data';
 
 // Import all schemas we want to validate
 import { traitSchema, traitSchemaMap } from '../schemas/traitSchema';
@@ -46,6 +47,68 @@ interface ParsedField {
 /**
  * Schema registry mapping file types to their schemas
  */
+/**
+ * Block names that establish trigger context
+ */
+const TRIGGER_BLOCKS = new Set([
+  'trigger', 'is_shown', 'is_valid', 'is_valid_showing_failures_only',
+  'ai_potential', 'ai_will_do', 'can_be_picked', 'can_pick',
+  'is_highlighted', 'auto_accept', 'can_send', 'can_be_picked_artifact',
+  'limit', // limit inside effects contains triggers
+]);
+
+/**
+ * Block names that establish effect context
+ */
+const EFFECT_BLOCKS = new Set([
+  'immediate', 'effect', 'after', 'on_accept', 'on_decline',
+  'on_send', 'on_auto_accept', 'option', 'hidden_effect',
+  'on_use', 'on_expire', 'on_invalidated',
+  'on_discover', 'on_expose',
+  'on_start', 'on_end', 'on_monthly', 'on_yearly',
+]);
+
+/**
+ * Fields that are valid in both trigger and effect contexts (control flow, etc.)
+ */
+const CONTROL_FLOW_FIELDS = new Set([
+  'if', 'else', 'else_if', 'switch', 'trigger_if', 'trigger_else',
+  'random', 'random_list', 'while', 'break', 'continue',
+  'limit', 'modifier', 'weight', 'factor', 'add', 'multiply',
+  'save_scope_as', 'save_scope_value_as', 'save_temporary_scope_as',
+  'custom_description', 'custom_tooltip', 'show_as_tooltip',
+  'hidden_effect', 'run_interaction',
+]);
+
+/**
+ * Scope-changing effects/triggers (valid in most contexts)
+ */
+const SCOPE_CHANGERS = new Set([
+  'root', 'prev', 'this', 'from',
+  'liege', 'top_liege', 'host', 'employer',
+  'father', 'mother', 'primary_spouse', 'betrothed',
+  'primary_heir', 'player_heir', 'designated_heir',
+  'dynasty', 'house', 'faith', 'culture', 'religion',
+  'capital_province', 'capital_county', 'primary_title',
+  'location', 'home_court',
+  // Iterator prefixes - these will be checked specially
+]);
+
+/**
+ * Prefixes for iterator effects/triggers
+ */
+const ITERATOR_PREFIXES = [
+  'every_', 'random_', 'any_', 'ordered_',
+];
+
+/**
+ * Parsed field with context information
+ */
+interface ParsedFieldWithContext extends ParsedField {
+  context: 'trigger' | 'effect' | 'schema' | 'unknown';
+  blockPath: string[];
+}
+
 const SCHEMA_REGISTRY: Map<DiagnosticFileType, { schema: FieldSchema[], schemaMap: Map<string, FieldSchema> }> = new Map([
   ['trait', { schema: traitSchema, schemaMap: traitSchemaMap }],
   ['event', { schema: eventSchema, schemaMap: eventSchemaMap }],
@@ -209,6 +272,10 @@ export class CK3DiagnosticsProvider {
         ));
       }
     }
+
+    // Validate effects and triggers in context
+    const effectTriggerDiagnostics = this.validateEffectsAndTriggers(document);
+    diagnostics.push(...effectTriggerDiagnostics);
 
     this.diagnosticCollection.set(document.uri, diagnostics);
   }
@@ -518,6 +585,256 @@ export class CK3DiagnosticsProvider {
     }
 
     return invalid;
+  }
+
+  /**
+   * Validate effects and triggers in context-aware blocks
+   */
+  private validateEffectsAndTriggers(
+    document: vscode.TextDocument
+  ): vscode.Diagnostic[] {
+    const diagnostics: vscode.Diagnostic[] = [];
+    const text = document.getText();
+    const lines = text.split('\n');
+
+    // Track context as we parse
+    const blockStack: Array<{ name: string; context: 'trigger' | 'effect' | 'unknown' }> = [];
+    let braceDepth = 0;
+
+    for (let lineNum = 0; lineNum < lines.length; lineNum++) {
+      const line = lines[lineNum];
+      const trimmed = line.trim();
+
+      // Skip comments and empty lines
+      if (trimmed.startsWith('#') || trimmed === '') {
+        continue;
+      }
+
+      // Remove inline comments
+      const commentIndex = line.indexOf('#');
+      const cleanLine = commentIndex >= 0 ? line.substring(0, commentIndex) : line;
+
+      // Count braces
+      const openBraces = (cleanLine.match(/\{/g) || []).length;
+      const closeBraces = (cleanLine.match(/\}/g) || []).length;
+
+      // Check for block start: name = {
+      const blockStartMatch = cleanLine.match(/^\s*(\S+)\s*=\s*\{/);
+      if (blockStartMatch) {
+        const blockName = blockStartMatch[1];
+        let context: 'trigger' | 'effect' | 'unknown' = 'unknown';
+
+        // Determine context based on block name
+        if (TRIGGER_BLOCKS.has(blockName)) {
+          context = 'trigger';
+        } else if (EFFECT_BLOCKS.has(blockName)) {
+          context = 'effect';
+        } else if (blockStack.length > 0) {
+          // Inherit context from parent if this is a scope changer or iterator
+          const parentContext = blockStack[blockStack.length - 1].context;
+          if (parentContext !== 'unknown') {
+            // Check if this is a valid scope changer or iterator
+            if (this.isValidScopeChanger(blockName) || this.isValidIterator(blockName, parentContext)) {
+              context = parentContext;
+            } else if (parentContext === 'effect' && effectsMap.has(blockName)) {
+              context = 'effect';
+            } else if (parentContext === 'trigger' && triggersMap.has(blockName)) {
+              context = 'trigger';
+            }
+          }
+        }
+
+        blockStack.push({ name: blockName, context });
+      }
+
+      // Check for simple field: name = value (no opening brace)
+      const fieldMatch = cleanLine.match(/^\s*(\S+)\s*=\s*([^{].*)$/);
+      if (fieldMatch && blockStack.length > 0) {
+        const fieldName = fieldMatch[1];
+        const currentBlock = blockStack[blockStack.length - 1];
+
+        // Only validate if we're in a known context
+        if (currentBlock.context !== 'unknown') {
+          const diagnostic = this.validateFieldInContext(
+            fieldName,
+            currentBlock.context,
+            lineNum,
+            cleanLine,
+            document
+          );
+          if (diagnostic) {
+            diagnostics.push(diagnostic);
+          }
+        }
+      }
+
+      // Note: We don't validate block names (like `immediate`, `if`, `liege`) here.
+      // Block names that establish context are schema fields (validated by schema validation).
+      // Block names that are scope changers or control flow are handled by context inheritance.
+
+      // Update brace depth and pop blocks
+      braceDepth += openBraces - closeBraces;
+
+      // Pop blocks when braces close
+      for (let i = 0; i < closeBraces; i++) {
+        if (blockStack.length > 0) {
+          blockStack.pop();
+        }
+      }
+    }
+
+    return diagnostics;
+  }
+
+  /**
+   * Check if a field name is a valid scope changer
+   */
+  private isValidScopeChanger(name: string): boolean {
+    if (SCOPE_CHANGERS.has(name)) {
+      return true;
+    }
+    // Check for scope: prefix
+    if (name.startsWith('scope:')) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Check if a field name is a valid iterator for the context
+   */
+  private isValidIterator(name: string, context: 'trigger' | 'effect'): boolean {
+    for (const prefix of ITERATOR_PREFIXES) {
+      if (name.startsWith(prefix)) {
+        // Check if this iterator exists in effects or triggers
+        if (context === 'effect' && effectsMap.has(name)) {
+          return true;
+        }
+        if (context === 'trigger' && triggersMap.has(name)) {
+          return true;
+        }
+        // Also check the other map since some iterators work in both
+        if (effectsMap.has(name) || triggersMap.has(name)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Validate a field in a specific context (trigger or effect)
+   */
+  private validateFieldInContext(
+    fieldName: string,
+    context: 'trigger' | 'effect',
+    lineNum: number,
+    cleanLine: string,
+    document: vscode.TextDocument
+  ): vscode.Diagnostic | null {
+    // Skip control flow and common fields
+    if (CONTROL_FLOW_FIELDS.has(fieldName)) {
+      return null;
+    }
+
+    // Skip context-establishing blocks (these are schema fields, not effects/triggers)
+    // This handles edge cases where `immediate =` is on a separate line from `{`
+    if (TRIGGER_BLOCKS.has(fieldName) || EFFECT_BLOCKS.has(fieldName)) {
+      return null;
+    }
+
+    // Skip scope changers
+    if (this.isValidScopeChanger(fieldName)) {
+      return null;
+    }
+
+    // Skip iterators
+    if (this.isValidIterator(fieldName, context)) {
+      return null;
+    }
+
+    // Check if it's a valid effect/trigger for the context
+    if (context === 'effect') {
+      if (!effectsMap.has(fieldName) && !triggersMap.has(fieldName)) {
+        // Could be a scripted effect - those start with various prefixes
+        // Be lenient: only flag if it doesn't look like a scripted effect
+        if (!this.couldBeScriptedEffectOrTrigger(fieldName)) {
+          const fieldStart = cleanLine.indexOf(fieldName);
+          const range = new vscode.Range(
+            new vscode.Position(lineNum, fieldStart >= 0 ? fieldStart : 0),
+            new vscode.Position(lineNum, fieldStart >= 0 ? fieldStart + fieldName.length : cleanLine.length)
+          );
+          return new vscode.Diagnostic(
+            range,
+            `Unknown effect: "${fieldName}"`,
+            vscode.DiagnosticSeverity.Warning
+          );
+        }
+      }
+    } else if (context === 'trigger') {
+      if (!triggersMap.has(fieldName) && !effectsMap.has(fieldName)) {
+        // Could be a scripted trigger
+        if (!this.couldBeScriptedEffectOrTrigger(fieldName)) {
+          const fieldStart = cleanLine.indexOf(fieldName);
+          const range = new vscode.Range(
+            new vscode.Position(lineNum, fieldStart >= 0 ? fieldStart : 0),
+            new vscode.Position(lineNum, fieldStart >= 0 ? fieldStart + fieldName.length : cleanLine.length)
+          );
+          return new vscode.Diagnostic(
+            range,
+            `Unknown trigger: "${fieldName}"`,
+            vscode.DiagnosticSeverity.Warning
+          );
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Check if a name could be a scripted effect or trigger
+   * Scripted effects/triggers are user-defined and can have any name
+   * We use heuristics to avoid false positives
+   */
+  private couldBeScriptedEffectOrTrigger(name: string): boolean {
+    // Common patterns for scripted effects/triggers
+    const scriptedPatterns = [
+      /_effect$/,
+      /_trigger$/,
+      /^trigger_/,
+      /^effect_/,
+      /^scripted_/,
+      /^has_/,
+      /^is_/,
+      /^can_/,
+      /^get_/,
+      /^set_/,
+      /^add_/,
+      /^remove_/,
+      /^check_/,
+      /^calculate_/,
+      /^apply_/,
+      /^grant_/,
+      /^create_/,
+      /^destroy_/,
+      /^update_/,
+      /^validate_/,
+    ];
+
+    for (const pattern of scriptedPatterns) {
+      if (pattern.test(name)) {
+        return true;
+      }
+    }
+
+    // Also allow anything with underscores (likely a scripted thing)
+    // This is very permissive to avoid false positives
+    if (name.includes('_') && name.length > 3) {
+      return true;
+    }
+
+    return false;
   }
 
   /**
