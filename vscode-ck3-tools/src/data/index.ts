@@ -339,16 +339,16 @@ const effectParameterOverrides: Record<string, string[]> = {
   'add_durability': ['value'],
   'add_dread': ['value', 'min', 'max'],
   'add_stress': ['value', 'min', 'max', 'type'],
-  'add_unity_value': ['value'],
+  'add_unity_value': ['value', 'character', 'desc'],
   'change_herd': ['value'],
   'change_county_control': ['value'],
   'pay_treasury_or_gold': ['value', 'target'],
-  'pay_gold_to_treasury': ['value'],
+  'pay_gold_to_treasury': ['value', 'target'],
   'pay_long_term_gold': ['target', 'gold'],
   'add_martial_lifestyle_xp': ['value'],
 
   // Interface effects (unique additions)
-  'open_view_data': ['data', 'view'],
+  'open_view_data': ['data', 'view', 'player'],
   'save_opinion_value_as': ['name', 'target'],
 
   // Control flow (parameters)
