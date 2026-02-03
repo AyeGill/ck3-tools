@@ -180,6 +180,9 @@ describe('CK3 Game File Validation', () => {
     const uniqueInvalidEnumValues: Record<string, Set<string>> = {}; // field -> values
     const uniqueTypeMismatches: Record<string, Set<string>> = {}; // field -> values
 
+    // Track unknown fields by schema type: schema -> Set<fieldName>
+    const unknownFieldsBySchema: Map<string, Set<string>> = new Map();
+
     // Track examples of specific unknown effects (for debugging)
     const TRACK_EFFECT = process.env.TRACK_EFFECT || '';
     const trackedEffectExamples: Array<{ file: string; line: number; lineText: string }> = [];
@@ -260,7 +263,14 @@ describe('CK3 Game File Validation', () => {
             const msg = diag.message;
             if (msg.startsWith('Unknown field:')) {
               const match = msg.match(/Unknown field: "([^"]+)"/);
-              if (match) uniqueUnknownFields.add(match[1]);
+              if (match) {
+                uniqueUnknownFields.add(match[1]);
+                // Track by schema type
+                if (!unknownFieldsBySchema.has(fileType)) {
+                  unknownFieldsBySchema.set(fileType, new Set());
+                }
+                unknownFieldsBySchema.get(fileType)!.add(match[1]);
+              }
             } else if (msg.startsWith('Unknown effect:')) {
               const match = msg.match(/Unknown effect: "([^"]+)" in "([^"]+)"/);
               if (match) {
@@ -450,6 +460,23 @@ describe('CK3 Game File Validation', () => {
         for (const ex of trackedEffectExamples) {
           console.log(`${ex.file}:${ex.line}`);
           console.log(`  ${ex.lineText.trim()}`);
+        }
+      }
+
+      // Output unknown fields grouped by schema - this can be used to generate schema additions
+      if (unknownFieldsBySchema.size > 0) {
+        console.log(`\n============================================================`);
+        console.log(`Unknown Fields by Schema (for schema generation)`);
+        console.log(`============================================================`);
+        // Sort schemas by number of unknown fields
+        const sortedSchemas = [...unknownFieldsBySchema.entries()].sort((a, b) => b[1].size - a[1].size);
+        for (const [schema, fields] of sortedSchemas) {
+          const sortedFields = [...fields].sort();
+          console.log(`\n--- ${schema}Schema (${sortedFields.length} unknown fields) ---`);
+          // Output as a TypeScript-friendly format for easy copy-paste
+          for (const field of sortedFields) {
+            console.log(`  '${field}',`);
+          }
         }
       }
     }
