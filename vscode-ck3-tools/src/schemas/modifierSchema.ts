@@ -276,6 +276,15 @@ export const modifierSchema: FieldSchema[] = [
     description: 'Additional building slots.',
     example: 'building_slot_add = 1',
   },
+  {
+    name: 'scale',
+    type: 'block',
+    description: 'Scales the modifier values based on a value or script calculation.',
+    example: `scale = {
+    value = learning
+    multiply = 0.1
+}`,
+  },
 
   // Wildcard: accept any valid modifier from the game's modifier database
   // This covers the hundreds of modifiers not explicitly listed above
