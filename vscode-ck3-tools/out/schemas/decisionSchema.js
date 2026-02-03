@@ -40,13 +40,6 @@ exports.decisionSchema = [
 }`,
     },
     {
-        name: 'major',
-        type: 'boolean',
-        description: 'If yes, this is a major decision shown prominently.',
-        default: false,
-        example: 'major = yes',
-    },
-    {
         name: 'sort_order',
         type: 'integer',
         description: 'Sort order in the decision list. Lower numbers appear first.',
@@ -155,20 +148,6 @@ exports.decisionSchema = [
     gui = "decision_view_widget_generic_list"
     controller = decision_option_list_controller
 }`,
-    },
-    // Extra
-    {
-        name: 'extra_character',
-        type: 'string',
-        description: 'Additional character to show in the decision view.',
-        example: 'extra_character = scope:target',
-    },
-    // Title/County targeting
-    {
-        name: 'title_target',
-        type: 'string',
-        description: 'Scope to a title for title-targeted decisions.',
-        example: 'title_target = scope:county',
     },
 ];
 // Map for quick lookup

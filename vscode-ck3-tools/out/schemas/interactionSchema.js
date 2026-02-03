@@ -173,14 +173,6 @@ exports.interactionSchema = [
         description: 'Effects when the interaction is blocked.',
         example: 'on_blocked_effect = { add_stress = 10 }',
     },
-    {
-        name: 'effect',
-        type: 'effect',
-        description: 'Immediate effects (for auto-accepted interactions).',
-        example: `effect = {
-    add_prestige = 100
-}`,
-    },
     // Auto-accept
     {
         name: 'auto_accept',
@@ -325,14 +317,6 @@ exports.interactionSchema = [
         type: 'string',
         description: 'Filter for valid targets.',
         example: 'target_filter = recipient_courtiers',
-    },
-    // Reply
-    {
-        name: 'respond_on_decline',
-        type: 'boolean',
-        description: 'If yes, send notification when declined.',
-        default: true,
-        example: 'respond_on_decline = no',
     },
     // Interface
     {

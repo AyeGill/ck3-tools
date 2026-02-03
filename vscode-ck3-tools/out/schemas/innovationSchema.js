@@ -87,12 +87,6 @@ exports.innovationSchema = [
         description: 'Men-at-arms type unlocked by this innovation.',
         example: 'unlock_maa = armored_footmen',
     },
-    {
-        name: 'unlock_decision',
-        type: 'string',
-        description: 'Decision unlocked by this innovation.',
-        example: 'unlock_decision = found_holy_order_decision',
-    },
     // Modifiers
     {
         name: 'character_modifier',
@@ -125,15 +119,6 @@ exports.innovationSchema = [
         description: 'Modifiers applied to counties of this culture.',
         example: `county_modifier = {
     development_growth_factor = 0.1
-}`,
-    },
-    // Effects
-    {
-        name: 'on_complete',
-        type: 'effect',
-        description: 'Effects when the innovation is completed.',
-        example: `on_complete = {
-    add_prestige = 500
 }`,
     },
     // Flags

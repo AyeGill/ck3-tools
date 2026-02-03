@@ -32,68 +32,11 @@ exports.holdingSchema = [
     },
     // Flags
     {
-        name: 'flag',
-        type: 'string',
-        description: 'Flag identifier for this holding type.',
-        example: 'flag = castle',
-    },
-    {
         name: 'can_be_inherited',
         type: 'boolean',
         description: 'Whether this holding can be inherited.',
         default: true,
         example: 'can_be_inherited = no',
-    },
-    // Graphics
-    {
-        name: 'gfx_settings',
-        type: 'block',
-        description: 'Graphics settings for this holding type.',
-        example: `gfx_settings = {
-    holding_type = castle
-}`,
-    },
-    // Modifiers
-    {
-        name: 'county_modifier',
-        type: 'block',
-        description: 'Modifiers applied to the county.',
-        example: `county_modifier = {
-    tax_mult = 0.1
-}`,
-    },
-    {
-        name: 'province_modifier',
-        type: 'block',
-        description: 'Modifiers applied to the province.',
-        example: `province_modifier = {
-    garrison_size = 500
-}`,
-    },
-    {
-        name: 'holder_modifier',
-        type: 'block',
-        description: 'Modifiers applied to the holder.',
-        example: `holder_modifier = {
-    monthly_prestige = 0.5
-}`,
-    },
-    // Requirements
-    {
-        name: 'can_construct',
-        type: 'trigger',
-        description: 'Conditions to construct this holding.',
-        example: `can_construct = {
-    holder = { government_has_flag = government_is_feudal }
-}`,
-    },
-    {
-        name: 'is_valid',
-        type: 'trigger',
-        description: 'Conditions for this holding to be valid.',
-        example: `is_valid = {
-    province = { has_building = castle_01 }
-}`,
     },
 ];
 // Map for quick lookup

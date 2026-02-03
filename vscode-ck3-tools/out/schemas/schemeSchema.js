@@ -155,14 +155,6 @@ exports.schemeSchema = [
     scope:target = { is_alive = yes }
 }`,
     },
-    {
-        name: 'valid_target',
-        type: 'trigger',
-        description: 'Conditions for a target to be valid.',
-        example: `valid_target = {
-    NOT = { this = scope:owner }
-}`,
-    },
     // Agents
     {
         name: 'agent_leave_threshold',
@@ -232,33 +224,6 @@ exports.schemeSchema = [
         example: 'on_phase_completed = { }',
     },
     {
-        name: 'on_success',
-        type: 'effect',
-        description: 'Effects when the scheme succeeds.',
-        example: `on_success = {
-    scope:target = { death = { killer = scope:owner } }
-}`,
-    },
-    {
-        name: 'on_fail',
-        type: 'effect',
-        description: 'Effects when the scheme fails.',
-        example: 'on_fail = { add_stress = 10 }',
-    },
-    {
-        name: 'on_discover',
-        type: 'effect',
-        description: 'Effects when the scheme is discovered.',
-        example: `on_discover = {
-    scope:target = {
-        add_opinion = {
-            target = scope:owner
-            modifier = discovered_murder_attempt
-        }
-    }
-}`,
-    },
-    {
         name: 'on_invalidated',
         type: 'effect',
         description: 'Effects when the scheme becomes invalid.',
@@ -270,40 +235,7 @@ exports.schemeSchema = [
         description: 'Monthly effects while scheme is active.',
         example: 'on_monthly = { }',
     },
-    // Power
-    {
-        name: 'power_per_skill_point',
-        type: 'float',
-        description: 'Power gained per skill point.',
-        example: 'power_per_skill_point = 1.0',
-    },
-    {
-        name: 'power_per_agent_skill_point',
-        type: 'float',
-        description: 'Power gained per agent skill point.',
-        example: 'power_per_agent_skill_point = 0.5',
-    },
-    {
-        name: 'resistance_per_skill_point',
-        type: 'float',
-        description: 'Resistance per target skill point.',
-        example: 'resistance_per_skill_point = 1.0',
-    },
     // UI
-    {
-        name: 'freeze_scheme_on_start',
-        type: 'boolean',
-        description: 'If yes, scheme is frozen when started.',
-        default: false,
-        example: 'freeze_scheme_on_start = yes',
-    },
-    {
-        name: 'uses_agents',
-        type: 'boolean',
-        description: 'Whether the scheme uses agents.',
-        default: true,
-        example: 'uses_agents = no',
-    },
     {
         name: 'use_secrecy',
         type: 'boolean',

@@ -61,24 +61,6 @@ exports.storyCycleSchema = [
     }
 }`,
     },
-    // Variables
-    {
-        name: 'on_yearly_pulse',
-        type: 'effect',
-        description: 'Yearly effects for the story.',
-        example: `on_yearly_pulse = {
-    change_variable = {
-        name = story_progress
-        add = 1
-    }
-}`,
-    },
-    {
-        name: 'on_monthly_pulse',
-        type: 'effect',
-        description: 'Monthly effects for the story.',
-        example: 'on_monthly_pulse = { }',
-    },
 ];
 // Map for quick lookup
 exports.storyCycleSchemaMap = new Map(exports.storyCycleSchema.map((field) => [field.name, field]));

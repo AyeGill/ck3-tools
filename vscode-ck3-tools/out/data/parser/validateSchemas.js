@@ -96,8 +96,29 @@ const SCHEMA_MAPPINGS = [
     { schemaName: 'epidemic', schemaFile: 'epidemicSchema', gameDir: 'common/epidemics', parseMode: 'nested' },
 ];
 /**
+ * Recursively find all .txt files in a directory
+ */
+function findTxtFiles(dir) {
+    const files = [];
+    if (!fs.existsSync(dir)) {
+        return files;
+    }
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+            files.push(...findTxtFiles(fullPath));
+        }
+        else if (entry.name.endsWith('.txt')) {
+            files.push(fullPath);
+        }
+    }
+    return files;
+}
+/**
  * Extract top-level field names from CK3 script files
  * This handles the nested block structure: entity_name = { field = value }
+ * Recursively scans all subdirectories for .txt files
  */
 function extractFieldsFromGameFiles(gameDir, parseMode = 'nested') {
     const fields = new Set();
@@ -105,9 +126,8 @@ function extractFieldsFromGameFiles(gameDir, parseMode = 'nested') {
         console.error(`  Directory not found: ${gameDir}`);
         return fields;
     }
-    const files = fs.readdirSync(gameDir).filter(f => f.endsWith('.txt'));
-    for (const file of files) {
-        const filePath = path.join(gameDir, file);
+    const files = findTxtFiles(gameDir);
+    for (const filePath of files) {
         const content = fs.readFileSync(filePath, 'utf-8');
         // Remove comments
         const lines = content.split('\n').map(line => {

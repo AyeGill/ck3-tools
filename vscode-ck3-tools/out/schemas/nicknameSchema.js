@@ -22,38 +22,6 @@ exports.nicknameSchema = [
         default: false,
         example: 'is_bad = yes',
     },
-    // Conditions
-    {
-        name: 'is_valid',
-        type: 'trigger',
-        description: 'Conditions for the nickname to be valid.',
-        example: `is_valid = {
-    martial >= 15
-    has_trait = brave
-}`,
-    },
-    // AI
-    {
-        name: 'ai_will_give',
-        type: 'trigger',
-        description: 'AI conditions to give this nickname.',
-        example: `ai_will_give = {
-    prestige >= 2000
-    has_trait = brave
-}`,
-    },
-    {
-        name: 'weight',
-        type: 'block',
-        description: 'Weight calculation for nickname selection.',
-        example: `weight = {
-    base = 100
-    modifier = {
-        add = 50
-        martial >= 20
-    }
-}`,
-    },
 ];
 // Map for quick lookup
 exports.nicknameSchemaMap = new Map(exports.nicknameSchema.map((field) => [field.name, field]));

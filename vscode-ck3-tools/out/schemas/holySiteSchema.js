@@ -31,15 +31,6 @@ exports.holySiteSchema = [
     clergy_opinion = 5
 }`,
     },
-    {
-        name: 'county_modifier',
-        type: 'block',
-        description: 'Modifiers applied to the county containing this holy site.',
-        example: `county_modifier = {
-    tax_mult = 0.1
-    development_growth_factor = 0.05
-}`,
-    },
     // Flags
     {
         name: 'flag',
@@ -57,13 +48,6 @@ exports.holySiteSchema = [
         faith = faith:catholic
     }
 }`,
-    },
-    // Buildings
-    {
-        name: 'build_building',
-        type: 'string',
-        description: 'Building to automatically build at this holy site.',
-        example: 'build_building = holy_site_cathedral_01',
     },
 ];
 // Map for quick lookup
