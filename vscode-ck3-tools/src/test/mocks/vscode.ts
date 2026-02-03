@@ -119,10 +119,13 @@ export interface TextLine {
 export class MockTextDocument {
   private lines: string[];
   public fileName: string;
+  public uri: Uri;
+  public languageId: string = 'ck3';
 
   constructor(content: string, fileName: string) {
     this.lines = content.split('\n');
     this.fileName = fileName;
+    this.uri = Uri.file(fileName);
   }
 
   lineAt(line: number | Position): TextLine {
@@ -170,6 +173,18 @@ export class MockTextDocument {
   get lineCount(): number {
     return this.lines.length;
   }
+
+  positionAt(offset: number): Position {
+    let remaining = offset;
+    for (let line = 0; line < this.lines.length; line++) {
+      const lineLength = this.lines[line].length + 1; // +1 for newline
+      if (remaining < lineLength) {
+        return new Position(line, remaining);
+      }
+      remaining -= lineLength;
+    }
+    return new Position(this.lines.length - 1, this.lines[this.lines.length - 1]?.length || 0);
+  }
 }
 
 /**
@@ -183,6 +198,7 @@ export function createMockDocument(content: string, fileName: string): MockTextD
 export const languages = {
   registerCompletionItemProvider: () => ({ dispose: () => {} }),
   registerHoverProvider: () => ({ dispose: () => {} }),
+  createDiagnosticCollection: (name: string) => new DiagnosticCollection(),
 };
 
 export const window = {
@@ -213,3 +229,72 @@ export const CompletionTriggerKind = {
   TriggerCharacter: 1,
   TriggerForIncompleteCompletions: 2,
 };
+
+// DiagnosticSeverity enum for diagnostics testing
+export enum DiagnosticSeverity {
+  Error = 0,
+  Warning = 1,
+  Information = 2,
+  Hint = 3,
+}
+
+// Mock Diagnostic class
+export class Diagnostic {
+  range: Range;
+  message: string;
+  severity: DiagnosticSeverity;
+
+  constructor(range: Range, message: string, severity: DiagnosticSeverity = DiagnosticSeverity.Error) {
+    this.range = range;
+    this.message = message;
+    this.severity = severity;
+  }
+}
+
+// Mock DiagnosticCollection
+export class DiagnosticCollection {
+  private diagnostics: Map<string, Diagnostic[]> = new Map();
+
+  set(uri: { toString(): string } | string, diagnostics: Diagnostic[]): void {
+    const key = typeof uri === 'string' ? uri : uri.toString();
+    this.diagnostics.set(key, diagnostics);
+  }
+
+  get(uri: { toString(): string } | string): Diagnostic[] | undefined {
+    const key = typeof uri === 'string' ? uri : uri.toString();
+    return this.diagnostics.get(key);
+  }
+
+  delete(uri: { toString(): string } | string): void {
+    const key = typeof uri === 'string' ? uri : uri.toString();
+    this.diagnostics.delete(key);
+  }
+
+  clear(): void {
+    this.diagnostics.clear();
+  }
+
+  dispose(): void {
+    this.clear();
+  }
+}
+
+// Mock Uri
+export class Uri {
+  readonly scheme: string = 'file';
+  readonly path: string;
+  readonly fsPath: string;
+
+  constructor(path: string) {
+    this.path = path;
+    this.fsPath = path;
+  }
+
+  toString(): string {
+    return `file://${this.path}`;
+  }
+
+  static file(path: string): Uri {
+    return new Uri(path);
+  }
+}

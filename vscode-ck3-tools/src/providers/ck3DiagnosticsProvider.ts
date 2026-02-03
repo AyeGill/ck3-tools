@@ -273,6 +273,10 @@ export class CK3DiagnosticsProvider {
       }
     }
 
+    // Validate syntax errors (unmatched braces, incomplete assignments, etc.)
+    const syntaxDiagnostics = this.validateSyntax(document);
+    diagnostics.push(...syntaxDiagnostics);
+
     // Validate effects and triggers in context
     const effectTriggerDiagnostics = this.validateEffectsAndTriggers(document);
     diagnostics.push(...effectTriggerDiagnostics);
@@ -350,8 +354,9 @@ export class CK3DiagnosticsProvider {
       const closeBraces = (cleanLine.match(/\}/g) || []).length;
 
       // Check for entity start: name = { at brace depth 0
+      // Use [\w.]+ to match both regular entities (trait_name) and event IDs (namespace.0001)
       if (braceDepth === 0 && openBraces > 0) {
-        const match = cleanLine.match(/^\s*(\w+)\s*=\s*\{/);
+        const match = cleanLine.match(/^\s*([\w.]+)\s*=\s*\{/);
         if (match) {
           currentEntity = {
             name: match[1],
@@ -585,6 +590,112 @@ export class CK3DiagnosticsProvider {
     }
 
     return invalid;
+  }
+
+  /**
+   * Validate syntax errors (unmatched braces, incomplete assignments, etc.)
+   */
+  private validateSyntax(document: vscode.TextDocument): vscode.Diagnostic[] {
+    const diagnostics: vscode.Diagnostic[] = [];
+    const text = document.getText();
+    const lines = text.split('\n');
+
+    // Track brace matching
+    const braceStack: Array<{ line: number; column: number }> = [];
+    let inString = false;
+
+    for (let lineNum = 0; lineNum < lines.length; lineNum++) {
+      const line = lines[lineNum];
+
+      // Skip comment-only lines
+      const trimmed = line.trim();
+      if (trimmed.startsWith('#')) {
+        continue;
+      }
+
+      // Find comment start on this line
+      const commentIndex = line.indexOf('#');
+      const codePart = commentIndex >= 0 ? line.substring(0, commentIndex) : line;
+
+      // Check for incomplete assignment (= at end of line with nothing after)
+      const incompleteAssignMatch = codePart.match(/=\s*$/);
+      if (incompleteAssignMatch && !codePart.includes('{')) {
+        // Check if next non-empty line starts with { (multi-line block)
+        let nextLineHasBrace = false;
+        for (let j = lineNum + 1; j < lines.length; j++) {
+          const nextTrimmed = lines[j].trim();
+          if (nextTrimmed === '' || nextTrimmed.startsWith('#')) continue;
+          if (nextTrimmed.startsWith('{')) {
+            nextLineHasBrace = true;
+          }
+          break;
+        }
+
+        if (!nextLineHasBrace) {
+          const eqPos = codePart.lastIndexOf('=');
+          diagnostics.push(new vscode.Diagnostic(
+            new vscode.Range(lineNum, eqPos, lineNum, eqPos + 1),
+            'Incomplete assignment: expected value after "="',
+            vscode.DiagnosticSeverity.Error
+          ));
+        }
+      }
+
+      // Track braces for matching
+      for (let col = 0; col < codePart.length; col++) {
+        const char = codePart[col];
+
+        if (char === '{') {
+          braceStack.push({ line: lineNum, column: col });
+        } else if (char === '}') {
+          if (braceStack.length === 0) {
+            // Unmatched closing brace
+            diagnostics.push(new vscode.Diagnostic(
+              new vscode.Range(lineNum, col, lineNum, col + 1),
+              'Unmatched closing brace "}"',
+              vscode.DiagnosticSeverity.Error
+            ));
+          } else {
+            braceStack.pop();
+          }
+        }
+      }
+
+      // Check for common syntax issues on this line
+      // Empty block on same line: something = { }
+      // This is actually valid in CK3, so we won't flag it
+
+      // Check for double equals: ==
+      if (codePart.includes('==')) {
+        const pos = codePart.indexOf('==');
+        diagnostics.push(new vscode.Diagnostic(
+          new vscode.Range(lineNum, pos, lineNum, pos + 2),
+          'Invalid syntax: use single "=" for assignment, or comparison operators like ">=" "<=" "!="',
+          vscode.DiagnosticSeverity.Error
+        ));
+      }
+
+      // Check for assignment without field name: = value at start of line
+      const badAssignMatch = codePart.match(/^\s*=\s*\S/);
+      if (badAssignMatch) {
+        diagnostics.push(new vscode.Diagnostic(
+          new vscode.Range(lineNum, codePart.indexOf('='), lineNum, codePart.indexOf('=') + 1),
+          'Missing field name before "="',
+          vscode.DiagnosticSeverity.Error
+        ));
+      }
+    }
+
+    // Check for unmatched opening braces at end of file
+    for (const brace of braceStack) {
+      diagnostics.push(new vscode.Diagnostic(
+        new vscode.Range(brace.line, brace.column, brace.line, brace.column + 1),
+        'Unmatched opening brace "{"',
+        vscode.DiagnosticSeverity.Error
+      ));
+    }
+
+    return diagnostics;
   }
 
   /**
