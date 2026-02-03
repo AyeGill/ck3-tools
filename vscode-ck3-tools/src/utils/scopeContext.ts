@@ -110,10 +110,15 @@ export function analyzeBlockContext(
  */
 export const KNOWN_SCOPE_CHANGERS: Map<string, ScopeType> = new Map([
   // Generic scope references (always valid, scope depends on context)
+  // Include uppercase versions for case-insensitivity
   ['root', 'character'],
+  ['ROOT', 'character'],
   ['prev', 'character'],
+  ['PREV', 'character'],
   ['this', 'character'],
+  ['THIS', 'character'],
   ['from', 'character'],
+  ['FROM', 'character'],
 
   // Character to character scope changers
   ['liege', 'character'],
