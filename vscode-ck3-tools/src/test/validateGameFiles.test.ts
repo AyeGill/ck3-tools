@@ -207,14 +207,12 @@ describe('CK3 Game File Validation', () => {
         const fileType = getFileType(file);
         fileTypeCount[fileType] = (fileTypeCount[fileType] || 0) + 1;
 
-        // Clear previous diagnostics
-        mockDiagnostics.clear();
-
         // Validate the document
         provider.validateDocument(doc);
 
-        // Get the diagnostics
-        const diagnostics = mockDiagnostics.get(doc.uri.toString()) || [];
+        // Get the diagnostics from the provider's collection directly
+        const collection = provider.getDiagnosticCollection();
+        const diagnostics = (collection as any).get(doc.uri) || [];
 
         for (const diag of diagnostics) {
           const error: ValidationError = {
