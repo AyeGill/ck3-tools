@@ -790,10 +790,13 @@ export class CK3DiagnosticsProvider {
       const openBraces = (cleanLine.match(/\{/g) || []).length;
       const closeBraces = (cleanLine.match(/\}/g) || []).length;
 
-      // Check for block start: name = {
-      const blockStartMatch = cleanLine.match(/^\s*(\S+)\s*=\s*\{/);
-      if (blockStartMatch) {
-        const blockName = blockStartMatch[1];
+      // Check for ALL block starts on this line: name = {
+      // A single line may contain multiple inline blocks like: limit = { scope:actor = { is_ai = yes } }
+      // We need to push ALL of them to keep the stack balanced with closing braces
+      const blockStartRegex = /(\S+)\s*=\s*\{/g;
+      const blockStarts = [...cleanLine.matchAll(blockStartRegex)];
+      for (const match of blockStarts) {
+        const blockName = match[1];
         let context: 'trigger' | 'effect' | 'unknown' = 'unknown';
 
         // Determine context based on block name
