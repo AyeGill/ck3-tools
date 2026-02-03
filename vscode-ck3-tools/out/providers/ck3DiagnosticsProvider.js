@@ -547,7 +547,7 @@ class CK3DiagnosticsProvider {
                 const currentBlock = blockStack[blockStack.length - 1];
                 // Only validate if we're in a known context
                 if (currentBlock.context !== 'unknown') {
-                    const diagnostic = this.validateFieldInContext(fieldName, currentBlock.context, lineNum, cleanLine, document);
+                    const diagnostic = this.validateFieldInContext(fieldName, currentBlock.context, currentBlock.name, lineNum, cleanLine, document);
                     if (diagnostic) {
                         diagnostics.push(diagnostic);
                     }
@@ -604,7 +604,7 @@ class CK3DiagnosticsProvider {
     /**
      * Validate a field in a specific context (trigger or effect)
      */
-    validateFieldInContext(fieldName, context, lineNum, cleanLine, document) {
+    validateFieldInContext(fieldName, context, parentBlockName, lineNum, cleanLine, document) {
         // Skip control flow and common fields
         if (CONTROL_FLOW_FIELDS.has(fieldName)) {
             return null;
@@ -620,6 +620,12 @@ class CK3DiagnosticsProvider {
         }
         // Skip iterators
         if (this.isValidIterator(fieldName, context)) {
+            return null;
+        }
+        // Check if it's a known parameter of the parent block
+        const parentEffect = data_1.effectsMap.get(parentBlockName);
+        const parentTrigger = data_1.triggersMap.get(parentBlockName);
+        if (parentEffect?.parameters?.includes(fieldName) || parentTrigger?.parameters?.includes(fieldName)) {
             return null;
         }
         // Check if it's a valid effect/trigger for the context

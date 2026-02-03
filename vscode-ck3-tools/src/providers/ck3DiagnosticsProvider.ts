@@ -658,6 +658,7 @@ export class CK3DiagnosticsProvider {
           const diagnostic = this.validateFieldInContext(
             fieldName,
             currentBlock.context,
+            currentBlock.name,
             lineNum,
             cleanLine,
             document
@@ -728,6 +729,7 @@ export class CK3DiagnosticsProvider {
   private validateFieldInContext(
     fieldName: string,
     context: 'trigger' | 'effect',
+    parentBlockName: string,
     lineNum: number,
     cleanLine: string,
     document: vscode.TextDocument
@@ -750,6 +752,13 @@ export class CK3DiagnosticsProvider {
 
     // Skip iterators
     if (this.isValidIterator(fieldName, context)) {
+      return null;
+    }
+
+    // Check if it's a known parameter of the parent block
+    const parentEffect = effectsMap.get(parentBlockName);
+    const parentTrigger = triggersMap.get(parentBlockName);
+    if (parentEffect?.parameters?.includes(fieldName) || parentTrigger?.parameters?.includes(fieldName)) {
       return null;
     }
 

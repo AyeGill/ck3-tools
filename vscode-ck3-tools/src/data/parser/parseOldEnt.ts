@@ -25,6 +25,7 @@ interface ParsedEffect {
   syntax?: string;
   supportedScopes: string[];
   supportedTargets?: string[];
+  parameters?: string[];
 }
 
 interface ParsedTrigger {
@@ -34,6 +35,58 @@ interface ParsedTrigger {
   supportedScopes: string[];
   supportedTargets?: string[];
   valueType?: string; // e.g., "yes/no", "<, <=, =, !=, >, >="
+  parameters?: string[];
+}
+
+/**
+ * Common effect/trigger names to skip when extracting parameters
+ * (these might appear in example code but aren't parameters)
+ */
+const KNOWN_EFFECTS_TRIGGERS = new Set([
+  // Common effects that appear in examples
+  'add_gold', 'add_dread', 'add_piety', 'add_prestige', 'add_stress',
+  'add_trait', 'remove_trait', 'set_trait', 'add_hook', 'add_opinion',
+  'save_scope_as', 'save_temporary_scope_as', 'create_character',
+  'death', 'imprison', 'release', 'kill', 'spawn_army',
+  // Common triggers that appear in examples
+  'is_adult', 'is_alive', 'is_ruler', 'has_trait', 'age', 'gold',
+  // Scope changers often used in examples
+  'root', 'prev', 'this', 'from', 'scope', 'liege', 'primary_spouse',
+  // Control flow
+  'if', 'else', 'else_if', 'and', 'or', 'not', 'limit',
+]);
+
+/**
+ * Extract parameter names from syntax documentation
+ * Looks for patterns like "param = value" or "param = { ... }"
+ */
+function extractParameters(syntax: string | undefined, name: string): string[] {
+  if (!syntax) return [];
+
+  const params = new Set<string>();
+
+  // Common parameter patterns in the syntax documentation
+  // Match lines like: "  param = value" or "param = { ... }"
+  const paramRegex = /^\s*([a-z_][a-z0-9_]*)\s*=/gim;
+
+  let match;
+  while ((match = paramRegex.exec(syntax)) !== null) {
+    const param = match[1].toLowerCase();
+    // Skip the effect/trigger name itself, known effects/triggers, and common non-parameter words
+    if (param !== name.toLowerCase() &&
+        !KNOWN_EFFECTS_TRIGGERS.has(param) &&
+        !['x', 'y', 'z', 'w', 'a', 'b', 'int', 'yes', 'no', 'key', 'value', 'script', 'trigger', 'triggers', 'effect', 'effects'].includes(param)) {
+      params.add(param);
+    }
+  }
+
+  // Also extract from angle bracket patterns like <count=num/all>
+  const bracketRegex = /<([a-z_][a-z0-9_]*)=/gi;
+  while ((match = bracketRegex.exec(syntax)) !== null) {
+    params.add(match[1].toLowerCase());
+  }
+
+  return Array.from(params);
 }
 
 interface ParsedModifier {
@@ -98,12 +151,16 @@ function parseEffects(content: string): ParsedEffect[] {
       supportedScopes = ['none'];
     }
 
+    // Extract parameters from syntax documentation
+    const parameters = extractParameters(syntax, name);
+
     effects.push({
       name,
       description,
       syntax,
       supportedScopes,
       supportedTargets: supportedTargets.length > 0 ? supportedTargets : undefined,
+      parameters: parameters.length > 0 ? parameters : undefined,
     });
   }
 
@@ -168,6 +225,9 @@ function parseTriggers(content: string): ParsedTrigger[] {
       supportedScopes = ['none'];
     }
 
+    // Extract parameters from syntax documentation
+    const parameters = extractParameters(syntax, name);
+
     triggers.push({
       name,
       description,
@@ -175,6 +235,7 @@ function parseTriggers(content: string): ParsedTrigger[] {
       supportedScopes,
       supportedTargets: supportedTargets.length > 0 ? supportedTargets : undefined,
       valueType,
+      parameters: parameters.length > 0 ? parameters : undefined,
     });
   }
 
@@ -253,6 +314,7 @@ function generateEffectsCode(effects: ParsedEffect[]): string {
     '  outputScope?: ScopeType;',
     '  isIterator?: boolean;',
     '  syntax?: string;',
+    '  parameters?: string[];',
     '}',
     '',
   ];
@@ -305,9 +367,12 @@ function generateEffectsCode(effects: ParsedEffect[]): string {
       const syntax = effect.syntax
         ? `, syntax: ${JSON.stringify(effect.syntax)}`  // Full syntax including all lines
         : '';
+      const params = effect.parameters?.length
+        ? `, parameters: [${effect.parameters.map(p => `'${p}'`).join(', ')}]`
+        : '';
 
       const desc = effect.description.replace(/'/g, "\\'");
-      lines.push(`  { name: '${effect.name}', description: '${desc}', supportedScopes: [${scopes}]${targets}${outputScope}${iteratorFlag}${syntax} },`);
+      lines.push(`  { name: '${effect.name}', description: '${desc}', supportedScopes: [${scopes}]${targets}${outputScope}${iteratorFlag}${syntax}${params} },`);
     }
 
     lines.push(`];`);
@@ -378,6 +443,7 @@ function generateTriggersCode(triggers: ParsedTrigger[]): string {
     '  isIterator?: boolean;',
     "  valueType?: 'boolean' | 'comparison' | 'value' | 'block';",
     '  syntax?: string;',
+    '  parameters?: string[];',
     '}',
     '',
   ];
@@ -443,9 +509,12 @@ function generateTriggersCode(triggers: ParsedTrigger[]): string {
       const syntax = trigger.syntax
         ? `, syntax: ${JSON.stringify(trigger.syntax)}`  // Full syntax including all lines
         : '';
+      const params = trigger.parameters?.length
+        ? `, parameters: [${trigger.parameters.map(p => `'${p}'`).join(', ')}]`
+        : '';
 
       const desc = trigger.description.replace(/'/g, "\\'");
-      lines.push(`  { name: '${trigger.name}', description: '${desc}', supportedScopes: [${scopes}]${targets}${outputScope}${iteratorFlag}${valueType}${syntax} },`);
+      lines.push(`  { name: '${trigger.name}', description: '${desc}', supportedScopes: [${scopes}]${targets}${outputScope}${iteratorFlag}${valueType}${syntax}${params} },`);
     }
 
     lines.push(`];`);

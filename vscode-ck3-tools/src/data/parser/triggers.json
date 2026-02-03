@@ -39,6 +39,10 @@
     ],
     "supportedTargets": [
       "accolade_type"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -50,6 +54,10 @@
     ],
     "supportedTargets": [
       "dynasty"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -61,6 +69,10 @@
     ],
     "supportedTargets": [
       "activity"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -72,6 +84,10 @@
     ],
     "supportedTargets": [
       "activity_type"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -83,6 +99,10 @@
     ],
     "supportedTargets": [
       "artifact"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -94,6 +114,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -105,6 +129,10 @@
     ],
     "supportedTargets": [
       "casus_belli_type"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -116,6 +144,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -127,6 +159,10 @@
     ],
     "supportedTargets": [
       "legend"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -138,6 +174,10 @@
     ],
     "supportedTargets": [
       "confederation"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -149,6 +189,10 @@
     ],
     "supportedTargets": [
       "confederation_type"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -160,6 +204,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -171,6 +219,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -182,6 +234,10 @@
     ],
     "supportedTargets": [
       "court_position_type"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -193,6 +249,10 @@
     ],
     "supportedTargets": [
       "culture"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -204,6 +264,10 @@
     ],
     "supportedTargets": [
       "culture_innovation"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -215,6 +279,10 @@
     ],
     "supportedTargets": [
       "culture_pillar"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -226,6 +294,10 @@
     ],
     "supportedTargets": [
       "culture_tradition"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -237,6 +309,10 @@
     ],
     "supportedTargets": [
       "decision"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -248,6 +324,10 @@
     ],
     "supportedTargets": [
       "doctrine"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -259,6 +339,10 @@
     ],
     "supportedTargets": [
       "domicile"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -270,6 +354,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -281,6 +369,10 @@
     ],
     "supportedTargets": [
       "dynasty"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -292,6 +384,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -303,6 +399,10 @@
     ],
     "supportedTargets": [
       "epidemic"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -314,6 +414,10 @@
     ],
     "supportedTargets": [
       "epidemic_type"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -332,6 +436,10 @@
     ],
     "supportedTargets": [
       "geographical_region"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -343,6 +451,10 @@
     ],
     "supportedTargets": [
       "government_type"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -354,6 +466,10 @@
     ],
     "supportedTargets": [
       "great_project"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -365,6 +481,10 @@
     ],
     "supportedTargets": [
       "great_project_type"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -376,6 +496,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -387,6 +511,10 @@
     ],
     "supportedTargets": [
       "holding_type"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -398,6 +526,10 @@
     ],
     "supportedTargets": [
       "house_aspiration"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -409,6 +541,10 @@
     ],
     "supportedTargets": [
       "house_relation_level"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -420,6 +556,10 @@
     ],
     "supportedTargets": [
       "house_relation_type"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -431,6 +571,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -439,6 +583,10 @@
     "syntax": "any_in_global_list = { <count=num/all> / <percent=fixed_point> <triggers> }",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -447,6 +595,10 @@
     "syntax": "any_in_list = { <count=num/all> / <percent=fixed_point> <triggers> }",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -455,6 +607,10 @@
     "syntax": "any_in_local_list = { <count=num/all> / <percent=fixed_point> <triggers> }",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -466,6 +622,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -477,6 +637,10 @@
     ],
     "supportedTargets": [
       "inspiration"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -488,6 +652,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -499,6 +667,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -510,6 +682,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -521,6 +697,10 @@
     ],
     "supportedTargets": [
       "legend"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -532,6 +712,10 @@
     ],
     "supportedTargets": [
       "legend_type"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -543,6 +727,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -554,6 +742,10 @@
     ],
     "supportedTargets": [
       "mercenary_company"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -565,6 +757,10 @@
     ],
     "supportedTargets": [
       "activity"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -576,6 +772,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -587,6 +787,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -598,6 +802,10 @@
     ],
     "supportedTargets": [
       "province"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -609,6 +817,10 @@
     ],
     "supportedTargets": [
       "religion"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -620,6 +832,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -631,6 +847,10 @@
     ],
     "supportedTargets": [
       "province"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -642,6 +862,10 @@
     ],
     "supportedTargets": [
       "task_contract"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -653,6 +877,10 @@
     ],
     "supportedTargets": [
       "task_contract_type"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -664,6 +892,10 @@
     ],
     "supportedTargets": [
       "trait"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -675,6 +907,10 @@
     ],
     "supportedTargets": [
       "trait"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -686,6 +922,10 @@
     ],
     "supportedTargets": [
       "vassal_contract"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -803,6 +1043,11 @@
     "syntax": "custom_description = {\ntext = <trigger_localization_key>\nsubject = <optional subject scope> #defaults to current scope\nobject = <optional object scope>\nvalue = <optional script value>\n... triggers ...\n}",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "text",
+      "subject",
+      "object"
     ]
   },
   {
@@ -811,6 +1056,10 @@
     "syntax": "custom_tooltip = {\ntext = <text>\nsubject = <scope> (optional)\n<trigger>\n}",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "text",
+      "subject"
     ]
   },
   {
@@ -857,6 +1106,9 @@
     "syntax": "variable_list_size = { name = X target >= Y }\nWhere X is the name of the variable\nWhere Y is a script value or number",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "variable_list_size"
     ]
   },
   {
@@ -865,6 +1117,9 @@
     "syntax": "has_all_variables = {\nname = variable_name1\nname = variable_name2\nname = variable_name3\n}",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "name"
     ]
   },
   {
@@ -905,6 +1160,9 @@
     "syntax": "has_variable_list = name",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "has_variable_list"
     ]
   },
   {
@@ -948,6 +1206,9 @@
     "syntax": "has_variable_list = name",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "has_variable_list"
     ]
   },
   {
@@ -972,6 +1233,9 @@
     "syntax": "has_none_of_variables = {\nname = variable_name1\nname = variable_name2\nname = variable_name3\n}",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "name"
     ]
   },
   {
@@ -988,6 +1252,9 @@
     "syntax": "has_variable = variable_name\nhas_variable = {\nname = variable_name1\nname = variable_name2\nname = variable_name3\n}",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "name"
     ]
   },
   {
@@ -1084,7 +1351,10 @@
     "supportedTargets": [
       "character"
     ],
-    "valueType": "character scope"
+    "valueType": "character scope",
+    "parameters": [
+      "was_preferred_heir"
+    ]
   },
   {
     "name": "is_set",
@@ -1100,6 +1370,9 @@
     "syntax": "is_target_in_variable_list = { name = X target = Y }\nWhere X is the name of the variable\nWhere Y is an event target",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "is_target_in_variable_list"
     ]
   },
   {
@@ -1108,6 +1381,9 @@
     "syntax": "is_target_in_variable_list = { name = X target = Y }\nWhere X is the name of the variable\nWhere Y is an event target",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "is_target_in_variable_list"
     ]
   },
   {
@@ -1124,6 +1400,9 @@
     "syntax": "is_custom_title_name_key_used = my_title_localization_key",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "is_custom_title_name_key_used"
     ]
   },
   {
@@ -1206,6 +1485,9 @@
     "syntax": "variable_list_size = { name = X target >= Y }\nWhere X is the name of the variable\nWhere Y is a script value or number",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "variable_list_size"
     ]
   },
   {
@@ -1368,6 +1650,12 @@
     "syntax": "switch = {\ntrigger = simple_assign_trigger\ncase_1 = { <triggers> }\ncase_2 = { <triggers> }\ncase_n = { <triggers> }\nfallback = { <triggers> }",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "case_1",
+      "case_2",
+      "case_n",
+      "fallback"
     ]
   },
   {
@@ -1376,6 +1664,10 @@
     "syntax": "time_of_year = {\nmin = 11.1 # default: beginning of year\nmax = 2.29 # default: end of year\n}\nDates are formatted as \"<month>.<day>\" or just \"<month>\".\nThe check includes the min and max dates.\nmin can be larger than max, in this case we wrap around to the next year (i.e., February is between October and March).",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "min",
+      "max"
     ]
   },
   {
@@ -1469,6 +1761,10 @@
     "syntax": "ai_diplomacy_stance = {\ntarget = target_character\nstance = neutral/threat/enemy/friend\n}",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "target",
+      "stance"
     ]
   },
   {
@@ -1589,7 +1885,10 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "target"
+    ]
   },
   {
     "name": "any_acclaimed_knight",
@@ -1600,6 +1899,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1611,6 +1914,10 @@
     ],
     "supportedTargets": [
       "accolade"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1622,6 +1929,10 @@
     ],
     "supportedTargets": [
       "accolade"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1633,6 +1944,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1644,6 +1959,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1655,6 +1974,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1666,6 +1989,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1677,6 +2004,10 @@
     ],
     "supportedTargets": [
       "army"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1688,6 +2019,10 @@
     ],
     "supportedTargets": [
       "task_contract"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1699,6 +2034,10 @@
     ],
     "supportedTargets": [
       "task_contract"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1710,6 +2049,10 @@
     ],
     "supportedTargets": [
       "artifact"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1721,6 +2064,10 @@
     ],
     "supportedTargets": [
       "epidemic"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1732,6 +2079,10 @@
     ],
     "supportedTargets": [
       "situation"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1743,6 +2094,10 @@
     ],
     "supportedTargets": [
       "struggle"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1754,6 +2109,10 @@
     ],
     "supportedTargets": [
       "task_contract"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1765,6 +2124,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1776,6 +2139,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1787,6 +2154,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1798,6 +2169,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1809,6 +2184,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1820,6 +2199,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1831,6 +2214,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1842,6 +2229,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1853,6 +2244,10 @@
     ],
     "supportedTargets": [
       "trait"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1864,6 +2259,10 @@
     ],
     "supportedTargets": [
       "war"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1875,6 +2274,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1886,6 +2289,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1897,6 +2304,10 @@
     ],
     "supportedTargets": [
       "artifact"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1908,6 +2319,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1919,6 +2334,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1930,6 +2349,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1941,6 +2364,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1952,6 +2379,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1963,6 +2394,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1974,6 +2409,11 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "court_position",
+      "count",
+      "percent"
     ]
   },
   {
@@ -1985,6 +2425,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -1996,6 +2440,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2007,6 +2455,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2018,6 +2470,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2029,6 +2485,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2040,6 +2500,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2051,6 +2515,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2062,6 +2530,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2073,6 +2545,10 @@
     ],
     "supportedTargets": [
       "province"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2084,6 +2560,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2095,6 +2575,10 @@
     ],
     "supportedTargets": [
       "artifact"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2106,6 +2590,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2117,6 +2605,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2128,6 +2620,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2139,6 +2635,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2150,6 +2650,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2161,6 +2665,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2172,6 +2680,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2183,6 +2695,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2194,6 +2710,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2205,6 +2725,10 @@
     ],
     "supportedTargets": [
       "mercenary_company"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2216,6 +2740,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2227,6 +2755,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2238,6 +2770,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2249,6 +2785,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2260,6 +2800,10 @@
     ],
     "supportedTargets": [
       "activity"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2271,6 +2815,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2282,6 +2830,10 @@
     ],
     "supportedTargets": [
       "secret"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2293,6 +2845,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2304,6 +2860,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2315,6 +2875,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2326,6 +2890,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2337,6 +2905,10 @@
     ],
     "supportedTargets": [
       "regiment"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2348,6 +2920,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2359,6 +2935,10 @@
     ],
     "supportedTargets": [
       "character_memory"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2370,6 +2950,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2381,6 +2965,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2392,6 +2980,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2403,6 +2995,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2414,6 +3010,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2425,6 +3025,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2436,6 +3040,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2447,6 +3055,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2458,6 +3070,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2469,6 +3085,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2480,6 +3100,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2491,6 +3115,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2502,6 +3130,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2513,6 +3145,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2524,6 +3160,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2535,6 +3175,10 @@
     ],
     "supportedTargets": [
       "story"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2546,6 +3190,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2557,6 +3205,10 @@
     ],
     "supportedTargets": [
       "holy_order"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2568,6 +3220,10 @@
     ],
     "supportedTargets": [
       "artifact"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2579,6 +3235,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2590,6 +3250,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2601,6 +3265,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2612,6 +3280,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2623,6 +3295,10 @@
     ],
     "supportedTargets": [
       "legend"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2634,6 +3310,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2645,6 +3325,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2656,6 +3340,10 @@
     ],
     "supportedTargets": [
       "dynasty_house"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2667,6 +3355,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2678,6 +3370,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2689,6 +3385,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2700,6 +3400,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2711,6 +3415,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2722,6 +3430,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2733,6 +3445,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2744,6 +3460,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2755,6 +3475,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2766,6 +3490,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2777,6 +3505,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2788,6 +3520,10 @@
     ],
     "supportedTargets": [
       "province"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2799,6 +3535,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2810,6 +3550,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2821,6 +3565,11 @@
     ],
     "supportedTargets": [
       "scheme"
+    ],
+    "parameters": [
+      "random_scheme",
+      "count",
+      "percent"
     ]
   },
   {
@@ -2832,6 +3581,11 @@
     ],
     "supportedTargets": [
       "secret"
+    ],
+    "parameters": [
+      "random_secret",
+      "count",
+      "percent"
     ]
   },
   {
@@ -2843,6 +3597,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2854,6 +3612,10 @@
     ],
     "supportedTargets": [
       "inspiration"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2865,6 +3627,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2876,6 +3642,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2887,6 +3657,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2898,6 +3672,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2909,6 +3687,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2920,6 +3702,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2931,6 +3717,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2942,6 +3732,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2953,6 +3747,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2964,6 +3762,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2975,6 +3777,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2986,6 +3792,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -2997,6 +3807,10 @@
     ],
     "supportedTargets": [
       "faction"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -3008,6 +3822,10 @@
     ],
     "supportedTargets": [
       "scheme"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -3019,6 +3837,10 @@
     ],
     "supportedTargets": [
       "secret"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -3030,6 +3852,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -3041,6 +3867,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -3052,6 +3882,10 @@
     ],
     "supportedTargets": [
       "tax_slot"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -3063,6 +3897,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -3074,6 +3912,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -3085,6 +3927,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -3096,6 +3942,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -3107,6 +3957,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -3118,6 +3972,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -3129,6 +3987,10 @@
     ],
     "supportedTargets": [
       "secret"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -3140,6 +4002,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -3151,6 +4017,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -3162,6 +4032,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -3173,6 +4047,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -3184,6 +4062,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -3193,7 +4075,10 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "target"
+    ]
   },
   {
     "name": "appointment_candidate_score",
@@ -3202,7 +4087,10 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "target"
+    ]
   },
   {
     "name": "appointment_level_for_title",
@@ -3211,7 +4099,10 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "target"
+    ]
   },
   {
     "name": "appointment_timeout_days",
@@ -3281,6 +4172,10 @@
     "syntax": "can_add_hook = {\ntarget = <character>\ntype = <hook type>\ndays/months/year = whatever (optional; will use the duration from the type if not provided)\n}",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "target",
+      "type"
     ]
   },
   {
@@ -3419,6 +4314,9 @@
     "syntax": "can_create_task_contact = <key>\nCan create task contract with <key> type and employer(optional)",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "can_create_task_contact"
     ]
   },
   {
@@ -3450,6 +4348,10 @@
     "syntax": "scope:character = { can_embrace_tradition = scope:new_tradition }\nscope:character = {\ncan_embrace_tradition = {\ntradition = scope:new_tradition\nreplace = my_old_tradition\n}\n}",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "tradition",
+      "replace"
     ]
   },
   {
@@ -3566,7 +4468,12 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "character target"
+    "valueType": "character target",
+    "parameters": [
+      "who",
+      "faction",
+      "check_in_a_faction"
+    ]
   },
   {
     "name": "can_nomad_raze_holding",
@@ -3598,6 +4505,10 @@
     "syntax": "Will fail if the planner or project type are invalid.\nusage:\n<scope:character> = {\ncan_plan_great_project_in_province = {\ntype_name = <key>\nprovince = <province>\n}\n}",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "type_name",
+      "province"
     ]
   },
   {
@@ -3798,7 +4709,11 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "type",
+      "target"
+    ]
   },
   {
     "name": "current_domain_fertility",
@@ -3957,7 +4872,10 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "diplomacy"
+    ]
   },
   {
     "name": "diplomacy_for_portrait",
@@ -4092,6 +5010,9 @@
     "description": "AI boldness modified by the dread of the specified character",
     "syntax": "dread_modified_ai_boldness = {\ncharacter = root\t# the character whose dread is affecting the target character\nvalue >= 5\n}",
     "supportedScopes": [
+      "character"
+    ],
+    "parameters": [
       "character"
     ]
   },
@@ -4322,7 +5243,10 @@
     "supportedTargets": [
       "character"
     ],
-    "valueType": "character scope"
+    "valueType": "character scope",
+    "parameters": [
+      "has_appointment_investment_in_character"
+    ]
   },
   {
     "name": "has_appointment_invested_title",
@@ -4334,7 +5258,10 @@
     "supportedTargets": [
       "landed_title"
     ],
-    "valueType": "landed_title scope"
+    "valueType": "landed_title scope",
+    "parameters": [
+      "has_appointment_investment_in_title"
+    ]
   },
   {
     "name": "has_appointment_level_for_title",
@@ -4654,6 +5581,9 @@
     "syntax": "has_dread_level_towards = {\ntarget = X\nlevel >/</>=/<=/= Y\n}",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "target"
     ]
   },
   {
@@ -5880,6 +6810,9 @@
     "syntax": "has_trait_rank = {\ntrait = TRAIT_GROUP\nrank <=> number (can be script value) # need only one of rank or character\ncharacter <=> character target # need only one of rank or character\n}\nNote that not having the trait and having rank 0 counts as the same thing. rank < X on its own will therefore always return true for a character that does not have the trait.",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "trait"
     ]
   },
   {
@@ -6068,7 +7001,10 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "intrigue"
+    ]
   },
   {
     "name": "intrigue_for_portrait",
@@ -6313,6 +7249,22 @@
     "syntax": "All options are optional. If option is missing, it's set to \"any\" - it will have no effect on the outcome of the trigger\nscope:charater = {\nis_available_quick = {\nai = no\nalive = yes\nfemale = no\nadult = no\nincapable = no        # has any incapacitating trait\nimprisoned = no\nhostage = no\ntravel = no\nactivity = no\nruler = no\nadvanced_ruler = no   # rulers with playable data that have access to all game mechanics\n# barons, rebels, merc and holy order leaders fail this check\nlanded = no\nin_army = no          # commander or knight in the army on the map\nat_war = no\n}\n}",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "ai",
+      "alive",
+      "female",
+      "adult",
+      "incapable",
+      "imprisoned",
+      "hostage",
+      "travel",
+      "activity",
+      "ruler",
+      "advanced_ruler",
+      "landed",
+      "in_army",
+      "at_war"
     ]
   },
   {
@@ -6357,6 +7309,15 @@
     "syntax": "is_character_interaction_potentially_accepted = {\nrecipient = character\ninteraction = interaction_name\nsecondary_actor = character <optional>\nsecondary_recipient = character <optional>\ntarget_title = title <optional>\nrequired_response = yes/maybe <optional>\nai_accept = min acceptance value <optional>\n}",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "recipient",
+      "interaction",
+      "secondary_actor",
+      "secondary_recipient",
+      "target_title",
+      "required_response",
+      "ai_accept"
     ]
   },
   {
@@ -6365,6 +7326,10 @@
     "syntax": "is_character_interaction_shown = {\nrecipient = character\ninteraction = interaction_name\n}",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "recipient",
+      "interaction"
     ]
   },
   {
@@ -6373,6 +7338,10 @@
     "syntax": "is_character_interaction_valid = {\nrecipient = character\ninteraction = interaction_name\n}",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "recipient",
+      "interaction"
     ]
   },
   {
@@ -6482,6 +7451,11 @@
     "syntax": "character = {\nis_council_task_valid {\ntask_type = council_position_type_key\ntarget = for_targeted_tasks\n}\n}",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "character",
+      "task_type",
+      "target"
     ]
   },
   {
@@ -6824,7 +7798,10 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "yes/no"
+    "valueType": "yes/no",
+    "parameters": [
+      "character"
+    ]
   },
   {
     "name": "is_in_guest_subset",
@@ -6832,6 +7809,10 @@
     "syntax": "involved in?\nis_in_guest_subset = {\nname = <subset_key>\nphase = <phase_key> #Optional\n}\nIf phase is not specified, it will check the current phase, otherwise it will\ncheck all phases matching the phase key.",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "name",
+      "phase"
     ]
   },
   {
@@ -7088,6 +8069,9 @@
     "syntax": "character = {\nis_performing_council_task = task_kurultai_fertility_2\n}",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "character"
     ]
   },
   {
@@ -7095,6 +8079,9 @@
     "description": "Is the scoped character performing the given task?",
     "syntax": "This will check for any cloned task as well: the given example will yield yes even if the character is performing task_kurultai_fertility_2.\ncharacter = {\nis_performing_council_task_or_clone = task_kurultai_fertility_1\n}",
     "supportedScopes": [
+      "character"
+    ],
+    "parameters": [
       "character"
     ]
   },
@@ -7461,7 +8448,10 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "target"
+    ]
   },
   {
     "name": "join_scheme_chance",
@@ -7469,6 +8459,11 @@
     "syntax": "join_scheme_chance = {\nscheme = scheme_target #An ongoing scheme\nmax = 0\nmin = -10\n}",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "scheme",
+      "max",
+      "min"
     ]
   },
   {
@@ -7518,7 +8513,10 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "learning"
+    ]
   },
   {
     "name": "learning_for_portrait",
@@ -7670,7 +8668,11 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "add",
+      "target"
+    ]
   },
   {
     "name": "martial",
@@ -7687,7 +8689,10 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "martial"
+    ]
   },
   {
     "name": "martial_for_portrait",
@@ -7996,7 +9001,11 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "category",
+      "attribute"
+    ]
   },
   {
     "name": "morph_gene_value",
@@ -8005,7 +9014,11 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "morph_gene_attribute",
+      "category"
+    ]
   },
   {
     "name": "num_active_accolades",
@@ -8388,7 +9401,10 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "target"
+    ]
   },
   {
     "name": "num_taken_task_contracts",
@@ -8423,7 +9439,11 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "num_virtous_traits",
+      "target"
+    ]
   },
   {
     "name": "number_maa_regiments_of_base_type",
@@ -8471,6 +9491,9 @@
     "syntax": "number_of_personality_traits_in_common = { target = X value >/</>=/<= Y }",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "number_of_personality_traits_in_common"
     ]
   },
   {
@@ -8785,7 +9808,10 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "prowess"
+    ]
   },
   {
     "name": "prowess_for_portrait",
@@ -9033,6 +10059,10 @@
     "syntax": "A match value can range from 0.0 to 1.0. (0% to 100%)\nA static group filter means: this character will always get the same result against the same group. (there is no 'random' involved beyond the name of the group)\nOn average (across all characters), an 0.1 match means you would get 'yes' for 10% of the characters to match this group, and it would always be the same characters for the same group.\nstatic_group_filter = {\ngroup = <a_group_id>\nmatch = 0.1\n}\nInstead of a group id, you can supply a scope, and it will use that scope's value as the group 'id'.\nstatic_group_filter = {\nscope = <any_scope>\nmatch = 0.1\n}",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "group",
+      "match"
     ]
   },
   {
@@ -9050,7 +10080,10 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "stewardship"
+    ]
   },
   {
     "name": "stewardship_for_portrait",
@@ -9185,7 +10218,11 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "title",
+      "candidate"
+    ]
   },
   {
     "name": "target_is_liege_or_above",
@@ -9243,7 +10280,10 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "target"
+    ]
   },
   {
     "name": "time_after_diarch_designated",
@@ -9251,6 +10291,9 @@
     "syntax": "time_after_designated_diarch = { days/months/years =,>,< X }",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "time_after_designated_diarch"
     ]
   },
   {
@@ -9624,6 +10667,10 @@
     "syntax": "scope:character = {\nwould_be_valid_for_court_position = {\nemployer = scope:employer\ncourt_position = court_physician_court_position\n}\n}",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "employer",
+      "court_position"
     ]
   },
   {
@@ -9746,6 +10793,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -9791,6 +10842,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -9802,6 +10857,12 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "max_naval_distance",
+      "allow_one_county_land_gap",
+      "count",
+      "percent"
     ]
   },
   {
@@ -9813,6 +10874,10 @@
     ],
     "supportedTargets": [
       "faith"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -9824,6 +10889,10 @@
     ],
     "supportedTargets": [
       "regiment"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -9835,6 +10904,10 @@
     ],
     "supportedTargets": [
       "province"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -9846,6 +10919,10 @@
     ],
     "supportedTargets": [
       "epidemic"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -9857,6 +10934,10 @@
     ],
     "supportedTargets": [
       "situation"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -9868,6 +10949,10 @@
     ],
     "supportedTargets": [
       "situation_sub_region"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -9879,6 +10964,10 @@
     ],
     "supportedTargets": [
       "struggle"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -9890,6 +10979,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -9901,6 +10994,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -9912,6 +11009,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -9923,6 +11024,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -9934,6 +11039,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -9945,6 +11054,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -9956,6 +11069,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -9967,6 +11084,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -9978,6 +11099,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -9989,6 +11114,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -10000,6 +11129,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -10011,6 +11144,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -10022,6 +11159,10 @@
     ],
     "supportedTargets": [
       "regiment"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -10033,6 +11174,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -10044,6 +11189,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -10055,6 +11204,12 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "candidate",
+      "add",
+      "count",
+      "percent"
     ]
   },
   {
@@ -10066,6 +11221,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -10077,6 +11236,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -10088,6 +11251,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -10099,6 +11266,10 @@
     ],
     "supportedTargets": [
       "faction"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -10110,6 +11281,10 @@
     ],
     "supportedTargets": [
       "regiment"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -10121,6 +11296,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -10132,6 +11311,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -10143,6 +11326,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -10154,6 +11341,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -10165,6 +11356,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -10176,6 +11371,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -10187,6 +11386,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -10198,6 +11401,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -10258,6 +11465,9 @@
     "syntax": "county_has_province_with_terrain = {\nterrain = hills\nterrain = mountains\n}",
     "supportedScopes": [
       "landed_title"
+    ],
+    "parameters": [
+      "terrain"
     ]
   },
   {
@@ -10483,6 +11693,11 @@
     "syntax": "is_connected_to = {\nmax_naval_distance = 500\nallow_one_county_land_gap = yes\ntarget = some other county\n}",
     "supportedScopes": [
       "landed_title"
+    ],
+    "parameters": [
+      "max_naval_distance",
+      "allow_one_county_land_gap",
+      "target"
     ]
   },
   {
@@ -10676,6 +11891,9 @@
     "syntax": "landed_county_title = {\nis_target_of_council_task = task_kurultai_fertility_2\n}",
     "supportedScopes": [
       "landed_title"
+    ],
+    "parameters": [
+      "landed_county_title"
     ]
   },
   {
@@ -10684,6 +11902,10 @@
     "syntax": "The example will yield yes if the county is affected by task_kurultai_fertility_1.\nlanded_county_title = {\nis_target_of_council_task = task_kurultai_fertility_2\n}",
     "supportedScopes": [
       "landed_title"
+    ],
+    "parameters": [
+      "landed_county_title",
+      "is_target_of_council_task"
     ]
   },
   {
@@ -10774,7 +11996,10 @@
     "supportedScopes": [
       "landed_title"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "target"
+    ]
   },
   {
     "name": "recent_history",
@@ -10820,6 +12045,10 @@
     "syntax": "title_create_faction_type_chance = {\ntype = faction_type #An ongoing faction\ntarget = target_character\nvalue <|<=|>=|> 0\n}",
     "supportedScopes": [
       "landed_title"
+    ],
+    "parameters": [
+      "type",
+      "target"
     ]
   },
   {
@@ -10845,7 +12074,10 @@
     "supportedScopes": [
       "landed_title"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "faction"
+    ]
   },
   {
     "name": "title_law_group_at_maximum_level",
@@ -10965,6 +12197,10 @@
     ],
     "supportedTargets": [
       "province"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -11011,6 +12247,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -11135,6 +12375,11 @@
     ],
     "supportedTargets": [
       "province"
+    ],
+    "parameters": [
+      "unique",
+      "count",
+      "percent"
     ]
   },
   {
@@ -11146,6 +12391,11 @@
     ],
     "supportedTargets": [
       "province"
+    ],
+    "parameters": [
+      "unique",
+      "count",
+      "percent"
     ]
   },
   {
@@ -11157,6 +12407,11 @@
     ],
     "supportedTargets": [
       "province"
+    ],
+    "parameters": [
+      "unique",
+      "count",
+      "percent"
     ]
   },
   {
@@ -11168,6 +12423,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -11179,6 +12438,12 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "name",
+      "phase",
+      "count",
+      "percent"
     ]
   },
   {
@@ -11190,6 +12455,11 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "name",
+      "count",
+      "percent"
     ]
   },
   {
@@ -11201,6 +12471,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -11212,6 +12486,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -11256,6 +12534,10 @@
     "syntax": "has_phase = name_of_phase\nhas_phase = {\ntype = name_of_phase\nlocation = scope:province\n}",
     "supportedScopes": [
       "activity"
+    ],
+    "parameters": [
+      "type",
+      "location"
     ]
   },
   {
@@ -11264,6 +12546,11 @@
     "syntax": "has_phase = name_of_phase\nhas_phase = {\ntype = name_of_phase\nlocation = scope:province\n}",
     "supportedScopes": [
       "activity"
+    ],
+    "parameters": [
+      "has_phase",
+      "type",
+      "location"
     ]
   },
   {
@@ -11272,6 +12559,11 @@
     "syntax": "has_phase = name_of_phase\nhas_phase = {\ntype = name_of_phase\nlocation = scope:province\n}",
     "supportedScopes": [
       "activity"
+    ],
+    "parameters": [
+      "has_phase",
+      "type",
+      "location"
     ]
   },
   {
@@ -11353,6 +12645,10 @@
     ],
     "supportedTargets": [
       "dynasty_house"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -11380,6 +12676,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -11455,6 +12755,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -11466,6 +12770,10 @@
     ],
     "supportedTargets": [
       "artifact"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -11477,6 +12785,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -11488,6 +12800,10 @@
     ],
     "supportedTargets": [
       "house_relation"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -11499,6 +12815,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -11639,7 +12959,10 @@
     "supportedScopes": [
       "dynasty_house"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "target"
+    ]
   },
   {
     "name": "house_power",
@@ -11682,6 +13005,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -11693,6 +13020,10 @@
     ],
     "supportedTargets": [
       "province"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -11704,6 +13035,10 @@
     ],
     "supportedTargets": [
       "province"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -11784,6 +13119,9 @@
     "syntax": "nhas_county_modifier_duration_remaining = name",
     "supportedScopes": [
       "travel_plan"
+    ],
+    "parameters": [
+      "nhas_county_modifier_duration_remaining"
     ]
   },
   {
@@ -11940,6 +13278,10 @@
     ],
     "supportedTargets": [
       "combat_side"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -11969,6 +13311,10 @@
     ],
     "supportedTargets": [
       "ghw"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -11980,6 +13326,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -11991,6 +13341,10 @@
     ],
     "supportedTargets": [
       "holy_order"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -12002,6 +13356,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -12013,6 +13371,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -12024,6 +13386,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -12203,6 +13569,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -12214,6 +13584,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -12314,6 +13688,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -12351,6 +13729,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -12574,6 +13956,11 @@
     ],
     "supportedTargets": [
       "regiment"
+    ],
+    "parameters": [
+      "include_hired",
+      "count",
+      "percent"
     ]
   },
   {
@@ -12741,6 +14128,10 @@
     ],
     "supportedTargets": [
       "project_contribution"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -12758,6 +14149,9 @@
     "syntax": "Possible values are:\n* planned = the project is gathering funds\n* in_progress = the project has started\n* completed = the project was completed\nusage:\n<scope:great_project> = {\ngreat_project_construction_phase = in_progress\n}",
     "supportedScopes": [
       "great_project"
+    ],
+    "parameters": [
+      "great_project_construction_phase"
     ]
   },
   {
@@ -12786,6 +14180,10 @@
     ],
     "supportedTargets": [
       "army"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -12797,6 +14195,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -12808,6 +14210,10 @@
     ],
     "supportedTargets": [
       "great_project"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -12819,6 +14225,10 @@
     ],
     "supportedTargets": [
       "province"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -12830,6 +14240,10 @@
     ],
     "supportedTargets": [
       "domicile"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -12841,6 +14255,10 @@
     ],
     "supportedTargets": [
       "epidemic"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -12852,6 +14270,10 @@
     ],
     "supportedTargets": [
       "legend"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -12888,7 +14310,10 @@
     "supportedScopes": [
       "province"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "target"
+    ]
   },
   {
     "name": "epidemic_resistance",
@@ -13195,7 +14620,10 @@
     "supportedScopes": [
       "province"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "target"
+    ]
   },
   {
     "name": "terrain",
@@ -13229,6 +14657,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -13240,6 +14672,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -13251,6 +14687,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -13347,7 +14787,10 @@
     "supportedScopes": [
       "war"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "target"
+    ]
   },
   {
     "name": "war_days",
@@ -13612,6 +15055,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -13623,6 +15070,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -13634,6 +15085,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -13761,6 +15216,10 @@
     ],
     "supportedTargets": [
       "situation_participant_group"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -13772,6 +15231,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -13783,6 +15246,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -13794,6 +15261,10 @@
     ],
     "supportedTargets": [
       "situation_sub_region"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -13863,6 +15334,9 @@
     "syntax": "has_situation_top_catalyst = situation_catalyst_key",
     "supportedScopes": [
       "situation"
+    ],
+    "parameters": [
+      "has_situation_top_catalyst"
     ]
   },
   {
@@ -13879,6 +15353,9 @@
     "syntax": "has_situation_top_catalyst = situation_catalyst_key",
     "supportedScopes": [
       "situation"
+    ],
+    "parameters": [
+      "has_situation_top_catalyst"
     ]
   },
   {
@@ -13954,6 +15431,10 @@
     ],
     "supportedTargets": [
       "dynasty_house"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -13965,6 +15446,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -14207,6 +15692,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -14218,6 +15707,10 @@
     ],
     "supportedTargets": [
       "geographical_region"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -14229,6 +15722,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -14240,6 +15737,10 @@
     ],
     "supportedTargets": [
       "situation_participant_group"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -14353,6 +15854,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -14364,6 +15869,10 @@
     ],
     "supportedTargets": [
       "agent_slot"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -14551,6 +16060,10 @@
     ],
     "supportedTargets": [
       "government_type"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -14579,6 +16092,10 @@
     ],
     "supportedTargets": [
       "trait"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -14619,6 +16136,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -14630,6 +16151,10 @@
     ],
     "supportedTargets": [
       "province"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -14755,6 +16280,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -14766,6 +16295,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -14777,6 +16310,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -14788,6 +16325,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -14799,6 +16340,10 @@
     ],
     "supportedTargets": [
       "culture_innovation"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -14810,6 +16355,10 @@
     ],
     "supportedTargets": [
       "culture"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -14821,6 +16370,10 @@
     ],
     "supportedTargets": [
       "culture"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -14832,6 +16385,10 @@
     ],
     "supportedTargets": [
       "culture_tradition"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -14902,6 +16459,11 @@
     "syntax": "has_all_innovations = {\nwith_flag = flag_name # innovation matches if it has the flag; optional\nwithout_flag = flag_name # innovation matches if it does not have the flag; optional\nculture_era = era_key # innovation matches if it is from the era; optional\n}",
     "supportedScopes": [
       "culture"
+    ],
+    "parameters": [
+      "with_flag",
+      "without_flag",
+      "culture_era"
     ]
   },
   {
@@ -15094,7 +16656,10 @@
     "supportedScopes": [
       "culture"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "target"
+    ]
   },
   {
     "name": "any_secret_knower",
@@ -15105,6 +16670,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -15116,6 +16685,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -15212,6 +16785,10 @@
     ],
     "supportedTargets": [
       "faith"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -15223,6 +16800,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -15234,6 +16815,10 @@
     ],
     "supportedTargets": [
       "dynasty_house"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -15358,6 +16943,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -15369,6 +16958,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -15380,6 +16973,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -15391,6 +16988,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -15465,6 +17066,10 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -15476,6 +17081,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -15598,6 +17207,10 @@
     ],
     "supportedTargets": [
       "character"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -15609,6 +17222,10 @@
     ],
     "supportedTargets": [
       "dynasty_house"
+    ],
+    "parameters": [
+      "count",
+      "percent"
     ]
   },
   {
@@ -15641,6 +17258,9 @@
     "syntax": "usage:\n<bloc> = {\nhas_house_power_parameter = <parameter_key>\n}",
     "supportedScopes": [
       "confederation"
+    ],
+    "parameters": [
+      "has_house_power_parameter"
     ]
   },
   {

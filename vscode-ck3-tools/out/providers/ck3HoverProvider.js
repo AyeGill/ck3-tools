@@ -461,6 +461,11 @@ class CK3HoverProvider {
                 return this.getStatHover(word);
             }
         }
+        // Check if this is a parameter of an effect/trigger block
+        const parameterHover = this.getParameterHover(document, position, word);
+        if (parameterHover) {
+            return parameterHover;
+        }
         // Always check for effects and triggers (works in any CK3 file)
         const effectHover = this.getEffectHover(word);
         if (effectHover) {
@@ -692,6 +697,110 @@ class CK3HoverProvider {
             }
         }
         return new vscode.Hover(markdown);
+    }
+    /**
+     * Get hover documentation for a parameter of an effect/trigger
+     */
+    getParameterHover(document, position, word) {
+        // Find the parent block by scanning backwards
+        const parentBlock = this.findParentBlock(document, position);
+        if (!parentBlock)
+            return null;
+        // Check if this word is a parameter of the parent block
+        const effect = data_1.effectsMap.get(parentBlock);
+        const trigger = data_2.triggersMap.get(parentBlock);
+        const effectDef = effect;
+        const triggerDef = trigger;
+        const isEffectParam = effectDef?.parameters?.includes(word);
+        const isTriggerParam = triggerDef?.parameters?.includes(word);
+        if (!isEffectParam && !isTriggerParam)
+            return null;
+        const markdown = new vscode.MarkdownString();
+        markdown.appendMarkdown(`## ${word}\n\n`);
+        markdown.appendMarkdown(`**Parameter of** \`${parentBlock}\`\n\n`);
+        // Try to extract description from the syntax
+        const def = effectDef || triggerDef;
+        if (def?.syntax) {
+            const paramDesc = this.extractParameterDescription(word, def.syntax);
+            if (paramDesc) {
+                markdown.appendMarkdown(`${paramDesc}\n\n`);
+            }
+        }
+        // Show the full syntax as reference
+        if (def?.syntax) {
+            markdown.appendMarkdown(`**Full syntax:**\n\`\`\`\n${def.syntax}\n\`\`\`\n`);
+        }
+        return new vscode.Hover(markdown);
+    }
+    /**
+     * Find the parent block name by scanning backwards from the current position
+     */
+    findParentBlock(document, position) {
+        // Track brace depth to find the containing block
+        let braceDepth = 0;
+        for (let lineNum = position.line; lineNum >= 0; lineNum--) {
+            const lineText = document.lineAt(lineNum).text;
+            // Count braces in this line (only portion before cursor on current line)
+            const textToCheck = lineNum === position.line
+                ? lineText.substring(0, position.character)
+                : lineText;
+            // Remove comments
+            const commentIdx = textToCheck.indexOf('#');
+            const cleanText = commentIdx >= 0 ? textToCheck.substring(0, commentIdx) : textToCheck;
+            // Count braces (from end of line backwards for proper nesting)
+            for (let i = cleanText.length - 1; i >= 0; i--) {
+                if (cleanText[i] === '}') {
+                    braceDepth++;
+                }
+                else if (cleanText[i] === '{') {
+                    braceDepth--;
+                    // When braceDepth goes negative, we've found a block start
+                    if (braceDepth < 0) {
+                        // Look for the block name before this brace
+                        const beforeBrace = cleanText.substring(0, i);
+                        const blockMatch = beforeBrace.match(/(\S+)\s*=\s*$/);
+                        if (blockMatch) {
+                            return blockMatch[1];
+                        }
+                        // Check previous line if block name not on same line
+                        if (lineNum > 0) {
+                            const prevLine = document.lineAt(lineNum - 1).text;
+                            const prevMatch = prevLine.match(/(\S+)\s*=\s*$/);
+                            if (prevMatch) {
+                                return prevMatch[1];
+                            }
+                        }
+                        braceDepth = 0; // Reset and continue looking
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    /**
+     * Extract a parameter's description from the syntax documentation
+     */
+    extractParameterDescription(param, syntax) {
+        // Look for lines like "param = description" or "param = value # comment"
+        const lines = syntax.split('\n');
+        for (const line of lines) {
+            // Match patterns like: "param = value # description" or "param = value - description"
+            const paramPattern = new RegExp(`^\\s*${param}\\s*=\\s*(.*)$`, 'i');
+            const match = line.match(paramPattern);
+            if (match) {
+                let desc = match[1].trim();
+                // Extract comment/description from # or after the value
+                const commentMatch = desc.match(/#\s*(.*)$/);
+                if (commentMatch) {
+                    return commentMatch[1].trim();
+                }
+                // Return the whole value description if no comment
+                if (desc && desc.length < 100) { // Sanity check
+                    return desc;
+                }
+            }
+        }
+        return null;
     }
 }
 exports.CK3HoverProvider = CK3HoverProvider;

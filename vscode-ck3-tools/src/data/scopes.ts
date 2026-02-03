@@ -61,6 +61,7 @@ export type ScopeType =
   | 'task_contract_type'      // Task contract type definition
   | 'situation'               // Situations (administrative)
   | 'situation_sub_region'    // Situation sub-regions
+  | 'situation_participant_group' // Situation participant groups
   | 'tax_slot'                // Tax slot scope
   | 'domicile'                // Domicile scope
   | 'domicile_type'           // Domicile type definition
