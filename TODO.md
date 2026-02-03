@@ -77,6 +77,17 @@ So for example prompting for skill modifications in a trait template makes littl
   - [x] Barebones syntax highlighting done.
 - [ ] Reflect all the information gathered into the schemas (and everywhere else) in the plain-text documentation we're also producing.
 - [ ] Simple linting. If we have a comprehensive list of items that are valid in each space (that is, a proper, complete schema) we can mark any invalid ones. (I guess there should be a "ignore this particular invalid field forever" button). We can also detect name collisions (especially useful for events that are just named by numbers), at least within the same mod.
+  - **IN PROGRESS**: `CK3DiagnosticsProvider` implemented with schema-based validation
+  - Run `npx vitest run src/test/validateGameFiles.test.ts` to validate against vanilla game files (1,522 files)
+  - Current output: 41,889 diagnostics (mostly false positives indicating coverage gaps)
+  - [ ] **Unknown fields (16,816)** - Many game file fields not yet in schemas. Audit game files and add missing fields to `src/schemas/`
+  - [ ] **Unknown effects (13,781)** - Effects not in `src/data/effects.ts`. The `couldBeScriptedEffectOrTrigger` heuristic suppresses warnings for names with underscores, but many built-in effects still missing
+  - [ ] **Invalid theme values (5,453)** - The `theme` enum in event schema needs more values
+  - [ ] **Missing required fields (1,949)** - May be flagging fields that aren't actually required in all contexts
+  - [ ] **Unknown triggers (1,848)** - Triggers not in `src/data/triggers.ts`
+  - [ ] **Invalid category values (201)** - The `category` enum needs more values
+  - [ ] **Type mismatches** - Validator flags script value references (like `expensive_building_tier_3_cost`) as type errors. Options: accept identifiers as numeric values, build list of known script values, or add "script_value" type
+  - [ ] **Boolean type mismatches (95)** - Fields like `auto_accept` expect `yes/no` but sometimes take block values for conditional logic
 - [ ] There should also be an option to "explicitify" the localization keys, by adding all the necessary localization key fields (with their default values) to an item (so if we have a trait foo_bar, doing this would add name = trait_foo_bar) and so on.
   - [ ] In general the localization generator should account for the whole structure of the current item when generating necessary localizations (so if you have an event with a bunch of options, it should generate the localizations for each option). But this seems quite hard so that's probably a low priority.
 - [x] Add some unit tests
