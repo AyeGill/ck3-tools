@@ -46,6 +46,13 @@ export const decisionSchema: FieldSchema[] = [
     default: 0,
     example: 'sort_order = 10',
   },
+  {
+    name: 'major',
+    type: 'boolean',
+    description: 'If yes, this is a major decision shown prominently in the UI with its own tab.',
+    default: 'no',
+    example: 'major = yes',
+  },
 
   // Conditions
   {

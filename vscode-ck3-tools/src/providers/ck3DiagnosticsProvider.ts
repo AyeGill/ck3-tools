@@ -618,26 +618,39 @@ export class CK3DiagnosticsProvider {
       const codePart = commentIndex >= 0 ? line.substring(0, commentIndex) : line;
 
       // Check for incomplete assignment (= at end of line with nothing after)
+      // But don't flag comparison operators (<=, >=, !=, ==) as incomplete assignments
       const incompleteAssignMatch = codePart.match(/=\s*$/);
       if (incompleteAssignMatch && !codePart.includes('{')) {
-        // Check if next non-empty line starts with { (multi-line block)
-        let nextLineHasBrace = false;
-        for (let j = lineNum + 1; j < lines.length; j++) {
-          const nextTrimmed = lines[j].trim();
-          if (nextTrimmed === '' || nextTrimmed.startsWith('#')) continue;
-          if (nextTrimmed.startsWith('{')) {
-            nextLineHasBrace = true;
-          }
-          break;
-        }
+        // Check if the trailing = is part of a comparison operator
+        const lastEqPos = codePart.lastIndexOf('=');
+        const charBefore = lastEqPos > 0 ? codePart[lastEqPos - 1] : '';
+        const isComparisonOp = ['<', '>', '!', '='].includes(charBefore);
 
-        if (!nextLineHasBrace) {
-          const eqPos = codePart.lastIndexOf('=');
-          diagnostics.push(new vscode.Diagnostic(
-            new vscode.Range(lineNum, eqPos, lineNum, eqPos + 1),
-            'Incomplete assignment: expected value after "="',
-            vscode.DiagnosticSeverity.Error
-          ));
+        if (!isComparisonOp) {
+          // Check if next non-empty line starts with { or has a value (multi-line assignment)
+          let nextLineHasValue = false;
+          for (let j = lineNum + 1; j < lines.length; j++) {
+            const nextTrimmed = lines[j].trim();
+            if (nextTrimmed === '' || nextTrimmed.startsWith('#')) continue;
+            // Accept: { (block), " (string), number, yes/no, identifier
+            if (nextTrimmed.startsWith('{') ||
+                nextTrimmed.startsWith('"') ||
+                /^-?\d/.test(nextTrimmed) ||
+                /^(yes|no)\b/.test(nextTrimmed) ||
+                /^[\w@]/.test(nextTrimmed)) {
+              nextLineHasValue = true;
+            }
+            break;
+          }
+
+          if (!nextLineHasValue) {
+            const eqPos = codePart.lastIndexOf('=');
+            diagnostics.push(new vscode.Diagnostic(
+              new vscode.Range(lineNum, eqPos, lineNum, eqPos + 1),
+              'Incomplete assignment: expected value after "="',
+              vscode.DiagnosticSeverity.Error
+            ));
+          }
         }
       }
 
@@ -661,28 +674,35 @@ export class CK3DiagnosticsProvider {
         }
       }
 
-      // Check for common syntax issues on this line
-      // Empty block on same line: something = { }
-      // This is actually valid in CK3, so we won't flag it
-
-      // Check for double equals: ==
-      if (codePart.includes('==')) {
-        const pos = codePart.indexOf('==');
-        diagnostics.push(new vscode.Diagnostic(
-          new vscode.Range(lineNum, pos, lineNum, pos + 2),
-          'Invalid syntax: use single "=" for assignment, or comparison operators like ">=" "<=" "!="',
-          vscode.DiagnosticSeverity.Error
-        ));
-      }
+      // Note: We don't check for double equals (==) because CK3 uses == for comparisons in triggers
+      // e.g., `$VALUE$ == 25` or `count == 5`
 
       // Check for assignment without field name: = value at start of line
+      // But allow if previous line ends with a field name (multi-line continuation)
       const badAssignMatch = codePart.match(/^\s*=\s*\S/);
       if (badAssignMatch) {
-        diagnostics.push(new vscode.Diagnostic(
-          new vscode.Range(lineNum, codePart.indexOf('='), lineNum, codePart.indexOf('=') + 1),
-          'Missing field name before "="',
-          vscode.DiagnosticSeverity.Error
-        ));
+        // Check if previous non-comment line ends with an identifier (field name continuation)
+        let prevLineEndsWithFieldName = false;
+        for (let j = lineNum - 1; j >= 0; j--) {
+          const prevLine = lines[j].trim();
+          if (prevLine === '' || prevLine.startsWith('#')) continue;
+          // Remove inline comment
+          const prevCommentIdx = prevLine.indexOf('#');
+          const prevCode = prevCommentIdx >= 0 ? prevLine.substring(0, prevCommentIdx).trim() : prevLine;
+          // Check if it ends with an identifier (word characters)
+          if (/\w$/.test(prevCode)) {
+            prevLineEndsWithFieldName = true;
+          }
+          break;
+        }
+
+        if (!prevLineEndsWithFieldName) {
+          diagnostics.push(new vscode.Diagnostic(
+            new vscode.Range(lineNum, codePart.indexOf('='), lineNum, codePart.indexOf('=') + 1),
+            'Missing field name before "="',
+            vscode.DiagnosticSeverity.Error
+          ));
+        }
       }
     }
 

@@ -488,19 +488,8 @@ test.0001 = {
       expect(assignDiag.severity).toBe(0); // Error
     });
 
-    it('should detect double equals', () => {
-      const content = `my_trait = {
-	category == childhood
-}`;
-      const diagnostics = getDiagnostics(content, '/mod/common/traits/test.txt');
-
-      const eqDiag = diagnostics.find((d: any) =>
-        d.message.includes('Invalid syntax') && d.message.includes('single "="')
-      );
-
-      expect(eqDiag).toBeDefined();
-      expect(eqDiag.severity).toBe(0); // Error
-    });
+    // Note: We no longer flag == as invalid because CK3 uses == for comparisons
+    // e.g., `$VALUE$ == 25` in triggers. This is intentional.
 
     it('should detect missing field name before equals', () => {
       const content = `my_trait = {
