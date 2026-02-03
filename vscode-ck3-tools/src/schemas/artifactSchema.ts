@@ -95,6 +95,103 @@ export const artifactSchema: FieldSchema[] = [
 }`,
   },
 
+  // Artifact type and category
+  {
+    name: 'type',
+    type: 'string',
+    description: 'The type of artifact.',
+  },
+  {
+    name: 'category',
+    type: 'string',
+    description: 'The category of artifact.',
+  },
+  {
+    name: 'group',
+    type: 'string',
+    description: 'The artifact group for categorization.',
+  },
+
+  // Repair and reforge
+  {
+    name: 'can_repair',
+    type: 'boolean',
+    description: 'Whether the artifact can be repaired.',
+  },
+  {
+    name: 'can_reforge',
+    type: 'boolean',
+    description: 'Whether the artifact can be reforged.',
+  },
+
+  // Visual configuration
+  {
+    name: 'default_type',
+    type: 'string',
+    description: 'Default visual type for the artifact.',
+  },
+  {
+    name: 'default_visuals',
+    type: 'string',
+    description: 'Default visual configuration for the artifact.',
+  },
+  {
+    name: 'in_type',
+    type: 'string',
+    description: 'Input type for artifact transformation.',
+  },
+  {
+    name: 'in_visuals',
+    type: 'string',
+    description: 'Input visuals for artifact transformation.',
+  },
+  {
+    name: 'out_type',
+    type: 'string',
+    description: 'Output type for artifact transformation.',
+  },
+  {
+    name: 'out_visuals',
+    type: 'string',
+    description: 'Output visuals for artifact transformation.',
+  },
+  {
+    name: 'pedestal',
+    type: 'string',
+    description: 'Pedestal type for displaying the artifact in court.',
+  },
+  {
+    name: 'support_type',
+    type: 'string',
+    description: 'Support type for the artifact visual.',
+  },
+  {
+    name: 'fallback',
+    type: 'string',
+    description: 'Fallback artifact type if conditions are not met.',
+  },
+
+  // Features and modifiers
+  {
+    name: 'required_features',
+    type: 'block',
+    description: 'Features required for this artifact.',
+  },
+  {
+    name: 'optional_features',
+    type: 'block',
+    description: 'Optional features for this artifact.',
+  },
+  {
+    name: 'disallowed_modifiers',
+    type: 'block',
+    description: 'Modifiers that cannot be applied to this artifact.',
+  },
+  {
+    name: 'replacement_modifiers',
+    type: 'block',
+    description: 'Replacement modifiers for this artifact.',
+  },
 ];
 
 // Schema for artifact templates (used for spawning)

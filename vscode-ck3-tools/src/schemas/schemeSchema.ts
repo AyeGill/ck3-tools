@@ -251,6 +251,137 @@ export const schemeSchema: FieldSchema[] = [
     default: true,
     example: 'use_secrecy = no',
   },
+
+  // Additional scheme properties
+  {
+    name: 'base_secrecy',
+    type: 'integer',
+    description: 'Base secrecy value for the scheme.',
+  },
+  {
+    name: 'minimum_secrecy',
+    type: 'integer',
+    description: 'Minimum secrecy percentage the scheme can have.',
+  },
+  {
+    name: 'minimum_success',
+    type: 'integer',
+    description: 'Minimum success chance percentage.',
+  },
+  {
+    name: 'is_basic',
+    type: 'boolean',
+    description: 'Whether this is a basic scheme type.',
+  },
+  {
+    name: 'hide_target_name',
+    type: 'boolean',
+    description: 'Whether to hide the target name in UI.',
+  },
+  {
+    name: 'uses_resistance',
+    type: 'boolean',
+    description: 'Whether the scheme uses resistance mechanics.',
+  },
+
+  // Frame and visuals
+  {
+    name: 'frame',
+    type: 'string',
+    description: 'UI frame type for the scheme.',
+  },
+  {
+    name: 'hud_text',
+    type: 'string',
+    description: 'Text displayed in the HUD for this scheme.',
+  },
+
+  // Contribution system
+  {
+    name: 'contribution',
+    type: 'block',
+    description: 'Contribution configuration for the scheme.',
+  },
+  {
+    name: 'contribution_type',
+    type: 'string',
+    description: 'Type of contribution for the scheme.',
+  },
+
+  // Travel interaction
+  {
+    name: 'freeze_scheme_when_traveling',
+    type: 'boolean',
+    description: 'Whether the scheme freezes when the owner is traveling.',
+  },
+  {
+    name: 'freeze_scheme_when_traveling_target',
+    type: 'boolean',
+    description: 'Whether the scheme freezes when the target is traveling.',
+  },
+
+  // Speed modifiers
+  {
+    name: 'spymaster_speed_per_skill_point',
+    type: 'string',
+    description: 'Speed modifier per spymaster skill point (script value).',
+  },
+  {
+    name: 'target_spymaster_speed_per_skill_point',
+    type: 'string',
+    description: 'Speed modifier per target spymaster skill point (script value).',
+  },
+  {
+    name: 'tier_speed',
+    type: 'block',
+    description: 'Speed modifiers per tier.',
+  },
+
+  // Agent slots
+  {
+    name: 'starting_agent_slots',
+    type: 'integer',
+    description: 'Number of agent slots available at start.',
+  },
+  {
+    name: 'valid_agent_for_slot',
+    type: 'trigger',
+    description: 'Conditions for a character to fill a specific agent slot.',
+  },
+
+  // Modifiers and parameters
+  {
+    name: 'owner_modifier',
+    type: 'block',
+    description: 'Modifiers applied to the scheme owner.',
+  },
+  {
+    name: 'parameters',
+    type: 'block',
+    description: 'Additional parameters for the scheme.',
+  },
+
+  // Events
+  {
+    name: 'on_activate',
+    type: 'effect',
+    description: 'Effects when the scheme is activated.',
+  },
+  {
+    name: 'on_hud_click',
+    type: 'effect',
+    description: 'Effects when the HUD element is clicked.',
+  },
+  {
+    name: 'on_semiyearly',
+    type: 'effect',
+    description: 'Effects that trigger semi-yearly.',
+  },
+  {
+    name: 'pulse_actions',
+    type: 'block',
+    description: 'Pulse action configuration for the scheme.',
+  },
 ];
 
 // Map for quick lookup

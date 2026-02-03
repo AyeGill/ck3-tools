@@ -229,6 +229,117 @@ export const buildingSchema: FieldSchema[] = [
     default: false,
     example: 'show_disabled = yes',
   },
+
+  // Additional modifier blocks
+  {
+    name: 'character_culture_modifier',
+    type: 'block',
+    description: 'Modifiers applied to the holder based on culture parameters.',
+  },
+  {
+    name: 'character_government_modifier',
+    type: 'block',
+    description: 'Modifiers applied to the holder based on government type.',
+  },
+  {
+    name: 'county_culture_modifier',
+    type: 'block',
+    description: 'Modifiers applied to the county based on culture parameters.',
+  },
+  {
+    name: 'county_dynasty_modifier',
+    type: 'block',
+    description: 'Modifiers applied to the county based on dynasty.',
+  },
+  {
+    name: 'county_holder_character_modifier',
+    type: 'block',
+    description: 'Modifiers applied to the county holder character.',
+  },
+  {
+    name: 'duchy_capital_county_culture_modifier',
+    type: 'block',
+    description: 'Modifiers applied to duchy capital county based on culture.',
+  },
+  {
+    name: 'province_culture_modifier',
+    type: 'block',
+    description: 'Modifiers applied to the province based on culture parameters.',
+  },
+  {
+    name: 'province_government_modifier',
+    type: 'block',
+    description: 'Modifiers applied to the province based on government type.',
+  },
+  {
+    name: 'province_terrain_modifier',
+    type: 'block',
+    description: 'Modifiers applied to the province based on terrain type.',
+  },
+
+  // Slot and type
+  {
+    name: 'slot',
+    type: 'string',
+    description: 'Building slot this building occupies.',
+    example: 'slot = city_01',
+  },
+  {
+    name: 'type_icon',
+    type: 'string',
+    description: 'Icon type for the building.',
+    example: 'type_icon = "economy"',
+  },
+
+  // Great projects and special buildings
+  {
+    name: 'great_project_type',
+    type: 'string',
+    description: 'Type of great project this building is part of.',
+  },
+  {
+    name: 'is_graphical_background',
+    type: 'boolean',
+    description: 'Whether this is a graphical background building.',
+  },
+  {
+    name: 'is_mandala_capital',
+    type: 'boolean',
+    description: 'Whether this building makes the holding a mandala capital.',
+  },
+  {
+    name: 'can_rebuild',
+    type: 'boolean',
+    description: 'Whether this building can be rebuilt after destruction.',
+  },
+  {
+    name: 'rebuild_cost',
+    type: 'block',
+    description: 'Cost to rebuild this building.',
+  },
+  {
+    name: 'fallback',
+    type: 'string',
+    description: 'Fallback building if this one cannot be built.',
+  },
+
+  // Cost block (alternative to cost_gold/cost_prestige)
+  {
+    name: 'cost',
+    type: 'block',
+    description: 'Cost block for building construction.',
+    example: `cost = {
+    gold = 100
+    prestige = 50
+}`,
+  },
+
+  // Description
+  {
+    name: 'effect_desc',
+    type: 'string',
+    description: 'Description of the building effects for UI.',
+  },
 ];
 
 // Map for quick lookup

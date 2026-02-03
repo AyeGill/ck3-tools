@@ -168,6 +168,357 @@ export const activitySchema: FieldSchema[] = [
     description: 'How often AI checks to start this activity (in months).',
     example: 'ai_check_interval = 12',
   },
+
+  // Activity type and grouping
+  {
+    name: 'activity_group_type',
+    type: 'string',
+    description: 'The activity group this activity belongs to.',
+  },
+  {
+    name: 'sort_order',
+    type: 'integer',
+    description: 'Sort order for display in lists.',
+  },
+  {
+    name: 'gui_tags',
+    type: 'block',
+    description: 'GUI tags for filtering and display.',
+  },
+
+  // AI configuration
+  {
+    name: 'ai_check_interval_by_tier',
+    type: 'block',
+    description: 'AI check interval based on character tier.',
+  },
+  {
+    name: 'ai_province_filter',
+    type: 'trigger',
+    description: 'AI filter for selecting provinces.',
+  },
+  {
+    name: 'ai_select_num_provinces',
+    type: 'integer',
+    description: 'Number of provinces AI should select.',
+  },
+  {
+    name: 'ai_target_quick_trigger',
+    type: 'trigger',
+    description: 'Quick trigger for AI target selection.',
+  },
+  {
+    name: 'ai_target_score',
+    type: 'block',
+    description: 'Score calculation for AI target selection.',
+  },
+  {
+    name: 'ai_targets',
+    type: 'block',
+    description: 'Configuration for AI targets.',
+  },
+  {
+    name: 'ai_will_select_province',
+    type: 'trigger',
+    description: 'Conditions for AI to select a province.',
+  },
+
+  // Planning and configuration
+  {
+    name: 'can_plan',
+    type: 'trigger',
+    description: 'Conditions for being able to plan this activity.',
+  },
+  {
+    name: 'can_always_plan',
+    type: 'boolean',
+    description: 'Whether the activity can always be planned.',
+  },
+  {
+    name: 'planner_type',
+    type: 'string',
+    description: 'Type of activity planner to use.',
+  },
+  {
+    name: 'activity_planner_widgets',
+    type: 'block',
+    description: 'Widgets for the activity planner UI.',
+  },
+  {
+    name: 'activity_window_widgets',
+    type: 'block',
+    description: 'Widgets for the activity window UI.',
+  },
+
+  // Guest configuration
+  {
+    name: 'can_be_activity_guest',
+    type: 'trigger',
+    description: 'Conditions for a character to be a guest.',
+  },
+  {
+    name: 'allow_zero_guest_invites',
+    type: 'boolean',
+    description: 'Whether zero guest invites are allowed.',
+  },
+  {
+    name: 'guest_description',
+    type: 'string',
+    description: 'Description shown for guests.',
+  },
+  {
+    name: 'guest_intents',
+    type: 'block',
+    description: 'Intent configuration for guests.',
+  },
+  {
+    name: 'guest_join_chance',
+    type: 'block',
+    description: 'Chance calculation for guest joining.',
+  },
+  {
+    name: 'guest_subsets',
+    type: 'block',
+    description: 'Subsets of potential guests.',
+  },
+  {
+    name: 'special_guests',
+    type: 'block',
+    description: 'Configuration for special guests.',
+  },
+  {
+    name: 'max_guest_arrival_delay_time',
+    type: 'integer',
+    description: 'Maximum delay for guest arrival.',
+  },
+
+  // Host configuration
+  {
+    name: 'host_description',
+    type: 'string',
+    description: 'Description shown for the host.',
+  },
+  {
+    name: 'host_intents',
+    type: 'block',
+    description: 'Intent configuration for the host.',
+  },
+
+  // Location and travel
+  {
+    name: 'is_location_valid',
+    type: 'trigger',
+    description: 'Conditions for a location to be valid.',
+  },
+  {
+    name: 'is_single_location',
+    type: 'boolean',
+    description: 'Whether the activity occurs at a single location.',
+  },
+  {
+    name: 'is_target_valid',
+    type: 'trigger',
+    description: 'Conditions for a target to be valid.',
+  },
+  {
+    name: 'travel_entourage_selection',
+    type: 'block',
+    description: 'Configuration for travel entourage selection.',
+  },
+  {
+    name: 'max_route_deviation_mult',
+    type: 'float',
+    description: 'Maximum route deviation multiplier.',
+  },
+
+  // Locale configuration
+  {
+    name: 'locales',
+    type: 'block',
+    description: 'Available locales for the activity.',
+  },
+  {
+    name: 'locale_background',
+    type: 'string',
+    description: 'Background for the locale.',
+  },
+  {
+    name: 'locale_cooldown',
+    type: 'block',
+    description: 'Cooldown for locale selection.',
+  },
+  {
+    name: 'auto_select_locale_cooldown',
+    type: 'block',
+    description: 'Cooldown for auto-selecting locales.',
+  },
+  {
+    name: 'early_locale_opening_duration',
+    type: 'block',
+    description: 'Duration for early locale opening.',
+  },
+  {
+    name: 'on_enter_locale',
+    type: 'effect',
+    description: 'Effects when entering a locale.',
+  },
+
+  // Province configuration
+  {
+    name: 'province_description',
+    type: 'string',
+    description: 'Description for province selection.',
+  },
+  {
+    name: 'province_score',
+    type: 'block',
+    description: 'Score calculation for province selection.',
+  },
+  {
+    name: 'num_pickable_phases',
+    type: 'integer',
+    description: 'Number of phases that can be picked.',
+  },
+  {
+    name: 'max_pickable_phases_per_province',
+    type: 'integer',
+    description: 'Maximum pickable phases per province.',
+  },
+  {
+    name: 'max_province_icons',
+    type: 'integer',
+    description: 'Maximum province icons to display.',
+  },
+
+  // State and pulse events
+  {
+    name: 'on_enter_active_state',
+    type: 'effect',
+    description: 'Effects when entering active state.',
+  },
+  {
+    name: 'on_enter_passive_state',
+    type: 'effect',
+    description: 'Effects when entering passive state.',
+  },
+  {
+    name: 'on_enter_travel_state',
+    type: 'effect',
+    description: 'Effects when entering travel state.',
+  },
+  {
+    name: 'on_leave_travel_state',
+    type: 'effect',
+    description: 'Effects when leaving travel state.',
+  },
+  {
+    name: 'on_active_state_pulse',
+    type: 'effect',
+    description: 'Effects on active state pulse.',
+  },
+  {
+    name: 'on_passive_state_pulse',
+    type: 'effect',
+    description: 'Effects on passive state pulse.',
+  },
+  {
+    name: 'on_travel_state_pulse',
+    type: 'effect',
+    description: 'Effects on travel state pulse.',
+  },
+  {
+    name: 'pulse_actions',
+    type: 'block',
+    description: 'Pulse action configuration.',
+  },
+
+  // Other events
+  {
+    name: 'on_host_death',
+    type: 'effect',
+    description: 'Effects when the host dies.',
+  },
+  {
+    name: 'on_target_invalidated',
+    type: 'effect',
+    description: 'Effects when target becomes invalid.',
+  },
+
+  // Timing
+  {
+    name: 'cooldown',
+    type: 'block',
+    description: 'Cooldown before activity can be started again.',
+  },
+  {
+    name: 'wait_time_before_start',
+    type: 'block',
+    description: 'Wait time before the activity starts.',
+  },
+  {
+    name: 'auto_complete',
+    type: 'boolean',
+    description: 'Whether the activity auto-completes.',
+  },
+
+  // UI and visuals
+  {
+    name: 'visuals',
+    type: 'block',
+    description: 'Visual configuration for the activity.',
+  },
+  {
+    name: 'map_entity',
+    type: 'string',
+    description: 'Map entity for the activity.',
+  },
+  {
+    name: 'scripted_animation',
+    type: 'string',
+    description: 'Scripted animation for the activity.',
+  },
+  {
+    name: 'window_characters',
+    type: 'block',
+    description: 'Characters to display in the window.',
+  },
+  {
+    name: 'conclusion_description',
+    type: 'string',
+    description: 'Description shown at activity conclusion.',
+  },
+  {
+    name: 'ui_predicted_cost',
+    type: 'block',
+    description: 'Predicted cost shown in UI.',
+  },
+
+  // Options and special features
+  {
+    name: 'options',
+    type: 'block',
+    description: 'Activity options configuration.',
+  },
+  {
+    name: 'special_option_category',
+    type: 'string',
+    description: 'Category for special options.',
+  },
+  {
+    name: 'open_invite',
+    type: 'boolean',
+    description: 'Whether the activity has open invites.',
+  },
+  {
+    name: 'notify_player_can_join_activity',
+    type: 'boolean',
+    description: 'Whether to notify player they can join.',
+  },
+  {
+    name: 'chance',
+    type: 'block',
+    description: 'Chance calculation for the activity.',
+  },
 ];
 
 // Map for quick lookup
