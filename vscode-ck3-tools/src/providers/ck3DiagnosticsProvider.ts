@@ -116,6 +116,7 @@ const DYNAMIC_KEY_BLOCKS = new Set([
   'ai_value_modifier',       // may have dynamic keys
   'compare_value',           // comparison block
   'value',                   // numeric value blocks
+  'option',                  // event options have schema fields + effects (temporary - see TODO)
 ]);
 
 /**
