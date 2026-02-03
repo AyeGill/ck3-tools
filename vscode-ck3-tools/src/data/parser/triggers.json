@@ -2712,6 +2712,10 @@
       "landed_title"
     ],
     "parameters": [
+      "any",
+      "every",
+      "ordered",
+      "random_held_title",
       "count",
       "percent"
     ]
@@ -4175,7 +4179,10 @@
     ],
     "parameters": [
       "target",
-      "type"
+      "type",
+      "days",
+      "months",
+      "year"
     ]
   },
   {
@@ -10293,7 +10300,10 @@
       "character"
     ],
     "parameters": [
-      "time_after_designated_diarch"
+      "time_after_designated_diarch",
+      "days",
+      "months",
+      "years"
     ]
   },
   {
@@ -10861,6 +10871,9 @@
     "parameters": [
       "max_naval_distance",
       "allow_one_county_land_gap",
+      "any",
+      "every",
+      "whatever_connectec_county",
       "count",
       "percent"
     ]
@@ -11208,6 +11221,10 @@
     "parameters": [
       "candidate",
       "add",
+      "any",
+      "every",
+      "ordered",
+      "random_succession_appointment_investors",
       "count",
       "percent"
     ]
@@ -12007,6 +12024,11 @@
     "syntax": "recent_history = { type = X days/months/years = Y }\nThe type can be omitted, all history types are considered then\nPossible types:\nconquest\nconquest_holy_war\nconquest_claim\nconquest_populist\nelection\ninheritance\nabdication\ncreated\ndestroyed\nusurped\ngranted\nrevoked\nindependency\nleased_out\nlease_revoked\nreturned\nfaction_demand\nswear_fealty\nstepped_down\nappointment\nappointment_succession",
     "supportedScopes": [
       "landed_title"
+    ],
+    "parameters": [
+      "days",
+      "months",
+      "years"
     ]
   },
   {

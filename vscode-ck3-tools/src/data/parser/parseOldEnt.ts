@@ -64,6 +64,17 @@ function extractParameters(syntax: string | undefined, name: string): string[] {
   if (!syntax) return [];
 
   const params = new Set<string>();
+  const skipWords = new Set(['x', 'y', 'z', 'w', 'a', 'b', 'int', 'yes', 'no', 'key', 'value', 'script', 'trigger', 'triggers', 'effect', 'effects']);
+
+  // Helper to add a parameter if it's valid
+  const addParam = (param: string) => {
+    param = param.toLowerCase();
+    if (param !== name.toLowerCase() &&
+        !KNOWN_EFFECTS_TRIGGERS.has(param) &&
+        !skipWords.has(param)) {
+      params.add(param);
+    }
+  };
 
   // Common parameter patterns in the syntax documentation
   // Match lines like: "  param = value" or "param = { ... }"
@@ -71,12 +82,16 @@ function extractParameters(syntax: string | undefined, name: string): string[] {
 
   let match;
   while ((match = paramRegex.exec(syntax)) !== null) {
-    const param = match[1].toLowerCase();
-    // Skip the effect/trigger name itself, known effects/triggers, and common non-parameter words
-    if (param !== name.toLowerCase() &&
-        !KNOWN_EFFECTS_TRIGGERS.has(param) &&
-        !['x', 'y', 'z', 'w', 'a', 'b', 'int', 'yes', 'no', 'key', 'value', 'script', 'trigger', 'triggers', 'effect', 'effects'].includes(param)) {
-      params.add(param);
+    addParam(match[1]);
+  }
+
+  // Match slash-separated alternatives like "days/months/years = ..." anywhere in syntax
+  // These are distinctive enough to match inline (not just at line start)
+  const slashParamRegex = /([a-z_][a-z0-9_]*(?:\/[a-z_][a-z0-9_]*)+)\s*=/gi;
+  while ((match = slashParamRegex.exec(syntax)) !== null) {
+    // Split and add each as a separate parameter
+    for (const p of match[1].split('/')) {
+      addParam(p);
     }
   }
 

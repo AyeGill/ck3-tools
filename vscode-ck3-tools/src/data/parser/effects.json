@@ -82,7 +82,11 @@
       "none"
     ],
     "parameters": [
-      "add_to_variable_list"
+      "add_to_variable_list",
+      "days",
+      "weeks",
+      "months",
+      "years"
     ]
   },
   {
@@ -101,7 +105,11 @@
       "none"
     ],
     "parameters": [
-      "add_to_variable_list"
+      "add_to_variable_list",
+      "days",
+      "weeks",
+      "months",
+      "years"
     ]
   },
   {
@@ -118,6 +126,12 @@
     "syntax": "add_to_variable_list = { name = X target = Y days/weeks/months/years = Z }\nWhere X is the name of the variable\nWhere Y is an event target\nAn optional days where Z is the number of days or script value",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "days",
+      "weeks",
+      "months",
+      "years"
     ]
   },
   {
@@ -3074,6 +3088,11 @@
     "syntax": "random_list = { X1 = { trigger = { enables/disable this effect} modifier/compare_modifier/opinion_modifier = Y1 effect1 } X2 = { trigger = { enables/disable this effect} modifier/compare_modifier/opinion_modifier = Y2 effect2 } ... }\nSelects one effect from the list and fires it. The effects are weighted by numbers X1, X2... (the higher the number, the higher the chance of the effect being picked).\nThe chances can be modified by optional value modifier lists Y1, Y2... (AKA MTTH)",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "modifier",
+      "compare_modifier",
+      "opinion_modifier"
     ]
   },
   {
@@ -3699,7 +3718,10 @@
       "on_action",
       "saved_event_id",
       "trigger_on_next_date",
-      "delayed"
+      "delayed",
+      "days",
+      "months",
+      "years"
     ]
   },
   {
@@ -3791,6 +3813,11 @@
     "syntax": "usage:\nadd_character_flag = X\nadd_character_flag = { flag = X days/weeks/years = Y }\nwhere X is the name of the flag and Y is a value or value interval \"{ min max }\"",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "days",
+      "weeks",
+      "years"
     ]
   },
   {
@@ -3799,6 +3826,12 @@
     "syntax": "add_character_modifier = name\nadd_character_modifier = { modifier = name days/weeks/months/years = int }\nYou can also add an optional 'desc' field. This is a dynamic description that'll be used for your timed modifier",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "days",
+      "weeks",
+      "months",
+      "years"
     ]
   },
   {
@@ -3830,7 +3863,10 @@
       "character"
     ],
     "parameters": [
-      "flag"
+      "flag",
+      "years",
+      "weeks",
+      "days"
     ]
   },
   {
@@ -3867,6 +3903,11 @@
     "syntax": "add_hook = { type = X, target = Y, secret = Z, days/months/years = W  }\nNote: days/months/years optional (taken from hook type otherwise) and can be a value or an interval, secret required for hook types that require it.\nDoes send a toast to the player if it's involved.",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "days",
+      "months",
+      "years"
     ]
   },
   {
@@ -3875,6 +3916,11 @@
     "syntax": "add_hook = { type = X, target = Y, secret = Z, days/months/years = W  }\nNote: days/months/years optional (taken from hook type otherwise) and can be a value or an interval, secret required for hook types that require it.\nDoes NOT send a toast to the player.",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "days",
+      "months",
+      "years"
     ]
   },
   {
@@ -4228,6 +4274,13 @@
     "syntax": "'character' specifies the target character\n'override' says whether it should replace the previous truce even if shorter\n'years / months / days' sets the duration of the truce\n'result' specifies the result from the scope character's point of view ('white_peace' by default)\n'casus_belli' sets the casus belli scope that caused the truce, mutually exclusive with 'name'\n'name' sets a custom description. Dynamic description with the current scope\n'war' sets the war that caused the truce, mutually exclusive with 'casus_belli'\nadd_truce_both_ways = { character = X years/months/days = Y override = yes/no result = victory/defeat/white_peace casus_belli/war = Z }",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "years",
+      "months",
+      "days",
+      "casus_belli",
+      "war"
     ]
   },
   {
@@ -4236,6 +4289,13 @@
     "syntax": "'character' specifies the target character\n'override' says whether it should replace the previous truce even if shorter\n'years / months / days' sets the duration of the truce\n'result' specifies the result from the scope character's point of view ('white_peace' by default)\n'casus_belli' sets the casus belli scope that caused the truce, mutually exclusive with 'name'\n'name' sets a custom description. Dynamic description with the current scope\nadd_truce_one_way = { character = X years/months/days = Y override = yes/no result = victory/defeat/white_peace casus_belli/war = Z }",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "years",
+      "months",
+      "days",
+      "casus_belli",
+      "war"
     ]
   },
   {
@@ -5661,6 +5721,12 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "any",
+      "every",
+      "ordered",
+      "random_held_title"
     ]
   },
   {
@@ -6739,7 +6805,10 @@
       "character"
     ],
     "parameters": [
-      "agent_slot"
+      "agent_slot",
+      "days",
+      "months",
+      "years"
     ]
   },
   {
@@ -6764,6 +6833,11 @@
     "syntax": "force_vote_as = { target = someone days/months/years = x }",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "days",
+      "months",
+      "years"
     ]
   },
   {
@@ -6877,7 +6951,10 @@
     ],
     "parameters": [
       "faction",
-      "forced_by"
+      "forced_by",
+      "days",
+      "months",
+      "years"
     ]
   },
   {
@@ -8085,7 +8162,11 @@
       "position",
       "min",
       "max",
-      "check_range_bounds"
+      "check_range_bounds",
+      "any",
+      "every",
+      "ordered",
+      "random_held_title"
     ]
   },
   {
@@ -10524,6 +10605,11 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "any",
+      "every",
+      "ordered"
     ]
   },
   {
@@ -12516,7 +12602,10 @@
       "character"
     ],
     "parameters": [
-      "name"
+      "name",
+      "years",
+      "weeks",
+      "days"
     ]
   },
   {
@@ -13153,7 +13242,9 @@
       "inheritable",
       "uses_supply",
       "army",
-      "name"
+      "name",
+      "men",
+      "stacks"
     ]
   },
   {
@@ -13404,6 +13495,12 @@
     "syntax": "add_county_modifier = name\nadd_county_modifier = { modifier = name days/weeks/months/years = int }\nYou can also add an optional 'desc' field. This is a dynamic description that'll be used for your timed modifier",
     "supportedScopes": [
       "landed_title"
+    ],
+    "parameters": [
+      "days",
+      "weeks",
+      "months",
+      "years"
     ]
   },
   {
@@ -13523,7 +13620,10 @@
     ],
     "parameters": [
       "max_naval_distance",
-      "allow_one_county_land_gap"
+      "allow_one_county_land_gap",
+      "any",
+      "every",
+      "whatever_connectec_county"
     ]
   },
   {
@@ -13783,7 +13883,11 @@
     ],
     "parameters": [
       "candidate",
-      "add"
+      "add",
+      "any",
+      "every",
+      "ordered",
+      "random_succession_appointment_investors"
     ]
   },
   {
@@ -13986,7 +14090,10 @@
       "position",
       "min",
       "max",
-      "check_range_bounds"
+      "check_range_bounds",
+      "any",
+      "every",
+      "whatever_connectec_county"
     ]
   },
   {
@@ -14403,7 +14510,11 @@
       "position",
       "min",
       "max",
-      "check_range_bounds"
+      "check_range_bounds",
+      "any",
+      "every",
+      "ordered",
+      "random_succession_appointment_investors"
     ]
   },
   {
@@ -14663,7 +14774,10 @@
     ],
     "parameters": [
       "max_naval_distance",
-      "allow_one_county_land_gap"
+      "allow_one_county_land_gap",
+      "any",
+      "every",
+      "whatever_connectec_county"
     ]
   },
   {
@@ -14923,7 +15037,10 @@
     ],
     "parameters": [
       "candidate",
-      "add"
+      "add",
+      "any",
+      "every",
+      "ordered"
     ]
   },
   {
@@ -16209,6 +16326,12 @@
     "syntax": "add_house_modifier = name\nadd_house_modifier = { modifier = name days/weeks/months/years = int }\nYou can also add an optional 'desc' field. This is a dynamic description that'll be used for your timed modifier",
     "supportedScopes": [
       "dynasty_house"
+    ],
+    "parameters": [
+      "days",
+      "weeks",
+      "months",
+      "years"
     ]
   },
   {
@@ -16217,6 +16340,12 @@
     "syntax": "add_house_unity_modifier = name\nadd_house_unity_modifier = { modifier = name days/weeks/months/years = int }\nYou can also add an optional 'desc' field. This is a dynamic description that'll be used for your timed modifier",
     "supportedScopes": [
       "dynasty_house"
+    ],
+    "parameters": [
+      "days",
+      "weeks",
+      "months",
+      "years"
     ]
   },
   {
@@ -16526,6 +16655,12 @@
     "syntax": "'on_travel_plan_movement' on_action will not be triggered for any of the provinces. 'on_travel_plan_arrival' will be triggered.\nadd_destination_progress = {\ndays/weeks/months/years = X\n}",
     "supportedScopes": [
       "travel_plan"
+    ],
+    "parameters": [
+      "days",
+      "weeks",
+      "months",
+      "years"
     ]
   },
   {
@@ -16541,6 +16676,12 @@
     "syntax": "add_travel_plan_modifier = name\nadd_travel_plan_modifier = { modifier = name days/weeks/months/years = int }\nYou can also add an optional 'desc' field. This is a dynamic description that'll be used for your timed modifier",
     "supportedScopes": [
       "travel_plan"
+    ],
+    "parameters": [
+      "days",
+      "weeks",
+      "months",
+      "years"
     ]
   },
   {
@@ -16575,7 +16716,11 @@
       "travel_plan"
     ],
     "parameters": [
-      "add"
+      "add",
+      "days",
+      "weeks",
+      "months",
+      "years"
     ]
   },
   {
@@ -17756,6 +17901,12 @@
     "syntax": "add_province_modifier = name\nadd_province_modifier = { modifier = name days/weeks/months/years = int }\nYou can also add an optional 'desc' field. This is a dynamic description that'll be used for your timed modifier",
     "supportedScopes": [
       "province"
+    ],
+    "parameters": [
+      "days",
+      "weeks",
+      "months",
+      "years"
     ]
   },
   {
@@ -18907,6 +19058,12 @@
     "syntax": "add_dynasty_modifier = name\nadd_dynasty_modifier = { modifier = name days/weeks/months/years = int }\nYou can also add an optional 'desc' field. This is a dynamic description that'll be used for your timed modifier",
     "supportedScopes": [
       "dynasty"
+    ],
+    "parameters": [
+      "days",
+      "weeks",
+      "months",
+      "years"
     ]
   },
   {
@@ -19600,6 +19757,12 @@
     "syntax": "add_legend_county_modifier = name\nadd_legend_county_modifier = { modifier = name days/weeks/months/years = int }\nYou can also add an optional 'desc' field. This is a dynamic description that'll be used for your timed modifier",
     "supportedScopes": [
       "legend"
+    ],
+    "parameters": [
+      "days",
+      "weeks",
+      "months",
+      "years"
     ]
   },
   {
@@ -19608,6 +19771,12 @@
     "syntax": "add_legend_owner_modifier = name\nadd_legend_owner_modifier = { modifier = name days/weeks/months/years = int }\nYou can also add an optional 'desc' field. This is a dynamic description that'll be used for your timed modifier",
     "supportedScopes": [
       "legend"
+    ],
+    "parameters": [
+      "days",
+      "weeks",
+      "months",
+      "years"
     ]
   },
   {
@@ -19616,6 +19785,12 @@
     "syntax": "add_legend_province_modifier = name\nadd_legend_province_modifier = { modifier = name days/weeks/months/years = int }\nYou can also add an optional 'desc' field. This is a dynamic description that'll be used for your timed modifier",
     "supportedScopes": [
       "legend"
+    ],
+    "parameters": [
+      "days",
+      "weeks",
+      "months",
+      "years"
     ]
   },
   {
@@ -20965,6 +21140,12 @@
     "syntax": "change_struggle_phase_duration = { duration = { points = X } }\nor\nchange_struggle_phase_duration = { duration = { days/weeks/months/years = Y }\nwhereX is amount of points(can be negative);Y is amount of days/weeks/months/years (can be negative)",
     "supportedScopes": [
       "struggle"
+    ],
+    "parameters": [
+      "days",
+      "weeks",
+      "months",
+      "years"
     ]
   },
   {
