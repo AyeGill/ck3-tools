@@ -89,6 +89,18 @@ export const onActionSchema: FieldSchema[] = [
     description: 'Event to fire if no other events are valid.',
     example: 'fallback = fallback_event.0001',
   },
+  {
+    name: 'weight_multiplier',
+    type: 'block',
+    description: 'Multiplier applied to event weights in random_events.',
+    example: `weight_multiplier = {
+    value = 1
+    if = {
+        limit = { has_trait = lucky }
+        multiply = 2
+    }
+}`,
+  },
 ];
 
 // Map for quick lookup

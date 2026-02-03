@@ -21,6 +21,13 @@ export const opinionModifierSchema: FieldSchema[] = [
     example: 'decaying = yes',
   },
   {
+    name: 'growing',
+    type: 'boolean',
+    description: 'Whether the modifier grows over time (opposite of decaying).',
+    default: false,
+    example: 'growing = yes',
+  },
+  {
     name: 'monthly_change',
     type: 'float',
     description: 'How much the modifier value changes each month (positive number). Used with decaying/growing.',
