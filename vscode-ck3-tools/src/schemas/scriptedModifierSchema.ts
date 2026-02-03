@@ -81,6 +81,14 @@ export const scriptedModifierSchema: FieldSchema[] = [
     multiplier = 2
 }`,
   },
+  {
+    name: 'first_valid',
+    type: 'block',
+    description: 'Use the first valid modifier from a list.',
+  },
+
+  // TODO: Scripted modifiers can include other scripted modifiers by name.
+  // This is a wildcard situation - need to parse common/scripted_modifiers/ to get the list.
 ];
 
 // Map for quick lookup
