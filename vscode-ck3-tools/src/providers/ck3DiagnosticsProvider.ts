@@ -15,6 +15,10 @@ import { nicknameSchema, nicknameSchemaMap } from '../schemas/nicknameSchema';
 import { modifierSchema, modifierSchemaMap } from '../schemas/modifierSchema';
 import { secretSchema, secretSchemaMap } from '../schemas/secretSchema';
 import { activitySchema, activitySchemaMap } from '../schemas/activitySchema';
+import { onActionSchema, onActionSchemaMap } from '../schemas/onActionSchema';
+import { scriptedEffectSchema, scriptedEffectSchemaMap } from '../schemas/scriptedEffectsSchema';
+import { scriptedTriggerSchema, scriptedTriggerSchemaMap } from '../schemas/scriptedTriggersSchema';
+import { scriptedModifierSchema, scriptedModifierSchemaMap } from '../schemas/scriptedModifierSchema';
 
 /**
  * Supported file types for diagnostics
@@ -22,7 +26,9 @@ import { activitySchema, activitySchemaMap } from '../schemas/activitySchema';
 type DiagnosticFileType =
   | 'trait' | 'event' | 'decision' | 'interaction' | 'building'
   | 'artifact' | 'scheme' | 'opinion_modifier' | 'nickname'
-  | 'modifier' | 'secret' | 'activity' | 'unknown';
+  | 'modifier' | 'secret' | 'activity' | 'on_action'
+  | 'scripted_effect' | 'scripted_trigger' | 'scripted_modifier'
+  | 'unknown';
 
 /**
  * Represents a parsed entity from a CK3 file
@@ -122,6 +128,10 @@ const SCHEMA_REGISTRY: Map<DiagnosticFileType, { schema: FieldSchema[], schemaMa
   ['modifier', { schema: modifierSchema, schemaMap: modifierSchemaMap }],
   ['secret', { schema: secretSchema, schemaMap: secretSchemaMap }],
   ['activity', { schema: activitySchema, schemaMap: activitySchemaMap }],
+  ['on_action', { schema: onActionSchema, schemaMap: onActionSchemaMap }],
+  ['scripted_effect', { schema: scriptedEffectSchema, schemaMap: scriptedEffectSchemaMap }],
+  ['scripted_trigger', { schema: scriptedTriggerSchema, schemaMap: scriptedTriggerSchemaMap }],
+  ['scripted_modifier', { schema: scriptedModifierSchema, schemaMap: scriptedModifierSchemaMap }],
 ]);
 
 /**
@@ -320,6 +330,10 @@ export class CK3DiagnosticsProvider {
     if (normalizedPath.includes('/common/modifiers/')) return 'modifier';
     if (normalizedPath.includes('/common/secret_types/')) return 'secret';
     if (normalizedPath.includes('/common/activities/')) return 'activity';
+    if (normalizedPath.includes('/common/on_action/')) return 'on_action';
+    if (normalizedPath.includes('/common/scripted_effects/')) return 'scripted_effect';
+    if (normalizedPath.includes('/common/scripted_triggers/')) return 'scripted_trigger';
+    if (normalizedPath.includes('/common/scripted_modifiers/')) return 'scripted_modifier';
 
     return 'unknown';
   }

@@ -49,6 +49,10 @@ const nicknameSchema_1 = require("../schemas/nicknameSchema");
 const modifierSchema_1 = require("../schemas/modifierSchema");
 const secretSchema_1 = require("../schemas/secretSchema");
 const activitySchema_1 = require("../schemas/activitySchema");
+const onActionSchema_1 = require("../schemas/onActionSchema");
+const scriptedEffectsSchema_1 = require("../schemas/scriptedEffectsSchema");
+const scriptedTriggersSchema_1 = require("../schemas/scriptedTriggersSchema");
+const scriptedModifierSchema_1 = require("../schemas/scriptedModifierSchema");
 /**
  * Schema registry mapping file types to their schemas
  */
@@ -114,6 +118,10 @@ const SCHEMA_REGISTRY = new Map([
     ['modifier', { schema: modifierSchema_1.modifierSchema, schemaMap: modifierSchema_1.modifierSchemaMap }],
     ['secret', { schema: secretSchema_1.secretSchema, schemaMap: secretSchema_1.secretSchemaMap }],
     ['activity', { schema: activitySchema_1.activitySchema, schemaMap: activitySchema_1.activitySchemaMap }],
+    ['on_action', { schema: onActionSchema_1.onActionSchema, schemaMap: onActionSchema_1.onActionSchemaMap }],
+    ['scripted_effect', { schema: scriptedEffectsSchema_1.scriptedEffectSchema, schemaMap: scriptedEffectsSchema_1.scriptedEffectSchemaMap }],
+    ['scripted_trigger', { schema: scriptedTriggersSchema_1.scriptedTriggerSchema, schemaMap: scriptedTriggersSchema_1.scriptedTriggerSchemaMap }],
+    ['scripted_modifier', { schema: scriptedModifierSchema_1.scriptedModifierSchema, schemaMap: scriptedModifierSchema_1.scriptedModifierSchemaMap }],
 ]);
 /**
  * CK3 Diagnostics Provider
@@ -264,6 +272,14 @@ class CK3DiagnosticsProvider {
             return 'secret';
         if (normalizedPath.includes('/common/activities/'))
             return 'activity';
+        if (normalizedPath.includes('/common/on_action/'))
+            return 'on_action';
+        if (normalizedPath.includes('/common/scripted_effects/'))
+            return 'scripted_effect';
+        if (normalizedPath.includes('/common/scripted_triggers/'))
+            return 'scripted_trigger';
+        if (normalizedPath.includes('/common/scripted_modifiers/'))
+            return 'scripted_modifier';
         return 'unknown';
     }
     /**
@@ -512,22 +528,34 @@ class CK3DiagnosticsProvider {
             const commentIndex = line.indexOf('#');
             const codePart = commentIndex >= 0 ? line.substring(0, commentIndex) : line;
             // Check for incomplete assignment (= at end of line with nothing after)
+            // But don't flag comparison operators (<=, >=, !=, ==) as incomplete assignments
             const incompleteAssignMatch = codePart.match(/=\s*$/);
             if (incompleteAssignMatch && !codePart.includes('{')) {
-                // Check if next non-empty line starts with { (multi-line block)
-                let nextLineHasBrace = false;
-                for (let j = lineNum + 1; j < lines.length; j++) {
-                    const nextTrimmed = lines[j].trim();
-                    if (nextTrimmed === '' || nextTrimmed.startsWith('#'))
-                        continue;
-                    if (nextTrimmed.startsWith('{')) {
-                        nextLineHasBrace = true;
+                // Check if the trailing = is part of a comparison operator
+                const lastEqPos = codePart.lastIndexOf('=');
+                const charBefore = lastEqPos > 0 ? codePart[lastEqPos - 1] : '';
+                const isComparisonOp = ['<', '>', '!', '='].includes(charBefore);
+                if (!isComparisonOp) {
+                    // Check if next non-empty line starts with { or has a value (multi-line assignment)
+                    let nextLineHasValue = false;
+                    for (let j = lineNum + 1; j < lines.length; j++) {
+                        const nextTrimmed = lines[j].trim();
+                        if (nextTrimmed === '' || nextTrimmed.startsWith('#'))
+                            continue;
+                        // Accept: { (block), " (string), number, yes/no, identifier
+                        if (nextTrimmed.startsWith('{') ||
+                            nextTrimmed.startsWith('"') ||
+                            /^-?\d/.test(nextTrimmed) ||
+                            /^(yes|no)\b/.test(nextTrimmed) ||
+                            /^[\w@]/.test(nextTrimmed)) {
+                            nextLineHasValue = true;
+                        }
+                        break;
                     }
-                    break;
-                }
-                if (!nextLineHasBrace) {
-                    const eqPos = codePart.lastIndexOf('=');
-                    diagnostics.push(new vscode.Diagnostic(new vscode.Range(lineNum, eqPos, lineNum, eqPos + 1), 'Incomplete assignment: expected value after "="', vscode.DiagnosticSeverity.Error));
+                    if (!nextLineHasValue) {
+                        const eqPos = codePart.lastIndexOf('=');
+                        diagnostics.push(new vscode.Diagnostic(new vscode.Range(lineNum, eqPos, lineNum, eqPos + 1), 'Incomplete assignment: expected value after "="', vscode.DiagnosticSeverity.Error));
+                    }
                 }
             }
             // Track braces for matching
@@ -546,18 +574,30 @@ class CK3DiagnosticsProvider {
                     }
                 }
             }
-            // Check for common syntax issues on this line
-            // Empty block on same line: something = { }
-            // This is actually valid in CK3, so we won't flag it
-            // Check for double equals: ==
-            if (codePart.includes('==')) {
-                const pos = codePart.indexOf('==');
-                diagnostics.push(new vscode.Diagnostic(new vscode.Range(lineNum, pos, lineNum, pos + 2), 'Invalid syntax: use single "=" for assignment, or comparison operators like ">=" "<=" "!="', vscode.DiagnosticSeverity.Error));
-            }
+            // Note: We don't check for double equals (==) because CK3 uses == for comparisons in triggers
+            // e.g., `$VALUE$ == 25` or `count == 5`
             // Check for assignment without field name: = value at start of line
+            // But allow if previous line ends with a field name (multi-line continuation)
             const badAssignMatch = codePart.match(/^\s*=\s*\S/);
             if (badAssignMatch) {
-                diagnostics.push(new vscode.Diagnostic(new vscode.Range(lineNum, codePart.indexOf('='), lineNum, codePart.indexOf('=') + 1), 'Missing field name before "="', vscode.DiagnosticSeverity.Error));
+                // Check if previous non-comment line ends with an identifier (field name continuation)
+                let prevLineEndsWithFieldName = false;
+                for (let j = lineNum - 1; j >= 0; j--) {
+                    const prevLine = lines[j].trim();
+                    if (prevLine === '' || prevLine.startsWith('#'))
+                        continue;
+                    // Remove inline comment
+                    const prevCommentIdx = prevLine.indexOf('#');
+                    const prevCode = prevCommentIdx >= 0 ? prevLine.substring(0, prevCommentIdx).trim() : prevLine;
+                    // Check if it ends with an identifier (word characters)
+                    if (/\w$/.test(prevCode)) {
+                        prevLineEndsWithFieldName = true;
+                    }
+                    break;
+                }
+                if (!prevLineEndsWithFieldName) {
+                    diagnostics.push(new vscode.Diagnostic(new vscode.Range(lineNum, codePart.indexOf('='), lineNum, codePart.indexOf('=') + 1), 'Missing field name before "="', vscode.DiagnosticSeverity.Error));
+                }
             }
         }
         // Check for unmatched opening braces at end of file
