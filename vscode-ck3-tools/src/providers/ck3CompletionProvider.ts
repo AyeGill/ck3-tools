@@ -21,6 +21,14 @@ import {
   allTriggers,
 } from '../data';
 import {
+  TRIGGER_BLOCKS,
+  EFFECT_BLOCKS,
+  BlockContext,
+  isScopeReference,
+  isNumericBlock,
+  analyzeBlockContext,
+} from '../utils/scopeContext';
+import {
   eventSchema,
   eventSchemaMap,
   eventOptionSchema,
@@ -943,26 +951,6 @@ function getAllTriggersSchema(): FieldSchema[] {
 }
 
 /**
- * Known trigger block names (entry points into trigger context)
- */
-const TRIGGER_BLOCKS = new Set([
-  'trigger', 'is_shown', 'is_valid', 'is_valid_showing_failures_only',
-  'ai_potential', 'ai_will_do', 'can_be_picked', 'can_pick',
-  'is_highlighted', 'auto_accept', 'can_send', 'can_be_picked_artifact',
-  'limit', 'modifier', // limit and modifier inside effects also contain triggers
-]);
-
-/**
- * Known effect block names (entry points into effect context)
- */
-const EFFECT_BLOCKS = new Set([
-  'immediate', 'effect', 'after', 'on_accept', 'on_decline',
-  'on_send', 'on_auto_accept', 'option', 'hidden_effect',
-  'on_use', 'on_expire', 'on_invalidated',  // Hook effect blocks
-  'on_discover', 'on_expose',  // Secret effect blocks
-]);
-
-/**
  * Known modifier block names - these establish a modifier context
  * The value indicates the modifier category (character, county, province)
  */
@@ -981,19 +969,6 @@ const MODIFIER_BLOCKS: Map<string, 'character' | 'county' | 'province'> = new Ma
   // Province modifier blocks
   ['province_modifier', 'province'],
 ]);
-
-/**
- * Check if a block name is numeric (e.g., "50" in track = { 50 = { } })
- */
-function isNumericBlock(block: string): boolean {
-  return /^\d+$/.test(block);
-}
-
-type BlockContext = {
-  type: 'trigger' | 'effect' | 'unknown';
-  scope: ScopeType;
-  unknownScope?: boolean;  // True when inside scope:X blocks where we can't determine the target scope
-};
 
 type ModifierContext = {
   inModifierBlock: boolean;
@@ -1057,60 +1032,6 @@ function analyzeModifierContext(blockPath: string[]): ModifierContext {
     inModifierBlock: modifierCategory !== null,
     modifierCategory,
   };
-}
-
-/**
- * Check if a block name is a scope:X pattern where we can't determine the target scope
- */
-function isScopeReference(block: string): boolean {
-  return /^scope:[a-zA-Z_][a-zA-Z0-9_]*$/.test(block);
-}
-
-/**
- * Analyze blockPath to determine the current context type and scope.
- * Walks through the block path, tracking scope changes from iterators.
- *
- * @param blockPath Array of block names from outermost to innermost
- * @param initialScope The scope to start with (typically 'character' for events)
- * @returns Object with context type ('trigger' or 'effect') and current scope
- */
-function analyzeBlockContext(blockPath: string[], initialScope: ScopeType = 'character'): BlockContext {
-  let contextType: 'trigger' | 'effect' | 'unknown' = 'unknown';
-  let currentScope: ScopeType = initialScope;
-  let unknownScope = false;
-
-  for (const block of blockPath) {
-    // Check if this block establishes a trigger or effect context
-    if (TRIGGER_BLOCKS.has(block)) {
-      contextType = 'trigger';
-    } else if (EFFECT_BLOCKS.has(block)) {
-      contextType = 'effect';
-    }
-
-    // Check if this is a scope:X reference - we can't determine the target scope
-    if (isScopeReference(block)) {
-      unknownScope = true;
-      continue;
-    }
-
-    // Check if this block is a scope-changing trigger or effect
-    // Look up in triggers first (for any_* iterators in trigger blocks)
-    const trigger = triggersMap.get(block);
-    if (trigger?.outputScope) {
-      currentScope = trigger.outputScope;
-      unknownScope = false; // Known scope again
-      continue;
-    }
-
-    // Look up in effects (for every_* iterators in effect blocks)
-    const effect = effectsMap.get(block);
-    if (effect?.outputScope) {
-      currentScope = effect.outputScope;
-      unknownScope = false; // Known scope again
-    }
-  }
-
-  return { type: contextType, scope: currentScope, unknownScope };
 }
 
 /**

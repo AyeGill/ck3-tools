@@ -227,8 +227,8 @@ test.0001 = {
       expect(typeDiag).toBeUndefined();
     });
 
-    it('should flag "type" inside any_relation as unknown (not a documented parameter)', () => {
-      // any_relation only has 'count' and 'percent' as parameters, NOT 'type'
+    it('should not flag "type" inside any_relation as unknown (it is a valid parameter)', () => {
+      // any_relation has 'type' as a parameter to specify the relation type
       const content = `namespace = test
 test.0001 = {
 	type = character_event
@@ -244,8 +244,8 @@ test.0001 = {
         d.message.includes('"type"') && d.message.includes('Unknown')
       );
 
-      // This SHOULD be flagged since 'type' is not a parameter of any_relation
-      expect(typeDiag).toBeDefined();
+      // 'type' IS a valid parameter of any_relation, so it should NOT be flagged
+      expect(typeDiag).toBeUndefined();
     });
 
     it('should not flag "months" inside trigger_event as unknown', () => {

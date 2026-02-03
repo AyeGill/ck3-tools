@@ -229,6 +229,7 @@ describe('Context Detection Bug', () => {
 
     // REGRESSION TEST: The limit = { scope:actor = { is_ai = yes } } is on ONE LINE
     // This caused block stack corruption before the fix
+    // We use 'xyznotreal' as a sentinel value to check context detection (no underscores to avoid scripted trigger heuristic)
     const content = `grant_titles_interaction = {
 	on_accept = {
 		if = {
@@ -239,9 +240,7 @@ describe('Context Detection Bug', () => {
 				scope:recipient = {
 					is_lowborn = yes
 				}
-				any_in_list = {
-					list = titles_to_grant
-				}
+				xyznotreal = yes
 			}
 		}
 	}
@@ -253,12 +252,12 @@ describe('Context Detection Bug', () => {
     const collection = provider.getDiagnosticCollection();
     const diagnostics = (collection as any).get(doc.uri) || [];
 
-    const listDiagnostic = diagnostics.find((d: any) => d.message.includes('"list"'));
-    // The key assertion: "list" must be flagged as "Unknown trigger" not "Unknown effect"
+    const fakeDiagnostic = diagnostics.find((d: any) => d.message.includes('"xyznotreal"'));
+    // The key assertion: "xyznotreal" must be flagged as "Unknown trigger" not "Unknown effect"
     // because we're inside limit = {} which is trigger context
-    expect(listDiagnostic).toBeDefined();
-    expect(listDiagnostic.message).toContain('Unknown trigger');
-    expect(listDiagnostic.message).not.toContain('Unknown effect');
+    expect(fakeDiagnostic).toBeDefined();
+    expect(fakeDiagnostic.message).toContain('Unknown trigger');
+    expect(fakeDiagnostic.message).not.toContain('Unknown effect');
 
     provider.dispose();
   });

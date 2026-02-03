@@ -1,6 +1,16 @@
 import * as vscode from 'vscode';
 import { FieldSchema } from '../schemas/traitSchema';
-import { effectsMap, triggersMap } from '../data';
+import { effectsMap, triggersMap, ScopeType } from '../data';
+import {
+  TRIGGER_BLOCKS,
+  EFFECT_BLOCKS,
+  BlockContext,
+  analyzeBlockContext,
+  validateScopePath,
+  looksLikeScopePath,
+  isScopeReference,
+  KNOWN_SCOPE_CHANGERS,
+} from '../utils/scopeContext';
 
 // Import all schemas we want to validate
 import { traitSchema, traitSchemaMap } from '../schemas/traitSchema';
@@ -51,30 +61,6 @@ interface ParsedField {
 }
 
 /**
- * Schema registry mapping file types to their schemas
- */
-/**
- * Block names that establish trigger context
- */
-const TRIGGER_BLOCKS = new Set([
-  'trigger', 'is_shown', 'is_valid', 'is_valid_showing_failures_only',
-  'ai_potential', 'ai_will_do', 'can_be_picked', 'can_pick',
-  'is_highlighted', 'auto_accept', 'can_send', 'can_be_picked_artifact',
-  'limit', // limit inside effects contains triggers
-]);
-
-/**
- * Block names that establish effect context
- */
-const EFFECT_BLOCKS = new Set([
-  'immediate', 'effect', 'after', 'on_accept', 'on_decline',
-  'on_send', 'on_auto_accept', 'option', 'hidden_effect',
-  'on_use', 'on_expire', 'on_invalidated',
-  'on_discover', 'on_expose',
-  'on_start', 'on_end', 'on_monthly', 'on_yearly',
-]);
-
-/**
  * Fields that are valid in both trigger and effect contexts (control flow, etc.)
  */
 const CONTROL_FLOW_FIELDS = new Set([
@@ -86,19 +72,7 @@ const CONTROL_FLOW_FIELDS = new Set([
   'hidden_effect', 'run_interaction',
 ]);
 
-/**
- * Scope-changing effects/triggers (valid in most contexts)
- */
-const SCOPE_CHANGERS = new Set([
-  'root', 'prev', 'this', 'from',
-  'liege', 'top_liege', 'host', 'employer',
-  'father', 'mother', 'primary_spouse', 'betrothed',
-  'primary_heir', 'player_heir', 'designated_heir',
-  'dynasty', 'house', 'faith', 'culture', 'religion',
-  'capital_province', 'capital_county', 'primary_title',
-  'location', 'home_court',
-  // Iterator prefixes - these will be checked specially
-]);
+// SCOPE_CHANGERS now imported from '../utils/scopeContext' as KNOWN_SCOPE_CHANGERS
 
 /**
  * Prefixes for iterator effects/triggers
@@ -871,7 +845,7 @@ export class CK3DiagnosticsProvider {
    * Check if a field name is a valid scope changer
    */
   private isValidScopeChanger(name: string): boolean {
-    if (SCOPE_CHANGERS.has(name)) {
+    if (KNOWN_SCOPE_CHANGERS.has(name)) {
       return true;
     }
     // Check for scope: prefix
@@ -939,6 +913,22 @@ export class CK3DiagnosticsProvider {
     const parentEffect = effectsMap.get(parentBlockName);
     const parentTrigger = triggersMap.get(parentBlockName);
     if (parentEffect?.parameters?.includes(fieldName) || parentTrigger?.parameters?.includes(fieldName)) {
+      return null;
+    }
+
+    // Check if it's a scope path like "liege.primary_title.holder"
+    if (looksLikeScopePath(fieldName)) {
+      // For now, use 'character' as the starting scope
+      // TODO: Use the actual tracked scope from block context
+      const result = validateScopePath(fieldName, 'character');
+      if (result.valid) {
+        return null;
+      }
+      // If invalid, we'll let it fall through to the unknown effect/trigger check
+    }
+
+    // Check if it's a scope:X reference
+    if (isScopeReference(fieldName)) {
       return null;
     }
 
