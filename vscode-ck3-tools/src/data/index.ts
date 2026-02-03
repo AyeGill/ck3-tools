@@ -463,6 +463,102 @@ const triggerParameterOverrides: Record<string, string[]> = {
 
   // Compare triggers
   'compare_value': ['value', 'target'],
+
+  // Iterator triggers that take count/percent
+  'any_consort': ['count', 'percent'],
+  'any_spouse': ['count', 'percent'],
+  'any_child': ['count', 'percent'],
+  'any_parent': ['count', 'percent'],
+  'any_sibling': ['count', 'percent'],
+  'any_courtier': ['count', 'percent', 'even_if_dead'],
+  'any_courtier_or_guest': ['count', 'percent'],
+  'any_vassal': ['count', 'percent', 'even_if_dead'],
+  'any_held_title': ['count', 'percent'],
+  'any_heir_title': ['count', 'percent'],
+  'any_heir': ['count', 'percent'],
+  'any_faction_member': ['count', 'percent'],
+  'any_scheme_agent_character': ['count', 'percent'],
+  'any_scheme_agent_slot': ['count', 'percent'],
+  'any_secret_knower': ['count', 'percent'],
+  'any_killed_character': ['count', 'percent'],
+  'any_entourage_character': ['count', 'percent'],
+  'any_attending_character': ['count', 'percent'],
+  'any_close_family_member': ['count', 'percent', 'even_if_dead'],
+  'any_dynasty_member': ['count', 'percent'],
+  'any_culture_county': ['count', 'percent'],
+  'any_province_epidemic': ['count', 'percent'],
+  'any_knight': ['count', 'percent'],
+  'any_held_county': ['count', 'percent'],
+  'any_sub_realm_county': ['count', 'percent'],
+  'any_targeting_faction': ['count', 'percent'],
+  'any_faith': ['count', 'percent'],
+  'any_leased_title': ['count', 'percent'],
+  'any_martial_councillor': ['count', 'percent'],
+
+  // Region iteration triggers
+  'any_county_in_region': ['region', 'count', 'percent'],
+  'every_county_in_region': ['region'],
+  'random_county_in_region': ['region', 'weight'],
+
+  // Opinion modifier trigger
+  'opinion_modifier': ['who', 'opinion', 'multiplier', 'step', 'min', 'max', 'factor'],
+  'compare_modifier': ['value', 'multiplier', 'min', 'max'],
+
+  // Dread level trigger
+  'has_dread_level_towards': ['target', 'level'],
+
+  // Ordered triggers
+  'ordered_in_list': ['list', 'variable', 'order_by', 'position', 'min', 'max', 'check_range_bounds'],
+
+  // Weight/AI chance blocks (these take base, modifier, etc.)
+  'ai_chance': ['base', 'modifier', 'factor', 'add', 'multiplier'],
+  'ai_will_do': ['base', 'modifier', 'factor', 'add', 'multiplier'],
+  'weight': ['base', 'modifier', 'factor', 'add', 'multiplier', 'min', 'max'],
+  'weight_multiplier': ['base', 'modifier', 'factor'],
+  'modifier': ['add', 'factor', 'desc', 'trigger'],
+
+  // Trait-related triggers
+  'has_trait_rank': ['trait', 'rank', 'value'],
+  'trait_is_same_or_worse': ['trait', 'target'],
+
+  // Character flag triggers
+  'has_character_flag': ['flag', 'days', 'months', 'years', 'weeks'],
+
+  // Numeric comparison blocks
+  'add': ['value', 'min', 'max'],
+  'multiply': ['value', 'min', 'max'],
+  'divide': ['value', 'min', 'max'],
+  'subtract': ['value', 'min', 'max'],
+  'order_by': ['value'],
+
+  // Desc block for conditional descriptions
+  'desc': ['desc', 'trigger', 'first_valid', 'triggered_desc'],
+  'triggered_desc': ['desc', 'trigger'],
+
+  // Duel trigger
+  'duel': ['skill', 'target', 'value', 'localization'],
+
+  // Relation flag triggers
+  'has_relation_flag': ['target', 'relation', 'flag'],
+  'set_relation_flag': ['target', 'relation', 'flag'],
+  'remove_relation_flag': ['target', 'relation', 'flag'],
+
+  // More iterator triggers with count
+  'any_pool_character': ['province', 'count', 'percent'],
+  'any_ruler': ['count', 'percent'],
+  'any_independent_ruler': ['count', 'percent'],
+  'any_living_character': ['count', 'percent'],
+  'any_player': ['count', 'percent'],
+  'any_de_jure_county': ['count', 'percent'],
+  'any_de_jure_county_holder': ['count', 'percent'],
+  'any_neighboring_county': ['count', 'percent'],
+  'any_neighboring_province': ['count', 'percent'],
+  'any_activity_guest': ['count', 'percent'],
+  'any_activity_participant': ['count', 'percent'],
+  'any_activity_spectator': ['count', 'percent'],
+  'any_war_participant': ['count', 'percent'],
+  'any_war_enemy': ['count', 'percent'],
+  'any_war_ally': ['count', 'percent'],
 };
 
 /**
