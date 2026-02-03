@@ -12,6 +12,14 @@ exports.ARTIFACT_SLOTS = [
     'regalia',
     'helmet',
     'miscellaneous',
+    // Court artifact slots
+    'book',
+    'journal',
+    'pedestal',
+    'sculpture',
+    'throne',
+    'wall_big',
+    'wall_small',
 ];
 exports.ARTIFACT_RARITIES = [
     'common',

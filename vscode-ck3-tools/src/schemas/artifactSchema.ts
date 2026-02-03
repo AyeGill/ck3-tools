@@ -10,6 +10,14 @@ export const ARTIFACT_SLOTS = [
   'regalia',
   'helmet',
   'miscellaneous',
+  // Court artifact slots
+  'book',
+  'journal',
+  'pedestal',
+  'sculpture',
+  'throne',
+  'wall_big',
+  'wall_small',
 ] as const;
 
 export const ARTIFACT_RARITIES = [
