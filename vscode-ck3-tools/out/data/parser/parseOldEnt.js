@@ -77,18 +77,37 @@ function extractParameters(syntax, name) {
     if (!syntax)
         return [];
     const params = new Set();
+    const skipWords = new Set(['x', 'y', 'z', 'w', 'a', 'b', 'int', 'yes', 'no', 'key', 'value', 'script', 'trigger', 'triggers', 'effect', 'effects']);
+    // Helper to add a parameter if it's valid
+    const addParam = (param) => {
+        param = param.toLowerCase();
+        if (param !== name.toLowerCase() &&
+            !KNOWN_EFFECTS_TRIGGERS.has(param) &&
+            !skipWords.has(param)) {
+            params.add(param);
+        }
+    };
     // Common parameter patterns in the syntax documentation
     // Match lines like: "  param = value" or "param = { ... }"
     const paramRegex = /^\s*([a-z_][a-z0-9_]*)\s*=/gim;
     let match;
     while ((match = paramRegex.exec(syntax)) !== null) {
-        const param = match[1].toLowerCase();
-        // Skip the effect/trigger name itself, known effects/triggers, and common non-parameter words
-        if (param !== name.toLowerCase() &&
-            !KNOWN_EFFECTS_TRIGGERS.has(param) &&
-            !['x', 'y', 'z', 'w', 'a', 'b', 'int', 'yes', 'no', 'key', 'value', 'script', 'trigger', 'triggers', 'effect', 'effects'].includes(param)) {
-            params.add(param);
+        addParam(match[1]);
+    }
+    // Match slash-separated alternatives like "days/months/years = ..." anywhere in syntax
+    // These are distinctive enough to match inline (not just at line start)
+    const slashParamRegex = /([a-z_][a-z0-9_]*(?:\/[a-z_][a-z0-9_]*)+)\s*=/gi;
+    while ((match = slashParamRegex.exec(syntax)) !== null) {
+        // Split and add each as a separate parameter
+        for (const p of match[1].split('/')) {
+            addParam(p);
         }
+    }
+    // Match parameters after opening brace: "{ param = value" or ", param = value"
+    // This catches inline parameters like "add_character_flag = { flag = X days/weeks/years = Y }"
+    const inlineParamRegex = /[{,]\s*([a-z_][a-z0-9_]*)\s*=/gi;
+    while ((match = inlineParamRegex.exec(syntax)) !== null) {
+        addParam(match[1]);
     }
     // Also extract from angle bracket patterns like <count=num/all>
     const bracketRegex = /<([a-z_][a-z0-9_]*)=/gi;

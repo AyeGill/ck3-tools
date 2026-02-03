@@ -864,6 +864,7 @@
       "task_contract"
     ],
     "parameters": [
+      "task_contract_type",
       "count",
       "percent"
     ]
@@ -909,6 +910,7 @@
       "trait"
     ],
     "parameters": [
+      "category",
       "count",
       "percent"
     ]
@@ -950,6 +952,9 @@
     "syntax": "calc_true_if = { amount = 2 <trigger> <trigger> <trigger> }",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "amount"
     ]
   },
   {
@@ -1108,7 +1113,8 @@
       "none"
     ],
     "parameters": [
-      "variable_list_size"
+      "variable_list_size",
+      "name"
     ]
   },
   {
@@ -1372,7 +1378,8 @@
       "none"
     ],
     "parameters": [
-      "is_target_in_variable_list"
+      "is_target_in_variable_list",
+      "name"
     ]
   },
   {
@@ -1383,7 +1390,8 @@
       "none"
     ],
     "parameters": [
-      "is_target_in_variable_list"
+      "is_target_in_variable_list",
+      "name"
     ]
   },
   {
@@ -1392,6 +1400,9 @@
     "syntax": "is_target_in_variable_list = { name = X target = Y }\nWhere X is the name of the variable\nWhere Y is an event target",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "name"
     ]
   },
   {
@@ -1477,7 +1488,10 @@
     "supportedScopes": [
       "none"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "name"
+    ]
   },
   {
     "name": "local_variable_list_size",
@@ -1487,7 +1501,8 @@
       "none"
     ],
     "parameters": [
-      "variable_list_size"
+      "variable_list_size",
+      "name"
     ]
   },
   {
@@ -1601,6 +1616,9 @@
     "syntax": "save_temporary_opinion_value_as = { name = <string> target = x",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "name"
     ]
   },
   {
@@ -1616,6 +1634,9 @@
     "syntax": "save_temporary_scope_value_as = { name = <string> value = x }",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "name"
     ]
   },
   {
@@ -1700,6 +1721,9 @@
     "syntax": "variable_list_size = { name = X target >= Y }\nWhere X is the name of the variable\nWhere Y is a script value or number",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "name"
     ]
   },
   {
@@ -1720,6 +1744,9 @@
     "syntax": "weighted_calc_true_if = { amount = 10 5 = { <trigger> } 15 = { <trigger> } 7 = { <trigger> } }",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "amount"
     ]
   },
   {
@@ -1931,6 +1958,7 @@
       "accolade"
     ],
     "parameters": [
+      "accolade_parameter",
       "count",
       "percent"
     ]
@@ -2036,6 +2064,7 @@
       "task_contract"
     ],
     "parameters": [
+      "task_contract_type",
       "count",
       "percent"
     ]
@@ -2111,6 +2140,7 @@
       "task_contract"
     ],
     "parameters": [
+      "task_contract_type",
       "count",
       "percent"
     ]
@@ -2941,6 +2971,7 @@
       "character_memory"
     ],
     "parameters": [
+      "memory_type",
       "count",
       "percent"
     ]
@@ -3181,6 +3212,7 @@
       "story"
     ],
     "parameters": [
+      "type",
       "count",
       "percent"
     ]
@@ -3572,6 +3604,7 @@
     ],
     "parameters": [
       "random_scheme",
+      "type",
       "count",
       "percent"
     ]
@@ -3588,6 +3621,7 @@
     ],
     "parameters": [
       "random_secret",
+      "type",
       "count",
       "percent"
     ]
@@ -3813,6 +3847,7 @@
       "faction"
     ],
     "parameters": [
+      "faction_type",
       "count",
       "percent"
     ]
@@ -4008,6 +4043,7 @@
       "character"
     ],
     "parameters": [
+      "vassal_stance",
       "count",
       "percent"
     ]
@@ -4023,6 +4059,7 @@
       "character"
     ],
     "parameters": [
+      "vassal_stance",
       "count",
       "percent"
     ]
@@ -4305,6 +4342,9 @@
     "syntax": "can_create_faction = { type = X target = Y }",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "type"
     ]
   },
   {
@@ -4536,6 +4576,9 @@
     "syntax": "can_start_scheme = { type = X target = Y }",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "type"
     ]
   },
   {
@@ -4881,7 +4924,8 @@
     ],
     "valueType": "<, <=, =, !=, >, >=",
     "parameters": [
-      "diplomacy"
+      "diplomacy",
+      "target"
     ]
   },
   {
@@ -5562,7 +5606,10 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "yes/no"
+    "valueType": "yes/no",
+    "parameters": [
+      "has_temperament_high"
+    ]
   },
   {
     "name": "has_domicile_temperament_low",
@@ -5571,7 +5618,10 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "yes/no"
+    "valueType": "yes/no",
+    "parameters": [
+      "has_temperament_low"
+    ]
   },
   {
     "name": "has_domicile_temperament_neutral",
@@ -5580,7 +5630,10 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "yes/no"
+    "valueType": "yes/no",
+    "parameters": [
+      "has_temperament_neutral"
+    ]
   },
   {
     "name": "has_dread_level_towards",
@@ -5607,6 +5660,9 @@
     "syntax": "has_election_vote_of = { who = scope:actor title = primary_title }",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "who"
     ]
   },
   {
@@ -6771,6 +6827,10 @@
     "syntax": "scope:actor = { has_contract_group = { contract_group = <key> } }",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "has_contract_group",
+      "contract_group"
     ]
   },
   {
@@ -6837,7 +6897,10 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "trait"
+    ]
   },
   {
     "name": "has_treasury",
@@ -7010,7 +7073,8 @@
     ],
     "valueType": "<, <=, =, !=, >, >=",
     "parameters": [
-      "intrigue"
+      "intrigue",
+      "target"
     ]
   },
   {
@@ -8202,6 +8266,9 @@
     "syntax": "is_scheming_against = { target = X type = Y } limits to schemes of type Y\nis_scheming_against = { target = X scheme_skill = Y } limits to schemes of Y skill category\nis_scheming_against = { target = X } considers all schemes",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "target"
     ]
   },
   {
@@ -8522,7 +8589,8 @@
     ],
     "valueType": "<, <=, =, !=, >, >=",
     "parameters": [
-      "learning"
+      "learning",
+      "target"
     ]
   },
   {
@@ -8698,7 +8766,8 @@
     ],
     "valueType": "<, <=, =, !=, >, >=",
     "parameters": [
-      "martial"
+      "martial",
+      "target"
     ]
   },
   {
@@ -9500,7 +9569,8 @@
       "character"
     ],
     "parameters": [
-      "number_of_personality_traits_in_common"
+      "number_of_personality_traits_in_common",
+      "target"
     ]
   },
   {
@@ -9528,7 +9598,10 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "title"
+    ]
   },
   {
     "name": "number_of_fertile_concubines",
@@ -9569,6 +9642,9 @@
     "syntax": "number_of_opposing_personality_traits = { target = X value >/</>=/<= Y }",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "target"
     ]
   },
   {
@@ -9577,6 +9653,9 @@
     "syntax": "number_of_opposing_traits = { target = X value >/</>=/<= Y }",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "target"
     ]
   },
   {
@@ -9593,6 +9672,9 @@
     "syntax": "number_of_personality_traits_in_common = { target = X value >/</>=/<= Y }",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "target"
     ]
   },
   {
@@ -9610,7 +9692,10 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "target"
+    ]
   },
   {
     "name": "number_of_stationed_maa_regiments",
@@ -9634,6 +9719,9 @@
     "syntax": "number_of_traits_in_common = { target = X value >/</>=/<= Y }",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "target"
     ]
   },
   {
@@ -9652,7 +9740,10 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "target"
+    ]
   },
   {
     "name": "number_title_maa_regiments_of_type",
@@ -9765,7 +9856,10 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "target"
+    ]
   },
   {
     "name": "pregnancy_days",
@@ -9817,7 +9911,8 @@
     ],
     "valueType": "<, <=, =, !=, >, >=",
     "parameters": [
-      "prowess"
+      "prowess",
+      "target"
     ]
   },
   {
@@ -10089,7 +10184,8 @@
     ],
     "valueType": "<, <=, =, !=, >, >=",
     "parameters": [
-      "stewardship"
+      "stewardship",
+      "target"
     ]
   },
   {
@@ -10334,7 +10430,10 @@
     "supportedScopes": [
       "character"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "target"
+    ]
   },
   {
     "name": "trait_compatibility",
@@ -10934,6 +11033,7 @@
       "epidemic"
     ],
     "parameters": [
+      "intensity",
       "count",
       "percent"
     ]
@@ -11129,6 +11229,7 @@
       "landed_title"
     ],
     "parameters": [
+      "continue",
       "count",
       "percent"
     ]
@@ -11144,6 +11245,7 @@
       "landed_title"
     ],
     "parameters": [
+      "continue",
       "count",
       "percent"
     ]
@@ -11446,6 +11548,9 @@
     "syntax": "can_title_create_faction = { type = X target = Y }",
     "supportedScopes": [
       "landed_title"
+    ],
+    "parameters": [
+      "type"
     ]
   },
   {
@@ -12028,7 +12133,8 @@
     "parameters": [
       "days",
       "months",
-      "years"
+      "years",
+      "type"
     ]
   },
   {
@@ -12447,6 +12553,7 @@
       "character"
     ],
     "parameters": [
+      "state",
       "count",
       "percent"
     ]
@@ -12629,6 +12736,9 @@
     "syntax": "is_special_guest = character\nis_special_guest = { target = character type = key }",
     "supportedScopes": [
       "activity"
+    ],
+    "parameters": [
+      "target"
     ]
   },
   {
@@ -14279,6 +14389,7 @@
       "epidemic"
     ],
     "parameters": [
+      "intensity",
       "count",
       "percent"
     ]
@@ -14396,6 +14507,9 @@
     "syntax": "has_building_with_flag = { flag = temple count >= 2 }\nhas_building_with_flag = temple # count >= 1",
     "supportedScopes": [
       "province"
+    ],
+    "parameters": [
+      "flag"
     ]
   },
   {
@@ -14660,6 +14774,9 @@
     "syntax": "travel_danger_type = { travel_plan = scope:some_travel_plan type = name_of_danger_type }\ntravel_danger_type = { travel_plan = scope:some_travel_plan terrain = terrain type }",
     "supportedScopes": [
       "province"
+    ],
+    "parameters": [
+      "travel_plan"
     ]
   },
   {
@@ -16201,6 +16318,9 @@
     "syntax": "has_legend_chapter = { name = opening localization_key = default_legend_opening }\nhas_legend_chapter = opening",
     "supportedScopes": [
       "legend"
+    ],
+    "parameters": [
+      "name"
     ]
   },
   {
@@ -16427,7 +16547,10 @@
     "supportedScopes": [
       "culture"
     ],
-    "valueType": "<, <=, =, !=, >, >="
+    "valueType": "<, <=, =, !=, >, >=",
+    "parameters": [
+      "target"
+    ]
   },
   {
     "name": "culture_age",
@@ -16502,6 +16625,9 @@
     "syntax": "<culture> = { has_building_gfx = mena_clothing_gfx }",
     "supportedScopes": [
       "culture"
+    ],
+    "parameters": [
+      "has_building_gfx"
     ]
   },
   {
@@ -16510,6 +16636,9 @@
     "syntax": "<culture> = { has_building_gfx = mena_coa_gfx }",
     "supportedScopes": [
       "culture"
+    ],
+    "parameters": [
+      "has_building_gfx"
     ]
   },
   {
@@ -17077,7 +17206,10 @@
     "supportedScopes": [
       "council_task"
     ],
-    "valueType": "yes/no"
+    "valueType": "yes/no",
+    "parameters": [
+      "position_can_be_fired"
+    ]
   },
   {
     "name": "any_faction_county_member",

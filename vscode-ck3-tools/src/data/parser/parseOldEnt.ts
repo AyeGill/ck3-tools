@@ -95,6 +95,13 @@ function extractParameters(syntax: string | undefined, name: string): string[] {
     }
   }
 
+  // Match parameters after opening brace: "{ param = value" or ", param = value"
+  // This catches inline parameters like "add_character_flag = { flag = X days/weeks/years = Y }"
+  const inlineParamRegex = /[{,]\s*([a-z_][a-z0-9_]*)\s*=/gi;
+  while ((match = inlineParamRegex.exec(syntax)) !== null) {
+    addParam(match[1]);
+  }
+
   // Also extract from angle bracket patterns like <count=num/all>
   const bracketRegex = /<([a-z_][a-z0-9_]*)=/gi;
   while ((match = bracketRegex.exec(syntax)) !== null) {

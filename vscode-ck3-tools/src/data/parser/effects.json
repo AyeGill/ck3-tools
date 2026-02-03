@@ -86,7 +86,8 @@
       "days",
       "weeks",
       "months",
-      "years"
+      "years",
+      "name"
     ]
   },
   {
@@ -95,6 +96,9 @@
     "syntax": "add_to_list = <name_of_list>\nadd_to_list = { name = <name_of_list> value = <script_value> }\nNOTE, if adding a permanent target to a temporary list, the whole list becomes permanent",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "name"
     ]
   },
   {
@@ -109,7 +113,8 @@
       "days",
       "weeks",
       "months",
-      "years"
+      "years",
+      "name"
     ]
   },
   {
@@ -118,6 +123,9 @@
     "syntax": "add_to_temporary_list = <name_of_list>\nadd_to_temporary_list = { name = <name_of_list> value = <script_value> }\nNOTE, if adding a temporary target to a permanent list, the list will stay permanent",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "name"
     ]
   },
   {
@@ -131,7 +139,8 @@
       "days",
       "weeks",
       "months",
-      "years"
+      "years",
+      "name"
     ]
   },
   {
@@ -179,7 +188,8 @@
       "none"
     ],
     "parameters": [
-      "change_variable"
+      "change_variable",
+      "name"
     ]
   },
   {
@@ -190,7 +200,8 @@
       "none"
     ],
     "parameters": [
-      "change_variable"
+      "change_variable",
+      "name"
     ]
   },
   {
@@ -199,6 +210,9 @@
     "syntax": "When exceeding law list bounds, the edge law is used. Invalid laws are not skipped.\nchange_realm_law_level = { law_group = budget_allocation_salary_law change = -2 }",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "law_group"
     ]
   },
   {
@@ -207,6 +221,9 @@
     "syntax": "When exceeding law list bounds, the edge law is used. Invalid laws are not skipped.\nchange_realm_law_level_skip_effects = { law_group = budget_allocation_salary_law change = -2 }",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "law_group"
     ]
   },
   {
@@ -243,6 +260,9 @@
     "syntax": "When exceeding law list bounds, the edge law is used. Invalid laws are not skipped.\nchange_title_law_level = { law_group = budget_allocation_salary_law change = -2 }",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "law_group"
     ]
   },
   {
@@ -253,7 +273,8 @@
       "none"
     ],
     "parameters": [
-      "change_title_law_level"
+      "change_title_law_level",
+      "law_group"
     ]
   },
   {
@@ -262,6 +283,9 @@
     "syntax": "change_variable = { name = X operation = Y }\nWhere X is the name of the numeric variable to modify\nWhere the valid operations are add, subtract, multiply, divide, modulo, min and max\nWhere Y is a fixed point value, script value or event target of a value type",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "name"
     ]
   },
   {
@@ -272,7 +296,8 @@
       "none"
     ],
     "parameters": [
-      "clamp_variable"
+      "clamp_variable",
+      "name"
     ]
   },
   {
@@ -283,7 +308,8 @@
       "none"
     ],
     "parameters": [
-      "clamp_variable"
+      "clamp_variable",
+      "name"
     ]
   },
   {
@@ -292,6 +318,9 @@
     "syntax": "clamp_variable = { name = X max = Y min = Z }\nWhere X is the name of the variable\nWhere Y and Z are script values",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "name"
     ]
   },
   {
@@ -396,6 +425,9 @@
     "syntax": "create_accolade = { knight = scope:character primary = accolade_type secondary = accolade_type name = loc_key }",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "knight"
     ]
   },
   {
@@ -468,7 +500,10 @@
       "dynasty",
       "ethnicity",
       "ethnicities",
-      "after_creation"
+      "after_creation",
+      "count",
+      "catholic",
+      "norse"
     ]
   },
   {
@@ -1327,7 +1362,8 @@
       "task_contract"
     ],
     "parameters": [
-      "any_task_contract"
+      "any_task_contract",
+      "task_contract_type"
     ]
   },
   {
@@ -1363,7 +1399,8 @@
       "trait"
     ],
     "parameters": [
-      "any_trait_in_category"
+      "any_trait_in_category",
+      "category"
     ]
   },
   {
@@ -2479,7 +2516,8 @@
       "position",
       "min",
       "max",
-      "check_range_bounds"
+      "check_range_bounds",
+      "task_contract_type"
     ]
   },
   {
@@ -2534,7 +2572,8 @@
       "position",
       "min",
       "max",
-      "check_range_bounds"
+      "check_range_bounds",
+      "category"
     ]
   },
   {
@@ -3092,7 +3131,8 @@
     "parameters": [
       "modifier",
       "compare_modifier",
-      "opinion_modifier"
+      "opinion_modifier",
+      "x1"
     ]
   },
   {
@@ -3212,7 +3252,8 @@
       "task_contract"
     ],
     "parameters": [
-      "any_task_contract"
+      "any_task_contract",
+      "task_contract_type"
     ]
   },
   {
@@ -3248,7 +3289,8 @@
       "trait"
     ],
     "parameters": [
-      "any_trait_in_category"
+      "any_trait_in_category",
+      "category"
     ]
   },
   {
@@ -3272,7 +3314,8 @@
     "parameters": [
       "holding_type",
       "purge_secondary_holdings",
-      "excluded_holding_type"
+      "excluded_holding_type",
+      "default"
     ]
   },
   {
@@ -3309,7 +3352,8 @@
       "none"
     ],
     "parameters": [
-      "remove_list_variable"
+      "remove_list_variable",
+      "name"
     ]
   },
   {
@@ -3320,7 +3364,8 @@
       "none"
     ],
     "parameters": [
-      "remove_list_variable"
+      "remove_list_variable",
+      "name"
     ]
   },
   {
@@ -3329,6 +3374,9 @@
     "syntax": "remove_list_variable = { name = X target = Y }\nWhere X is the name of the variable\nWhere Y is an event target",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "name"
     ]
   },
   {
@@ -3388,7 +3436,8 @@
       "none"
     ],
     "parameters": [
-      "round_variable"
+      "round_variable",
+      "name"
     ]
   },
   {
@@ -3399,7 +3448,8 @@
       "none"
     ],
     "parameters": [
-      "round_variable"
+      "round_variable",
+      "name"
     ]
   },
   {
@@ -3408,6 +3458,9 @@
     "syntax": "round_variable = { name = X nearest = Y }\nWhere X is the name of the variable\nWhere Y is a script value",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "name"
     ]
   },
   {
@@ -3434,6 +3487,9 @@
     "syntax": "save_opinion_value_as = { name = <string> target = x }",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "name"
     ]
   },
   {
@@ -3453,6 +3509,9 @@
     "syntax": "save_scope_value_as = { name = <string> value = x }",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "name"
     ]
   },
   {
@@ -3461,6 +3520,9 @@
     "syntax": "save_temporary_opinion_value_as = { name = <string> target = x",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "name"
     ]
   },
   {
@@ -3480,6 +3542,9 @@
     "syntax": "save_temporary_scope_value_as = { name = <string> value = x }",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "name"
     ]
   },
   {
@@ -3563,7 +3628,8 @@
       "none"
     ],
     "parameters": [
-      "set_variable"
+      "set_variable",
+      "name"
     ]
   },
   {
@@ -3574,7 +3640,8 @@
       "none"
     ],
     "parameters": [
-      "set_variable"
+      "set_variable",
+      "name"
     ]
   },
   {
@@ -3602,6 +3669,9 @@
     "syntax": "set_variable = { name = X value = Y days = Z }\nWhere X is the name of the variable used to then access it\nWhere Y is any event target, bool, value, script value or flag (flag:W)\nAn optional days where Z is the number of days or script value\nThis variable will be accessible with <type_>var:X. With type being in a scope object or in a top scope\nCan also be used as set_variable = X (equivalent to set_variable = { name = X value = yes })",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "name"
     ]
   },
   {
@@ -3690,6 +3760,9 @@
     "syntax": "stats_log = { category = string <string> = <loc_key> }\nThe loc keys will have ROOT, SCOPE, THIS, and PREV available",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "category"
     ]
   },
   {
@@ -3758,6 +3831,9 @@
     "syntax": "while = { limit = { <triggers> } <effects> }\nwhile = { count = 3 <effects> }\nDefault max of 1000.",
     "supportedScopes": [
       "none"
+    ],
+    "parameters": [
+      "count"
     ]
   },
   {
@@ -3817,7 +3893,8 @@
     "parameters": [
       "days",
       "weeks",
-      "years"
+      "years",
+      "flag"
     ]
   },
   {
@@ -3831,7 +3908,8 @@
       "days",
       "weeks",
       "months",
-      "years"
+      "years",
+      "modifier"
     ]
   },
   {
@@ -3907,7 +3985,10 @@
     "parameters": [
       "days",
       "months",
-      "years"
+      "years",
+      "type",
+      "target",
+      "secret"
     ]
   },
   {
@@ -3920,7 +4001,10 @@
     "parameters": [
       "days",
       "months",
-      "years"
+      "years",
+      "type",
+      "target",
+      "secret"
     ]
   },
   {
@@ -4152,6 +4236,9 @@
     "syntax": "add_secret = { type = X target = Y }\nNote that if you create a Secret in the immediate effect, the tooltips for other effects run in that Secret's scope (such as reveal_to) are likely to be displayed incorrectly, or not to be displayed at all. This is due to the game generating the tooltip before it actually has a Secret that exists to work off of.\nTest rigorously and use custom tooltips if necessary. Creating a Secret in the immediate and then running effects on it in an event option should produce perfectly normal tooltips.",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "type"
     ]
   },
   {
@@ -4188,6 +4275,9 @@
     "syntax": "add_subject_standing = { add = learning max = 10 }",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "add"
     ]
   },
   {
@@ -4252,6 +4342,9 @@
     "syntax": "add_trait_xp = { trait = <trait_key> track = <track_key> value = <script_value> }",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "trait"
     ]
   },
   {
@@ -4280,7 +4373,8 @@
       "months",
       "days",
       "casus_belli",
-      "war"
+      "war",
+      "character"
     ]
   },
   {
@@ -4295,7 +4389,8 @@
       "months",
       "days",
       "casus_belli",
-      "war"
+      "war",
+      "character"
     ]
   },
   {
@@ -4552,6 +4647,9 @@
     "syntax": "change_first_name = <dynamic_description>\nchange_first_name = { template_character = scope:character } # copy name from the template character",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "template_character"
     ]
   },
   {
@@ -4822,6 +4920,11 @@
     "syntax": "create_character_memory = { type = memory_type participants = { tag = scope } duration = { years = 3 } }",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "type",
+      "tag",
+      "years"
     ]
   },
   {
@@ -4910,6 +5013,9 @@
     "syntax": "Creates an inspiration of a given type owned by scoped character, new inspiration is saved as scope:new_inspiration\ncreate_inspiration = { type = inspiration_type gold = script_value }\nAs above but overrides the base cost compared to the one defined in the type",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "type"
     ]
   },
   {
@@ -5139,7 +5245,8 @@
       "accolade"
     ],
     "parameters": [
-      "any_active_accolade"
+      "any_active_accolade",
+      "accolade_parameter"
     ]
   },
   {
@@ -5219,7 +5326,8 @@
       "task_contract"
     ],
     "parameters": [
-      "any_character_active_contract"
+      "any_character_active_contract",
+      "task_contract_type"
     ]
   },
   {
@@ -5277,7 +5385,8 @@
       "task_contract"
     ],
     "parameters": [
-      "any_character_task_contract"
+      "any_character_task_contract",
+      "task_contract_type"
     ]
   },
   {
@@ -5894,7 +6003,8 @@
       "character_memory"
     ],
     "parameters": [
-      "any_memory"
+      "any_memory",
+      "memory_type"
     ]
   },
   {
@@ -6073,7 +6183,8 @@
       "story"
     ],
     "parameters": [
-      "any_owned_story"
+      "any_owned_story",
+      "type"
     ]
   },
   {
@@ -6362,7 +6473,8 @@
       "scheme"
     ],
     "parameters": [
-      "random_scheme"
+      "random_scheme",
+      "type"
     ]
   },
   {
@@ -6376,7 +6488,8 @@
       "secret"
     ],
     "parameters": [
-      "random_secret"
+      "random_secret",
+      "type"
     ]
   },
   {
@@ -6544,7 +6657,8 @@
       "faction"
     ],
     "parameters": [
-      "any_targeting_faction"
+      "any_targeting_faction",
+      "faction_type"
     ]
   },
   {
@@ -6690,7 +6804,8 @@
       "character"
     ],
     "parameters": [
-      "any_vassal"
+      "any_vassal",
+      "vassal_stance"
     ]
   },
   {
@@ -6704,7 +6819,8 @@
       "character"
     ],
     "parameters": [
-      "any_vassal_or_below"
+      "any_vassal_or_below",
+      "vassal_stance"
     ]
   },
   {
@@ -6837,7 +6953,8 @@
     "parameters": [
       "days",
       "months",
-      "years"
+      "years",
+      "target"
     ]
   },
   {
@@ -7223,7 +7340,8 @@
       "position",
       "min",
       "max",
-      "check_range_bounds"
+      "check_range_bounds",
+      "accolade_parameter"
     ]
   },
   {
@@ -7350,7 +7468,8 @@
       "position",
       "min",
       "max",
-      "check_range_bounds"
+      "check_range_bounds",
+      "task_contract_type"
     ]
   },
   {
@@ -7441,7 +7560,8 @@
       "position",
       "min",
       "max",
-      "check_range_bounds"
+      "check_range_bounds",
+      "task_contract_type"
     ]
   },
   {
@@ -8437,7 +8557,8 @@
       "position",
       "min",
       "max",
-      "check_range_bounds"
+      "check_range_bounds",
+      "memory_type"
     ]
   },
   {
@@ -8726,7 +8847,8 @@
       "position",
       "min",
       "max",
-      "check_range_bounds"
+      "check_range_bounds",
+      "type"
     ]
   },
   {
@@ -9195,7 +9317,8 @@
       "position",
       "min",
       "max",
-      "check_range_bounds"
+      "check_range_bounds",
+      "type"
     ]
   },
   {
@@ -9214,7 +9337,8 @@
       "position",
       "min",
       "max",
-      "check_range_bounds"
+      "check_range_bounds",
+      "type"
     ]
   },
   {
@@ -9485,7 +9609,8 @@
       "position",
       "min",
       "max",
-      "check_range_bounds"
+      "check_range_bounds",
+      "faction_type"
     ]
   },
   {
@@ -9720,7 +9845,8 @@
       "position",
       "min",
       "max",
-      "check_range_bounds"
+      "check_range_bounds",
+      "vassal_stance"
     ]
   },
   {
@@ -9739,7 +9865,8 @@
       "position",
       "min",
       "max",
-      "check_range_bounds"
+      "check_range_bounds",
+      "vassal_stance"
     ]
   },
   {
@@ -9804,7 +9931,8 @@
       "character"
     ],
     "parameters": [
-      "vassal_contract_set_obligation_level"
+      "vassal_contract_set_obligation_level",
+      "type"
     ]
   },
   {
@@ -9813,6 +9941,9 @@
     "syntax": "pay_gold_to_treasury = { target = X value = Y }",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "target"
     ]
   },
   {
@@ -9821,6 +9952,9 @@
     "syntax": "pay_herd = { target = X value = Y }",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "target"
     ]
   },
   {
@@ -9925,6 +10059,9 @@
     "syntax": "the target character receives treasury if exists, otherwise gold\npay_treasury_or_gold = { target = X value = Y }",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "target"
     ]
   },
   {
@@ -9933,6 +10070,9 @@
     "syntax": "pay_treasury_to_gold = { target = X value = Y }",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "target"
     ]
   },
   {
@@ -10023,7 +10163,8 @@
       "accolade"
     ],
     "parameters": [
-      "any_active_accolade"
+      "any_active_accolade",
+      "accolade_parameter"
     ]
   },
   {
@@ -10103,7 +10244,8 @@
       "task_contract"
     ],
     "parameters": [
-      "any_character_active_contract"
+      "any_character_active_contract",
+      "task_contract_type"
     ]
   },
   {
@@ -10161,7 +10303,8 @@
       "task_contract"
     ],
     "parameters": [
-      "any_character_task_contract"
+      "any_character_task_contract",
+      "task_contract_type"
     ]
   },
   {
@@ -10777,7 +10920,8 @@
       "character_memory"
     ],
     "parameters": [
-      "any_memory"
+      "any_memory",
+      "memory_type"
     ]
   },
   {
@@ -10956,7 +11100,8 @@
       "story"
     ],
     "parameters": [
-      "any_owned_story"
+      "any_owned_story",
+      "type"
     ]
   },
   {
@@ -11243,6 +11388,9 @@
     ],
     "supportedTargets": [
       "scheme"
+    ],
+    "parameters": [
+      "type"
     ]
   },
   {
@@ -11254,6 +11402,9 @@
     ],
     "supportedTargets": [
       "secret"
+    ],
+    "parameters": [
+      "type"
     ]
   },
   {
@@ -11421,7 +11572,8 @@
       "faction"
     ],
     "parameters": [
-      "any_targeting_faction"
+      "any_targeting_faction",
+      "faction_type"
     ]
   },
   {
@@ -11567,7 +11719,8 @@
       "character"
     ],
     "parameters": [
-      "any_vassal"
+      "any_vassal",
+      "vassal_stance"
     ]
   },
   {
@@ -11581,7 +11734,8 @@
       "character"
     ],
     "parameters": [
-      "any_vassal_or_below"
+      "any_vassal_or_below",
+      "vassal_stance"
     ]
   },
   {
@@ -11780,6 +11934,9 @@
     "syntax": "remove_interaction_cooldown_against = { interaction = interaction_name target = character }",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "interaction"
     ]
   },
   {
@@ -12249,6 +12406,9 @@
     "syntax": "remove_scheme_cooldown_against = { scheme = scheme_name target = character }",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "scheme"
     ]
   },
   {
@@ -12760,6 +12920,9 @@
     "syntax": "stick_to_location can be used to prevent the safety checks that sometimes return characters to their default location automatically.Usage:   set_location = province\nset_location = { location = province   stick_to_location = yes/no }",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "location"
     ]
   },
   {
@@ -13366,7 +13529,8 @@
       "character"
     ],
     "parameters": [
-      "vassal_contract_set_obligation_level"
+      "vassal_contract_set_obligation_level",
+      "type"
     ]
   },
   {
@@ -13437,6 +13601,9 @@
     "syntax": "vassal_contract_set_obligation_level = { type = name level = 1 } # index to obligation level\nvassal_contract_set_obligation_level = { type = name level = feudal_obligation_low }\nvassal_contract_set_obligation_level = { type = name level = scope:obligation }",
     "supportedScopes": [
       "character"
+    ],
+    "parameters": [
+      "type"
     ]
   },
   {
@@ -13500,7 +13667,8 @@
       "days",
       "weeks",
       "months",
-      "years"
+      "years",
+      "modifier"
     ]
   },
   {
@@ -13670,7 +13838,8 @@
       "epidemic"
     ],
     "parameters": [
-      "any_county_province_epidemic"
+      "any_county_province_epidemic",
+      "intensity"
     ]
   },
   {
@@ -13814,6 +13983,9 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "continue"
     ]
   },
   {
@@ -13825,6 +13997,9 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "continue"
     ]
   },
   {
@@ -14166,7 +14341,8 @@
       "position",
       "min",
       "max",
-      "check_range_bounds"
+      "check_range_bounds",
+      "intensity"
     ]
   },
   {
@@ -14400,7 +14576,8 @@
       "position",
       "min",
       "max",
-      "check_range_bounds"
+      "check_range_bounds",
+      "continue"
     ]
   },
   {
@@ -14418,7 +14595,8 @@
       "position",
       "min",
       "max",
-      "check_range_bounds"
+      "check_range_bounds",
+      "continue"
     ]
   },
   {
@@ -14824,7 +15002,8 @@
       "epidemic"
     ],
     "parameters": [
-      "any_county_province_epidemic"
+      "any_county_province_epidemic",
+      "intensity"
     ]
   },
   {
@@ -14968,6 +15147,9 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "continue"
     ]
   },
   {
@@ -14979,6 +15161,9 @@
     ],
     "supportedTargets": [
       "landed_title"
+    ],
+    "parameters": [
+      "continue"
     ]
   },
   {
@@ -15732,7 +15917,8 @@
       "character"
     ],
     "parameters": [
-      "any_attending_character"
+      "any_attending_character",
+      "state"
     ]
   },
   {
@@ -15862,7 +16048,8 @@
       "position",
       "min",
       "max",
-      "check_range_bounds"
+      "check_range_bounds",
+      "state"
     ]
   },
   {
@@ -15947,6 +16134,9 @@
     "syntax": "progress_activity_phase_after = { days = X weeks = Z months = Y}",
     "supportedScopes": [
       "activity"
+    ],
+    "parameters": [
+      "days"
     ]
   },
   {
@@ -16002,7 +16192,8 @@
       "character"
     ],
     "parameters": [
-      "any_attending_character"
+      "any_attending_character",
+      "state"
     ]
   },
   {
@@ -16331,7 +16522,8 @@
       "days",
       "weeks",
       "months",
-      "years"
+      "years",
+      "modifier"
     ]
   },
   {
@@ -16345,7 +16537,8 @@
       "days",
       "weeks",
       "months",
-      "years"
+      "years",
+      "modifier"
     ]
   },
   {
@@ -16681,7 +16874,8 @@
       "days",
       "weeks",
       "months",
-      "years"
+      "years",
+      "modifier"
     ]
   },
   {
@@ -17276,6 +17470,9 @@
     "syntax": "start_great_holy_war = {target_character = someonetarget_title = some titledelay = script value # Number of days until the war should startwar = some war # Optional. Will make this a directed GHW instead of undirected, and tie it to this specific war}",
     "supportedScopes": [
       "faith"
+    ],
+    "parameters": [
+      "target_character"
     ]
   },
   {
@@ -17446,6 +17643,9 @@
     "syntax": "set_great_holy_war_target = { target_character = someone target_title = some title }",
     "supportedScopes": [
       "ghw"
+    ],
+    "parameters": [
+      "target_character"
     ]
   },
   {
@@ -17631,7 +17831,8 @@
       "domicile"
     ],
     "parameters": [
-      "domicile"
+      "domicile",
+      "lower_domicile_building"
     ]
   },
   {
@@ -17667,7 +17868,8 @@
       "domicile"
     ],
     "parameters": [
-      "domicile"
+      "domicile",
+      "remove_domicile_building"
     ]
   },
   {
@@ -17792,6 +17994,9 @@
     "syntax": "scope:army = { refull_supply = yes }",
     "supportedScopes": [
       "army"
+    ],
+    "parameters": [
+      "refull_supply"
     ]
   },
   {
@@ -17906,7 +18111,8 @@
       "days",
       "weeks",
       "months",
-      "years"
+      "years",
+      "modifier"
     ]
   },
   {
@@ -18029,7 +18235,8 @@
       "epidemic"
     ],
     "parameters": [
-      "any_province_epidemic"
+      "any_province_epidemic",
+      "intensity"
     ]
   },
   {
@@ -18156,7 +18363,8 @@
       "position",
       "min",
       "max",
-      "check_range_bounds"
+      "check_range_bounds",
+      "intensity"
     ]
   },
   {
@@ -18255,7 +18463,8 @@
       "epidemic"
     ],
     "parameters": [
-      "any_province_epidemic"
+      "any_province_epidemic",
+      "intensity"
     ]
   },
   {
@@ -18825,6 +19034,9 @@
     "syntax": "change_top_phase = my_first_phase\nchange_top_phase = { phase = my_first_phase }",
     "supportedScopes": [
       "situation"
+    ],
+    "parameters": [
+      "phase"
     ]
   },
   {
@@ -19063,7 +19275,8 @@
       "days",
       "weeks",
       "months",
-      "years"
+      "years",
+      "modifier"
     ]
   },
   {
@@ -19274,6 +19487,9 @@
     "syntax": "change_phase = my_first_phase\nchange_phase = { phase = my_first_phase }",
     "supportedScopes": [
       "situation_sub_region"
+    ],
+    "parameters": [
+      "phase"
     ]
   },
   {
@@ -19762,7 +19978,8 @@
       "days",
       "weeks",
       "months",
-      "years"
+      "years",
+      "modifier"
     ]
   },
   {
@@ -19776,7 +19993,8 @@
       "days",
       "weeks",
       "months",
-      "years"
+      "years",
+      "modifier"
     ]
   },
   {
@@ -19790,7 +20008,8 @@
       "days",
       "weeks",
       "months",
-      "years"
+      "years",
+      "modifier"
     ]
   },
   {
@@ -19935,6 +20154,9 @@
     "syntax": "set_legend_chapter = { name = opening localization_key = <loc_key> }",
     "supportedScopes": [
       "legend"
+    ],
+    "parameters": [
+      "name"
     ]
   },
   {
@@ -19943,6 +20165,9 @@
     "syntax": "set_legend_property = { name = animal_type target = var:hunt_type }",
     "supportedScopes": [
       "legend"
+    ],
+    "parameters": [
+      "name"
     ]
   },
   {
@@ -20512,7 +20737,8 @@
       "culture"
     ],
     "parameters": [
-      "set_cultural_accpetance"
+      "set_cultural_accpetance",
+      "target"
     ]
   },
   {
@@ -21132,6 +21358,9 @@
     "syntax": "change_struggle_phase = X\nchange_struggle_phase = { struggle_phase = X with_transition = yes/no }\nwhere X is a struggle phase type",
     "supportedScopes": [
       "struggle"
+    ],
+    "parameters": [
+      "struggle_phase"
     ]
   },
   {
@@ -21145,7 +21374,9 @@
       "days",
       "weeks",
       "months",
-      "years"
+      "years",
+      "duration",
+      "points"
     ]
   },
   {
