@@ -23,6 +23,9 @@ import {
 import {
   TRIGGER_BLOCKS,
   EFFECT_BLOCKS,
+  WEIGHT_BLOCKS,
+  WEIGHT_BLOCK_PARAMS,
+  TRIGGER_CONTEXT_BLOCKS_WITH_PARAMS,
   BlockContext,
   isScopeReference,
   isNumericBlock,
@@ -986,11 +989,25 @@ function analyzeModifierContext(blockPath: string[]): ModifierContext {
   let modifierCategory: 'character' | 'county' | 'province' | null = null;
   let inMultiTrack = false;
   let multiTrackDepth = 0; // How many blocks deep we are after 'tracks'
+  let inWeightBlock = false; // Track if we're inside a weight block
 
-  for (const block of blockPath) {
+  for (let i = 0; i < blockPath.length; i++) {
+    const block = blockPath[i];
+
+    // Track if we entered a weight block
+    if (WEIGHT_BLOCKS.has(block)) {
+      inWeightBlock = true;
+    }
+
     // Check if this block establishes a modifier context
+    // But NOT if it's 'modifier' inside a weight block (that's a weight modifier, not a character modifier)
     const category = MODIFIER_BLOCKS.get(block);
     if (category) {
+      // Skip 'modifier' if it's directly inside a weight block
+      if (block === 'modifier' && inWeightBlock) {
+        // This is a weight modifier block, not a character modifier block
+        continue;
+      }
       modifierCategory = category;
       // Don't break - a later block might override (e.g., nested modifiers)
     }
@@ -1018,8 +1035,8 @@ function analyzeModifierContext(blockPath: string[]): ModifierContext {
       continue;
     }
 
-    // If we hit a trigger or effect block, we leave modifier context
-    if (TRIGGER_BLOCKS.has(block) || EFFECT_BLOCKS.has(block)) {
+    // If we hit a trigger, effect, or weight block, we leave modifier context
+    if (TRIGGER_BLOCKS.has(block) || EFFECT_BLOCKS.has(block) || WEIGHT_BLOCKS.has(block)) {
       // Check if this is 'modifier' which is special - it's both a trigger container
       // AND a modifier context depending on usage
       if (block !== 'modifier') {
@@ -1035,11 +1052,27 @@ function analyzeModifierContext(blockPath: string[]): ModifierContext {
 }
 
 /**
- * Get completions for a block context - triggers or effects filtered by scope
+ * Get completions for a block context - triggers, effects, or weight blocks filtered by scope
  * If unknownScope is true, returns all completions without filtering
  */
-function getSchemaForBlockContext(context: BlockContext): FieldSchema[] {
+function getSchemaForBlockContext(context: BlockContext, parentBlockName?: string): FieldSchema[] {
   if (context.type === 'trigger') {
+    // Check if we're inside a block that creates trigger context with extra params
+    if (parentBlockName) {
+      const blockConfig = TRIGGER_CONTEXT_BLOCKS_WITH_PARAMS.get(parentBlockName);
+      if (blockConfig) {
+        // Return extra params + triggers
+        const extraParamsSchema: FieldSchema[] = [...blockConfig.extraParams].map(param => ({
+          name: param,
+          type: 'any',
+          description: `Parameter for ${parentBlockName} block`,
+        }));
+        const triggerSchema = context.unknownScope
+          ? getAllTriggersSchema()
+          : getTriggerSchemaForScope(context.scope);
+        return [...extraParamsSchema, ...triggerSchema];
+      }
+    }
     return context.unknownScope
       ? getAllTriggersSchema()
       : getTriggerSchemaForScope(context.scope);
@@ -1047,13 +1080,30 @@ function getSchemaForBlockContext(context: BlockContext): FieldSchema[] {
     return context.unknownScope
       ? getAllEffectsSchema()
       : getEffectSchemaForScope(context.scope);
+  } else if (context.type === 'weight') {
+    // Return weight block parameters as completions
+    return getWeightBlockSchema();
   }
   return [];
 }
 
 /**
+ * Get schema for weight block parameters (base, modifier, factor, etc.)
+ */
+function getWeightBlockSchema(): FieldSchema[] {
+  return [
+    { name: 'base', type: 'integer', description: 'Base weight value' },
+    { name: 'modifier', type: 'block', description: 'Conditional weight modifier with inline triggers' },
+    { name: 'opinion_modifier', type: 'block', description: 'Opinion-based weight modifier' },
+    { name: 'factor', type: 'float', description: 'Multiply the current weight' },
+    { name: 'add', type: 'float', description: 'Add to the current weight' },
+    { name: 'multiply', type: 'float', description: 'Multiply the current weight (alias for factor)' },
+  ];
+}
+
+/**
  * Helper function to get schema for a file type that has trigger/effect blocks.
- * This handles the common pattern of checking for trigger/effect context within any entity.
+ * This handles the common pattern of checking for trigger/effect/weight context within any entity.
  *
  * @param blockPath The current block path
  * @param topLevelSchema The schema to return at the top level
@@ -1070,16 +1120,25 @@ function getSchemaWithTriggerEffectBlocks(
   }
 
   const blockContext = analyzeBlockContext(blockPath, initialScope);
+  const lastBlock = blockPath[blockPath.length - 1];
+  const parentBlock = blockPath.length >= 2 ? blockPath[blockPath.length - 2] : null;
 
   // Check for internal field schemas first (e.g., opinion = { target = ... value = ... })
   const internalFields = getInternalFieldSchema(blockPath, blockContext.type);
   if (internalFields) {
+    // For weight modifier blocks, also include triggers
+    // Check if parent is a weight block (since the current block creates trigger context)
+    const blockConfig = TRIGGER_CONTEXT_BLOCKS_WITH_PARAMS.get(lastBlock);
+    if (blockConfig && blockConfig.validIn === 'weight' && parentBlock && WEIGHT_BLOCKS.has(parentBlock)) {
+      // This is a modifier/opinion_modifier inside weight - return params + triggers
+      return [...internalFields, ...getAllTriggersSchema()];
+    }
     return internalFields;
   }
 
-  // If we're in a trigger or effect context, return appropriate completions
+  // If we're in a trigger, effect, or weight context, return appropriate completions
   if (blockContext.type !== 'unknown') {
-    return getSchemaForBlockContext(blockContext);
+    return getSchemaForBlockContext(blockContext, lastBlock);
   }
 
   // Fall back to top-level schema
@@ -1226,10 +1285,23 @@ const EFFECT_INTERNAL_FIELDS: Map<string, FieldSchema[]> = new Map([
  * Check if we're inside a trigger/effect that has internal fields
  * Returns the internal field schema if found, null otherwise
  */
-function getInternalFieldSchema(blockPath: string[], contextType: 'trigger' | 'effect' | 'unknown'): FieldSchema[] | null {
+function getInternalFieldSchema(blockPath: string[], contextType: 'trigger' | 'effect' | 'weight' | 'unknown'): FieldSchema[] | null {
   if (blockPath.length === 0) return null;
 
   const lastBlock = blockPath[blockPath.length - 1];
+  const parentBlock = blockPath.length >= 2 ? blockPath[blockPath.length - 2] : null;
+
+  // Check for weight modifier blocks (modifier/opinion_modifier inside weight context)
+  // We check if parent is a weight block because the current block creates trigger context
+  const blockConfig = TRIGGER_CONTEXT_BLOCKS_WITH_PARAMS.get(lastBlock);
+  if (blockConfig && blockConfig.validIn === 'weight' && parentBlock && WEIGHT_BLOCKS.has(parentBlock)) {
+    // Return extra params for this block - triggers are handled by the caller
+    return [...blockConfig.extraParams].map(param => ({
+      name: param,
+      type: 'any',
+      description: `Parameter for ${lastBlock} block`,
+    }));
+  }
 
   // Check trigger internal fields
   if (contextType === 'trigger' || contextType === 'unknown') {
@@ -2104,19 +2176,7 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
         if (decisionLastBlock === 'cost' || decisionLastBlock === 'minimum_cost') {
           return costBlockSchema;
         }
-        // Analyze the block path for scope-aware completions
-        {
-          const blockContext = analyzeBlockContext(blockPath, 'character');
-          // Check for internal field schemas first (e.g., opinion = { target = ... value = ... })
-          const internalFields = getInternalFieldSchema(blockPath, blockContext.type);
-          if (internalFields) {
-            return internalFields;
-          }
-          if (blockContext.type !== 'unknown') {
-            return getSchemaForBlockContext(blockContext);
-          }
-        }
-        return decisionSchema;
+        return getSchemaWithTriggerEffectBlocks(blockPath, decisionSchema);
 
       case 'interaction':
         return getSchemaWithTriggerEffectBlocks(blockPath, interactionSchema);

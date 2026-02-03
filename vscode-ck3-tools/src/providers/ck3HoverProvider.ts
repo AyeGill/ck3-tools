@@ -4,6 +4,12 @@ import { FieldSchema, TRAIT_CATEGORIES, STATS } from '../schemas/traitSchema';
 // Import effect and trigger data
 import { effectsMap, EffectDefinition } from '../data';
 import { triggersMap, TriggerDefinition } from '../data';
+// Import weight block definitions
+import {
+  WEIGHT_BLOCKS,
+  WEIGHT_BLOCK_PARAMS,
+  TRIGGER_CONTEXT_BLOCKS_WITH_PARAMS,
+} from '../utils/scopeContext';
 
 // Import all schema maps (mirroring ck3CompletionProvider imports)
 import { traitSchemaMap } from '../schemas/traitSchema';
@@ -751,6 +757,17 @@ export class CK3HoverProvider implements vscode.HoverProvider {
     const parentBlock = this.findParentBlock(document, position);
     if (!parentBlock) return null;
 
+    // Check if this is a weight block parameter
+    if (WEIGHT_BLOCKS.has(parentBlock) && WEIGHT_BLOCK_PARAMS.has(word)) {
+      return this.getWeightParamHover(word, parentBlock);
+    }
+
+    // Check if this is a parameter of a trigger-context block with extra params
+    const blockConfig = TRIGGER_CONTEXT_BLOCKS_WITH_PARAMS.get(parentBlock);
+    if (blockConfig && blockConfig.extraParams.has(word)) {
+      return this.getTriggerContextBlockParamHover(word, parentBlock, blockConfig.extraParams);
+    }
+
     // Check if this word is a parameter of the parent block
     const effect = effectsMap.get(parentBlock);
     const trigger = triggersMap.get(parentBlock);
@@ -779,6 +796,94 @@ export class CK3HoverProvider implements vscode.HoverProvider {
     // Show the full syntax as reference
     if (def?.syntax) {
       markdown.appendMarkdown(`**Full syntax:**\n\`\`\`\n${def.syntax}\n\`\`\`\n`);
+    }
+
+    return new vscode.Hover(markdown);
+  }
+
+  /**
+   * Get hover for weight block parameters (base, modifier, factor, etc.)
+   */
+  private getWeightParamHover(param: string, parentBlock: string): vscode.Hover {
+    const descriptions: Record<string, string> = {
+      base: 'The starting weight value before modifiers are applied.',
+      modifier: 'A conditional weight modifier block. Contains inline triggers that, if true, apply the adjustment (add/factor/multiply).',
+      opinion_modifier: 'An opinion-based weight modifier. Adjusts weight based on opinion between characters.',
+      factor: 'Multiplies the current weight by this value.',
+      add: 'Adds this value to the current weight.',
+      multiply: 'Multiplies the current weight by this value (alias for factor).',
+    };
+
+    const markdown = new vscode.MarkdownString();
+    markdown.appendMarkdown(`## ${param}\n\n`);
+    markdown.appendMarkdown(`**Weight block parameter** in \`${parentBlock}\`\n\n`);
+    markdown.appendMarkdown(`${descriptions[param] || 'A weight calculation parameter.'}\n\n`);
+
+    // Show example syntax for the whole weight block
+    markdown.appendMarkdown(`**Example:**\n\`\`\`\n${parentBlock} = {\n    base = 100\n    modifier = {\n        add = 50\n        has_trait = ambitious\n    }\n}\n\`\`\`\n`);
+
+    return new vscode.Hover(markdown);
+  }
+
+  /**
+   * Get hover for extra parameters in trigger-context blocks (like modifier inside weight)
+   */
+  private getTriggerContextBlockParamHover(
+    param: string,
+    parentBlock: string,
+    extraParams: Set<string>
+  ): vscode.Hover {
+    // Descriptions for modifier block params
+    const modifierParamDescriptions: Record<string, string> = {
+      add: 'Adds this value to the weight when the inline triggers are satisfied.',
+      factor: 'Multiplies the weight by this value when the inline triggers are satisfied.',
+      multiply: 'Multiplies the weight by this value when the inline triggers are satisfied (alias for factor).',
+      desc: 'A localization key or string describing what this modifier does.',
+      value: 'The value to use for this modifier.',
+    };
+
+    // Descriptions for opinion_modifier block params
+    const opinionModifierParamDescriptions: Record<string, string> = {
+      who: 'The character whose opinion is being checked.',
+      opinion_target: 'The character the opinion is towards.',
+      min: 'Minimum opinion value to consider.',
+      max: 'Maximum opinion value to consider.',
+      multiplier: 'Multiplies the opinion value by this factor.',
+      desc: 'A localization key or string describing what this modifier does.',
+      step: 'Step size for opinion value increments.',
+    };
+
+    // Descriptions for compare_value block params
+    const compareValueParamDescriptions: Record<string, string> = {
+      value: 'The value to compare against.',
+      target: 'The target value or scope to compare.',
+    };
+
+    const markdown = new vscode.MarkdownString();
+    markdown.appendMarkdown(`## ${param}\n\n`);
+    markdown.appendMarkdown(`**Parameter of** \`${parentBlock}\`\n\n`);
+
+    // Get description based on parent block
+    let description: string | undefined;
+    if (parentBlock === 'modifier') {
+      description = modifierParamDescriptions[param];
+    } else if (parentBlock === 'opinion_modifier') {
+      description = opinionModifierParamDescriptions[param];
+    } else if (parentBlock === 'compare_value') {
+      description = compareValueParamDescriptions[param];
+    }
+
+    markdown.appendMarkdown(`${description || 'A block parameter.'}\n\n`);
+
+    // Show all valid params for this block
+    const paramList = Array.from(extraParams).join(', ');
+    markdown.appendMarkdown(`**Valid parameters:** \`${paramList}\`\n\n`);
+
+    // Block-specific example
+    if (parentBlock === 'modifier') {
+      markdown.appendMarkdown(`**Example:**\n\`\`\`\nmodifier = {\n    add = 50\n    has_trait = ambitious\n}\n\`\`\`\n`);
+    } else if (parentBlock === 'opinion_modifier') {
+      markdown.appendMarkdown(`**Example:**\n\`\`\`\nopinion_modifier = {\n    who = root\n    opinion_target = scope:target\n    multiplier = 0.5\n}\n\`\`\`\n`);
     }
 
     return new vscode.Hover(markdown);

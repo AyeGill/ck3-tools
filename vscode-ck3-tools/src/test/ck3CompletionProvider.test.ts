@@ -862,4 +862,207 @@ test.0001 = {
       expect(labels).toContain('remove_secret');
     });
   });
+
+  describe('Weight block completions', () => {
+    it('should offer weight block params inside ai_will_do = { }', () => {
+      const content = `example_decision = {
+	ai_will_do = {
+
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/common/decisions/test.txt');
+      const position = new Position(2, 2); // Inside ai_will_do block
+
+      const result = provider.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      // Should get weight block parameters
+      expect(labels).toContain('base');
+      expect(labels).toContain('modifier');
+      expect(labels).toContain('factor');
+      expect(labels).toContain('add');
+      expect(labels).toContain('multiply');
+      expect(labels).toContain('opinion_modifier');
+    });
+
+    it('should offer weight block params inside ai_chance = { }', () => {
+      const content = `my_interaction = {
+	ai_accept = {
+		ai_chance = {
+
+		}
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/common/character_interactions/test.txt');
+      const position = new Position(3, 3); // Inside ai_chance block
+
+      const result = provider.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      // Should get weight block parameters
+      expect(labels).toContain('base');
+      expect(labels).toContain('modifier');
+      expect(labels).toContain('factor');
+    });
+
+    it('should offer weight block params inside ai_accept = { }', () => {
+      const content = `my_interaction = {
+	ai_accept = {
+
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/common/character_interactions/test.txt');
+      const position = new Position(2, 2); // Inside ai_accept block
+
+      const result = provider.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      // Should get weight block parameters
+      expect(labels).toContain('base');
+      expect(labels).toContain('modifier');
+      expect(labels).toContain('factor');
+    });
+
+    it('should offer extra params AND triggers inside modifier in weight context', () => {
+      const content = `example_decision = {
+	ai_will_do = {
+		base = 100
+		modifier = {
+
+		}
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/common/decisions/test.txt');
+      const position = new Position(4, 3); // Inside modifier block within ai_will_do
+
+      const result = provider.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      // Should get modifier extra params
+      expect(labels).toContain('add');
+      expect(labels).toContain('factor');
+      expect(labels).toContain('multiply');
+      // Should ALSO get triggers (inline triggers in modifier blocks)
+      expect(labels).toContain('is_adult');
+      expect(labels).toContain('has_trait');
+    });
+
+    it('should offer extra params AND triggers inside opinion_modifier in weight context', () => {
+      const content = `example_decision = {
+	ai_will_do = {
+		base = 100
+		opinion_modifier = {
+
+		}
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/common/decisions/test.txt');
+      const position = new Position(4, 3); // Inside opinion_modifier block
+
+      const result = provider.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      // Should get opinion_modifier extra params
+      expect(labels).toContain('who');
+      expect(labels).toContain('opinion_target');
+      expect(labels).toContain('multiplier');
+      // Should ALSO get triggers
+      expect(labels).toContain('is_adult');
+    });
+
+    it('should NOT offer effects inside ai_will_do (effects are for effect context)', () => {
+      const content = `example_decision = {
+	ai_will_do = {
+
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/common/decisions/test.txt');
+      const position = new Position(2, 2);
+
+      const result = provider.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      // Should NOT get effects like add_prestige inside weight context
+      expect(labels).not.toContain('add_prestige');
+      expect(labels).not.toContain('trigger_event');
+    });
+
+    it('should NOT offer triggers directly inside ai_will_do (only in modifier blocks)', () => {
+      const content = `example_decision = {
+	ai_will_do = {
+
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/common/decisions/test.txt');
+      const position = new Position(2, 2);
+
+      const result = provider.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      // Should NOT get triggers directly in weight block (only inside modifier)
+      expect(labels).not.toContain('is_adult');
+      expect(labels).not.toContain('has_trait');
+    });
+
+    it('should correctly break out of weight context when entering effect block', () => {
+      const content = `example_decision = {
+	ai_will_do = {
+		base = 100
+	}
+	effect = {
+
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/common/decisions/test.txt');
+      const position = new Position(5, 2); // Inside effect block (after ai_will_do)
+
+      const result = provider.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      // Should get effects, not weight params
+      expect(labels).toContain('add_prestige');
+      expect(labels).toContain('trigger_event');
+      expect(labels).not.toContain('base');
+    });
+  });
 });
