@@ -15,6 +15,18 @@ exports.INTERACTION_CATEGORIES = [
     'interaction_category_prison',
     'interaction_category_scheme',
     'interaction_category_uncategorized',
+    // Additional categories from game files
+    'contract',
+    'interaction_category_diarch',
+    'interaction_category_laamp',
+    'interaction_category_succession',
+    'interaction_category_romance',
+    'political',
+    // Debug categories
+    'interaction_debug_admin',
+    'interaction_debug_main',
+    'interaction_debug_mpo',
+    'interaction_debug_tgp',
 ];
 exports.GREETING_TYPES = [
     'positive',

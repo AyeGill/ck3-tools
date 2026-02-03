@@ -365,7 +365,11 @@ exports.scriptedTriggerSchema = [
         name: 'highest_held_title_tier',
         type: 'enum',
         description: 'Check the highest title tier held.',
-        values: ['barony', 'county', 'duchy', 'kingdom', 'empire'],
+        values: [
+            'barony', 'county', 'duchy', 'kingdom', 'empire',
+            // Also valid with tier_ prefix
+            'tier_barony', 'tier_county', 'tier_duchy', 'tier_kingdom', 'tier_empire',
+        ],
         example: 'highest_held_title_tier >= tier_kingdom',
     },
     // Conditional triggers
