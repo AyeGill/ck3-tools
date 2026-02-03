@@ -227,6 +227,27 @@ test.0001 = {
       expect(typeDiag).toBeUndefined();
     });
 
+    it('should flag "type" inside any_relation as unknown (not a documented parameter)', () => {
+      // any_relation only has 'count' and 'percent' as parameters, NOT 'type'
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	trigger = {
+		any_relation = {
+			type = lover
+		}
+	}
+}`;
+      const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+      const typeDiag = diagnostics.find((d: any) =>
+        d.message.includes('"type"') && d.message.includes('Unknown')
+      );
+
+      // This SHOULD be flagged since 'type' is not a parameter of any_relation
+      expect(typeDiag).toBeDefined();
+    });
+
     it('should not flag "months" inside trigger_event as unknown', () => {
       // trigger_event has 'months', 'days', 'years' as parameters
       const content = `namespace = test
