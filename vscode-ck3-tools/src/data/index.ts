@@ -118,12 +118,12 @@ const effectParameterOverrides: Record<string, string[]> = {
 
   // Random effects
   'random': ['chance', 'modifier'],
-  'random_list': ['modifier'],
+  'random_list': ['modifier', 'desc'],
 
   // Interface effects
   'custom_tooltip': ['text', 'subject', 'object'],
   'custom_description': ['text'],
-  'send_interface_message': ['type', 'title', 'desc', 'left_icon', 'right_icon', 'goto'],
+  'send_interface_message': ['type', 'title', 'desc', 'tooltip', 'left_icon', 'right_icon', 'goto'],
   'send_interface_toast': ['type', 'title', 'desc', 'left_icon', 'right_icon'],
 
   // Death effect
@@ -134,15 +134,15 @@ const effectParameterOverrides: Record<string, string[]> = {
   'reverse_add_opinion': ['target', 'modifier', 'opinion', 'years', 'months', 'days', 'weeks'],
 
   // List/iteration
-  'every_in_list': ['list', 'variable'],
+  'every_in_list': ['list', 'variable', 'custom'],
   'random_in_list': ['list', 'variable', 'weight'],
   'ordered_in_list': ['list', 'variable', 'order_by', 'position', 'min', 'max', 'check_range_bounds'],
   'any_in_list': ['list', 'variable', 'count'],
-  'add_to_list': ['list', 'variable'],
-  'add_to_temporary_list': ['list', 'variable'],
+  'add_to_list': ['name', 'value', 'list', 'variable'],
+  'add_to_temporary_list': ['name', 'value', 'list', 'variable'],
 
   // Casus belli
-  'start_war': ['casus_belli', 'target', 'claimant', 'target_title'],
+  'start_war': ['casus_belli', 'cb', 'target', 'claimant', 'target_title'],
 
   // Scheme effects
   'start_scheme': ['type', 'target'],
@@ -153,7 +153,7 @@ const effectParameterOverrides: Record<string, string[]> = {
   // Modifier effects
   'add_scheme_modifier': ['type', 'days', 'months', 'weeks', 'years'],
   'add_character_modifier': ['modifier', 'days', 'months', 'weeks', 'years', 'desc'],
-  'add_county_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
+  'add_county_modifier': ['modifier', 'days', 'months', 'weeks', 'years', 'desc'],
   'add_province_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
   'add_realm_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
   'add_dynasty_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
@@ -201,11 +201,10 @@ const effectParameterOverrides: Record<string, string[]> = {
   'assert_read': ['target', 'text'],
 
   // Duel effects
-  'duel': ['target', 'skill', 'value', 'on_success', 'on_fail', 'localization'],
+  'duel': ['target', 'skill', 'value', 'on_success', 'on_fail', 'localization', 'desc'],
 
   // Dynasty effects
   'add_dynasty_perk': ['perk'],
-  'add_dynasty_prestige': [],
   'add_dynasty_prestige_level': [],
 
   // Secret effects
@@ -241,7 +240,7 @@ const effectParameterOverrides: Record<string, string[]> = {
   'appoint_court_position': ['recipient', 'court_position'],
 
   // Inventory effects
-  'create_artifact': ['name', 'type', 'template', 'rarity', 'save_scope_as', 'modifier', 'decaying', 'history', 'visuals', 'description'],
+  'create_artifact': ['name', 'type', 'template', 'rarity', 'save_scope_as', 'modifier', 'decaying', 'history', 'visuals', 'description', 'wealth', 'quality'],
 
   // Title effects
   'change_title_holder': ['holder', 'change'],
@@ -253,6 +252,107 @@ const effectParameterOverrides: Record<string, string[]> = {
   'any_in_local_list': ['list', 'variable', 'count'],
   'ordered_in_local_list': ['list', 'variable', 'order_by', 'position', 'min', 'max'],
   'add_to_local_list': ['list', 'variable'],
+  'add_to_variable_list': ['name', 'target', 'years', 'months', 'days', 'weeks'],
+  'add_to_global_variable_list': ['name', 'target'],
+  'remove_list_variable': ['name', 'target'],
+  'remove_list_global_variable': ['name', 'target'],
+  'while': ['limit', 'count', 'list'],
+
+  // Math effects (when used as block with value)
+  'add_legitimacy': ['value', 'divide', 'subtract', 'multiply', 'min', 'max'],
+  'add_piety': ['value', 'divide', 'subtract', 'multiply', 'min', 'max'],
+  'add_prestige': ['value', 'divide', 'subtract', 'multiply', 'min', 'max'],
+  'add_gold': ['value', 'divide', 'subtract', 'multiply', 'min', 'max'],
+  'add_dynasty_prestige': ['value', 'divide', 'subtract', 'multiply', 'min', 'max'],
+  'add_scheme_progress': ['value', 'subtract', 'add'],
+  'remove_short_term_gold': ['value', 'divide', 'subtract', 'multiply', 'min', 'max'],
+  'pay_short_term_gold': ['target', 'gold'],
+  'add_treasury_or_gold': ['value', 'min', 'max'],
+  'change_development_level': ['value', 'divide', 'floor', 'subtract', 'multiply'],
+  'change_influence': ['value', 'round', 'add', 'subtract'],
+  'change_fervor': ['value', 'desc'],
+  'change_cultural_acceptance': ['value', 'target', 'desc'],
+  'change_merit': ['value'],
+  'change_opportunities': ['value'],
+  'pay_herd': ['value', 'target'],
+  'add_trait_xp': ['value', 'track', 'trait'],
+
+  // Relation effects
+  'set_relation_lover': ['target', 'reason', 'province', 'copy_reason'],
+  'set_relation_rival': ['target', 'reason', 'copy_reason'],
+  'set_relation_friend': ['target', 'reason', 'copy_reason'],
+  'set_relation_nemesis': ['target', 'reason', 'copy_reason'],
+  'set_relation_grudge': ['target', 'reason', 'copy_reason'],
+  'remove_relation_flag': ['target', 'relation', 'flag'],
+  'remove_opinion': ['target', 'modifier', 'single'],
+  'remove_hook': ['target', 'type'],
+
+  // Character effects
+  'imprison': ['target', 'type'],
+  'change_liege': ['liege', 'change', 'LIEGE', 'CHANGE'],
+  'becomes_independent': ['change'],
+  'change_trait_rank': ['trait', 'rank', 'max', 'value'],
+
+  // Faction/war effects
+  'create_faction': ['type', 'target', 'special_character', 'special_title'],
+
+  // Region iteration
+  'every_county_in_region': ['region', 'custom'],
+  'every_vassal': ['custom', 'even_if_dead'],
+  'every_close_family_member': ['custom', 'even_if_dead'],
+  'every_relation': ['type', 'custom'],
+  'random_relation': ['type', 'weight'],
+  'every_character_struggle': ['involvement', 'custom'],
+  'random_court_position_holder': ['type', 'weight'],
+
+  // Activity effects
+  'add_activity_log_entry': ['key', 'character', 'target', 'artifact', 'scope', 'tags', 'score'],
+
+  // Dynasty effects
+  'create_cadet_branch': ['prefix', 'founder', 'name'],
+  'vassal_contract_set_obligation_level': ['type', 'level'],
+  'set_appointment_timeout': ['years', 'months', 'days', 'weeks'],
+
+  // More iterators with custom parameter
+  'every_attending_character': ['custom'],
+  'every_close_or_extended_family_member': ['custom', 'even_if_dead'],
+  'every_vassal_or_below': ['custom', 'even_if_dead'],
+  'every_courtier': ['custom', 'even_if_dead'],
+  'every_in_de_jure_hierarchy': ['custom'],
+  'every_pool_character': ['province', 'custom'],
+  'every_ruler': ['custom'],
+  'every_independent_ruler': ['custom'],
+  'every_court_position_holder': ['type', 'custom'],
+  'every_knight': ['custom', 'even_if_dead'],
+  'every_faction_member': ['custom'],
+  'every_courtier_or_guest': ['custom'],
+  'every_child': ['custom', 'even_if_dead'],
+  'every_councillor': ['custom'],
+  'every_traveling_family_member': ['custom'],
+  'every_in_global_list': ['list', 'variable', 'custom'],
+  'random_in_global_list': ['list', 'variable', 'weight'],
+  'random_pool_character': ['province', 'weight'],
+  'random_county_in_region': ['region', 'weight'],
+  'ordered_relation': ['type', 'order_by', 'position', 'min', 'max'],
+
+  // More value effects
+  'add_durability': ['value'],
+  'add_dread': ['value', 'min', 'max'],
+  'add_stress': ['value', 'min', 'max', 'type'],
+  'add_unity_value': ['value'],
+  'change_herd': ['value'],
+  'change_county_control': ['value'],
+  'pay_treasury_or_gold': ['value', 'target'],
+  'pay_gold_to_treasury': ['value'],
+  'pay_long_term_gold': ['target', 'gold'],
+  'add_martial_lifestyle_xp': ['value'],
+
+  // Interface effects (unique additions)
+  'open_view_data': ['data', 'view'],
+  'save_opinion_value_as': ['name', 'target'],
+
+  // Control flow (parameters)
+  'if': ['limit', 'text'],
 };
 
 /**
