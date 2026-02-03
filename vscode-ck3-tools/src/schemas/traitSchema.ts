@@ -92,13 +92,6 @@ export const traitSchema: FieldSchema[] = [
     description: 'Monthly piety gain/loss.',
     example: 'monthly_piety = 0.3',
   },
-  {
-    name: 'monthly_gold',
-    type: 'float',
-    description: 'Monthly gold gain/loss (rare for traits).',
-    example: 'monthly_gold = 0.1',
-  },
-
   // Validation and Restrictions
   {
     name: 'valid_sex',
@@ -454,12 +447,6 @@ export const traitSchema: FieldSchema[] = [
   },
 
   // AI
-  {
-    name: 'ai_value',
-    type: 'integer',
-    description: 'Base AI value for this trait (affects AI decision making).',
-    example: 'ai_value = 100',
-  },
   {
     name: 'ai_rationality',
     type: 'integer',

@@ -39,13 +39,6 @@ export const artifactSchema: FieldSchema[] = [
     example: 'slot = primary_armament',
   },
   {
-    name: 'rarity',
-    type: 'enum',
-    description: 'The rarity tier of the artifact.',
-    values: [...ARTIFACT_RARITIES],
-    example: 'rarity = famed',
-  },
-  {
     name: 'icon',
     type: 'string',
     description: 'Icon path for the artifact.',
@@ -67,46 +60,7 @@ export const artifactSchema: FieldSchema[] = [
     default: false,
     example: 'unique = yes',
   },
-  {
-    name: 'can_be_gifted',
-    type: 'boolean',
-    description: 'Whether the artifact can be gifted.',
-    default: true,
-    example: 'can_be_gifted = yes',
-  },
-  {
-    name: 'can_be_stolen',
-    type: 'boolean',
-    description: 'Whether the artifact can be stolen.',
-    default: true,
-    example: 'can_be_stolen = yes',
-  },
-  {
-    name: 'can_be_destroyed',
-    type: 'boolean',
-    description: 'Whether the artifact can be destroyed.',
-    default: true,
-    example: 'can_be_destroyed = yes',
-  },
-  {
-    name: 'can_be_bought',
-    type: 'boolean',
-    description: 'Whether the artifact can be bought.',
-    default: true,
-    example: 'can_be_bought = yes',
-  },
-
   // Modifiers
-  {
-    name: 'modifier',
-    type: 'block',
-    description: 'Modifiers applied when the artifact is equipped.',
-    example: `modifier = {
-    martial = 2
-    prowess = 4
-    knight_effectiveness_mult = 0.1
-}`,
-  },
   {
     name: 'court_grandeur_baseline_add',
     type: 'integer',
@@ -133,75 +87,10 @@ export const artifactSchema: FieldSchema[] = [
 }`,
   },
 
-  // Durability
-  {
-    name: 'max_durability',
-    type: 'integer',
-    description: 'Maximum durability of the artifact.',
-    example: 'max_durability = 100',
-  },
-  {
-    name: 'decaying',
-    type: 'boolean',
-    description: 'Whether the artifact decays over time.',
-    default: false,
-    example: 'decaying = yes',
-  },
-  {
-    name: 'decay_rate',
-    type: 'float',
-    description: 'Rate of decay per year.',
-    example: 'decay_rate = 0.5',
-  },
-
-  // History
-  {
-    name: 'history',
-    type: 'block',
-    description: 'Historical ownership/events.',
-    example: `history = {
-    type = created
-    date = 800.1.1
-    actor = character:123
-}`,
-  },
-
-  // Visuals
-  {
-    name: 'quality',
-    type: 'integer',
-    description: 'Visual quality level (1-5).',
-    min: 1,
-    max: 5,
-    example: 'quality = 4',
-  },
-  {
-    name: 'wealth',
-    type: 'integer',
-    description: 'Visual wealth level (1-5).',
-    min: 1,
-    max: 5,
-    example: 'wealth = 3',
-  },
 ];
 
 // Schema for artifact templates (used for spawning)
 export const artifactTemplateSchema: FieldSchema[] = [
-  {
-    name: 'visuals',
-    type: 'block',
-    description: 'Visual appearance settings.',
-    example: `visuals = {
-    type = weapon
-    subtype = sword
-}`,
-  },
-  {
-    name: 'template',
-    type: 'string',
-    description: 'Base template to inherit from.',
-    example: 'template = sword_template',
-  },
   ...artifactSchema,
 ];
 

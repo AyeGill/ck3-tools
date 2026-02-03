@@ -30,45 +30,6 @@ export const terrainSchema: FieldSchema[] = [
     description: 'Audio parameter for sound effects.',
     example: 'audio_parameter = 0.5',
   },
-  {
-    name: 'supply_limit',
-    type: 'integer',
-    description: 'Base supply limit in this terrain.',
-    example: 'supply_limit = 3',
-  },
-  {
-    name: 'development_growth',
-    type: 'float',
-    description: 'Development growth modifier.',
-    example: 'development_growth = -0.2',
-  },
-
-  // Combat Modifiers
-  {
-    name: 'attacker_hard_casualty',
-    type: 'float',
-    description: 'Casualty modifier for attackers (hard).',
-    example: 'attacker_hard_casualty = 0.1',
-  },
-  {
-    name: 'attacker_retreat_losses',
-    type: 'float',
-    description: 'Retreat losses for attackers.',
-    example: 'attacker_retreat_losses = 0.1',
-  },
-  {
-    name: 'defender_hard_casualty',
-    type: 'float',
-    description: 'Casualty modifier for defenders (hard).',
-    example: 'defender_hard_casualty = -0.05',
-  },
-  {
-    name: 'defender_advantage',
-    type: 'integer',
-    description: 'Advantage bonus for defenders.',
-    example: 'defender_advantage = 5',
-  },
-
   // Province Modifier
   {
     name: 'province_modifier',
@@ -80,13 +41,6 @@ export const terrainSchema: FieldSchema[] = [
 }`,
   },
 
-  // Graphics
-  {
-    name: 'graphical_name',
-    type: 'string',
-    description: 'Graphical name for rendering.',
-    example: 'graphical_name = "plains"',
-  },
 ];
 
 // Map for quick lookup

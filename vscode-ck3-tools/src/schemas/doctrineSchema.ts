@@ -140,22 +140,6 @@ export const doctrineGroupSchema: FieldSchema[] = [
     description: 'Number of doctrines that must be picked from this group.',
     example: 'number_of_picks = 1',
   },
-  {
-    name: 'is_mandatory',
-    type: 'boolean',
-    description: 'Whether a doctrine from this group must be selected.',
-    default: false,
-    example: 'is_mandatory = yes',
-  },
-  {
-    name: 'doctrine',
-    type: 'block',
-    description: 'A doctrine definition within this group.',
-    example: `doctrine = {
-    name = doctrine_example
-    piety_cost = 500
-}`,
-  },
 ];
 
 // Map for quick lookup

@@ -21,10 +21,10 @@ export const opinionModifierSchema: FieldSchema[] = [
     example: 'decaying = yes',
   },
   {
-    name: 'decay',
+    name: 'monthly_change',
     type: 'float',
-    description: 'Rate of decay per year (if decaying).',
-    example: 'decay = 1.0',
+    description: 'How much the modifier value changes each month (positive number). Used with decaying/growing.',
+    example: 'monthly_change = 0.1',
   },
   {
     name: 'years',
@@ -54,66 +54,62 @@ export const opinionModifierSchema: FieldSchema[] = [
     example: 'stacking = yes',
   },
   {
-    name: 'non_extendable',
-    type: 'boolean',
-    description: 'Whether duration cannot be extended.',
-    default: false,
-    example: 'non_extendable = yes',
+    name: 'min',
+    type: 'integer',
+    description: 'Modifier value cannot be lower than this value.',
+    example: 'min = -100',
+  },
+  {
+    name: 'max',
+    type: 'integer',
+    description: 'Modifier value cannot be higher than this value.',
+    example: 'max = 100',
   },
 
-  // Inheritance
+  // Punishment Reasons
   {
-    name: 'inherit',
+    name: 'imprisonment_reason',
     type: 'boolean',
-    description: 'Whether the modifier is inherited on death.',
+    description: 'Gives the character an imprisonment reason on the target.',
     default: false,
-    example: 'inherit = yes',
+    example: 'imprisonment_reason = yes',
   },
   {
-    name: 'enemy_inherit',
+    name: 'banish_reason',
     type: 'boolean',
-    description: 'Whether enemies inherit this modifier.',
+    description: 'Gives the character a banishment reason on the target.',
     default: false,
-    example: 'enemy_inherit = no',
-  },
-
-  // Crime
-  {
-    name: 'crime',
-    type: 'boolean',
-    description: 'Whether this modifier represents a crime.',
-    default: false,
-    example: 'crime = yes',
-  },
-
-  // Prison
-  {
-    name: 'prison_reason',
-    type: 'boolean',
-    description: 'Whether this gives a valid imprisonment reason.',
-    default: false,
-    example: 'prison_reason = yes',
+    example: 'banish_reason = yes',
   },
   {
     name: 'execute_reason',
     type: 'boolean',
-    description: 'Whether this gives a valid execution reason.',
+    description: 'Gives the character an execution reason on the target.',
     default: false,
     example: 'execute_reason = yes',
   },
   {
-    name: 'revoke_reason',
+    name: 'revoke_title_reason',
     type: 'boolean',
-    description: 'Whether this gives a valid title revocation reason.',
+    description: 'Gives the character a title revocation reason on the target.',
     default: false,
-    example: 'revoke_reason = yes',
+    example: 'revoke_title_reason = yes',
   },
   {
     name: 'divorce_reason',
     type: 'boolean',
-    description: 'Whether this gives a valid divorce reason.',
+    description: 'Gives the character a reason to divorce the target.',
     default: false,
     example: 'divorce_reason = yes',
+  },
+
+  // Mechanical Effects
+  {
+    name: 'obedient',
+    type: 'boolean',
+    description: 'Makes the character obedient to the opinion target for the duration. Both characters must use Obedience.',
+    default: false,
+    example: 'obedient = yes',
   },
 ];
 

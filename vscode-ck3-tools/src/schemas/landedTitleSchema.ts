@@ -21,12 +21,6 @@ export const landedTitleSchema: FieldSchema[] = [
     example: 'color = { 150 50 50 }',
   },
   {
-    name: 'color2',
-    type: 'block',
-    description: 'Secondary RGB color for the title.',
-    example: 'color2 = { 255 255 255 }',
-  },
-  {
     name: 'capital',
     type: 'string',
     description: 'The capital county/barony of this title.',
@@ -65,13 +59,6 @@ export const landedTitleSchema: FieldSchema[] = [
     description: 'Title is destroyed if no valid heir exists.',
     default: false,
     example: 'destroy_if_invalid_heir = yes',
-  },
-  {
-    name: 'delete_on_destroy',
-    type: 'boolean',
-    description: 'Title is deleted when destroyed rather than becoming titular.',
-    default: false,
-    example: 'delete_on_destroy = yes',
   },
   {
     name: 'always_follows_primary_heir',
@@ -141,23 +128,6 @@ export const landedTitleSchema: FieldSchema[] = [
 }`,
   },
 
-  // Effects
-  {
-    name: 'on_creation',
-    type: 'effect',
-    description: 'Effects when the title is created.',
-    example: `on_creation = {
-    add_prestige = 500
-}`,
-  },
-  {
-    name: 'on_destruction',
-    type: 'effect',
-    description: 'Effects when the title is destroyed.',
-    example: `on_destruction = {
-    add_prestige = -500
-}`,
-  },
 ];
 
 // Schema for barony-level titles

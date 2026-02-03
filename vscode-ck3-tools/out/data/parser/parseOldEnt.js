@@ -249,11 +249,17 @@ function generateEffectsCode(effects) {
         byScope[primaryScope].push(effect);
     }
     // Generate arrays for each scope category
-    const scopeOrder = ['character', 'landed_title', 'province', 'dynasty', 'dynasty_house',
-        'culture', 'faith', 'religion', 'army', 'scheme', 'war', 'activity',
+    const scopeOrder = [
+        'character', 'landed_title', 'province', 'dynasty', 'dynasty_house',
+        'culture', 'culture_innovation', 'faith', 'religion', 'army', 'scheme', 'war', 'activity',
         'artifact', 'secret', 'faction', 'holy_order', 'mercenary_company',
         'inspiration', 'story', 'casus_belli', 'travel_plan', 'council_task',
-        'great_holy_war', 'struggle', 'legend', 'accolade', 'epidemic', 'none'];
+        'great_holy_war', 'struggle', 'legend', 'accolade', 'epidemic',
+        // Roads to Power scopes
+        'task_contract', 'situation', 'situation_sub_region', 'tax_slot',
+        'domicile', 'great_project', 'confederation', 'house_relation', 'agent_slot',
+        'none'
+    ];
     for (const scope of scopeOrder) {
         const scopeEffects = byScope[scope];
         if (!scopeEffects || scopeEffects.length === 0)
@@ -354,11 +360,17 @@ function generateTriggersCode(triggers) {
         byScope[primaryScope].push(trigger);
     }
     // Generate arrays for each scope category
-    const scopeOrder = ['character', 'landed_title', 'province', 'dynasty', 'dynasty_house',
-        'culture', 'faith', 'religion', 'army', 'scheme', 'war', 'activity',
+    const scopeOrder = [
+        'character', 'landed_title', 'province', 'dynasty', 'dynasty_house',
+        'culture', 'culture_innovation', 'faith', 'religion', 'army', 'scheme', 'war', 'activity',
         'artifact', 'secret', 'faction', 'holy_order', 'mercenary_company',
         'inspiration', 'story', 'casus_belli', 'travel_plan', 'council_task',
-        'great_holy_war', 'struggle', 'legend', 'accolade', 'epidemic', 'none'];
+        'great_holy_war', 'struggle', 'legend', 'accolade', 'epidemic',
+        // Roads to Power scopes
+        'task_contract', 'situation', 'situation_sub_region', 'tax_slot',
+        'domicile', 'great_project', 'confederation', 'house_relation', 'agent_slot',
+        'none'
+    ];
     for (const scope of scopeOrder) {
         const scopeTriggers = byScope[scope];
         if (!scopeTriggers || scopeTriggers.length === 0)

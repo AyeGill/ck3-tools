@@ -6,10 +6,12 @@ import { FieldSchema } from './traitSchema';
 
 export const SECRET_CATEGORIES = [
   'adultery',
+  'civil',
+  'deviancy',
+  'merit',
   'murder',
-  'crime',
+  'raid',
   'religious',
-  'other',
 ] as const;
 
 export const secretSchema: FieldSchema[] = [
@@ -21,47 +23,61 @@ export const secretSchema: FieldSchema[] = [
     values: [...SECRET_CATEGORIES],
     example: 'category = adultery',
   },
+
+  // Validity and conditions (trigger blocks)
+  {
+    name: 'is_valid',
+    type: 'trigger',
+    description: 'Conditions for the secret to remain valid. If false, the secret is removed.',
+    example: `is_valid = {
+    secret_lover_is_valid_trigger = {
+        OWNER = scope:secret_owner
+    }
+}`,
+  },
   {
     name: 'is_shunned',
-    type: 'boolean',
-    description: 'Whether this secret causes shunning if revealed.',
-    default: false,
-    example: 'is_shunned = yes',
+    type: 'trigger',
+    description: 'Trigger block that determines if this secret causes shunning when exposed. Usually checks faith doctrines.',
+    example: `is_shunned = {
+    secret_lover_is_shunned_trigger = {
+        OWNER = scope:secret_owner
+    }
+}`,
   },
   {
     name: 'is_criminal',
-    type: 'boolean',
-    description: 'Whether this secret is a crime.',
-    default: false,
-    example: 'is_criminal = yes',
+    type: 'trigger',
+    description: 'Trigger block that determines if this secret is criminal when exposed. Usually checks faith doctrines.',
+    example: `is_criminal = {
+    secret_lover_is_criminal_trigger = {
+        OWNER = scope:secret_owner
+    }
+}`,
   },
 
-  // Exposure
+  // Effect blocks
   {
     name: 'on_expose',
     type: 'effect',
-    description: 'Effects when the secret is exposed.',
+    description: 'Effects when the secret is exposed. Scope: secret. Common scopes: scope:secret_owner, scope:secret_exposer.',
     example: `on_expose = {
-    scope:owner = {
-        add_stress = 50
+    save_scope_as = secret
+    scope:secret_owner = {
+        trigger_event = secrets.0001
     }
-    scope:target = {
-        add_opinion = {
-            target = scope:owner
-            modifier = exposed_secret_opinion
-        }
-    }
+    secret_exposed_notification_effect = yes
 }`,
   },
   {
     name: 'on_discover',
     type: 'effect',
-    description: 'Effects when someone discovers the secret.',
+    description: 'Effects when someone discovers the secret. Scope: secret. Common scopes: scope:secret_owner, scope:discoverer.',
     example: `on_discover = {
     scope:discoverer = {
         add_hook = {
             type = hook_secret
-            target = scope:owner
+            target = scope:secret_owner
             secret = scope:secret
         }
     }
@@ -71,51 +87,8 @@ export const secretSchema: FieldSchema[] = [
     name: 'on_owner_death',
     type: 'effect',
     description: 'Effects when the secret owner dies.',
-    example: 'on_owner_death = { }',
-  },
-
-  // Validity
-  {
-    name: 'is_valid',
-    type: 'trigger',
-    description: 'Conditions for the secret to remain valid.',
-    example: `is_valid = {
-    scope:owner = { is_alive = yes }
-    scope:target = { is_alive = yes }
-}`,
-  },
-  {
-    name: 'is_known',
-    type: 'trigger',
-    description: 'Conditions for the secret to be public knowledge.',
-    example: `is_known = {
-    scope:owner = {
-        has_character_flag = publicly_known_adultery
-    }
-}`,
-  },
-
-  // Blackmail
-  {
-    name: 'blackmail_valid',
-    type: 'trigger',
-    description: 'Conditions for blackmail to be valid.',
-    example: `blackmail_valid = {
-    scope:blackmailer = {
-        NOT = { this = scope:owner }
-    }
-}`,
-  },
-
-  // AI
-  {
-    name: 'ai_will_expose',
-    type: 'trigger',
-    description: 'AI decision to expose the secret.',
-    example: `ai_will_expose = {
-    scope:exposer = {
-        opinion = { target = scope:owner value < -50 }
-    }
+    example: `on_owner_death = {
+    # Handle inheritance or cleanup
 }`,
   },
 ];

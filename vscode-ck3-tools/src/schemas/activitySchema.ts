@@ -64,20 +64,6 @@ export const activitySchema: FieldSchema[] = [
 }`,
   },
 
-  // Duration
-  {
-    name: 'max_days',
-    type: 'integer',
-    description: 'Maximum duration in days.',
-    example: 'max_days = 180',
-  },
-  {
-    name: 'min_days',
-    type: 'integer',
-    description: 'Minimum duration in days.',
-    example: 'min_days = 30',
-  },
-
   // Location
   {
     name: 'province_filter',
@@ -88,19 +74,6 @@ export const activitySchema: FieldSchema[] = [
     holder = root
 }`,
   },
-  {
-    name: 'ai_province_score',
-    type: 'block',
-    description: 'AI score for selecting a province.',
-    example: `ai_province_score = {
-    value = 100
-    if = {
-        limit = { this = root.capital_province }
-        add = 50
-    }
-}`,
-  },
-
   // Guests
   {
     name: 'guest_invite_rules',
@@ -121,13 +94,6 @@ export const activitySchema: FieldSchema[] = [
     description: 'Maximum number of guests.',
     example: 'max_guests = 20',
   },
-  {
-    name: 'min_guests',
-    type: 'integer',
-    description: 'Minimum number of guests.',
-    example: 'min_guests = 5',
-  },
-
   // Effects
   {
     name: 'on_start',
@@ -151,13 +117,6 @@ export const activitySchema: FieldSchema[] = [
     description: 'Effects when the activity becomes invalid.',
     example: 'on_invalidated = { }',
   },
-  {
-    name: 'on_monthly',
-    type: 'effect',
-    description: 'Monthly effects during the activity.',
-    example: 'on_monthly = { }',
-  },
-
   // Phases
   {
     name: 'phases',
@@ -188,19 +147,6 @@ export const activitySchema: FieldSchema[] = [
     type: 'string',
     description: 'Background image for the activity.',
     example: 'background = "gfx/interface/illustrations/activities/hunt.dds"',
-  },
-
-  // Special Options
-  {
-    name: 'special_options',
-    type: 'block',
-    description: 'Special activity options.',
-    example: `special_options = {
-    option_key = {
-        cost = { gold = 100 }
-        effect = { add_prestige = 50 }
-    }
-}`,
   },
 
   // AI

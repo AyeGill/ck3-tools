@@ -74,8 +74,9 @@ So for example prompting for skill modifications in a trait template makes littl
   - **DONE**: Integrated template generator as part of extension source
   - **DONE**: Consolidated into single build system and package.json
 - [ ] Syntax highlighting
+  - [x] Barebones syntax highlighting done.
 - [ ] Reflect all the information gathered into the schemas (and everywhere else) in the plain-text documentation we're also producing.
-- [ ] Simple linting. If we have a comprehensive list of items that are valid in each space (that is, a proper, complete schema) we can mark any invalid ones. (I guess there should be a "ignore this particular invalid field forever" button). We can also detect name collisions (especially possible for events that are just named by numbers), at least within the same mod.
+- [ ] Simple linting. If we have a comprehensive list of items that are valid in each space (that is, a proper, complete schema) we can mark any invalid ones. (I guess there should be a "ignore this particular invalid field forever" button). We can also detect name collisions (especially useful for events that are just named by numbers), at least within the same mod.
 - [ ] There should also be an option to "explicitify" the localization keys, by adding all the necessary localization key fields (with their default values) to an item (so if we have a trait foo_bar, doing this would add name = trait_foo_bar) and so on.
   - [ ] In general the localization generator should account for the whole structure of the current item when generating necessary localizations (so if you have an event with a bunch of options, it should generate the localizations for each option). But this seems quite hard so that's probably a low priority.
 - [x] Add some unit tests
