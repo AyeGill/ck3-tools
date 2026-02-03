@@ -13,6 +13,7 @@ import { registerGoToLocalizationCommand } from './localization/navigationProvid
 // TraitCompletionProvider and TraitHoverProvider removed - using unified providers instead
 import { CK3HoverProvider } from './providers/ck3HoverProvider';
 import { CK3CompletionProvider } from './providers/ck3CompletionProvider';
+import { CK3DiagnosticsProvider } from './providers/ck3DiagnosticsProvider';
 
 let generator: TemplateGenerator;
 
@@ -3270,6 +3271,36 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   console.log('Registered completion providers for all CK3 entity types');
+
+  // Register diagnostics provider for linting
+  const diagnosticsProvider = new CK3DiagnosticsProvider();
+  context.subscriptions.push(diagnosticsProvider.getDiagnosticCollection());
+
+  // Validate all currently open documents
+  vscode.workspace.textDocuments.forEach(doc => {
+    if (doc.languageId === 'ck3') {
+      diagnosticsProvider.validateDocument(doc);
+    }
+  });
+
+  // Register document change listeners
+  context.subscriptions.push(
+    vscode.workspace.onDidOpenTextDocument(doc => {
+      if (doc.languageId === 'ck3') {
+        diagnosticsProvider.validateDocument(doc);
+      }
+    }),
+    vscode.workspace.onDidChangeTextDocument(e => {
+      if (e.document.languageId === 'ck3') {
+        diagnosticsProvider.validateDocumentDebounced(e.document);
+      }
+    }),
+    vscode.workspace.onDidCloseTextDocument(doc => {
+      diagnosticsProvider.clearDiagnostics(doc.uri);
+    })
+  );
+
+  console.log('Registered diagnostics provider for CK3 files');
   vscode.window.showInformationMessage('CK3 Modding Tools loaded!');
 }
 

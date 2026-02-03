@@ -50,6 +50,7 @@ const navigationProvider_1 = require("./localization/navigationProvider");
 // TraitCompletionProvider and TraitHoverProvider removed - using unified providers instead
 const ck3HoverProvider_1 = require("./providers/ck3HoverProvider");
 const ck3CompletionProvider_1 = require("./providers/ck3CompletionProvider");
+const ck3DiagnosticsProvider_1 = require("./providers/ck3DiagnosticsProvider");
 let generator;
 // Document selector for CK3 trait files
 const TRAIT_FILE_SELECTOR = [
@@ -1573,6 +1574,28 @@ function activate(context) {
     context.subscriptions.push(vscode.languages.registerCompletionItemProvider(PILGRIMAGE_TYPE_FILE_SELECTOR, ck3CompletionProvider, '=', ' '));
     context.subscriptions.push(vscode.languages.registerCompletionItemProvider(CASUS_BELLI_TYPE_FILE_SELECTOR, ck3CompletionProvider, '=', ' '));
     console.log('Registered completion providers for all CK3 entity types');
+    // Register diagnostics provider for linting
+    const diagnosticsProvider = new ck3DiagnosticsProvider_1.CK3DiagnosticsProvider();
+    context.subscriptions.push(diagnosticsProvider.getDiagnosticCollection());
+    // Validate all currently open documents
+    vscode.workspace.textDocuments.forEach(doc => {
+        if (doc.languageId === 'ck3') {
+            diagnosticsProvider.validateDocument(doc);
+        }
+    });
+    // Register document change listeners
+    context.subscriptions.push(vscode.workspace.onDidOpenTextDocument(doc => {
+        if (doc.languageId === 'ck3') {
+            diagnosticsProvider.validateDocument(doc);
+        }
+    }), vscode.workspace.onDidChangeTextDocument(e => {
+        if (e.document.languageId === 'ck3') {
+            diagnosticsProvider.validateDocumentDebounced(e.document);
+        }
+    }), vscode.workspace.onDidCloseTextDocument(doc => {
+        diagnosticsProvider.clearDiagnostics(doc.uri);
+    }));
+    console.log('Registered diagnostics provider for CK3 files');
     vscode.window.showInformationMessage('CK3 Modding Tools loaded!');
 }
 function deactivate() {
