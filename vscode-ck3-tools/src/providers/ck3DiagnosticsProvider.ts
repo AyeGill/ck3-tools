@@ -951,7 +951,7 @@ export class CK3DiagnosticsProvider {
           );
           return new vscode.Diagnostic(
             range,
-            `Unknown effect: "${fieldName}"`,
+            `Unknown effect: "${fieldName}" in "${parentBlockName}"`,
             vscode.DiagnosticSeverity.Warning
           );
         }
@@ -967,7 +967,7 @@ export class CK3DiagnosticsProvider {
           );
           return new vscode.Diagnostic(
             range,
-            `Unknown trigger: "${fieldName}"`,
+            `Unknown trigger: "${fieldName}" in "${parentBlockName}"`,
             vscode.DiagnosticSeverity.Warning
           );
         }

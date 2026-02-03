@@ -184,6 +184,9 @@ describe('CK3 Game File Validation', () => {
     const TRACK_EFFECT = process.env.TRACK_EFFECT || '';
     const trackedEffectExamples: Array<{ file: string; line: number; lineText: string }> = [];
 
+    // Track parent->child pairs for unknown effects (to find missing parameters)
+    const unknownEffectInParent: Map<string, Set<string>> = new Map(); // parent -> set of unknown children
+
     // Track which file types are validated
     const fileTypeCount: Record<string, number> = {};
     const validatedTypes = new Set([
@@ -258,11 +261,17 @@ describe('CK3 Game File Validation', () => {
               const match = msg.match(/Unknown field: "([^"]+)"/);
               if (match) uniqueUnknownFields.add(match[1]);
             } else if (msg.startsWith('Unknown effect:')) {
-              const match = msg.match(/Unknown effect: "([^"]+)"/);
+              const match = msg.match(/Unknown effect: "([^"]+)" in "([^"]+)"/);
               if (match) {
-                uniqueUnknownEffects.add(match[1]);
+                const [, fieldName, parentBlock] = match;
+                uniqueUnknownEffects.add(fieldName);
+                // Track parent->child pairs
+                if (!unknownEffectInParent.has(parentBlock)) {
+                  unknownEffectInParent.set(parentBlock, new Set());
+                }
+                unknownEffectInParent.get(parentBlock)!.add(fieldName);
                 // Track examples for specific effect
-                if (TRACK_EFFECT && match[1] === TRACK_EFFECT && trackedEffectExamples.length < 10) {
+                if (TRACK_EFFECT && fieldName === TRACK_EFFECT && trackedEffectExamples.length < 10) {
                   const lines = content.split('\n');
                   trackedEffectExamples.push({
                     file: path.relative(CK3_GAME_PATH, file),
@@ -272,7 +281,7 @@ describe('CK3 Game File Validation', () => {
                 }
               }
             } else if (msg.startsWith('Unknown trigger:')) {
-              const match = msg.match(/Unknown trigger: "([^"]+)"/);
+              const match = msg.match(/Unknown trigger: "([^"]+)" in "([^"]+)"/);
               if (match) uniqueUnknownTriggers.add(match[1]);
             } else if (msg.startsWith('Invalid value for')) {
               const match = msg.match(/Invalid value for "([^"]+)": "([^"]+)"/);
@@ -403,6 +412,16 @@ describe('CK3 Game File Validation', () => {
         console.log(`\n--- Type mismatches for "${field}" (${values.size} unique) ---`);
         for (const value of [...values].sort()) {
           console.log(value);
+        }
+      }
+
+      // Output unknown effects by parent block (for finding missing parameters)
+      if (unknownEffectInParent.size > 0) {
+        console.log(`\n--- Unknown Effects by Parent Block (${unknownEffectInParent.size} parents) ---`);
+        // Sort by number of unknown children (most first)
+        const sorted = [...unknownEffectInParent.entries()].sort((a, b) => b[1].size - a[1].size);
+        for (const [parent, children] of sorted.slice(0, 50)) {
+          console.log(`'${parent}': [${[...children].map(c => `'${c}'`).join(', ')}],`);
         }
       }
 
