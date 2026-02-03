@@ -3,6 +3,9 @@
  * This ensures the validation script tests the exact same code as the extension
  *
  * Run with: npx vitest run src/test/validateGameFiles.test.ts
+ *
+ * For detailed deduplicated lists of each error type:
+ *   DETAILED=1 npx vitest run src/test/validateGameFiles.test.ts
  */
 
 import * as fs from 'fs';
@@ -163,10 +166,19 @@ describe('CK3 Game File Validation', () => {
   });
 
   it('validates all game files and reports diagnostics', () => {
+    const DETAILED = process.env.DETAILED === '1';
+
     const allErrors: ValidationError[] = [];
     const errorsByType: Record<string, number> = {};
     const errorsByField: Record<string, number> = {};
     const severityNames = ['Error', 'Warning', 'Information', 'Hint'];
+
+    // For detailed mode: track unique values per category
+    const uniqueUnknownFields = new Set<string>();
+    const uniqueUnknownEffects = new Set<string>();
+    const uniqueUnknownTriggers = new Set<string>();
+    const uniqueInvalidEnumValues: Record<string, Set<string>> = {}; // field -> values
+    const uniqueTypeMismatches: Record<string, Set<string>> = {}; // field -> values
 
     // Track which file types are validated
     const fileTypeCount: Record<string, number> = {};
@@ -233,6 +245,36 @@ describe('CK3 Game File Validation', () => {
           if (fieldMatch) {
             const field = fieldMatch[1];
             errorsByField[field] = (errorsByField[field] || 0) + 1;
+          }
+
+          // For detailed mode: categorize unique values
+          if (DETAILED) {
+            const msg = diag.message;
+            if (msg.startsWith('Unknown field:')) {
+              const match = msg.match(/Unknown field: "([^"]+)"/);
+              if (match) uniqueUnknownFields.add(match[1]);
+            } else if (msg.startsWith('Unknown effect:')) {
+              const match = msg.match(/Unknown effect: "([^"]+)"/);
+              if (match) uniqueUnknownEffects.add(match[1]);
+            } else if (msg.startsWith('Unknown trigger:')) {
+              const match = msg.match(/Unknown trigger: "([^"]+)"/);
+              if (match) uniqueUnknownTriggers.add(match[1]);
+            } else if (msg.startsWith('Invalid value for')) {
+              const match = msg.match(/Invalid value for "([^"]+)": "([^"]+)"/);
+              if (match) {
+                const [, field, value] = match;
+                if (!uniqueInvalidEnumValues[field]) uniqueInvalidEnumValues[field] = new Set();
+                uniqueInvalidEnumValues[field].add(value);
+              }
+            } else if (msg.includes('expects')) {
+              // Type mismatch: "field" expects X, got "value"
+              const match = msg.match(/"([^"]+)" expects .+, got "([^"]+)"/);
+              if (match) {
+                const [, field, value] = match;
+                if (!uniqueTypeMismatches[field]) uniqueTypeMismatches[field] = new Set();
+                uniqueTypeMismatches[field].add(value);
+              }
+            }
           }
         }
       } catch (err) {
@@ -306,6 +348,48 @@ describe('CK3 Game File Validation', () => {
       console.log('\n✅ All game files pass validation!');
     } else {
       console.log(`\n⚠️  Found ${allErrors.length} diagnostics to investigate`);
+    }
+
+    // Detailed mode: output deduplicated lists
+    if (DETAILED) {
+      console.log('\n============================================================');
+      console.log('DETAILED: Deduplicated Error Lists');
+      console.log('============================================================');
+
+      if (uniqueUnknownFields.size > 0) {
+        console.log(`\n--- Unknown Fields (${uniqueUnknownFields.size} unique) ---`);
+        for (const field of [...uniqueUnknownFields].sort()) {
+          console.log(field);
+        }
+      }
+
+      if (uniqueUnknownEffects.size > 0) {
+        console.log(`\n--- Unknown Effects (${uniqueUnknownEffects.size} unique) ---`);
+        for (const effect of [...uniqueUnknownEffects].sort()) {
+          console.log(effect);
+        }
+      }
+
+      if (uniqueUnknownTriggers.size > 0) {
+        console.log(`\n--- Unknown Triggers (${uniqueUnknownTriggers.size} unique) ---`);
+        for (const trigger of [...uniqueUnknownTriggers].sort()) {
+          console.log(trigger);
+        }
+      }
+
+      for (const [field, values] of Object.entries(uniqueInvalidEnumValues).sort()) {
+        console.log(`\n--- Invalid values for "${field}" (${values.size} unique) ---`);
+        for (const value of [...values].sort()) {
+          console.log(value);
+        }
+      }
+
+      for (const [field, values] of Object.entries(uniqueTypeMismatches).sort()) {
+        console.log(`\n--- Type mismatches for "${field}" (${values.size} unique) ---`);
+        for (const value of [...values].sort()) {
+          console.log(value);
+        }
+      }
     }
 
     // Cleanup
