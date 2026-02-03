@@ -128,3 +128,10 @@ So for example prompting for skill modifications in a trait template makes littl
     - Specific scope targets: `faith:catholic`, `title:k_france`, `culture:norse`
     - Pure numeric values: `"1"`, `"50"` (used in some contexts)
   - Could verify each pattern is still needed, check for edge cases, or validate more precisely
+
+- [ ] **Workspace Index Extensions**: The `CK3WorkspaceIndex` class now tracks entities across the workspace. Future extensions:
+  - [ ] **Go to Definition**: Click on `add_trait = brave` to jump to trait definition
+  - [ ] **Find References**: Find all uses of a trait/event/scripted effect
+  - [ ] **Autocomplete from index**: Suggest valid trait names when typing `add_trait =`, valid events for `trigger_event =`
+  - [ ] **Effect/trigger entity validation**: Use `supportedTargets` from effect definitions to validate references (e.g., `add_trait = brave` should check if `brave` is a defined trait)
+  - [ ] **Index game files**: Currently only indexes workspace files; could also index game files from CK3 install path for complete validation

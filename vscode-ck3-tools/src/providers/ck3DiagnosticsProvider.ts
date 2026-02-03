@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { FieldSchema } from '../schemas/traitSchema';
 import { effectsMap, triggersMap, modifiersMap, matchesModifierTemplate, ScopeType } from '../data';
+import { CK3WorkspaceIndex } from './workspaceIndex';
 import {
   TRIGGER_BLOCKS,
   EFFECT_BLOCKS,
@@ -131,9 +132,11 @@ export class CK3DiagnosticsProvider {
   private diagnosticCollection: vscode.DiagnosticCollection;
   private debounceTimers: Map<string, NodeJS.Timeout> = new Map();
   private readonly DEBOUNCE_DELAY = 300; // ms
+  private workspaceIndex: CK3WorkspaceIndex | null;
 
-  constructor() {
+  constructor(workspaceIndex?: CK3WorkspaceIndex) {
     this.diagnosticCollection = vscode.languages.createDiagnosticCollection('ck3');
+    this.workspaceIndex = workspaceIndex ?? null;
   }
 
   /**
@@ -194,7 +197,8 @@ export class CK3DiagnosticsProvider {
     }
 
     // Check for name collisions within the file
-    const nameCollisions = this.checkNameCollisions(entities);
+    // Skip for on_action since multiple definitions extend the same on_action (additive)
+    const nameCollisions = fileType === 'on_action' ? [] : this.checkNameCollisions(entities);
     for (const collision of nameCollisions) {
       const range = new vscode.Range(
         document.positionAt(this.getLineStart(text, collision.line)),
@@ -480,14 +484,18 @@ export class CK3DiagnosticsProvider {
         continue;
       }
 
-      // If schema has trigger wildcard, accept any valid trigger
-      if (hasTriggerWildcard && triggersMap.has(fieldName)) {
-        continue;
+      // If schema has trigger wildcard, accept any valid trigger or scripted trigger
+      if (hasTriggerWildcard) {
+        if (triggersMap.has(fieldName) || this.workspaceIndex?.has('scripted_trigger', fieldName)) {
+          continue;
+        }
       }
 
-      // If schema has effect wildcard, accept any valid effect
-      if (hasEffectWildcard && effectsMap.has(fieldName)) {
-        continue;
+      // If schema has effect wildcard, accept any valid effect or scripted effect
+      if (hasEffectWildcard) {
+        if (effectsMap.has(fieldName) || this.workspaceIndex?.has('scripted_effect', fieldName)) {
+          continue;
+        }
       }
 
       // If schema has modifier wildcard, accept any valid modifier or template match
@@ -553,12 +561,16 @@ export class CK3DiagnosticsProvider {
         case 'integer':
           // Allow negative numbers
           if (!/^-?\d+$/.test(value)) {
-            mismatches.push({
-              line: field.line,
-              message: `"${fieldName}" expects an integer, got "${value}"`
-            });
+            // In CK3, numeric fields can reference script values
+            // Accept @ references (local script values), known script values, or scope paths
+            if (!this.isValidScriptValueReference(value)) {
+              mismatches.push({
+                line: field.line,
+                message: `"${fieldName}" expects an integer or script value, got "${value}"`
+              });
+            }
           } else {
-            // Check min/max if defined
+            // Check min/max if defined (only for literal values)
             const num = parseInt(value, 10);
             if (schemaField.min !== undefined && num < schemaField.min) {
               mismatches.push({
@@ -577,16 +589,50 @@ export class CK3DiagnosticsProvider {
 
         case 'float':
           if (!/^-?\d+(\.\d+)?$/.test(value)) {
-            mismatches.push({
-              line: field.line,
-              message: `"${fieldName}" expects a number, got "${value}"`
-            });
+            // In CK3, numeric fields can reference script values
+            if (!this.isValidScriptValueReference(value)) {
+              mismatches.push({
+                line: field.line,
+                message: `"${fieldName}" expects a number or script value, got "${value}"`
+              });
+            }
           }
           break;
       }
     }
 
     return mismatches;
+  }
+
+  /**
+   * Check if a value is a valid script value reference
+   * This includes @ references (local script values), known script values from the workspace index,
+   * and scope paths that evaluate to numbers
+   */
+  private isValidScriptValueReference(value: string): boolean {
+    // @ references are local script values defined at the top of the file
+    if (value.startsWith('@')) {
+      return true;
+    }
+
+    // Scope paths can reference numeric values (e.g., scope:target.martial)
+    if (value.includes('.') || value.includes(':')) {
+      return true;
+    }
+
+    // Check if it's a known script value from the workspace index
+    if (this.workspaceIndex?.has('script_value', value)) {
+      return true;
+    }
+
+    // Accept any identifier that looks like a script value name
+    // (starts with letter/underscore, contains only word characters)
+    // This is permissive because we may not have indexed all script values yet
+    if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(value)) {
+      return true;
+    }
+
+    return false;
   }
 
   /**

@@ -14,6 +14,7 @@ import { registerGoToLocalizationCommand } from './localization/navigationProvid
 import { CK3HoverProvider } from './providers/ck3HoverProvider';
 import { CK3CompletionProvider } from './providers/ck3CompletionProvider';
 import { CK3DiagnosticsProvider } from './providers/ck3DiagnosticsProvider';
+import { CK3WorkspaceIndex } from './providers/workspaceIndex';
 
 let generator: TemplateGenerator;
 
@@ -3272,8 +3273,16 @@ export function activate(context: vscode.ExtensionContext) {
 
   console.log('Registered completion providers for all CK3 entity types');
 
+  // Create workspace index for cross-file validation
+  const workspaceIndex = new CK3WorkspaceIndex();
+
+  // Index workspace files in background
+  workspaceIndex.indexWorkspace().then(() => {
+    console.log(`CK3 workspace index ready: ${workspaceIndex.getTotalCount()} entities indexed`);
+  });
+
   // Register diagnostics provider for linting
-  const diagnosticsProvider = new CK3DiagnosticsProvider();
+  const diagnosticsProvider = new CK3DiagnosticsProvider(workspaceIndex);
   context.subscriptions.push(diagnosticsProvider.getDiagnosticCollection());
 
   // Validate all currently open documents
@@ -3297,6 +3306,27 @@ export function activate(context: vscode.ExtensionContext) {
     }),
     vscode.workspace.onDidCloseTextDocument(doc => {
       diagnosticsProvider.clearDiagnostics(doc.uri);
+    })
+  );
+
+  // Update workspace index when files are saved
+  context.subscriptions.push(
+    vscode.workspace.onDidSaveTextDocument(doc => {
+      if (doc.languageId === 'ck3') {
+        workspaceIndex.indexFile(doc.uri);
+      }
+    }),
+    vscode.workspace.onDidDeleteFiles(e => {
+      for (const uri of e.files) {
+        workspaceIndex.removeFile(uri.toString());
+      }
+    }),
+    vscode.workspace.onDidCreateFiles(e => {
+      for (const uri of e.files) {
+        if (uri.fsPath.endsWith('.txt')) {
+          workspaceIndex.indexFile(uri);
+        }
+      }
     })
   );
 

@@ -74,10 +74,16 @@ vi.mock('vscode', () => ({
   Uri: {
     file: (filePath: string) => ({ toString: () => `file://${filePath}`, fsPath: filePath }),
   },
+  workspace: {
+    workspaceFolders: undefined,
+    findFiles: async () => [],
+    openTextDocument: async () => { throw new Error('Not in VS Code'); },
+  },
 }));
 
 // Import after mock is set up
 import { CK3DiagnosticsProvider } from '../providers/ck3DiagnosticsProvider';
+import { CK3WorkspaceIndex } from '../providers/workspaceIndex';
 
 const CK3_GAME_PATH = '/Users/eigil/Library/Application Support/Steam/steamapps/common/Crusader Kings III/game';
 
@@ -145,10 +151,28 @@ function findTxtFiles(dir: string): string[] {
 
 describe('CK3 Game File Validation', () => {
   let provider: CK3DiagnosticsProvider;
+  let workspaceIndex: CK3WorkspaceIndex;
   let allFiles: string[] = [];
 
-  beforeAll(() => {
-    provider = new CK3DiagnosticsProvider();
+  beforeAll(async () => {
+    // Create and populate the workspace index with game files
+    workspaceIndex = new CK3WorkspaceIndex();
+
+    // Index game files (scripted_effects, scripted_triggers, etc.)
+    // This path is the parent of 'game' folder
+    const ck3BasePath = path.dirname(CK3_GAME_PATH);
+    await workspaceIndex.indexGameFiles(ck3BasePath);
+
+    console.log(`Workspace index populated:`);
+    console.log(`  - Scripted effects: ${workspaceIndex.getCount('scripted_effect')}`);
+    console.log(`  - Scripted triggers: ${workspaceIndex.getCount('scripted_trigger')}`);
+    console.log(`  - Script values: ${workspaceIndex.getCount('script_value')}`);
+    console.log(`  - Traits: ${workspaceIndex.getCount('trait')}`);
+    console.log(`  - Events: ${workspaceIndex.getCount('event')}`);
+    console.log(`  - Total: ${workspaceIndex.getTotalCount()}`);
+
+    // Create provider with the populated index
+    provider = new CK3DiagnosticsProvider(workspaceIndex);
 
     // Find all relevant directories
     const dirs = [
