@@ -8,6 +8,9 @@ export const SCHEME_CATEGORIES = [
   'hostile',
   'personal',
   'friendly',
+  // Additional categories from game files
+  'contract',
+  'political',
 ] as const;
 
 export const SCHEME_SKILLS = [
