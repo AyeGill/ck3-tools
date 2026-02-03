@@ -180,6 +180,10 @@ describe('CK3 Game File Validation', () => {
     const uniqueInvalidEnumValues: Record<string, Set<string>> = {}; // field -> values
     const uniqueTypeMismatches: Record<string, Set<string>> = {}; // field -> values
 
+    // Track examples of specific unknown effects (for debugging)
+    const TRACK_EFFECT = process.env.TRACK_EFFECT || '';
+    const trackedEffectExamples: Array<{ file: string; line: number; lineText: string }> = [];
+
     // Track which file types are validated
     const fileTypeCount: Record<string, number> = {};
     const validatedTypes = new Set([
@@ -255,7 +259,18 @@ describe('CK3 Game File Validation', () => {
               if (match) uniqueUnknownFields.add(match[1]);
             } else if (msg.startsWith('Unknown effect:')) {
               const match = msg.match(/Unknown effect: "([^"]+)"/);
-              if (match) uniqueUnknownEffects.add(match[1]);
+              if (match) {
+                uniqueUnknownEffects.add(match[1]);
+                // Track examples for specific effect
+                if (TRACK_EFFECT && match[1] === TRACK_EFFECT && trackedEffectExamples.length < 10) {
+                  const lines = content.split('\n');
+                  trackedEffectExamples.push({
+                    file: path.relative(CK3_GAME_PATH, file),
+                    line: diag.range.start.line + 1,
+                    lineText: lines[diag.range.start.line] || '',
+                  });
+                }
+              }
             } else if (msg.startsWith('Unknown trigger:')) {
               const match = msg.match(/Unknown trigger: "([^"]+)"/);
               if (match) uniqueUnknownTriggers.add(match[1]);
@@ -388,6 +403,15 @@ describe('CK3 Game File Validation', () => {
         console.log(`\n--- Type mismatches for "${field}" (${values.size} unique) ---`);
         for (const value of [...values].sort()) {
           console.log(value);
+        }
+      }
+
+      // Output tracked effect examples
+      if (TRACK_EFFECT && trackedEffectExamples.length > 0) {
+        console.log(`\n--- Examples of Unknown Effect "${TRACK_EFFECT}" ---`);
+        for (const ex of trackedEffectExamples) {
+          console.log(`${ex.file}:${ex.line}`);
+          console.log(`  ${ex.lineText.trim()}`);
         }
       }
     }

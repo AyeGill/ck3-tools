@@ -108,6 +108,17 @@ const ITERATOR_PREFIXES = [
 ];
 
 /**
+ * Blocks where children are dynamic keys (not effects/triggers)
+ * For example, stress_impact children are trait names, not effects
+ */
+const DYNAMIC_KEY_BLOCKS = new Set([
+  'stress_impact',           // children are trait names
+  'ai_value_modifier',       // may have dynamic keys
+  'compare_value',           // comparison block
+  'value',                   // numeric value blocks
+]);
+
+/**
  * Parsed field with context information
  */
 interface ParsedFieldWithContext extends ParsedField {
@@ -812,6 +823,11 @@ export class CK3DiagnosticsProvider {
       if (fieldMatch && blockStack.length > 0) {
         const fieldName = fieldMatch[1];
         const currentBlock = blockStack[blockStack.length - 1];
+
+        // Skip validation inside dynamic key blocks (e.g., stress_impact where keys are trait names)
+        if (DYNAMIC_KEY_BLOCKS.has(currentBlock.name)) {
+          continue;
+        }
 
         // Only validate if we're in a known context
         if (currentBlock.context !== 'unknown') {

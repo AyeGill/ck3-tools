@@ -88,6 +88,7 @@ So for example prompting for skill modifications in a trait template makes littl
   - [ ] **Invalid category values (201)** - The `category` enum needs more values
   - [ ] **Type mismatches** - Validator flags script value references (like `expensive_building_tier_3_cost`) as type errors. Options: accept identifiers as numeric values, build list of known script values, or add "script_value" type
   - [ ] **Boolean type mismatches (95)** - Fields like `auto_accept` expect `yes/no` but sometimes take block values for conditional logic
+  - [ ] **Dynamic key blocks** - Currently using a hardcoded `DYNAMIC_KEY_BLOCKS` set (e.g., `stress_impact`) to skip validation for blocks where children are trait names or other dynamic keys rather than effects/triggers. This is a quick fix; a more careful approach might define this in the schema itself (e.g., a `childKeyType: 'trait'` property) so the validator knows what kind of keys to expect.
 - [ ] There should also be an option to "explicitify" the localization keys, by adding all the necessary localization key fields (with their default values) to an item (so if we have a trait foo_bar, doing this would add name = trait_foo_bar) and so on.
   - [ ] In general the localization generator should account for the whole structure of the current item when generating necessary localizations (so if you have an event with a bunch of options, it should generate the localizations for each option). But this seems quite hard so that's probably a low priority.
 - [x] Add some unit tests
