@@ -353,6 +353,16 @@ const effectParameterOverrides: Record<string, string[]> = {
 
   // Control flow (parameters)
   'if': ['limit', 'text'],
+
+  // Trait rank effects
+  'set_trait_rank': ['trait', 'rank'],
+
+  // Claim iterators
+  'every_claim': ['explicit', 'pressed', 'custom'],
+  'random_claim': ['explicit', 'pressed', 'weight'],
+
+  // Struggle iterators
+  'random_character_struggle': ['involvement', 'weight'],
 };
 
 /**
@@ -423,10 +433,49 @@ export const effectsMap = new Map<string, EffectDefinition>(
 );
 
 /**
+ * Parameter overrides for triggers where generated data is incomplete
+ */
+const triggerParameterOverrides: Record<string, string[]> = {
+  // List iteration triggers
+  'any_in_list': ['list', 'variable', 'count', 'percent'],
+  'any_in_local_list': ['list', 'variable', 'count'],
+  'any_in_global_list': ['list', 'variable', 'count'],
+
+  // Claim triggers
+  'any_claim': ['explicit', 'pressed'],
+
+  // Struggle triggers
+  'any_character_struggle': ['involvement'],
+
+  // Relation triggers
+  'any_relation': ['type'],
+
+  // Court position triggers
+  'any_court_position_holder': ['type'],
+
+  // Variable triggers
+  'has_variable': ['name', 'value'],
+  'has_local_variable': ['name', 'value'],
+  'has_global_variable': ['name', 'value'],
+  'has_variable_list': ['name'],
+  'has_local_variable_list': ['name'],
+  'has_global_variable_list': ['name'],
+
+  // Compare triggers
+  'compare_value': ['value', 'target'],
+};
+
+/**
  * Build a map for quick lookup (includes scope changers)
  */
 export const triggersMap = new Map<string, TriggerDefinition>(
-  allTriggers.map(t => [t.name, t])
+  allTriggers.map(t => {
+    const override = triggerParameterOverrides[t.name];
+    if (override) {
+      return [t.name, { ...t, parameters: override }];
+    }
+    return [t.name, t];
+  })
 );
 
 // Export modifiers
