@@ -19,6 +19,8 @@ import {
   ScopeType,
   allEffects,
   allTriggers,
+  characterModifiers,
+  ModifierDefinition,
 } from '../data';
 import {
   TRIGGER_BLOCKS,
@@ -1064,7 +1066,7 @@ function getSchemaForBlockContext(context: BlockContext, parentBlockName?: strin
         // Return extra params + triggers
         const extraParamsSchema: FieldSchema[] = [...blockConfig.extraParams].map(param => ({
           name: param,
-          type: 'any',
+          type: 'string',
           description: `Parameter for ${parentBlockName} block`,
         }));
         const triggerSchema = context.unknownScope
@@ -1298,7 +1300,7 @@ function getInternalFieldSchema(blockPath: string[], contextType: 'trigger' | 'e
     // Return extra params for this block - triggers are handled by the caller
     return [...blockConfig.extraParams].map(param => ({
       name: param,
-      type: 'any',
+      type: 'string',
       description: `Parameter for ${lastBlock} block`,
     }));
   }
@@ -3562,6 +3564,18 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
               item.documentation = new vscode.MarkdownString(effect.description);
               item.insertText = effect.syntax ? effect.name : `${effect.name} = `;
               item.sortText = `2_${effect.name}`; // Lower priority than schema fields
+              items.push(item);
+            }
+          }
+        } else if (field.type === 'modifier') {
+          // Add all character modifiers (most common case for trait/modifier contexts)
+          for (const mod of characterModifiers) {
+            if (partial === '' || mod.name.toLowerCase().startsWith(partial)) {
+              const item = new vscode.CompletionItem(mod.name, vscode.CompletionItemKind.Property);
+              item.detail = `Modifier (${mod.categories.join(', ')})`;
+              item.documentation = new vscode.MarkdownString(`Character modifier: ${mod.name.replace(/_/g, ' ')}`);
+              item.insertText = `${mod.name} = `;
+              item.sortText = `2_${mod.name}`; // Lower priority than schema fields
               items.push(item);
             }
           }

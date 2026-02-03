@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { FieldSchema } from '../schemas/traitSchema';
-import { effectsMap, triggersMap, ScopeType } from '../data';
+import { effectsMap, triggersMap, modifiersMap, ScopeType } from '../data';
 import {
   TRIGGER_BLOCKS,
   EFFECT_BLOCKS,
@@ -472,6 +472,7 @@ export class CK3DiagnosticsProvider {
     // Check if schema has wildcard entries
     const hasTriggerWildcard = schema.some(f => f.isWildcard && f.type === 'trigger');
     const hasEffectWildcard = schema.some(f => f.isWildcard && f.type === 'effect');
+    const hasModifierWildcard = schema.some(f => f.isWildcard && f.type === 'modifier');
 
     for (const [fieldName, field] of entity.fields) {
       // Skip common fields that are valid across many contexts
@@ -486,6 +487,11 @@ export class CK3DiagnosticsProvider {
 
       // If schema has effect wildcard, accept any valid effect
       if (hasEffectWildcard && effectsMap.has(fieldName)) {
+        continue;
+      }
+
+      // If schema has modifier wildcard, accept any valid modifier
+      if (hasModifierWildcard && modifiersMap.has(fieldName)) {
         continue;
       }
 
