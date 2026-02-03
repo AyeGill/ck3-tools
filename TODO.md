@@ -96,6 +96,8 @@ So for example prompting for skill modifications in a trait template makes littl
   - **DONE**: Added hover provider tests (`ck3HoverProvider.test.ts` - 17 tests)
   - Total: 63 tests passing
 
+
+- What's up with accessory and artifact both being schemae? Should look in the game files and figure this out.
 ## Issues
 
 - [ ] While editing events, the option to automatically generate localization is missing. It needs to be added.

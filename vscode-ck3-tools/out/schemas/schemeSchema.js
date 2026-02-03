@@ -10,6 +10,9 @@ exports.SCHEME_CATEGORIES = [
     'hostile',
     'personal',
     'friendly',
+    // Additional categories from game files
+    'contract',
+    'political',
 ];
 exports.SCHEME_SKILLS = [
     'diplomacy',

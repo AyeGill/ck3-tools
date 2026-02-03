@@ -2400,7 +2400,36 @@ class CK3CompletionProvider {
         const items = [];
         const partial = linePrefix.trim().toLowerCase();
         const schema = this.getSchemaForContext(fileType, context.blockPath || []);
+        // Check for wildcard entries that expand to all triggers/effects
         for (const field of schema) {
+            if (field.isWildcard) {
+                // Wildcard: add all triggers or effects
+                if (field.type === 'trigger') {
+                    for (const trigger of data_1.allTriggers) {
+                        if (partial === '' || trigger.name.toLowerCase().startsWith(partial)) {
+                            const item = new vscode.CompletionItem(trigger.name, vscode.CompletionItemKind.Function);
+                            item.detail = `Trigger (${trigger.supportedScopes.join(', ')})`;
+                            item.documentation = new vscode.MarkdownString(trigger.description);
+                            item.insertText = trigger.syntax ? trigger.name : `${trigger.name} = `;
+                            item.sortText = `2_${trigger.name}`; // Lower priority than schema fields
+                            items.push(item);
+                        }
+                    }
+                }
+                else if (field.type === 'effect') {
+                    for (const effect of data_1.allEffects) {
+                        if (partial === '' || effect.name.toLowerCase().startsWith(partial)) {
+                            const item = new vscode.CompletionItem(effect.name, vscode.CompletionItemKind.Function);
+                            item.detail = `Effect (${effect.supportedScopes.join(', ')})`;
+                            item.documentation = new vscode.MarkdownString(effect.description);
+                            item.insertText = effect.syntax ? effect.name : `${effect.name} = `;
+                            item.sortText = `2_${effect.name}`; // Lower priority than schema fields
+                            items.push(item);
+                        }
+                    }
+                }
+                continue; // Don't add the wildcard itself as a completion
+            }
             if (partial === '' || field.name.toLowerCase().startsWith(partial)) {
                 const item = new vscode.CompletionItem(field.name, this.getCompletionKind(field));
                 item.detail = this.getFieldDetail(field);

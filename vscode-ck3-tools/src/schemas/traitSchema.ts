@@ -15,6 +15,12 @@ export interface FieldSchema {
   required?: boolean;
   children?: FieldSchema[];
   example?: string;
+  /**
+   * If true, this is a "wildcard" entry allowing any valid item of this type.
+   * Use with type: 'trigger' to accept any trigger, or type: 'effect' to accept any effect.
+   * The 'name' field is ignored for wildcard entries during validation.
+   */
+  isWildcard?: boolean;
 }
 
 export const TRAIT_CATEGORIES = [

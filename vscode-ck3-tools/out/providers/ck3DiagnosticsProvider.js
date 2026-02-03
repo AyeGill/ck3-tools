@@ -195,7 +195,7 @@ class CK3DiagnosticsProvider {
                 diagnostics.push(new vscode.Diagnostic(range, `Missing required field: "${field}"`, vscode.DiagnosticSeverity.Warning));
             }
             // Check for invalid/unknown fields
-            const invalidFields = this.checkInvalidFields(entity, schemaInfo.schemaMap, fileType);
+            const invalidFields = this.checkInvalidFields(entity, schemaInfo.schema, schemaInfo.schemaMap, fileType);
             for (const invalid of invalidFields) {
                 const line = document.lineAt(invalid.line);
                 const fieldStart = line.text.indexOf(invalid.name);
@@ -392,7 +392,7 @@ class CK3DiagnosticsProvider {
     /**
      * Check for invalid/unknown fields
      */
-    checkInvalidFields(entity, schemaMap, fileType) {
+    checkInvalidFields(entity, schema, schemaMap, fileType) {
         const invalid = [];
         // Skip validation for certain complex file types that have many dynamic fields
         if (['event', 'decision', 'interaction'].includes(fileType)) {
@@ -400,9 +400,20 @@ class CK3DiagnosticsProvider {
             // Only validate top-level fields that are clearly wrong
             return invalid;
         }
+        // Check if schema has wildcard entries
+        const hasTriggerWildcard = schema.some(f => f.isWildcard && f.type === 'trigger');
+        const hasEffectWildcard = schema.some(f => f.isWildcard && f.type === 'effect');
         for (const [fieldName, field] of entity.fields) {
             // Skip common fields that are valid across many contexts
             if (this.isCommonField(fieldName)) {
+                continue;
+            }
+            // If schema has trigger wildcard, accept any valid trigger
+            if (hasTriggerWildcard && data_1.triggersMap.has(fieldName)) {
+                continue;
+            }
+            // If schema has effect wildcard, accept any valid effect
+            if (hasEffectWildcard && data_1.effectsMap.has(fieldName)) {
                 continue;
             }
             if (!schemaMap.has(fieldName)) {
