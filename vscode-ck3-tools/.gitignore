@@ -5,6 +5,13 @@ node_modules/
 
 # Build output
 dist/
+out/
+
+# VSCode extension package
+*.vsix
+
+# VSCode test runner
+.vscode-test/
 
 # Test output
 test-output/
