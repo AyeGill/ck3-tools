@@ -508,19 +508,308 @@ export const traitSchema: FieldSchema[] = [
     example: 'ai_zeal = 20',
   },
 
-  // Include all character modifiers at the top level
-  // These can be used directly in traits (e.g., fertility = 0.1, attraction_opinion = 10)
-  ...characterModifiers
-    .filter(mod => !['diplomacy', 'martial', 'stewardship', 'intrigue', 'learning', 'prowess',
-                     'monthly_prestige', 'monthly_piety', 'ai_boldness', 'ai_compassion',
-                     'ai_greed', 'ai_honor', 'ai_rationality', 'ai_sociability',
-                     'ai_vengefulness', 'ai_zeal', 'ai_energy'].includes(mod.name)) // Avoid duplicates
-    .map(mod => ({
-      name: mod.name,
-      type: 'float' as const,
-      description: `Character modifier: ${mod.name.replace(/_/g, ' ')}`,
-      example: `${mod.name} = 0.1`,
-    })),
+  // Additional trait-specific fields
+  {
+    name: 'add_commander_trait',
+    type: 'boolean',
+    description: 'Whether this trait adds a commander trait.',
+  },
+  {
+    name: 'bastard',
+    type: 'boolean',
+    description: 'Whether this trait marks the character as a bastard.',
+  },
+  {
+    name: 'claim_inheritance_blocker',
+    type: 'boolean',
+    description: 'Whether this trait blocks claim inheritance.',
+  },
+  {
+    name: 'index',
+    type: 'integer',
+    description: 'Visual index for trait ordering.',
+  },
+  {
+    name: 'inherit_from_real_father',
+    type: 'boolean',
+    description: 'Whether inheritance comes from real father rather than presumed father.',
+  },
+  {
+    name: 'trait_exclusive_if_realm_contains',
+    type: 'block',
+    description: 'Trait becomes exclusive if realm contains specific conditions.',
+  },
+  {
+    name: 'ugliness_portrait_extremity_shift',
+    type: 'float',
+    description: 'Shifts portrait towards ugliness extremity.',
+  },
+
+  // Opinion modifiers by group
+  {
+    name: 'belligerent_opinion',
+    type: 'integer',
+    description: 'Opinion modifier from characters with belligerent vassal stance.',
+  },
+  {
+    name: 'courtly_opinion',
+    type: 'integer',
+    description: 'Opinion modifier from characters with courtly vassal stance.',
+  },
+  {
+    name: 'glory_hound_opinion',
+    type: 'integer',
+    description: 'Opinion modifier from characters with glory hound vassal stance.',
+  },
+  {
+    name: 'minority_opinion',
+    type: 'integer',
+    description: 'Opinion modifier from minority characters.',
+  },
+  {
+    name: 'parochial_opinion',
+    type: 'integer',
+    description: 'Opinion modifier from characters with parochial vassal stance.',
+  },
+  {
+    name: 'parochial_same_culture_opinion',
+    type: 'integer',
+    description: 'Opinion modifier from parochial characters of same culture.',
+  },
+  {
+    name: 'parochial_same_faith_opinion',
+    type: 'integer',
+    description: 'Opinion modifier from parochial characters of same faith.',
+  },
+  {
+    name: 'tribal_government_opinion',
+    type: 'integer',
+    description: 'Opinion modifier from characters with tribal government.',
+  },
+  {
+    name: 'zealot_opinion',
+    type: 'integer',
+    description: 'Opinion modifier from zealot characters.',
+  },
+
+  // Religion-specific opinion
+  {
+    name: 'buddhism_religion_opinion',
+    type: 'integer',
+    description: 'Opinion modifier from Buddhist characters.',
+  },
+  {
+    name: 'hinduism_religion_opinion',
+    type: 'integer',
+    description: 'Opinion modifier from Hindu characters.',
+  },
+  {
+    name: 'islam_religion_opinion',
+    type: 'integer',
+    description: 'Opinion modifier from Islamic characters.',
+  },
+  {
+    name: 'jainism_religion_opinion',
+    type: 'integer',
+    description: 'Opinion modifier from Jain characters.',
+  },
+  {
+    name: 'zoroastrianism_religion_opinion',
+    type: 'integer',
+    description: 'Opinion modifier from Zoroastrian characters.',
+  },
+  {
+    name: 'greek_opinion',
+    type: 'integer',
+    description: 'Opinion modifier from Greek culture characters.',
+  },
+
+  // Terrain advantages
+  {
+    name: 'desert_advantage',
+    type: 'integer',
+    description: 'Combat advantage in desert terrain.',
+  },
+  {
+    name: 'desert_cancel_negative_supply',
+    type: 'boolean',
+    description: 'Cancels negative supply effects in desert.',
+  },
+  {
+    name: 'desert_mountains_advantage',
+    type: 'integer',
+    description: 'Combat advantage in desert mountain terrain.',
+  },
+  {
+    name: 'drylands_advantage',
+    type: 'integer',
+    description: 'Combat advantage in drylands terrain.',
+  },
+  {
+    name: 'farmlands_advantage',
+    type: 'integer',
+    description: 'Combat advantage in farmlands terrain.',
+  },
+  {
+    name: 'forest_advantage',
+    type: 'integer',
+    description: 'Combat advantage in forest terrain.',
+  },
+  {
+    name: 'hills_advantage',
+    type: 'integer',
+    description: 'Combat advantage in hills terrain.',
+  },
+  {
+    name: 'jungle_advantage',
+    type: 'integer',
+    description: 'Combat advantage in jungle terrain.',
+  },
+  {
+    name: 'jungle_attrition_mult',
+    type: 'float',
+    description: 'Attrition multiplier in jungle terrain.',
+  },
+  {
+    name: 'jungle_cancel_negative_supply',
+    type: 'boolean',
+    description: 'Cancels negative supply effects in jungle.',
+  },
+  {
+    name: 'mountains_advantage',
+    type: 'integer',
+    description: 'Combat advantage in mountain terrain.',
+  },
+  {
+    name: 'oasis_advantage',
+    type: 'integer',
+    description: 'Combat advantage in oasis terrain.',
+  },
+  {
+    name: 'plains_advantage',
+    type: 'integer',
+    description: 'Combat advantage in plains terrain.',
+  },
+  {
+    name: 'steppe_advantage',
+    type: 'integer',
+    description: 'Combat advantage in steppe terrain.',
+  },
+  {
+    name: 'taiga_advantage',
+    type: 'integer',
+    description: 'Combat advantage in taiga terrain.',
+  },
+  {
+    name: 'wetlands_advantage',
+    type: 'integer',
+    description: 'Combat advantage in wetlands terrain.',
+  },
+  {
+    name: 'wetlands_travel_danger',
+    type: 'float',
+    description: 'Travel danger in wetlands terrain.',
+  },
+
+  // Men-at-arms modifiers
+  {
+    name: 'archer_cavalry_damage_mult',
+    type: 'float',
+    description: 'Damage multiplier for archer cavalry units.',
+  },
+  {
+    name: 'archer_cavalry_siege_value_add',
+    type: 'integer',
+    description: 'Siege value bonus for archer cavalry units.',
+  },
+  {
+    name: 'archer_cavalry_toughness_mult',
+    type: 'float',
+    description: 'Toughness multiplier for archer cavalry units.',
+  },
+  {
+    name: 'heavy_cavalry_damage_mult',
+    type: 'float',
+    description: 'Damage multiplier for heavy cavalry units.',
+  },
+  {
+    name: 'heavy_cavalry_toughness_mult',
+    type: 'float',
+    description: 'Toughness multiplier for heavy cavalry units.',
+  },
+  {
+    name: 'light_cavalry_damage_mult',
+    type: 'float',
+    description: 'Damage multiplier for light cavalry units.',
+  },
+  {
+    name: 'light_cavalry_siege_value_add',
+    type: 'integer',
+    description: 'Siege value bonus for light cavalry units.',
+  },
+  {
+    name: 'light_cavalry_toughness_mult',
+    type: 'float',
+    description: 'Toughness multiplier for light cavalry units.',
+  },
+
+  // Lifestyle XP modifiers
+  {
+    name: 'monthly_diplomacy_lifestyle_xp_gain_mult',
+    type: 'float',
+    description: 'Monthly diplomacy lifestyle XP gain multiplier.',
+  },
+  {
+    name: 'monthly_intrigue_lifestyle_xp_gain_mult',
+    type: 'float',
+    description: 'Monthly intrigue lifestyle XP gain multiplier.',
+  },
+  {
+    name: 'monthly_learning_lifestyle_xp_gain_mult',
+    type: 'float',
+    description: 'Monthly learning lifestyle XP gain multiplier.',
+  },
+  {
+    name: 'monthly_martial_lifestyle_xp_gain_mult',
+    type: 'float',
+    description: 'Monthly martial lifestyle XP gain multiplier.',
+  },
+  {
+    name: 'monthly_stewardship_lifestyle_xp_gain_mult',
+    type: 'float',
+    description: 'Monthly stewardship lifestyle XP gain multiplier.',
+  },
+  {
+    name: 'monthly_wanderer_lifestyle_xp_gain_mult',
+    type: 'float',
+    description: 'Monthly wanderer lifestyle XP gain multiplier.',
+  },
+  {
+    name: 'governor_xp_gain_mult',
+    type: 'float',
+    description: 'Governor XP gain multiplier.',
+  },
+
+  // Scheme modifiers
+  {
+    name: 'learn_language_scheme_phase_duration_add',
+    type: 'float',
+    description: 'Bonus to learn language scheme phase duration.',
+  },
+  {
+    name: 'seduce_scheme_phase_duration_add',
+    type: 'float',
+    description: 'Bonus to seduce scheme phase duration.',
+  },
+
+  // Wildcard: accept any valid modifier from the game's modifier database
+  // This replaces the manual spread of characterModifiers and uses the modifiersMap for validation
+  {
+    name: '*',
+    type: 'modifier',
+    isWildcard: true,
+    description: 'Any valid character modifier can be used in traits (e.g., fertility, attraction_opinion, monthly_prestige_gain_mult).',
+  },
 ];
 
 // Map for quick lookup

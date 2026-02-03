@@ -276,6 +276,15 @@ export const modifierSchema: FieldSchema[] = [
     description: 'Additional building slots.',
     example: 'building_slot_add = 1',
   },
+
+  // Wildcard: accept any valid modifier from the game's modifier database
+  // This covers the hundreds of modifiers not explicitly listed above
+  {
+    name: '*',
+    type: 'modifier',
+    isWildcard: true,
+    description: 'Any valid modifier from the game can be used in static modifier definitions.',
+  },
 ];
 
 // Map for quick lookup
