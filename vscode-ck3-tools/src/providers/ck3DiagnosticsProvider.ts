@@ -4,6 +4,9 @@ import { effectsMap, triggersMap, ScopeType } from '../data';
 import {
   TRIGGER_BLOCKS,
   EFFECT_BLOCKS,
+  WEIGHT_BLOCKS,
+  WEIGHT_BLOCK_PARAMS,
+  TRIGGER_CONTEXT_BLOCKS_WITH_PARAMS,
   BlockContext,
   analyzeBlockContext,
   validateScopePath,
@@ -743,8 +746,8 @@ export class CK3DiagnosticsProvider {
     const text = document.getText();
     const lines = text.split('\n');
 
-    // Track context as we parse
-    const blockStack: Array<{ name: string; context: 'trigger' | 'effect' | 'unknown' }> = [];
+    // Track context as we parse - now includes 'weight' context
+    const blockStack: Array<{ name: string; context: 'trigger' | 'effect' | 'weight' | 'unknown'; parentContext?: 'trigger' | 'effect' | 'weight' | 'unknown' }> = [];
     let braceDepth = 0;
 
     for (let lineNum = 0; lineNum < lines.length; lineNum++) {
@@ -771,19 +774,29 @@ export class CK3DiagnosticsProvider {
       const blockStarts = [...cleanLine.matchAll(blockStartRegex)];
       for (const match of blockStarts) {
         const blockName = match[1];
-        let context: 'trigger' | 'effect' | 'unknown' = 'unknown';
+        let context: 'trigger' | 'effect' | 'weight' | 'unknown' = 'unknown';
+        const parentContext = blockStack.length > 0 ? blockStack[blockStack.length - 1].context : 'unknown';
 
         // Determine context based on block name
-        if (TRIGGER_BLOCKS.has(blockName)) {
+        if (WEIGHT_BLOCKS.has(blockName)) {
+          // Weight blocks (ai_will_do, ai_chance, etc.) establish weight context
+          context = 'weight';
+        } else if (TRIGGER_BLOCKS.has(blockName)) {
           context = 'trigger';
         } else if (EFFECT_BLOCKS.has(blockName)) {
           context = 'effect';
-        } else if (blockStack.length > 0) {
-          // Inherit context from parent if this is a scope changer or iterator
-          const parentContext = blockStack[blockStack.length - 1].context;
-          if (parentContext !== 'unknown') {
-            // Check if this is a valid scope changer or iterator
-            if (this.isValidScopeChanger(blockName) || this.isValidIterator(blockName, parentContext)) {
+        } else {
+          // Check for blocks that create trigger context with extra params
+          const blockConfig = TRIGGER_CONTEXT_BLOCKS_WITH_PARAMS.get(blockName);
+          if (blockConfig && (blockConfig.validIn === 'any' || blockConfig.validIn === parentContext)) {
+            // This block (e.g., modifier in weight context) creates trigger context inside
+            context = 'trigger';
+          } else if (parentContext !== 'unknown') {
+            // Inherit context from parent if this is a scope changer or iterator
+            if (parentContext === 'weight') {
+              // Inside weight context, non-special blocks don't change context
+              context = 'weight';
+            } else if (this.isValidScopeChanger(blockName) || this.isValidIterator(blockName, parentContext as 'trigger' | 'effect')) {
               context = parentContext;
             } else if (parentContext === 'effect' && effectsMap.has(blockName)) {
               context = 'effect';
@@ -793,7 +806,7 @@ export class CK3DiagnosticsProvider {
           }
         }
 
-        blockStack.push({ name: blockName, context });
+        blockStack.push({ name: blockName, context, parentContext });
       }
 
       // Check for simple field: name = value (no opening brace)
@@ -815,7 +828,8 @@ export class CK3DiagnosticsProvider {
             currentBlock.name,
             lineNum,
             cleanLine,
-            document
+            document,
+            currentBlock.parentContext
           );
           if (diagnostic) {
             diagnostics.push(diagnostic);
@@ -878,16 +892,35 @@ export class CK3DiagnosticsProvider {
   }
 
   /**
-   * Validate a field in a specific context (trigger or effect)
+   * Validate a field in a specific context (trigger, effect, or weight)
    */
   private validateFieldInContext(
     fieldName: string,
-    context: 'trigger' | 'effect',
+    context: 'trigger' | 'effect' | 'weight',
     parentBlockName: string,
     lineNum: number,
     cleanLine: string,
-    document: vscode.TextDocument
+    document: vscode.TextDocument,
+    parentContext?: 'trigger' | 'effect' | 'weight' | 'unknown'
   ): vscode.Diagnostic | null {
+    // Handle weight context - validate against weight block params
+    if (context === 'weight') {
+      if (WEIGHT_BLOCK_PARAMS.has(fieldName)) {
+        return null; // Valid weight block parameter
+      }
+      // In weight context, unknown fields are not flagged as effects/triggers
+      // They could be script values or other valid constructs
+      return null;
+    }
+
+    // Handle blocks that create trigger context with extra params
+    const blockConfig = TRIGGER_CONTEXT_BLOCKS_WITH_PARAMS.get(parentBlockName);
+    if (blockConfig) {
+      if (blockConfig.extraParams.has(fieldName)) {
+        return null; // Valid block-specific parameter (e.g., 'add' in modifier)
+      }
+      // Not an extra param - validate as trigger (inline triggers)
+    }
     // Skip control flow and common fields
     if (CONTROL_FLOW_FIELDS.has(fieldName)) {
       return null;

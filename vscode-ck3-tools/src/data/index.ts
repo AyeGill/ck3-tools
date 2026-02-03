@@ -510,13 +510,6 @@ const triggerParameterOverrides: Record<string, string[]> = {
   // Ordered triggers
   'ordered_in_list': ['list', 'variable', 'order_by', 'position', 'min', 'max', 'check_range_bounds'],
 
-  // Weight/AI chance blocks (these take base, modifier, etc.)
-  'ai_chance': ['base', 'modifier', 'factor', 'add', 'multiplier'],
-  'ai_will_do': ['base', 'modifier', 'factor', 'add', 'multiplier'],
-  'weight': ['base', 'modifier', 'factor', 'add', 'multiplier', 'min', 'max'],
-  'weight_multiplier': ['base', 'modifier', 'factor'],
-  'modifier': ['add', 'factor', 'desc', 'trigger', 'value'],
-
   // Trait-related triggers
   'has_trait_rank': ['trait', 'rank', 'value'],
   'trait_is_same_or_worse': ['trait', 'target'],
@@ -597,19 +590,6 @@ export const triggersMap = new Map<string, TriggerDefinition>(
     return [t.name, t];
   })
 );
-
-// Add pseudo-triggers: schema blocks that appear in trigger contexts
-// These aren't actual game triggers but need to be recognized as valid parents with parameters
-for (const [name, parameters] of Object.entries(triggerParameterOverrides)) {
-  if (!triggersMap.has(name)) {
-    triggersMap.set(name, {
-      name,
-      description: `Parameter block (${name})`,
-      supportedScopes: ['none'],
-      parameters,
-    });
-  }
-}
 
 // Export modifiers
 export * from './modifiers.generated';

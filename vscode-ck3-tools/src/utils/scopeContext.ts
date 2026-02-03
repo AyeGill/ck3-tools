@@ -12,7 +12,7 @@ import { effectsMap, triggersMap } from '../data';
  * Block context information - what kind of code we're in and what scope
  */
 export interface BlockContext {
-  type: 'trigger' | 'effect' | 'unknown';
+  type: 'trigger' | 'effect' | 'weight' | 'unknown';
   scope: ScopeType;
   unknownScope?: boolean; // True when inside scope:X blocks where we can't determine the target scope
 }
@@ -22,9 +22,37 @@ export interface BlockContext {
  */
 export const TRIGGER_BLOCKS = new Set([
   'trigger', 'is_shown', 'is_valid', 'is_valid_showing_failures_only',
-  'ai_potential', 'ai_will_do', 'can_be_picked', 'can_pick',
+  'ai_potential', 'can_be_picked', 'can_pick',
   'is_highlighted', 'auto_accept', 'can_send', 'can_be_picked_artifact',
-  'limit', 'modifier', // limit and modifier inside effects also contain triggers
+  'limit', // Note: 'modifier' removed - it's context-dependent (see TRIGGER_CONTEXT_BLOCKS_WITH_PARAMS)
+]);
+
+/**
+ * Weight calculation blocks (ai_will_do, ai_chance, etc.)
+ * These are NOT trigger context - they have their own structure
+ */
+export const WEIGHT_BLOCKS = new Set([
+  'ai_will_do', 'ai_chance', 'ai_accept', 'weight', 'weight_multiplier',
+]);
+
+/**
+ * Parameters valid directly inside weight blocks
+ */
+export const WEIGHT_BLOCK_PARAMS = new Set([
+  'base', 'modifier', 'opinion_modifier', 'factor', 'add', 'multiply',
+]);
+
+/**
+ * Blocks that create trigger context AND have extra valid parameters
+ * These blocks contain inline triggers plus their own parameters
+ */
+export const TRIGGER_CONTEXT_BLOCKS_WITH_PARAMS = new Map<string, {
+  validIn: 'weight' | 'effect' | 'trigger' | 'any';
+  extraParams: Set<string>;
+}>([
+  ['modifier', { validIn: 'weight', extraParams: new Set(['add', 'factor', 'multiply', 'desc', 'value']) }],
+  ['opinion_modifier', { validIn: 'weight', extraParams: new Set(['who', 'opinion_target', 'min', 'max', 'multiplier', 'desc', 'step']) }],
+  ['compare_value', { validIn: 'trigger', extraParams: new Set(['value', 'target']) }],
 ]);
 
 /**
@@ -65,16 +93,24 @@ export function analyzeBlockContext(
   blockPath: string[],
   initialScope: ScopeType = 'character'
 ): BlockContext {
-  let contextType: 'trigger' | 'effect' | 'unknown' = 'unknown';
+  let contextType: 'trigger' | 'effect' | 'weight' | 'unknown' = 'unknown';
   let currentScope: ScopeType = initialScope;
   let unknownScope = false;
 
   for (const block of blockPath) {
-    // Check if this block establishes a trigger or effect context
-    if (TRIGGER_BLOCKS.has(block)) {
+    // Check if this block establishes a context
+    if (WEIGHT_BLOCKS.has(block)) {
+      contextType = 'weight';
+    } else if (TRIGGER_BLOCKS.has(block)) {
       contextType = 'trigger';
     } else if (EFFECT_BLOCKS.has(block)) {
       contextType = 'effect';
+    } else {
+      // Check for blocks that create trigger context with extra params
+      const blockConfig = TRIGGER_CONTEXT_BLOCKS_WITH_PARAMS.get(block);
+      if (blockConfig && (blockConfig.validIn === 'any' || blockConfig.validIn === contextType)) {
+        contextType = 'trigger'; // These blocks create trigger context inside
+      }
     }
 
     // Check if this is a scope:X reference - we can't determine the target scope
