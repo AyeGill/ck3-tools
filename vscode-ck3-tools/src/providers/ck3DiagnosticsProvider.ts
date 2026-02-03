@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { FieldSchema } from '../schemas/traitSchema';
-import { effectsMap, triggersMap, modifiersMap, ScopeType } from '../data';
+import { effectsMap, triggersMap, modifiersMap, matchesModifierTemplate, ScopeType } from '../data';
 import {
   TRIGGER_BLOCKS,
   EFFECT_BLOCKS,
@@ -490,8 +490,8 @@ export class CK3DiagnosticsProvider {
         continue;
       }
 
-      // If schema has modifier wildcard, accept any valid modifier
-      if (hasModifierWildcard && modifiersMap.has(fieldName)) {
+      // If schema has modifier wildcard, accept any valid modifier or template match
+      if (hasModifierWildcard && (modifiersMap.has(fieldName) || matchesModifierTemplate(fieldName))) {
         continue;
       }
 

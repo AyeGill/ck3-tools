@@ -115,6 +115,10 @@ So for example prompting for skill modifications in a trait template makes littl
 
 ## Future Investigation
 
+- [ ] **Scripted Modifiers / Weight Blocks**: The `scriptedModifierSchema` actually describes "weight blocks" (value calculation blocks used in `ai_will_do`, `agent_join_chance`, random event weights, etc.). These have fields like `base`, `add`, `multiply`, `modifier = {}`. However, weight blocks can also **include other scripted modifiers by name** (e.g., `compatibility_modifier = yes`). This is a wildcard situation - need to either parse `common/scripted_modifiers/` to get the list of valid scripted modifier names, or accept any `*_modifier` pattern. See [CK3 Wiki - Weight modifier](https://ck3.paradoxwikis.com/Weight_modifier).
+
+- [ ] **Modifier wildcard validation**: The `modifierSchema` and `traitSchema` have modifier wildcards that check against `modifiersMap`, but the map only contains ~736 static modifiers. Many modifier names are **template instantiations** (e.g., `$TERRAIN$_advantage` → `desert_advantage`, `$CULTURE$_opinion` → `afghan_opinion`). These instantiated names aren't in the map. Options: (1) expand templates by parsing game data for cultures/terrains/etc., (2) use regex patterns, or (3) accept any field in static_modifier contexts.
+
 - [ ] Review `isSpecialPattern` logic in `ck3DiagnosticsProvider.ts` (~lines 1057-1093)
   - Handles special CK3 patterns that shouldn't be flagged as unknown triggers/effects:
     - Script variable substitutions: `$VAR$`, `$VARIABLE$`
