@@ -442,7 +442,7 @@ const triggerParameterOverrides: Record<string, string[]> = {
   'any_in_global_list': ['list', 'variable', 'count'],
 
   // Claim triggers
-  'any_claim': ['explicit', 'pressed'],
+  'any_claim': ['explicit', 'pressed', 'count', 'percent'],
 
   // Struggle triggers
   'any_character_struggle': ['involvement'],
@@ -515,7 +515,7 @@ const triggerParameterOverrides: Record<string, string[]> = {
   'ai_will_do': ['base', 'modifier', 'factor', 'add', 'multiplier'],
   'weight': ['base', 'modifier', 'factor', 'add', 'multiplier', 'min', 'max'],
   'weight_multiplier': ['base', 'modifier', 'factor'],
-  'modifier': ['add', 'factor', 'desc', 'trigger'],
+  'modifier': ['add', 'factor', 'desc', 'trigger', 'value'],
 
   // Trait-related triggers
   'has_trait_rank': ['trait', 'rank', 'value'],
@@ -525,7 +525,7 @@ const triggerParameterOverrides: Record<string, string[]> = {
   'has_character_flag': ['flag', 'days', 'months', 'years', 'weeks'],
 
   // Numeric comparison blocks
-  'add': ['value', 'min', 'max'],
+  'add': ['value', 'min', 'max', 'floor', 'ceiling'],
   'multiply': ['value', 'min', 'max'],
   'divide': ['value', 'min', 'max'],
   'subtract': ['value', 'min', 'max'],
@@ -559,6 +559,30 @@ const triggerParameterOverrides: Record<string, string[]> = {
   'any_war_participant': ['count', 'percent'],
   'any_war_enemy': ['count', 'percent'],
   'any_war_ally': ['count', 'percent'],
+
+  // XP track triggers
+  'has_trait_xp': ['trait', 'track', 'value'],
+
+  // Scheme triggers
+  'is_scheming_against': ['target', 'type', 'skill'],
+
+  // Men-at-arms triggers
+  'number_maa_regiments_of_base_type': ['type', 'value'],
+  'max_number_maa_soldiers_of_base_type': ['type', 'value'],
+
+  // Value comparison triggers
+  'number_of_personality_traits_in_common': ['target', 'value'],
+  'number_of_traits_in_common': ['target', 'value'],
+  'tier_difference': ['target', 'value'],
+  'faith_hostility_level': ['target', 'value'],
+  'player_heir_position': ['value'],
+  'tax_collector_aptitude': ['value'],
+
+  // Hook triggers
+  'has_hook_of_type': ['target', 'type'],
+
+  // Court position triggers
+  'is_court_position_employer': ['court_position', 'who'],
 };
 
 /**
@@ -573,6 +597,19 @@ export const triggersMap = new Map<string, TriggerDefinition>(
     return [t.name, t];
   })
 );
+
+// Add pseudo-triggers: schema blocks that appear in trigger contexts
+// These aren't actual game triggers but need to be recognized as valid parents with parameters
+for (const [name, parameters] of Object.entries(triggerParameterOverrides)) {
+  if (!triggersMap.has(name)) {
+    triggersMap.set(name, {
+      name,
+      description: `Parameter block (${name})`,
+      supportedScopes: ['none'],
+      parameters,
+    });
+  }
+}
 
 // Export modifiers
 export * from './modifiers.generated';

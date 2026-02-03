@@ -37,6 +37,7 @@ exports.CK3CompletionProvider = void 0;
 const vscode = __importStar(require("vscode"));
 const traitSchema_1 = require("../schemas/traitSchema");
 const data_1 = require("../data");
+const scopeContext_1 = require("../utils/scopeContext");
 const eventSchema_1 = require("../schemas/eventSchema");
 const decisionSchema_1 = require("../schemas/decisionSchema");
 const interactionSchema_1 = require("../schemas/interactionSchema");
@@ -297,24 +298,6 @@ function getAllTriggersSchema() {
     return data_1.allTriggers.map(triggerToFieldSchema);
 }
 /**
- * Known trigger block names (entry points into trigger context)
- */
-const TRIGGER_BLOCKS = new Set([
-    'trigger', 'is_shown', 'is_valid', 'is_valid_showing_failures_only',
-    'ai_potential', 'ai_will_do', 'can_be_picked', 'can_pick',
-    'is_highlighted', 'auto_accept', 'can_send', 'can_be_picked_artifact',
-    'limit', 'modifier', // limit and modifier inside effects also contain triggers
-]);
-/**
- * Known effect block names (entry points into effect context)
- */
-const EFFECT_BLOCKS = new Set([
-    'immediate', 'effect', 'after', 'on_accept', 'on_decline',
-    'on_send', 'on_auto_accept', 'option', 'hidden_effect',
-    'on_use', 'on_expire', 'on_invalidated', // Hook effect blocks
-    'on_discover', 'on_expose', // Secret effect blocks
-]);
-/**
  * Known modifier block names - these establish a modifier context
  * The value indicates the modifier category (character, county, province)
  */
@@ -331,12 +314,6 @@ const MODIFIER_BLOCKS = new Map([
     // Province modifier blocks
     ['province_modifier', 'province'],
 ]);
-/**
- * Check if a block name is numeric (e.g., "50" in track = { 50 = { } })
- */
-function isNumericBlock(block) {
-    return /^\d+$/.test(block);
-}
 /**
  * Analyze blockPath to determine if we're in a modifier context.
  * Walks through the block path looking for modifier-establishing blocks.
@@ -364,19 +341,19 @@ function analyzeModifierContext(blockPath) {
         if (inMultiTrack) {
             multiTrackDepth++;
             // After 'tracks', first block is track name (skip), second+ blocks if numeric are modifier contexts
-            if (multiTrackDepth >= 2 && isNumericBlock(block)) {
+            if (multiTrackDepth >= 2 && (0, scopeContext_1.isNumericBlock)(block)) {
                 modifierCategory = 'character';
             }
             continue;
         }
         // Numeric blocks inside a modifier context stay in that context
         // (e.g., track = { 50 = { learning = 2 } })
-        if (isNumericBlock(block) && modifierCategory) {
+        if ((0, scopeContext_1.isNumericBlock)(block) && modifierCategory) {
             // Stay in modifier context
             continue;
         }
         // If we hit a trigger or effect block, we leave modifier context
-        if (TRIGGER_BLOCKS.has(block) || EFFECT_BLOCKS.has(block)) {
+        if (scopeContext_1.TRIGGER_BLOCKS.has(block) || scopeContext_1.EFFECT_BLOCKS.has(block)) {
             // Check if this is 'modifier' which is special - it's both a trigger container
             // AND a modifier context depending on usage
             if (block !== 'modifier') {
@@ -388,54 +365,6 @@ function analyzeModifierContext(blockPath) {
         inModifierBlock: modifierCategory !== null,
         modifierCategory,
     };
-}
-/**
- * Check if a block name is a scope:X pattern where we can't determine the target scope
- */
-function isScopeReference(block) {
-    return /^scope:[a-zA-Z_][a-zA-Z0-9_]*$/.test(block);
-}
-/**
- * Analyze blockPath to determine the current context type and scope.
- * Walks through the block path, tracking scope changes from iterators.
- *
- * @param blockPath Array of block names from outermost to innermost
- * @param initialScope The scope to start with (typically 'character' for events)
- * @returns Object with context type ('trigger' or 'effect') and current scope
- */
-function analyzeBlockContext(blockPath, initialScope = 'character') {
-    let contextType = 'unknown';
-    let currentScope = initialScope;
-    let unknownScope = false;
-    for (const block of blockPath) {
-        // Check if this block establishes a trigger or effect context
-        if (TRIGGER_BLOCKS.has(block)) {
-            contextType = 'trigger';
-        }
-        else if (EFFECT_BLOCKS.has(block)) {
-            contextType = 'effect';
-        }
-        // Check if this is a scope:X reference - we can't determine the target scope
-        if (isScopeReference(block)) {
-            unknownScope = true;
-            continue;
-        }
-        // Check if this block is a scope-changing trigger or effect
-        // Look up in triggers first (for any_* iterators in trigger blocks)
-        const trigger = data_1.triggersMap.get(block);
-        if (trigger?.outputScope) {
-            currentScope = trigger.outputScope;
-            unknownScope = false; // Known scope again
-            continue;
-        }
-        // Look up in effects (for every_* iterators in effect blocks)
-        const effect = data_1.effectsMap.get(block);
-        if (effect?.outputScope) {
-            currentScope = effect.outputScope;
-            unknownScope = false; // Known scope again
-        }
-    }
-    return { type: contextType, scope: currentScope, unknownScope };
 }
 /**
  * Get completions for a block context - triggers or effects filtered by scope
@@ -467,7 +396,7 @@ function getSchemaWithTriggerEffectBlocks(blockPath, topLevelSchema, initialScop
     if (blockPath.length === 0) {
         return topLevelSchema;
     }
-    const blockContext = analyzeBlockContext(blockPath, initialScope);
+    const blockContext = (0, scopeContext_1.analyzeBlockContext)(blockPath, initialScope);
     // Check for internal field schemas first (e.g., opinion = { target = ... value = ... })
     const internalFields = getInternalFieldSchema(blockPath, blockContext.type);
     if (internalFields) {
@@ -1426,7 +1355,7 @@ class CK3CompletionProvider {
                 }
                 // Analyze the block path for scope-aware completions
                 {
-                    const blockContext = analyzeBlockContext(blockPath, 'character');
+                    const blockContext = (0, scopeContext_1.analyzeBlockContext)(blockPath, 'character');
                     // Check for internal field schemas first (e.g., opinion = { target = ... value = ... })
                     const internalFields = getInternalFieldSchema(blockPath, blockContext.type);
                     if (internalFields) {
@@ -1443,7 +1372,7 @@ class CK3CompletionProvider {
                 }
                 // Check if we're inside an option (options contain effects)
                 if (blockPath.includes('option') && blockPath.length > 1) {
-                    const blockContext = analyzeBlockContext(blockPath, 'character');
+                    const blockContext = (0, scopeContext_1.analyzeBlockContext)(blockPath, 'character');
                     // Check for internal field schemas first
                     const internalFields = getInternalFieldSchema(blockPath, blockContext.type);
                     if (internalFields) {
@@ -1462,7 +1391,7 @@ class CK3CompletionProvider {
                 }
                 // Analyze the block path for scope-aware completions
                 {
-                    const blockContext = analyzeBlockContext(blockPath, 'character');
+                    const blockContext = (0, scopeContext_1.analyzeBlockContext)(blockPath, 'character');
                     // Check for internal field schemas first (e.g., opinion = { target = ... value = ... })
                     const internalFields = getInternalFieldSchema(blockPath, blockContext.type);
                     if (internalFields) {
@@ -1507,7 +1436,7 @@ class CK3CompletionProvider {
                 }
                 {
                     // Inside a scripted effect, we're always in effect context
-                    const blockContext = analyzeBlockContext(blockPath, 'character');
+                    const blockContext = (0, scopeContext_1.analyzeBlockContext)(blockPath, 'character');
                     const internalFields = getInternalFieldSchema(blockPath, 'effect');
                     if (internalFields) {
                         return internalFields;
@@ -1522,7 +1451,7 @@ class CK3CompletionProvider {
                 }
                 {
                     // Inside a scripted trigger, we're always in trigger context
-                    const blockContext = analyzeBlockContext(blockPath, 'character');
+                    const blockContext = (0, scopeContext_1.analyzeBlockContext)(blockPath, 'character');
                     const internalFields = getInternalFieldSchema(blockPath, 'trigger');
                     if (internalFields) {
                         return internalFields;

@@ -79,14 +79,12 @@ So for example prompting for skill modifications in a trait template makes littl
 - [ ] Simple linting. If we have a comprehensive list of items that are valid in each space (that is, a proper, complete schema) we can mark any invalid ones. (I guess there should be a "ignore this particular invalid field forever" button). We can also detect name collisions (especially useful for events that are just named by numbers), at least within the same mod.
   - **IN PROGRESS**: `CK3DiagnosticsProvider` implemented with schema-based validation
   - Run `npx vitest run src/test/validateGameFiles.test.ts` to validate against vanilla game files (1,522 files)
-  - Current output: 41,889 diagnostics (mostly false positives indicating coverage gaps)
-  - [ ] **Unknown fields (16,816)** - Many game file fields not yet in schemas. Audit game files and add missing fields to `src/schemas/`
-  - [ ] **Unknown effects (13,781)** - Effects not in `src/data/effects.ts`. The `couldBeScriptedEffectOrTrigger` heuristic suppresses warnings for names with underscores, but many built-in effects still missing
-  - [ ] **Invalid theme values (5,453)** - The `theme` enum in event schema needs more values
+  - Current output: 17,269 diagnostics (down from 41,889)
+  - [x] **Unknown effects** - ~~Effects not in `src/data/effects.ts`~~ **DONE**: All effects now recognized via generated data + parameter overrides + scripted pattern heuristics
+  - [x] **Unknown triggers** - ~~Triggers not in `src/data/triggers.ts`~~ **DONE**: All triggers now recognized via generated data + parameter overrides + special pattern handling
+  - [ ] **Unknown fields (13,591)** - Many game file fields not yet in schemas. Audit game files and add missing fields to `src/schemas/`
   - [ ] **Missing required fields (1,949)** - May be flagging fields that aren't actually required in all contexts
-  - [ ] **Unknown triggers (1,848)** - Triggers not in `src/data/triggers.ts`
-  - [ ] **Invalid category values (201)** - The `category` enum needs more values
-  - [ ] **Type mismatches** - Validator flags script value references (like `expensive_building_tier_3_cost`) as type errors. Options: accept identifiers as numeric values, build list of known script values, or add "script_value" type
+  - [ ] **Type mismatches (~1,700)** - Validator flags script value references (like `expensive_building_tier_3_cost`) as type errors. Options: accept identifiers as numeric values, build list of known script values, or add "script_value" type
   - [ ] **Boolean type mismatches (95)** - Fields like `auto_accept` expect `yes/no` but sometimes take block values for conditional logic
   - [ ] **Dynamic key blocks** - Currently using a hardcoded `DYNAMIC_KEY_BLOCKS` set (e.g., `stress_impact`) to skip validation for blocks where children are trait names or other dynamic keys rather than effects/triggers. This is a quick fix; a more careful approach might define this in the schema itself (e.g., a `childKeyType: 'trait'` property) so the validator knows what kind of keys to expect.
   - [ ] **Mixed schema/effect blocks** - Some blocks like `option` contain both schema fields (`name`, `flavor`, `trigger`) AND effects. Currently these schema fields get flagged as unknown effects. Need to recognize when we're inside a schema-defined block and check children against both the sub-schema AND the effects list.
@@ -96,7 +94,8 @@ So for example prompting for skill modifications in a trait template makes littl
   - **DONE**: Added template validation tests (`templates.test.ts` - 23 tests)
   - **DONE**: Added completion provider tests (`ck3CompletionProvider.test.ts` - 23 tests)
   - **DONE**: Added hover provider tests (`ck3HoverProvider.test.ts` - 17 tests)
-  - Total: 63 tests passing
+  - **DONE**: Added diagnostics provider tests and context detection tests
+  - Total: 107 tests passing
 
 
 - What's up with accessory and artifact both being schemae? Should look in the game files and figure this out.

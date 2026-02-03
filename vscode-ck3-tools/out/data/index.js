@@ -97,6 +97,226 @@ const controlFlowEffects = [
     { name: 'hidden_effect', description: 'Execute effects without showing in tooltip', supportedScopes: ['none'], syntax: 'hidden_effect = { <effects> }' },
 ];
 /**
+ * Parameter overrides for effects where generated data is incomplete
+ * These override the parameters array from effects.generated.ts
+ */
+const effectParameterOverrides = {
+    // Variable effects
+    'set_variable': ['name', 'value', 'days', 'months', 'weeks', 'years'],
+    'set_local_variable': ['name', 'value', 'days', 'months', 'weeks', 'years'],
+    'set_global_variable': ['name', 'value', 'days', 'months', 'weeks', 'years'],
+    'change_variable': ['name', 'add', 'subtract', 'multiply', 'divide', 'min', 'max'],
+    'change_local_variable': ['name', 'add', 'subtract', 'multiply', 'divide', 'min', 'max'],
+    'change_global_variable': ['name', 'add', 'subtract', 'multiply', 'divide', 'min', 'max'],
+    // Event effects
+    'trigger_event': ['id', 'on_action', 'days', 'months', 'weeks', 'years', 'delayed'],
+    // Random effects
+    'random': ['chance', 'modifier'],
+    'random_list': ['modifier', 'desc'],
+    // Interface effects
+    'custom_tooltip': ['text', 'subject', 'object'],
+    'custom_description': ['text'],
+    'send_interface_message': ['type', 'title', 'desc', 'tooltip', 'left_icon', 'right_icon', 'goto'],
+    'send_interface_toast': ['type', 'title', 'desc', 'left_icon', 'right_icon'],
+    // Death effect
+    'death': ['death_reason', 'killer'],
+    // Opinion effects
+    'add_opinion': ['target', 'modifier', 'opinion', 'years', 'months', 'days', 'weeks'],
+    'reverse_add_opinion': ['target', 'modifier', 'opinion', 'years', 'months', 'days', 'weeks'],
+    // List/iteration
+    'every_in_list': ['list', 'variable', 'custom'],
+    'random_in_list': ['list', 'variable', 'weight'],
+    'ordered_in_list': ['list', 'variable', 'order_by', 'position', 'min', 'max', 'check_range_bounds'],
+    'any_in_list': ['list', 'variable', 'count'],
+    'add_to_list': ['name', 'value', 'list', 'variable'],
+    'add_to_temporary_list': ['name', 'value', 'list', 'variable'],
+    // Casus belli
+    'start_war': ['casus_belli', 'cb', 'target', 'claimant', 'target_title'],
+    // Scheme effects
+    'start_scheme': ['type', 'target'],
+    // Create character
+    'create_character': ['template', 'name', 'age', 'gender', 'culture', 'faith', 'dynasty', 'location', 'employer', 'trait', 'save_scope_as'],
+    // Modifier effects
+    'add_scheme_modifier': ['type', 'days', 'months', 'weeks', 'years'],
+    'add_character_modifier': ['modifier', 'days', 'months', 'weeks', 'years', 'desc'],
+    'add_county_modifier': ['modifier', 'days', 'months', 'weeks', 'years', 'desc'],
+    'add_province_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
+    'add_realm_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
+    'add_dynasty_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
+    'add_house_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
+    'add_culture_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
+    'add_faith_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
+    'add_activity_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
+    'add_travel_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
+    // Flag effects
+    'add_character_flag': ['flag', 'days', 'months', 'weeks', 'years'],
+    'add_dynasty_flag': ['flag', 'days', 'months', 'weeks', 'years'],
+    'add_house_flag': ['flag', 'days', 'months', 'weeks', 'years'],
+    'add_title_flag': ['flag', 'days', 'months', 'weeks', 'years'],
+    // Save scope
+    'save_scope_as': [], // Takes just a name, not block params
+    'save_scope_value_as': ['name', 'value'],
+    'save_temporary_scope_as': [],
+    'save_temporary_scope_value_as': ['name', 'value'],
+    // Spawn effects
+    'spawn_army': ['name', 'levies', 'men_at_arms', 'location', 'inheritable', 'uses_supply', 'save_scope_as', 'war'],
+    // Truce effects
+    'add_truce_one_way': ['character', 'years', 'months', 'days', 'weeks', 'name'],
+    'add_truce_both_ways': ['character', 'years', 'months', 'days', 'weeks', 'name'],
+    'remove_truce': ['character'],
+    // Script value math (used inside script values)
+    'add': ['value', 'min', 'max'],
+    'subtract': ['value', 'min', 'max'],
+    'multiply': ['value', 'min', 'max'],
+    'divide': ['value', 'min', 'max'],
+    'min': ['value'],
+    'max': ['value'],
+    'floor': ['value'],
+    'round': ['value'],
+    // Show portrait
+    'show_portrait': ['character', 'trigger', 'animation', 'camera'],
+    // Assert effects (for debugging)
+    'assert_if': ['limit', 'text'],
+    'assert_read': ['target', 'text'],
+    // Duel effects
+    'duel': ['target', 'skill', 'value', 'on_success', 'on_fail', 'localization', 'desc'],
+    // Dynasty effects
+    'add_dynasty_perk': ['perk'],
+    'add_dynasty_prestige_level': [],
+    // Secret effects
+    'expose_secret': ['secret', 'target'],
+    'add_secret': ['type', 'target'],
+    // Activity effects
+    'complete_activity': [],
+    'cancel_activity': [],
+    'set_activity_location': ['province'],
+    // Struggle effects
+    'activate_struggle_catalyst': ['catalyst', 'character'],
+    'set_struggle_phase': ['struggle_type', 'phase'],
+    // Culture/faith effects
+    'set_culture': ['culture', 'save_scope_as'],
+    'set_faith': ['faith', 'save_scope_as'],
+    'convert_family_to_faith': ['faith'],
+    // Memory effects
+    'add_memory': ['type', 'participants', 'priority'],
+    // Focus effects
+    'set_focus': ['focus'],
+    'set_education_focus': ['focus'],
+    // Trait effects (complex form)
+    'add_trait': ['trait', 'track', 'value'],
+    'remove_trait': ['trait', 'track'],
+    // Court position effects
+    'appoint_court_position': ['recipient', 'court_position'],
+    // Inventory effects
+    'create_artifact': ['name', 'type', 'template', 'rarity', 'save_scope_as', 'modifier', 'decaying', 'history', 'visuals', 'description', 'wealth', 'quality'],
+    // Title effects
+    'change_title_holder': ['holder', 'change'],
+    'create_title_and_vassal_change': ['type', 'save_scope_as', 'add_claim_on_loss'],
+    // More list effects
+    'every_in_local_list': ['list', 'variable'],
+    'random_in_local_list': ['list', 'variable', 'weight'],
+    'any_in_local_list': ['list', 'variable', 'count'],
+    'ordered_in_local_list': ['list', 'variable', 'order_by', 'position', 'min', 'max'],
+    'add_to_local_list': ['list', 'variable'],
+    'add_to_variable_list': ['name', 'target', 'years', 'months', 'days', 'weeks'],
+    'add_to_global_variable_list': ['name', 'target'],
+    'remove_list_variable': ['name', 'target'],
+    'remove_list_global_variable': ['name', 'target'],
+    'while': ['limit', 'count', 'list'],
+    // Math effects (when used as block with value)
+    'add_legitimacy': ['value', 'divide', 'subtract', 'multiply', 'min', 'max'],
+    'add_piety': ['value', 'divide', 'subtract', 'multiply', 'min', 'max'],
+    'add_prestige': ['value', 'divide', 'subtract', 'multiply', 'min', 'max'],
+    'add_gold': ['value', 'divide', 'subtract', 'multiply', 'min', 'max'],
+    'add_dynasty_prestige': ['value', 'divide', 'subtract', 'multiply', 'min', 'max'],
+    'add_scheme_progress': ['value', 'subtract', 'add'],
+    'remove_short_term_gold': ['value', 'divide', 'subtract', 'multiply', 'min', 'max'],
+    'pay_short_term_gold': ['target', 'gold'],
+    'add_treasury_or_gold': ['value', 'min', 'max'],
+    'change_development_level': ['value', 'divide', 'floor', 'subtract', 'multiply'],
+    'change_influence': ['value', 'round', 'add', 'subtract'],
+    'change_fervor': ['value', 'desc'],
+    'change_cultural_acceptance': ['value', 'target', 'desc'],
+    'change_merit': ['value'],
+    'change_opportunities': ['value'],
+    'pay_herd': ['value', 'target'],
+    'add_trait_xp': ['value', 'track', 'trait'],
+    // Relation effects
+    'set_relation_lover': ['target', 'reason', 'province', 'copy_reason'],
+    'set_relation_rival': ['target', 'reason', 'copy_reason'],
+    'set_relation_friend': ['target', 'reason', 'copy_reason'],
+    'set_relation_nemesis': ['target', 'reason', 'copy_reason'],
+    'set_relation_grudge': ['target', 'reason', 'copy_reason'],
+    'remove_relation_flag': ['target', 'relation', 'flag'],
+    'remove_opinion': ['target', 'modifier', 'single'],
+    'remove_hook': ['target', 'type'],
+    // Character effects
+    'imprison': ['target', 'type'],
+    'change_liege': ['liege', 'change', 'LIEGE', 'CHANGE'],
+    'becomes_independent': ['change'],
+    'change_trait_rank': ['trait', 'rank', 'max', 'value'],
+    // Faction/war effects
+    'create_faction': ['type', 'target', 'special_character', 'special_title'],
+    // Region iteration
+    'every_county_in_region': ['region', 'custom'],
+    'every_vassal': ['custom', 'even_if_dead'],
+    'every_close_family_member': ['custom', 'even_if_dead'],
+    'every_relation': ['type', 'custom'],
+    'random_relation': ['type', 'weight'],
+    'every_character_struggle': ['involvement', 'custom'],
+    'random_court_position_holder': ['type', 'weight'],
+    // Activity effects
+    'add_activity_log_entry': ['key', 'character', 'target', 'artifact', 'scope', 'tags', 'score'],
+    // Dynasty effects
+    'create_cadet_branch': ['prefix', 'founder', 'name'],
+    'vassal_contract_set_obligation_level': ['type', 'level'],
+    'set_appointment_timeout': ['years', 'months', 'days', 'weeks'],
+    // More iterators with custom parameter
+    'every_attending_character': ['custom'],
+    'every_close_or_extended_family_member': ['custom', 'even_if_dead'],
+    'every_vassal_or_below': ['custom', 'even_if_dead'],
+    'every_courtier': ['custom', 'even_if_dead'],
+    'every_in_de_jure_hierarchy': ['custom'],
+    'every_pool_character': ['province', 'custom'],
+    'every_ruler': ['custom'],
+    'every_independent_ruler': ['custom'],
+    'every_court_position_holder': ['type', 'custom'],
+    'every_knight': ['custom', 'even_if_dead'],
+    'every_faction_member': ['custom'],
+    'every_courtier_or_guest': ['custom'],
+    'every_child': ['custom', 'even_if_dead'],
+    'every_councillor': ['custom'],
+    'every_traveling_family_member': ['custom'],
+    'every_in_global_list': ['list', 'variable', 'custom'],
+    'random_in_global_list': ['list', 'variable', 'weight'],
+    'random_pool_character': ['province', 'weight'],
+    'random_county_in_region': ['region', 'weight'],
+    'ordered_relation': ['type', 'order_by', 'position', 'min', 'max'],
+    // More value effects
+    'add_durability': ['value'],
+    'add_dread': ['value', 'min', 'max'],
+    'add_stress': ['value', 'min', 'max', 'type'],
+    'add_unity_value': ['value', 'character', 'desc'],
+    'change_herd': ['value'],
+    'change_county_control': ['value'],
+    'pay_treasury_or_gold': ['value', 'target'],
+    'pay_gold_to_treasury': ['value', 'target'],
+    'pay_long_term_gold': ['target', 'gold'],
+    'add_martial_lifestyle_xp': ['value'],
+    // Interface effects (unique additions)
+    'open_view_data': ['data', 'view', 'player'],
+    'save_opinion_value_as': ['name', 'target'],
+    // Control flow (parameters)
+    'if': ['limit', 'text'],
+    // Trait rank effects
+    'set_trait_rank': ['trait', 'rank'],
+    // Claim iterators
+    'every_claim': ['explicit', 'pressed', 'custom'],
+    'random_claim': ['explicit', 'pressed', 'weight'],
+    // Struggle iterators
+    'random_character_struggle': ['involvement', 'weight'],
+};
+/**
  * Logical triggers (NOT/AND/OR)
  */
 const logicalTriggers = [
@@ -148,12 +368,152 @@ function getTriggersForScope(scope) {
 }
 /**
  * Build a map for quick lookup (includes scope changers)
+ * Apply parameter overrides where needed
  */
-exports.effectsMap = new Map(exports.allEffects.map(e => [e.name, e]));
+exports.effectsMap = new Map(exports.allEffects.map(e => {
+    const override = effectParameterOverrides[e.name];
+    if (override) {
+        return [e.name, { ...e, parameters: override }];
+    }
+    return [e.name, e];
+}));
+/**
+ * Parameter overrides for triggers where generated data is incomplete
+ */
+const triggerParameterOverrides = {
+    // List iteration triggers
+    'any_in_list': ['list', 'variable', 'count', 'percent'],
+    'any_in_local_list': ['list', 'variable', 'count'],
+    'any_in_global_list': ['list', 'variable', 'count'],
+    // Claim triggers
+    'any_claim': ['explicit', 'pressed', 'count', 'percent'],
+    // Struggle triggers
+    'any_character_struggle': ['involvement'],
+    // Relation triggers
+    'any_relation': ['type'],
+    // Court position triggers
+    'any_court_position_holder': ['type'],
+    // Variable triggers
+    'has_variable': ['name', 'value'],
+    'has_local_variable': ['name', 'value'],
+    'has_global_variable': ['name', 'value'],
+    'has_variable_list': ['name'],
+    'has_local_variable_list': ['name'],
+    'has_global_variable_list': ['name'],
+    // Compare triggers
+    'compare_value': ['value', 'target'],
+    // Iterator triggers that take count/percent
+    'any_consort': ['count', 'percent'],
+    'any_spouse': ['count', 'percent'],
+    'any_child': ['count', 'percent'],
+    'any_parent': ['count', 'percent'],
+    'any_sibling': ['count', 'percent'],
+    'any_courtier': ['count', 'percent', 'even_if_dead'],
+    'any_courtier_or_guest': ['count', 'percent'],
+    'any_vassal': ['count', 'percent', 'even_if_dead'],
+    'any_held_title': ['count', 'percent'],
+    'any_heir_title': ['count', 'percent'],
+    'any_heir': ['count', 'percent'],
+    'any_faction_member': ['count', 'percent'],
+    'any_scheme_agent_character': ['count', 'percent'],
+    'any_scheme_agent_slot': ['count', 'percent'],
+    'any_secret_knower': ['count', 'percent'],
+    'any_killed_character': ['count', 'percent'],
+    'any_entourage_character': ['count', 'percent'],
+    'any_attending_character': ['count', 'percent'],
+    'any_close_family_member': ['count', 'percent', 'even_if_dead'],
+    'any_dynasty_member': ['count', 'percent'],
+    'any_culture_county': ['count', 'percent'],
+    'any_province_epidemic': ['count', 'percent'],
+    'any_knight': ['count', 'percent'],
+    'any_held_county': ['count', 'percent'],
+    'any_sub_realm_county': ['count', 'percent'],
+    'any_targeting_faction': ['count', 'percent'],
+    'any_faith': ['count', 'percent'],
+    'any_leased_title': ['count', 'percent'],
+    'any_martial_councillor': ['count', 'percent'],
+    // Region iteration triggers
+    'any_county_in_region': ['region', 'count', 'percent'],
+    'every_county_in_region': ['region'],
+    'random_county_in_region': ['region', 'weight'],
+    // Opinion modifier trigger
+    'opinion_modifier': ['who', 'opinion', 'multiplier', 'step', 'min', 'max', 'factor'],
+    'compare_modifier': ['value', 'multiplier', 'min', 'max'],
+    // Dread level trigger
+    'has_dread_level_towards': ['target', 'level'],
+    // Ordered triggers
+    'ordered_in_list': ['list', 'variable', 'order_by', 'position', 'min', 'max', 'check_range_bounds'],
+    // Weight/AI chance blocks (these take base, modifier, etc.)
+    'ai_chance': ['base', 'modifier', 'factor', 'add', 'multiplier'],
+    'ai_will_do': ['base', 'modifier', 'factor', 'add', 'multiplier'],
+    'weight': ['base', 'modifier', 'factor', 'add', 'multiplier', 'min', 'max'],
+    'weight_multiplier': ['base', 'modifier', 'factor'],
+    'modifier': ['add', 'factor', 'desc', 'trigger', 'value'],
+    // Trait-related triggers
+    'has_trait_rank': ['trait', 'rank', 'value'],
+    'trait_is_same_or_worse': ['trait', 'target'],
+    // Character flag triggers
+    'has_character_flag': ['flag', 'days', 'months', 'years', 'weeks'],
+    // Numeric comparison blocks
+    'add': ['value', 'min', 'max'],
+    'multiply': ['value', 'min', 'max'],
+    'divide': ['value', 'min', 'max'],
+    'subtract': ['value', 'min', 'max'],
+    'order_by': ['value'],
+    // Desc block for conditional descriptions
+    'desc': ['desc', 'trigger', 'first_valid', 'triggered_desc'],
+    'triggered_desc': ['desc', 'trigger'],
+    // Duel trigger
+    'duel': ['skill', 'target', 'value', 'localization'],
+    // Relation flag triggers
+    'has_relation_flag': ['target', 'relation', 'flag'],
+    'set_relation_flag': ['target', 'relation', 'flag'],
+    'remove_relation_flag': ['target', 'relation', 'flag'],
+    // More iterator triggers with count
+    'any_pool_character': ['province', 'count', 'percent'],
+    'any_ruler': ['count', 'percent'],
+    'any_independent_ruler': ['count', 'percent'],
+    'any_living_character': ['count', 'percent'],
+    'any_player': ['count', 'percent'],
+    'any_de_jure_county': ['count', 'percent'],
+    'any_de_jure_county_holder': ['count', 'percent'],
+    'any_neighboring_county': ['count', 'percent'],
+    'any_neighboring_province': ['count', 'percent'],
+    'any_activity_guest': ['count', 'percent'],
+    'any_activity_participant': ['count', 'percent'],
+    'any_activity_spectator': ['count', 'percent'],
+    'any_war_participant': ['count', 'percent'],
+    'any_war_enemy': ['count', 'percent'],
+    'any_war_ally': ['count', 'percent'],
+    // XP track triggers
+    'has_trait_xp': ['trait', 'track', 'value'],
+    // Scheme triggers
+    'is_scheming_against': ['target', 'type', 'skill'],
+    // Men-at-arms triggers
+    'number_maa_regiments_of_base_type': ['type', 'value'],
+    'max_number_maa_soldiers_of_base_type': ['type', 'value'],
+    // Value comparison triggers
+    'number_of_personality_traits_in_common': ['target', 'value'],
+    'number_of_traits_in_common': ['target', 'value'],
+    'tier_difference': ['target', 'value'],
+    'faith_hostility_level': ['target', 'value'],
+    'player_heir_position': ['value'],
+    'tax_collector_aptitude': ['value'],
+    // Hook triggers
+    'has_hook_of_type': ['target', 'type'],
+    // Court position triggers
+    'is_court_position_employer': ['court_position', 'who'],
+};
 /**
  * Build a map for quick lookup (includes scope changers)
  */
-exports.triggersMap = new Map(exports.allTriggers.map(t => [t.name, t]));
+exports.triggersMap = new Map(exports.allTriggers.map(t => {
+    const override = triggerParameterOverrides[t.name];
+    if (override) {
+        return [t.name, { ...t, parameters: override }];
+    }
+    return [t.name, t];
+}));
 // Export modifiers
 __exportStar(require("./modifiers.generated"), exports);
 //# sourceMappingURL=index.js.map

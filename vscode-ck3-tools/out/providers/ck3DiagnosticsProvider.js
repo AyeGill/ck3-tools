@@ -36,6 +36,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CK3DiagnosticsProvider = void 0;
 const vscode = __importStar(require("vscode"));
 const data_1 = require("../data");
+const scopeContext_1 = require("../utils/scopeContext");
 // Import all schemas we want to validate
 const traitSchema_1 = require("../schemas/traitSchema");
 const eventSchema_1 = require("../schemas/eventSchema");
@@ -54,28 +55,6 @@ const scriptedEffectsSchema_1 = require("../schemas/scriptedEffectsSchema");
 const scriptedTriggersSchema_1 = require("../schemas/scriptedTriggersSchema");
 const scriptedModifierSchema_1 = require("../schemas/scriptedModifierSchema");
 /**
- * Schema registry mapping file types to their schemas
- */
-/**
- * Block names that establish trigger context
- */
-const TRIGGER_BLOCKS = new Set([
-    'trigger', 'is_shown', 'is_valid', 'is_valid_showing_failures_only',
-    'ai_potential', 'ai_will_do', 'can_be_picked', 'can_pick',
-    'is_highlighted', 'auto_accept', 'can_send', 'can_be_picked_artifact',
-    'limit', // limit inside effects contains triggers
-]);
-/**
- * Block names that establish effect context
- */
-const EFFECT_BLOCKS = new Set([
-    'immediate', 'effect', 'after', 'on_accept', 'on_decline',
-    'on_send', 'on_auto_accept', 'option', 'hidden_effect',
-    'on_use', 'on_expire', 'on_invalidated',
-    'on_discover', 'on_expose',
-    'on_start', 'on_end', 'on_monthly', 'on_yearly',
-]);
-/**
  * Fields that are valid in both trigger and effect contexts (control flow, etc.)
  */
 const CONTROL_FLOW_FIELDS = new Set([
@@ -86,25 +65,24 @@ const CONTROL_FLOW_FIELDS = new Set([
     'custom_description', 'custom_tooltip', 'show_as_tooltip',
     'hidden_effect', 'run_interaction',
 ]);
-/**
- * Scope-changing effects/triggers (valid in most contexts)
- */
-const SCOPE_CHANGERS = new Set([
-    'root', 'prev', 'this', 'from',
-    'liege', 'top_liege', 'host', 'employer',
-    'father', 'mother', 'primary_spouse', 'betrothed',
-    'primary_heir', 'player_heir', 'designated_heir',
-    'dynasty', 'house', 'faith', 'culture', 'religion',
-    'capital_province', 'capital_county', 'primary_title',
-    'location', 'home_court',
-    // Iterator prefixes - these will be checked specially
-]);
+// SCOPE_CHANGERS now imported from '../utils/scopeContext' as KNOWN_SCOPE_CHANGERS
 /**
  * Prefixes for iterator effects/triggers
  */
 const ITERATOR_PREFIXES = [
     'every_', 'random_', 'any_', 'ordered_',
 ];
+/**
+ * Blocks where children are dynamic keys (not effects/triggers)
+ * For example, stress_impact children are trait names, not effects
+ */
+const DYNAMIC_KEY_BLOCKS = new Set([
+    'stress_impact', // children are trait names
+    'ai_value_modifier', // may have dynamic keys
+    'compare_value', // comparison block
+    'value', // numeric value blocks
+    'option', // event options have schema fields + effects (temporary - see TODO)
+]);
 const SCHEMA_REGISTRY = new Map([
     ['trait', { schema: traitSchema_1.traitSchema, schemaMap: traitSchema_1.traitSchemaMap }],
     ['event', { schema: eventSchema_1.eventSchema, schemaMap: eventSchema_1.eventSchemaMap }],
@@ -640,16 +618,19 @@ class CK3DiagnosticsProvider {
             // Count braces
             const openBraces = (cleanLine.match(/\{/g) || []).length;
             const closeBraces = (cleanLine.match(/\}/g) || []).length;
-            // Check for block start: name = {
-            const blockStartMatch = cleanLine.match(/^\s*(\S+)\s*=\s*\{/);
-            if (blockStartMatch) {
-                const blockName = blockStartMatch[1];
+            // Check for ALL block starts on this line: name = {
+            // A single line may contain multiple inline blocks like: limit = { scope:actor = { is_ai = yes } }
+            // We need to push ALL of them to keep the stack balanced with closing braces
+            const blockStartRegex = /(\S+)\s*=\s*\{/g;
+            const blockStarts = [...cleanLine.matchAll(blockStartRegex)];
+            for (const match of blockStarts) {
+                const blockName = match[1];
                 let context = 'unknown';
                 // Determine context based on block name
-                if (TRIGGER_BLOCKS.has(blockName)) {
+                if (scopeContext_1.TRIGGER_BLOCKS.has(blockName)) {
                     context = 'trigger';
                 }
-                else if (EFFECT_BLOCKS.has(blockName)) {
+                else if (scopeContext_1.EFFECT_BLOCKS.has(blockName)) {
                     context = 'effect';
                 }
                 else if (blockStack.length > 0) {
@@ -675,6 +656,10 @@ class CK3DiagnosticsProvider {
             if (fieldMatch && blockStack.length > 0) {
                 const fieldName = fieldMatch[1];
                 const currentBlock = blockStack[blockStack.length - 1];
+                // Skip validation inside dynamic key blocks (e.g., stress_impact where keys are trait names)
+                if (DYNAMIC_KEY_BLOCKS.has(currentBlock.name)) {
+                    continue;
+                }
                 // Only validate if we're in a known context
                 if (currentBlock.context !== 'unknown') {
                     const diagnostic = this.validateFieldInContext(fieldName, currentBlock.context, currentBlock.name, lineNum, cleanLine, document);
@@ -701,7 +686,7 @@ class CK3DiagnosticsProvider {
      * Check if a field name is a valid scope changer
      */
     isValidScopeChanger(name) {
-        if (SCOPE_CHANGERS.has(name)) {
+        if (scopeContext_1.KNOWN_SCOPE_CHANGERS.has(name)) {
             return true;
         }
         // Check for scope: prefix
@@ -741,7 +726,7 @@ class CK3DiagnosticsProvider {
         }
         // Skip context-establishing blocks (these are schema fields, not effects/triggers)
         // This handles edge cases where `immediate =` is on a separate line from `{`
-        if (TRIGGER_BLOCKS.has(fieldName) || EFFECT_BLOCKS.has(fieldName)) {
+        if (scopeContext_1.TRIGGER_BLOCKS.has(fieldName) || scopeContext_1.EFFECT_BLOCKS.has(fieldName)) {
             return null;
         }
         // Skip scope changers
@@ -758,6 +743,20 @@ class CK3DiagnosticsProvider {
         if (parentEffect?.parameters?.includes(fieldName) || parentTrigger?.parameters?.includes(fieldName)) {
             return null;
         }
+        // Check if it's a scope path like "liege.primary_title.holder"
+        if ((0, scopeContext_1.looksLikeScopePath)(fieldName)) {
+            // For now, use 'character' as the starting scope
+            // TODO: Use the actual tracked scope from block context
+            const result = (0, scopeContext_1.validateScopePath)(fieldName, 'character');
+            if (result.valid) {
+                return null;
+            }
+            // If invalid, we'll let it fall through to the unknown effect/trigger check
+        }
+        // Check if it's a scope:X reference
+        if ((0, scopeContext_1.isScopeReference)(fieldName)) {
+            return null;
+        }
         // Check if it's a valid effect/trigger for the context
         if (context === 'effect') {
             if (!data_1.effectsMap.has(fieldName) && !data_1.triggersMap.has(fieldName)) {
@@ -766,7 +765,7 @@ class CK3DiagnosticsProvider {
                 if (!this.couldBeScriptedEffectOrTrigger(fieldName)) {
                     const fieldStart = cleanLine.indexOf(fieldName);
                     const range = new vscode.Range(new vscode.Position(lineNum, fieldStart >= 0 ? fieldStart : 0), new vscode.Position(lineNum, fieldStart >= 0 ? fieldStart + fieldName.length : cleanLine.length));
-                    return new vscode.Diagnostic(range, `Unknown effect: "${fieldName}"`, vscode.DiagnosticSeverity.Warning);
+                    return new vscode.Diagnostic(range, `Unknown effect: "${fieldName}" in "${parentBlockName}"`, vscode.DiagnosticSeverity.Warning);
                 }
             }
         }
@@ -776,7 +775,7 @@ class CK3DiagnosticsProvider {
                 if (!this.couldBeScriptedEffectOrTrigger(fieldName)) {
                     const fieldStart = cleanLine.indexOf(fieldName);
                     const range = new vscode.Range(new vscode.Position(lineNum, fieldStart >= 0 ? fieldStart : 0), new vscode.Position(lineNum, fieldStart >= 0 ? fieldStart + fieldName.length : cleanLine.length));
-                    return new vscode.Diagnostic(range, `Unknown trigger: "${fieldName}"`, vscode.DiagnosticSeverity.Warning);
+                    return new vscode.Diagnostic(range, `Unknown trigger: "${fieldName}" in "${parentBlockName}"`, vscode.DiagnosticSeverity.Warning);
                 }
             }
         }

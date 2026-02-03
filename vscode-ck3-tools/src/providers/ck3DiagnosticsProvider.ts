@@ -932,6 +932,11 @@ export class CK3DiagnosticsProvider {
       return null;
     }
 
+    // Check for special CK3 patterns that shouldn't be flagged
+    if (this.isSpecialPattern(fieldName)) {
+      return null;
+    }
+
     // Check if it's a valid effect/trigger for the context
     if (context === 'effect') {
       if (!effectsMap.has(fieldName) && !triggersMap.has(fieldName)) {
@@ -1010,6 +1015,44 @@ export class CK3DiagnosticsProvider {
     // Also allow anything with underscores (likely a scripted thing)
     // This is very permissive to avoid false positives
     if (name.includes('_') && name.length > 3) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Check if a name is a special CK3 pattern that shouldn't be flagged
+   * These include script variables, flag/var references, and specific scope targets
+   */
+  private isSpecialPattern(name: string): boolean {
+    // Script variable substitutions: $VAR$, $VARIABLE$
+    if (/^\$[A-Z_][A-Z0-9_]*\$$/.test(name)) {
+      return true;
+    }
+
+    // Paths containing script variables: $INVADER$.faith.religion
+    if (name.includes('$')) {
+      return true;
+    }
+
+    // Flag references: flag:something, flag:$VAR$
+    if (/^flag:[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(name)) {
+      return true;
+    }
+
+    // Variable references: var:something
+    if (/^var:[a-zA-Z_][a-zA-Z0-9_]*$/.test(name)) {
+      return true;
+    }
+
+    // Specific scope targets: faith:catholic, title:k_france, culture:norse
+    if (/^(faith|title|culture|religion|dynasty|house|artifact|character):[a-zA-Z_][a-zA-Z0-9_]*$/.test(name)) {
+      return true;
+    }
+
+    // Pure numeric values used as triggers (like "1" in some contexts)
+    if (/^\d+$/.test(name)) {
       return true;
     }
 

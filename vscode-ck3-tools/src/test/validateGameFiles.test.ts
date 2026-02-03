@@ -186,6 +186,7 @@ describe('CK3 Game File Validation', () => {
 
     // Track parent->child pairs for unknown effects (to find missing parameters)
     const unknownEffectInParent: Map<string, Set<string>> = new Map(); // parent -> set of unknown children
+    const unknownTriggerInParent: Map<string, Set<string>> = new Map(); // parent -> set of unknown children
 
     // Track which file types are validated
     const fileTypeCount: Record<string, number> = {};
@@ -282,7 +283,15 @@ describe('CK3 Game File Validation', () => {
               }
             } else if (msg.startsWith('Unknown trigger:')) {
               const match = msg.match(/Unknown trigger: "([^"]+)" in "([^"]+)"/);
-              if (match) uniqueUnknownTriggers.add(match[1]);
+              if (match) {
+                const [, fieldName, parentBlock] = match;
+                uniqueUnknownTriggers.add(fieldName);
+                // Track parent->child pairs for triggers
+                if (!unknownTriggerInParent.has(parentBlock)) {
+                  unknownTriggerInParent.set(parentBlock, new Set());
+                }
+                unknownTriggerInParent.get(parentBlock)!.add(fieldName);
+              }
             } else if (msg.startsWith('Invalid value for')) {
               const match = msg.match(/Invalid value for "([^"]+)": "([^"]+)"/);
               if (match) {
@@ -421,6 +430,16 @@ describe('CK3 Game File Validation', () => {
         // Sort by number of unknown children (most first)
         const sorted = [...unknownEffectInParent.entries()].sort((a, b) => b[1].size - a[1].size);
         for (const [parent, children] of sorted.slice(0, 50)) {
+          console.log(`'${parent}': [${[...children].map(c => `'${c}'`).join(', ')}],`);
+        }
+      }
+
+      // Output unknown triggers by parent block (for finding missing parameters)
+      if (unknownTriggerInParent.size > 0) {
+        console.log(`\n--- Unknown Triggers by Parent Block (${unknownTriggerInParent.size} parents) ---`);
+        // Sort by number of unknown children (most first)
+        const sortedTriggers = [...unknownTriggerInParent.entries()].sort((a, b) => b[1].size - a[1].size);
+        for (const [parent, children] of sortedTriggers.slice(0, 50)) {
           console.log(`'${parent}': [${[...children].map(c => `'${c}'`).join(', ')}],`);
         }
       }
