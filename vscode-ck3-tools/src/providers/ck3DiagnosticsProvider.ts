@@ -74,6 +74,9 @@ const CONTROL_FLOW_FIELDS = new Set([
   'save_scope_as', 'save_scope_value_as', 'save_temporary_scope_as',
   'custom_description', 'custom_tooltip', 'show_as_tooltip',
   'hidden_effect', 'run_interaction',
+  // Script value fields - valid in many contexts for math expressions
+  'value', 'subtract', 'divide', 'min', 'max', 'round', 'floor', 'ceiling',
+  'desc',  // Used for tooltips in many places
 ]);
 
 // SCOPE_CHANGERS now imported from '../utils/scopeContext' as KNOWN_SCOPE_CHANGERS
@@ -95,6 +98,33 @@ const DYNAMIC_KEY_BLOCKS = new Set([
   'compare_value',           // comparison block
   'value',                   // numeric value blocks
   'option',                  // event options have schema fields + effects (temporary - see TODO)
+  'switch',                  // children are case keys (trait names, terrain types, yes/no, etc.)
+  'random_traits_list',      // children are trait names
+  'random_list',             // children are numeric weight keys (50 = { }, 25 = { })
+  'participants',            // children are participant role names
+  'properties',              // children are property names
+  'ai_frequency_by_tier',    // children are title tier names (barony, county, etc.)
+]);
+
+/**
+ * Fields that are valid inside random_list weight blocks (numeric parent names)
+ * These are commonly used for tooltips and weight configuration
+ */
+const RANDOM_LIST_WEIGHT_FIELDS = new Set([
+  'desc', 'show_chance', 'trigger', 'modifier', 'weight', 'min', 'max',
+]);
+
+/**
+ * Blocks that establish script value context (math expressions)
+ * Inside these blocks, math operations like value, add, multiply are valid
+ */
+const SCRIPT_VALUE_BLOCKS = new Set([
+  'chance',                           // parameter of random effect
+  'add', 'subtract', 'multiply', 'divide',  // math operation blocks
+  'min', 'max',                       // bounds blocks
+  'factor',                           // multiplier block
+  'compare_modifier',                 // comparison with modifiers
+  'compatibility_modifier',           // compatibility calculations
 ]);
 
 /**
@@ -859,8 +889,9 @@ export class CK3DiagnosticsProvider {
         }
 
         // Determine context based on block name
-        if (WEIGHT_BLOCKS.has(blockName)) {
-          // Weight blocks (ai_will_do, ai_chance, etc.) establish weight context
+        if (WEIGHT_BLOCKS.has(blockName) || SCRIPT_VALUE_BLOCKS.has(blockName)) {
+          // Weight blocks (ai_will_do, ai_chance, etc.) and script value blocks (chance, add, multiply)
+          // establish weight context where math operations are valid
           context = 'weight';
         } else if (TRIGGER_BLOCKS.has(blockName)) {
           context = 'trigger';
@@ -1059,6 +1090,19 @@ export class CK3DiagnosticsProvider {
       }
       // In weight context, unknown fields are not flagged as effects/triggers
       // They could be script values or other valid constructs
+      return null;
+    }
+
+    // Skip UPPERCASE parameters - these are scripted effect/trigger parameters
+    // Scripted effects/triggers use UPPERCASE naming convention for their parameters
+    // e.g., change_house_relation_effect = { HOUSE = ... VALUE = ... REASON = ... }
+    if (/^[A-Z][A-Z0-9_]*$/.test(fieldName)) {
+      return null;
+    }
+
+    // Skip known fields inside random_list weight blocks (numeric parent names like "50", "25")
+    // These blocks can have desc, show_chance, trigger, modifier, weight plus actual effects
+    if (/^\d+$/.test(parentBlockName) && RANDOM_LIST_WEIGHT_FIELDS.has(fieldName)) {
       return null;
     }
 
