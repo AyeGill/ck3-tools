@@ -465,6 +465,96 @@ test.0001 = {
     });
   });
 
+  describe('Unknown effects/triggers with block values', () => {
+    it('should flag unknown triggers with block values', () => {
+      // Bug: unknown triggers with { } values were not being flagged
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	trigger = {
+		adsasd = {
+		}
+	}
+}`;
+      const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+      const unknownTriggerDiag = diagnostics.find((d: any) =>
+        d.message.includes('Unknown trigger') && d.message.includes('adsasd')
+      );
+
+      expect(unknownTriggerDiag).toBeDefined();
+      expect(unknownTriggerDiag.severity).toBe(1); // Warning
+    });
+
+    it('should flag unknown effects with block values', () => {
+      // Bug: unknown effects with { } values were not being flagged
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		assd = {
+		}
+	}
+}`;
+      const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+      const unknownEffectDiag = diagnostics.find((d: any) =>
+        d.message.includes('Unknown effect') && d.message.includes('assd')
+      );
+
+      expect(unknownEffectDiag).toBeDefined();
+      expect(unknownEffectDiag.severity).toBe(1); // Warning
+    });
+
+    it('should flag unknown triggers with block values in decision is_shown', () => {
+      const content = `test_dec = {
+	is_shown = {
+		adsasd = {
+		}
+	}
+	effect = {
+		assd = {
+		}
+	}
+}`;
+      const diagnostics = getDiagnostics(content, '/mod/common/decisions/test.txt');
+
+      const unknownTriggerDiag = diagnostics.find((d: any) =>
+        d.message.includes('Unknown trigger') && d.message.includes('adsasd')
+      );
+      const unknownEffectDiag = diagnostics.find((d: any) =>
+        d.message.includes('Unknown effect') && d.message.includes('assd')
+      );
+
+      expect(unknownTriggerDiag).toBeDefined();
+      expect(unknownEffectDiag).toBeDefined();
+    });
+
+    it('should NOT flag valid effects/triggers with block values', () => {
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	trigger = {
+		any_vassal = {
+			is_adult = yes
+		}
+	}
+	immediate = {
+		every_vassal = {
+			add_prestige = 100
+		}
+	}
+}`;
+      const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+      const vassalDiag = diagnostics.find((d: any) =>
+        d.message.includes('any_vassal') || d.message.includes('every_vassal')
+      );
+
+      expect(vassalDiag).toBeUndefined();
+    });
+  });
+
   describe('Syntax errors', () => {
     it('should detect unmatched opening brace', () => {
       const content = `my_trait = {

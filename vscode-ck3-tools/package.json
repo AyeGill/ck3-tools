@@ -81,6 +81,16 @@
         "title": "CK3: Go to Localization"
       }
     ],
+    "configuration": {
+      "title": "CK3 Modding Tools",
+      "properties": {
+        "ck3-tools.gamePath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the CK3 game installation directory (e.g., '/Users/you/Library/Application Support/Steam/steamapps/common/Crusader Kings III'). Used to index game files for validation and autocomplete."
+        }
+      }
+    },
     "menus": {
       "editor/context": [
         {

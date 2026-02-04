@@ -3278,8 +3278,36 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Index workspace files in background
   workspaceIndex.indexWorkspace().then(() => {
-    console.log(`CK3 workspace index ready: ${workspaceIndex.getTotalCount()} entities indexed`);
+    console.log(`CK3 workspace index ready: ${workspaceIndex.getTotalCount()} workspace entities indexed`);
   });
+
+  // Index game files if path is configured
+  const gamePath = vscode.workspace.getConfiguration('ck3-tools').get<string>('gamePath');
+  if (gamePath) {
+    workspaceIndex.indexGameFiles(gamePath).then(() => {
+      console.log(`CK3 game files indexed: ${workspaceIndex.getTotalCount()} total entities`);
+    });
+  }
+
+  // Listen for configuration changes
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeConfiguration(e => {
+      if (e.affectsConfiguration('ck3-tools.gamePath')) {
+        const newGamePath = vscode.workspace.getConfiguration('ck3-tools').get<string>('gamePath');
+        if (newGamePath) {
+          workspaceIndex.indexGameFiles(newGamePath).then(() => {
+            console.log(`CK3 game files re-indexed: ${workspaceIndex.getTotalCount()} total entities`);
+            // Re-validate open documents
+            vscode.workspace.textDocuments.forEach(doc => {
+              if (doc.languageId === 'ck3') {
+                diagnosticsProvider.validateDocument(doc);
+              }
+            });
+          });
+        }
+      }
+    })
+  );
 
   // Register diagnostics provider for linting
   const diagnosticsProvider = new CK3DiagnosticsProvider(workspaceIndex);

@@ -486,21 +486,23 @@ export class CK3DiagnosticsProvider {
 
       // If schema has trigger wildcard, accept any valid trigger or scripted trigger
       if (hasTriggerWildcard) {
-        if (triggersMap.has(fieldName) || this.workspaceIndex?.has('scripted_trigger', fieldName)) {
+        if (triggersMap.has(fieldName) || this.workspaceIndex?.has('scripted_trigger', fieldName) || this.isKnownScopeChanger(fieldName)) {
           continue;
         }
       }
 
       // If schema has effect wildcard, accept any valid effect or scripted effect
       if (hasEffectWildcard) {
-        if (effectsMap.has(fieldName) || this.workspaceIndex?.has('scripted_effect', fieldName)) {
+        if (effectsMap.has(fieldName) || this.workspaceIndex?.has('scripted_effect', fieldName) || this.isKnownScopeChanger(fieldName)) {
           continue;
         }
       }
 
-      // If schema has modifier wildcard, accept any valid modifier or template match
-      if (hasModifierWildcard && (modifiersMap.has(fieldName) || matchesModifierTemplate(fieldName))) {
-        continue;
+      // If schema has modifier wildcard, accept any valid modifier, template match, or scripted modifier
+      if (hasModifierWildcard) {
+        if (modifiersMap.has(fieldName) || matchesModifierTemplate(fieldName) || this.workspaceIndex?.has('scripted_modifier', fieldName)) {
+          continue;
+        }
       }
 
       if (!schemaMap.has(fieldName)) {
@@ -531,6 +533,56 @@ export class CK3DiagnosticsProvider {
     ]);
 
     return commonFields.has(fieldName);
+  }
+
+  /**
+   * Check if a field name is a known scope changer that may not be in the generated effects/triggers data.
+   * These are newer CK3 features (travel, activities, task contracts, etc.) that are valid in
+   * effect/trigger contexts but missing from the parsed game documentation.
+   */
+  private isKnownScopeChanger(fieldName: string): boolean {
+    const knownScopeChangers = new Set([
+      // Travel system
+      'current_travel_plan',
+      // Court and governance
+      'diarch', 'liege_or_court_owner',
+      // Domicile/landless
+      'domicile',
+      // Councillors
+      'every_normal_councillor', 'any_normal_councillor',
+      // War/military
+      'every_pledged_attacker', 'war', 'regiment_owner',
+      // Inspiration/artisan
+      'inspiration',
+      // Activities
+      'involved_activity',
+      // Dynasty/house
+      'leading_house',
+      // Location/geography
+      'location', 'title_province', 'province_owner',
+      // Situation/struggle
+      'ordered_situation_group_participant',
+      // Feudal relationships
+      'overlord', 'top_liege', 'suzerain', 'lessee',
+      // Religion
+      'religion', 'secret_faith',
+      // Schemes/secrets/stories
+      'scheme_owner', 'secret_owner', 'story_owner',
+      // Task contracts
+      'task_contract', 'task_contract_employer', 'task_contract_location', 'task_contract_taker',
+      // Titles
+      'title', 'duchy', 'any_held_county',
+      // Artifacts
+      'artifact_owner',
+      // Grand projects
+      'contribution_is_funded', 'contribution_is_required',
+      // Legends
+      'promoted_legend',
+      // Trait flags (trigger)
+      'has_trait_flag',
+    ]);
+
+    return knownScopeChangers.has(fieldName);
   }
 
   /**
@@ -858,6 +910,33 @@ export class CK3DiagnosticsProvider {
           }
         }
 
+        // Validate block names that are in a trigger/effect context but don't establish their own context
+        // These are potentially unknown effects/triggers with block values (e.g., `adsasd = { }`)
+        if (context === 'unknown' && (parentContext === 'trigger' || parentContext === 'effect')) {
+          // Get the parent block info for validation
+          const parentBlockInfo = blockStack.length > 0 ? blockStack[blockStack.length - 1] : null;
+          const parentBlockName = parentBlockInfo?.name || '';
+
+          // Skip validation inside dynamic key blocks
+          if (!DYNAMIC_KEY_BLOCKS.has(parentBlockName)) {
+            const diagnostic = this.validateFieldInContext(
+              blockName,
+              parentContext,
+              parentBlockName,
+              lineNum,
+              cleanLine,
+              document,
+              parentBlockInfo?.parentContext
+            );
+            if (diagnostic) {
+              diagnostics.push(diagnostic);
+            }
+          }
+
+          // Inherit parent context so nested contents are still validated
+          context = parentContext;
+        }
+
         blockStack.push({ name: blockName, context, parentContext });
       }
 
@@ -888,10 +967,6 @@ export class CK3DiagnosticsProvider {
           }
         }
       }
-
-      // Note: We don't validate block names (like `immediate`, `if`, `liege`) here.
-      // Block names that establish context are schema fields (validated by schema validation).
-      // Block names that are scope changers or control flow are handled by context inheritance.
 
       // Update brace depth and pop blocks
       braceDepth += openBraces - closeBraces;
