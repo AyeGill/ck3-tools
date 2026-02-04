@@ -800,4 +800,84 @@ test.0001 = {
       expect(traitDiag).toBeUndefined();
     });
   });
+
+  describe('Inline sibling block context tracking', () => {
+    it('should NOT flag effects as being in trigger context when they are siblings of limit on same line', () => {
+      // This is a real pattern from vanilla game files where everything is on one line
+      // if = { limit = { ... } scope:target = { add_prestige = 100 } }
+      // The add_prestige effect should be in effect context, NOT trigger context
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		if = { limit = { is_adult = yes } add_prestige = 100 }
+	}
+}`;
+      const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+      // add_prestige should NOT be flagged as "effect used in trigger context"
+      const wrongContextDiag = diagnostics.find((d: any) =>
+        d.message.includes('Effect') && d.message.includes('trigger context')
+      );
+
+      expect(wrongContextDiag).toBeUndefined();
+    });
+
+    it('should NOT flag effects inside scope changers that are siblings of limit', () => {
+      // Pattern: if = { limit = { ... } scope:target = { effect_here } }
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		if = { limit = { is_adult = yes } scope:target = { add_prestige = 100 } }
+	}
+}`;
+      const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+      const wrongContextDiag = diagnostics.find((d: any) =>
+        d.message.includes('Effect') && d.message.includes('trigger context')
+      );
+
+      expect(wrongContextDiag).toBeUndefined();
+    });
+
+    it('should NOT flag effects after inline limit block on separate lines', () => {
+      // limit closes on same line, effect is on next line - should have correct context
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		if = {
+			limit = { is_adult = yes }
+			add_prestige = 100
+		}
+	}
+}`;
+      const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+      const wrongContextDiag = diagnostics.find((d: any) =>
+        d.message.includes('Effect') && d.message.includes('trigger context')
+      );
+
+      expect(wrongContextDiag).toBeUndefined();
+    });
+
+    it('should correctly track multiple inline blocks', () => {
+      // Complex pattern with multiple inline blocks
+      // The third block should inherit from `if`, not from `limit`
+      const content = `test_decision = {
+	effect = {
+		if = { limit = { is_adult = yes } liege = { add_prestige = 100 } }
+	}
+}`;
+      const diagnostics = getDiagnostics(content, '/mod/common/decisions/test.txt');
+
+      // No false positives about wrong context
+      const wrongContextDiag = diagnostics.find((d: any) =>
+        d.message.includes('trigger context') || d.message.includes('effect context')
+      );
+
+      expect(wrongContextDiag).toBeUndefined();
+    });
+  });
 });
