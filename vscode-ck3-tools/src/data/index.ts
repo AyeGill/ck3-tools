@@ -166,11 +166,14 @@ const effectParameterOverrides: Record<string, string[]> = {
 
   // Flag effects
   'add_character_flag': ['flag', 'days', 'months', 'weeks', 'years'],
+  'remove_character_flag': ['flag'],
   'add_dynasty_flag': ['flag', 'days', 'months', 'weeks', 'years'],
   'add_house_flag': ['flag', 'days', 'months', 'weeks', 'years'],
   'add_title_flag': ['flag', 'days', 'months', 'weeks', 'years'],
 
   // Save scope
+  'save_scope_as': ['name'],
+  'save_temporary_scope_as': ['name'],
   'save_scope_value_as': ['name', 'value'],
   'save_temporary_scope_value_as': ['name', 'value'],
 
@@ -356,6 +359,7 @@ const effectParameterOverrides: Record<string, string[]> = {
 
   // Control flow (parameters)
   'if': ['limit', 'text'],
+  'else_if': ['limit'],
 
   // Trait rank effects
   'set_trait_rank': ['trait', 'rank'],
@@ -436,6 +440,7 @@ const undocumentedTriggers: TriggerDefinition[] = [
  */
 const undocumentedEffects: EffectDefinition[] = [
   { name: 'battle_event', description: 'UNDOCUMENTED: Triggers a battle event display during combat. Found in game files but not in official documentation.', supportedScopes: ['combat_side'], parameters: ['key', 'type', 'left_portrait', 'right_portrait', 'target_left', 'target_right'] },
+  { name: 'set_relation_$RELATION', description: 'UNDOCUMENTED: Sets a relation between the scoped character and the target. Note that the relation "belongs to" the scoped character, so eg set_relation_ward should be called with the guardian in scope, not the ward', supportedScopes: ['character'], parameters: ['target', 'reason', 'copy_reason'], }
 ];
 
 /**
@@ -482,7 +487,7 @@ export function getTriggersForScope(scope: ScopeType): TriggerDefinition[] {
  * Overrides for supportedTargets when missing from generated data
  */
 const effectSupportedTargetsOverrides: Record<string, string[]> = {
-  // Effects that take entity values but lack supportedTargets in generated data
+  "set_relation_$RELATION$": ["character"]
 };
 
 /**
@@ -490,7 +495,15 @@ const effectSupportedTargetsOverrides: Record<string, string[]> = {
  * Used when the parser doesn't extract the correct entity types
  */
 const effectParameterEntityTypeOverrides: Record<string, Record<string, string>> = {
-  // Add manual overrides here if the parser misses any
+  "set_relation_$RELATION$": {"target": "character"},
+  // Opinion effects
+  "add_opinion": {"target": "character", "modifier": "opinion_modifier"},
+  "reverse_add_opinion": {"target": "character", "modifier": "opinion_modifier"},
+  "remove_opinion": {"target": "character", "modifier": "opinion_modifier"},
+  // Trait effects
+  "add_trait": {"trait": "trait"},
+  // Event effects
+  "trigger_event": {"id": "event", "on_action": "on_action"},
 };
 
 /**
@@ -607,6 +620,24 @@ const triggerParameterOverrides: Record<string, string[]> = {
   'opinion_modifier': ['who', 'opinion', 'multiplier', 'step', 'min', 'max', 'factor'],
   'compare_modifier': ['value', 'multiplier', 'min', 'max'],
 
+  // Opinion comparison triggers
+  'opinion': ['target', 'value'],
+  'reverse_opinion': ['target', 'value'],
+  'has_opinion_modifier': ['target', 'modifier', 'value'],
+  'reverse_has_opinion_modifier': ['target', 'modifier', 'value'],
+
+  // War triggers
+  'is_at_war_with': ['target'],
+
+  // Secret triggers
+  'has_secret': ['type', 'target'],
+
+  // Faction triggers
+  'can_join_faction': ['faction', 'target'],
+
+  // Time triggers
+  'time_of_year': ['month', 'day'],
+
   // Dread level trigger
   'has_dread_level_towards': ['target', 'level'],
 
@@ -702,7 +733,6 @@ const triggerParameterOverrides: Record<string, string[]> = {
  */
 const triggerSupportedTargetsOverrides: Record<string, string[]> = {
   'has_trait': ['trait'],
-  'has_culture': ['culture'],
   // Add more as discovered
 };
 
@@ -711,7 +741,19 @@ const triggerSupportedTargetsOverrides: Record<string, string[]> = {
  * Used when the parser doesn't extract the correct entity types
  */
 const triggerParameterEntityTypeOverrides: Record<string, Record<string, string>> = {
-  // Add manual overrides here if the parser misses any
+  // Opinion triggers
+  "opinion": {"target": "character"},
+  "reverse_opinion": {"target": "character"},
+  "has_opinion_modifier": {"target": "character", "modifier": "opinion_modifier"},
+  "reverse_has_opinion_modifier": {"target": "character", "modifier": "opinion_modifier"},
+  // War triggers
+  "is_at_war_with": {"target": "character"},
+  // Faction triggers
+  "can_join_faction": {"target": "character", "faction": "faction"},
+  // Secret triggers
+  "has_secret": {"target": "character", "type": "secret_type"},
+  // Relation triggers
+  "has_relation_flag": {"target": "character"},
 };
 
 /**

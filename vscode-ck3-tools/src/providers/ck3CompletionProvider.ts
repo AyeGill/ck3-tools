@@ -1164,142 +1164,6 @@ function getSchemaWithTriggerEffectBlocks(
 }
 
 /**
- * Internal field schemas for specific triggers that take block values
- * These are triggers that aren't iterators but have their own internal structure
- */
-const TRIGGER_INTERNAL_FIELDS: Map<string, FieldSchema[]> = new Map([
-  ['opinion', [
-    { name: 'target', type: 'string', description: 'The character to check opinion of (scope reference)', required: true },
-    { name: 'value', type: 'integer', description: 'Opinion threshold (e.g., value >= 50, value <= -20, value = { 10 50 })' },
-  ]],
-  ['reverse_opinion', [
-    { name: 'target', type: 'string', description: 'The character whose opinion to check (scope reference)', required: true },
-    { name: 'value', type: 'integer', description: 'Opinion threshold (e.g., value >= 50)' },
-  ]],
-  ['has_opinion_modifier', [
-    { name: 'target', type: 'string', description: 'The character to check opinion modifier on (scope reference)' },
-    { name: 'modifier', type: 'string', description: 'The opinion modifier to check for', required: true },
-    { name: 'value', type: 'integer', description: 'Optional value comparison' },
-  ]],
-  ['reverse_has_opinion_modifier', [
-    { name: 'target', type: 'string', description: 'The character to check opinion modifier on (scope reference)' },
-    { name: 'modifier', type: 'string', description: 'The opinion modifier to check for', required: true },
-    { name: 'value', type: 'integer', description: 'Optional value comparison' },
-  ]],
-  ['is_at_war_with', [
-    { name: 'target', type: 'string', description: 'The character to check war status with (scope reference)', required: true },
-  ]],
-  ['has_relation_flag', [
-    { name: 'target', type: 'string', description: 'The character to check relation with (scope reference)', required: true },
-    { name: 'flag', type: 'string', description: 'The relation flag to check for', required: true },
-  ]],
-  ['has_secret', [
-    { name: 'type', type: 'string', description: 'The secret type' },
-    { name: 'target', type: 'string', description: 'Target of the secret (scope reference)' },
-  ]],
-  ['can_join_faction', [
-    { name: 'faction', type: 'string', description: 'The faction type', required: true },
-    { name: 'target', type: 'string', description: 'Target character for the faction (scope reference)' },
-  ]],
-  ['has_character_flag', [
-    { name: 'flag', type: 'string', description: 'The flag name', required: true },
-    { name: 'days', type: 'integer', description: 'Minimum days the flag has been set' },
-  ]],
-  ['time_of_year', [
-    { name: 'month', type: 'integer', description: 'Month (1-12)' },
-    { name: 'day', type: 'integer', description: 'Day of month' },
-  ]],
-]);
-
-/**
- * Internal field schemas for specific effects that take block values
- */
-const EFFECT_INTERNAL_FIELDS: Map<string, FieldSchema[]> = new Map([
-  ['add_opinion', [
-    { name: 'target', type: 'string', description: 'The character to modify opinion of (scope reference)', required: true },
-    { name: 'modifier', type: 'string', description: 'The opinion modifier to add', required: true },
-    { name: 'opinion', type: 'integer', description: 'Opinion value (if not using modifier)' },
-    { name: 'years', type: 'integer', description: 'Duration in years' },
-    { name: 'months', type: 'integer', description: 'Duration in months' },
-    { name: 'days', type: 'integer', description: 'Duration in days' },
-  ]],
-  ['reverse_add_opinion', [
-    { name: 'target', type: 'string', description: 'The character whose opinion to modify (scope reference)', required: true },
-    { name: 'modifier', type: 'string', description: 'The opinion modifier to add', required: true },
-    { name: 'opinion', type: 'integer', description: 'Opinion value (if not using modifier)' },
-  ]],
-  ['remove_opinion', [
-    { name: 'target', type: 'string', description: 'The character to remove opinion modifier from (scope reference)', required: true },
-    { name: 'modifier', type: 'string', description: 'The opinion modifier to remove', required: true },
-  ]],
-  ['save_scope_as', [
-    { name: 'name', type: 'string', description: 'Name to save the scope as (access via scope:name)' },
-  ]],
-  ['save_temporary_scope_as', [
-    { name: 'name', type: 'string', description: 'Name to save the scope as temporarily' },
-  ]],
-  ['set_variable', [
-    { name: 'name', type: 'string', description: 'Variable name', required: true },
-    { name: 'value', type: 'integer', description: 'Value to set', required: true },
-    { name: 'days', type: 'integer', description: 'Duration in days before expiring' },
-    { name: 'years', type: 'integer', description: 'Duration in years before expiring' },
-    { name: 'months', type: 'integer', description: 'Duration in months before expiring' },
-  ]],
-  ['change_variable', [
-    { name: 'name', type: 'string', description: 'Variable name', required: true },
-    { name: 'add', type: 'integer', description: 'Value to add' },
-    { name: 'subtract', type: 'integer', description: 'Value to subtract' },
-    { name: 'multiply', type: 'integer', description: 'Value to multiply by' },
-    { name: 'divide', type: 'integer', description: 'Value to divide by' },
-  ]],
-  ['trigger_event', [
-    { name: 'id', type: 'string', description: 'Event ID to trigger', required: true },
-    { name: 'days', type: 'integer', description: 'Delay in days' },
-    { name: 'months', type: 'integer', description: 'Delay in months' },
-    { name: 'years', type: 'integer', description: 'Delay in years' },
-    { name: 'on_action', type: 'string', description: 'On action to trigger instead of specific event' },
-  ]],
-  ['add_character_flag', [
-    { name: 'flag', type: 'string', description: 'Flag name', required: true },
-    { name: 'days', type: 'integer', description: 'Duration in days' },
-    { name: 'months', type: 'integer', description: 'Duration in months' },
-    { name: 'years', type: 'integer', description: 'Duration in years' },
-  ]],
-  ['remove_character_flag', [
-    { name: 'flag', type: 'string', description: 'Flag name to remove', required: true },
-  ]],
-  ['create_character', [
-    { name: 'name', type: 'string', description: 'Character name' },
-    { name: 'age', type: 'integer', description: 'Age in years' },
-    { name: 'gender', type: 'enum', description: 'male or female', values: ['male', 'female'] },
-    { name: 'culture', type: 'string', description: 'Culture scope reference' },
-    { name: 'faith', type: 'string', description: 'Faith scope reference' },
-    { name: 'dynasty', type: 'string', description: 'Dynasty to assign (scope reference)' },
-    { name: 'father', type: 'string', description: 'Father character (scope reference)' },
-    { name: 'mother', type: 'string', description: 'Mother character (scope reference)' },
-    { name: 'employer', type: 'string', description: 'Employer - makes them a courtier (scope reference)' },
-    { name: 'location', type: 'string', description: 'Province location (scope reference)' },
-    { name: 'save_scope_as', type: 'string', description: 'Save reference as scope' },
-    { name: 'trait', type: 'string', description: 'Trait to add' },
-  ]],
-  ['death', [
-    { name: 'death_reason', type: 'string', description: 'Death reason identifier', required: true },
-    { name: 'killer', type: 'string', description: 'Character who killed them (scope reference)' },
-  ]],
-  ['add_trait', [
-    { name: 'trait', type: 'string', description: 'Trait to add', required: true },
-    { name: 'track', type: 'string', description: 'Track for the trait (if applicable)' },
-    { name: 'value', type: 'integer', description: 'Track value' },
-  ]],
-  ['if', [
-    { name: 'limit', type: 'trigger', description: 'Trigger conditions for this branch', required: true },
-  ]],
-  ['else_if', [
-    { name: 'limit', type: 'trigger', description: 'Trigger conditions for this branch', required: true },
-  ]],
-]);
-
-/**
  * Check if we're inside a trigger/effect that has internal fields
  * Returns the internal field schema if found, null otherwise
  */
@@ -1328,19 +1192,58 @@ function getInternalFieldSchema(blockPath: string[], contextType: 'trigger' | 'e
     return schemaConfig.schemaFields;
   }
 
-  // Check trigger internal fields
+  // Check trigger parameters from data layer
   if (contextType === 'trigger' || contextType === 'unknown') {
-    const triggerFields = TRIGGER_INTERNAL_FIELDS.get(lastBlock);
-    if (triggerFields) return triggerFields;
+    const triggerDef = triggersMap.get(lastBlock);
+    if (triggerDef?.parameters && triggerDef.parameters.length > 0) {
+      // Don't provide field completions for iterators - they take triggers/effects as children
+      if (!triggerDef.isIterator) {
+        const entityTypes = triggerParameterEntityTypes[lastBlock] || {};
+        return parametersToFieldSchema(triggerDef.parameters, entityTypes);
+      }
+    }
   }
 
-  // Check effect internal fields
+  // Check effect parameters from data layer
   if (contextType === 'effect' || contextType === 'unknown') {
-    const effectFields = EFFECT_INTERNAL_FIELDS.get(lastBlock);
-    if (effectFields) return effectFields;
+    const effectDef = effectsMap.get(lastBlock);
+    if (effectDef?.parameters && effectDef.parameters.length > 0) {
+      // Don't provide field completions for iterators - they take triggers/effects as children
+      if (!effectDef.isIterator) {
+        const entityTypes = effectParameterEntityTypes[lastBlock] || {};
+        return parametersToFieldSchema(effectDef.parameters, entityTypes);
+      }
+    }
   }
 
   return null;
+}
+
+/**
+ * Convert parameters array and entity types to FieldSchema[]
+ */
+function parametersToFieldSchema(
+  parameters: string[],
+  entityTypes: Record<string, string>
+): FieldSchema[] {
+  return parameters.map(param => {
+    const entityType = entityTypes[param];
+    // Infer type from entity type or parameter name
+    let type: FieldSchema['type'] = 'string';
+    if (entityType === 'character' || param === 'target' || param === 'killer' || param === 'employer') {
+      type = 'string'; // scope reference
+    } else if (['value', 'days', 'months', 'weeks', 'years', 'min', 'max', 'count', 'percent', 'age', 'rank', 'month', 'day'].includes(param)) {
+      type = 'integer';
+    } else if (['add', 'subtract', 'multiply', 'divide', 'multiplier', 'factor'].includes(param)) {
+      type = 'float';
+    }
+
+    return {
+      name: param,
+      type,
+      description: entityType ? `${param} (${entityType})` : param,
+    };
+  });
 }
 
 /**
