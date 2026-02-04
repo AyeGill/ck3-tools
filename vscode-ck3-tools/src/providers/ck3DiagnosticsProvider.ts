@@ -26,6 +26,17 @@ import {
 import { BLOCK_SCHEMAS, getBlockSchemaMap } from '../schemas/blockSchemas';
 import { schemaRegistry } from '../schemas/registry/schemaRegistry';
 
+/**
+ * File types that have full schema validation in the diagnostics provider.
+ * Other file types use the schema registry for hover/completion but don't
+ * get field-level validation to avoid false positives on incomplete schemas.
+ */
+const VALIDATED_FILE_TYPES = new Set([
+  'trait', 'event', 'decision', 'interaction', 'building',
+  'artifact', 'scheme', 'opinion_modifier', 'nickname',
+  'modifier', 'secret', 'activity', 'on_action',
+  'scripted_effect', 'scripted_trigger', 'scripted_modifier',
+]);
 
 /**
  * Represents a parsed entity from a CK3 file
@@ -306,6 +317,13 @@ export class CK3DiagnosticsProvider {
     }
 
     const fileType = schemaInfo.fileType;
+
+    // Only validate file types that have complete schemas
+    // Other file types still use the registry for hover/completion
+    if (!VALIDATED_FILE_TYPES.has(fileType)) {
+      this.diagnosticCollection.set(document.uri, []);
+      return;
+    }
     const diagnostics: vscode.Diagnostic[] = [];
     const text = document.getText();
 
