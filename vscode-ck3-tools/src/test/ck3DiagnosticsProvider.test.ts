@@ -1702,15 +1702,14 @@ test.0001 = {
       const collection = providerWithIndex.getDiagnosticCollection();
       const diagnostics = (collection as any).get(doc.uri) || [];
 
-      // Currently we don't validate trigger_event id values against the index
-      // This test documents current behavior - if we add validation later, update this test
+      // Now we validate trigger_event id values against the index via effectParameterEntityTypes
       const unknownEventDiag = diagnostics.find((d: any) =>
         d.message.includes('Unknown event') && d.message.includes('unknown_namespace.9999')
       );
 
-      // For now, this is NOT validated (would need to track that 'id' inside 'trigger_event' expects an event)
-      // This documents expected current behavior
-      expect(unknownEventDiag).toBeUndefined();
+      // The id parameter inside trigger_event should be validated as an event
+      expect(unknownEventDiag).toBeDefined();
+      expect(unknownEventDiag.message).toContain('Unknown event');
     });
   });
 });
