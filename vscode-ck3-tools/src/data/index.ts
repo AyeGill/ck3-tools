@@ -363,6 +363,9 @@ const effectParameterOverrides: Record<string, string[]> = {
 
   // Struggle iterators
   'random_character_struggle': ['involvement', 'weight'],
+
+  // Task contracts (docs have typo "task_task_contract_tier", game uses "task_contract_tier")
+  'create_task_contract': ['task_contract_tier', 'employer', 'employee', 'task_contract_target', 'task_contract_destination'],
 };
 
 /**
