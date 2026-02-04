@@ -821,15 +821,42 @@ export class CK3DiagnosticsProvider {
       const openBraces = (cleanLine.match(/\{/g) || []).length;
       const closeBraces = (cleanLine.match(/\}/g) || []).length;
 
-      // Check for ALL block starts on this line: name = {
+      // Check for ALL block starts on this line: name = { or name ?= {
       // A single line may contain multiple inline blocks like: limit = { scope:actor = { is_ai = yes } }
       // We need to push ALL of them to keep the stack balanced with closing braces
-      const blockStartRegex = /(\S+)\s*=\s*\{/g;
+      // The regex captures: (1) identifier, (2) operator (= or ?=)
+      // Identifier can include dots, colons for scope paths like faith.religious_head or scope:target
+      // Also includes $ for script variables like $CHARACTER$.liege
+      const blockStartRegex = /([\w.:$]+)\s*(\?=|=)\s*\{/g;
       const blockStarts = [...cleanLine.matchAll(blockStartRegex)];
       for (const match of blockStarts) {
         const blockName = match[1];
+        const operator = match[2]; // '=' or '?='
         let context: 'trigger' | 'effect' | 'weight' | 'unknown' = 'unknown';
         const parentContext = blockStack.length > 0 ? blockStack[blockStack.length - 1].context : 'unknown';
+
+        // For ?= operator, the LHS must be a valid scope (not an effect/trigger)
+        // ?= is a null-safe scope changer that only executes if the scope exists
+        if (operator === '?=') {
+          if (!this.isValidScopeChanger(blockName)) {
+            const fieldStart = cleanLine.indexOf(blockName);
+            const range = new vscode.Range(
+              new vscode.Position(lineNum, fieldStart >= 0 ? fieldStart : 0),
+              new vscode.Position(lineNum, fieldStart >= 0 ? fieldStart + blockName.length : cleanLine.length)
+            );
+            diagnostics.push(new vscode.Diagnostic(
+              range,
+              `Invalid ?= usage: "${blockName}" is not a valid scope. The ?= operator requires a scope changer.`,
+              vscode.DiagnosticSeverity.Warning
+            ));
+          }
+          // ?= always establishes a scope change context - inherit from parent
+          if (parentContext === 'trigger' || parentContext === 'effect') {
+            context = parentContext;
+          }
+          blockStack.push({ name: blockName, context, parentContext });
+          continue; // Skip the rest of the block validation for ?= blocks
+        }
 
         // Determine context based on block name
         if (WEIGHT_BLOCKS.has(blockName)) {
@@ -890,11 +917,33 @@ export class CK3DiagnosticsProvider {
         blockStack.push({ name: blockName, context, parentContext });
       }
 
-      // Check for simple field: name = value (no opening brace)
-      const fieldMatch = cleanLine.match(/^\s*(\S+)\s*=\s*([^{].*)$/);
+      // Check for simple field: name = value or name ?= value (no opening brace)
+      // Regex captures: (1) identifier, (2) operator (= or ?=), (3) value
+      // Includes $ for script variables like $CHARACTER$.liege
+      const fieldMatch = cleanLine.match(/^\s*([\w.:$]+)\s*(\?=|=)\s*([^{].*)$/);
       if (fieldMatch && blockStack.length > 0) {
         const fieldName = fieldMatch[1];
+        const fieldOperator = fieldMatch[2];
         const currentBlock = blockStack[blockStack.length - 1];
+
+        // For ?= operator with simple values, this is a scope comparison
+        // e.g., "house ?= top_liege.house" - comparing if scopes are equal
+        // These are valid as long as the LHS is a valid scope reference
+        if (fieldOperator === '?=') {
+          if (!this.isValidScopeChanger(fieldName)) {
+            const fieldStart = cleanLine.indexOf(fieldName);
+            const range = new vscode.Range(
+              new vscode.Position(lineNum, fieldStart >= 0 ? fieldStart : 0),
+              new vscode.Position(lineNum, fieldStart >= 0 ? fieldStart + fieldName.length : cleanLine.length)
+            );
+            diagnostics.push(new vscode.Diagnostic(
+              range,
+              `Invalid ?= usage: "${fieldName}" is not a valid scope. The ?= operator requires a scope reference.`,
+              vscode.DiagnosticSeverity.Warning
+            ));
+          }
+          continue; // Don't validate ?= as effect/trigger
+        }
 
         // Skip validation inside dynamic key blocks (e.g., stress_impact where keys are trait names)
         if (DYNAMIC_KEY_BLOCKS.has(currentBlock.name)) {
@@ -933,16 +982,39 @@ export class CK3DiagnosticsProvider {
   }
 
   /**
-   * Check if a field name is a valid scope changer
+   * Check if a name is a valid scope reference
+   * Valid scope references include:
+   * - Known scope changers (liege, domicile, activity_host, etc.)
+   * - Prefixed scopes (scope:target, var:my_var, culture:english, court_position:X)
+   * - Dot-paths (faith.religious_head, house.house_confederation)
+   * - Script variables ($CHARACTER$, $TARGET$.liege, etc.)
    */
   private isValidScopeChanger(name: string): boolean {
+    // Script variables like $CHARACTER$ or $TARGET$.liege are always valid
+    // They get substituted at runtime with actual scope references
+    if (name.includes('$')) {
+      return true;
+    }
+
+    // Known scope changers
     if (KNOWN_SCOPE_CHANGERS.has(name)) {
       return true;
     }
-    // Check for scope: prefix
-    if (name.startsWith('scope:')) {
+
+    // Prefixed scopes: scope:X, var:X, culture:X, faith:X, title:X, etc.
+    if (name.includes(':')) {
       return true;
     }
+
+    // Dot-paths: faith.religious_head, house.house_confederation
+    if (name.includes('.')) {
+      // First segment should be a valid scope changer or prefixed scope
+      const firstSegment = name.split('.')[0];
+      if (KNOWN_SCOPE_CHANGERS.has(firstSegment) || firstSegment.includes(':')) {
+        return true;
+      }
+    }
+
     return false;
   }
 

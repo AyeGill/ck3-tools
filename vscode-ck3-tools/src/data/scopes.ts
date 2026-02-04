@@ -7,6 +7,7 @@
 
 export type ScopeType =
   | 'none'              // Global/any scope (no specific context required)
+  | 'unknown'           // Unknown scope type (for scope changers we haven't fully mapped)
   | 'character'
   | 'landed_title'
   | 'province'

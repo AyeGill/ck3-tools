@@ -13,8 +13,7 @@ import { effectsMap, triggersMap } from '../data';
  */
 export interface BlockContext {
   type: 'trigger' | 'effect' | 'weight' | 'unknown';
-  scope: ScopeType;
-  unknownScope?: boolean; // True when inside scope:X blocks where we can't determine the target scope
+  scope: ScopeType;  // Use 'unknown' when scope type can't be determined (e.g., inside scope:X blocks)
 }
 
 /**
@@ -95,7 +94,6 @@ export function analyzeBlockContext(
 ): BlockContext {
   let contextType: 'trigger' | 'effect' | 'weight' | 'unknown' = 'unknown';
   let currentScope: ScopeType = initialScope;
-  let unknownScope = false;
 
   for (const block of blockPath) {
     // Check if this block establishes a context
@@ -115,7 +113,7 @@ export function analyzeBlockContext(
 
     // Check if this is a scope:X reference - we can't determine the target scope
     if (isScopeReference(block)) {
-      unknownScope = true;
+      currentScope = 'unknown';
       continue;
     }
 
@@ -124,7 +122,6 @@ export function analyzeBlockContext(
     const trigger = triggersMap.get(block);
     if (trigger?.outputScope) {
       currentScope = trigger.outputScope;
-      unknownScope = false; // Known scope again
       continue;
     }
 
@@ -132,11 +129,10 @@ export function analyzeBlockContext(
     const effect = effectsMap.get(block);
     if (effect?.outputScope) {
       currentScope = effect.outputScope;
-      unknownScope = false; // Known scope again
     }
   }
 
-  return { type: contextType, scope: currentScope, unknownScope };
+  return { type: contextType, scope: currentScope };
 }
 
 /**
@@ -314,6 +310,114 @@ export const KNOWN_SCOPE_CHANGERS: Map<string, ScopeType> = new Map([
   ['theme', 'none'],
   ['leader', 'character'],
   ['character', 'character'],
+
+  // Activity-specific scopes
+  ['activity_host', 'character'],
+  ['activity_owner', 'character'],
+  ['activity_location', 'province'],
+  ['intent_target', 'character'],
+  ['special_guest', 'character'],
+
+  // Scheme-specific scopes
+  ['scheme_target_character', 'character'],
+
+  // Combat scopes (winner/loser)
+  ['winner', 'character'],
+  ['loser', 'character'],
+
+  // Generic owner scope (works in many contexts)
+  ['owner', 'character'],
+
+  // Interaction scopes
+  ['recipient', 'character'],
+  ['actor', 'character'],
+
+  // Animal companion scopes (output type uncertain)
+  ['animal_type', 'unknown'],
+
+  // Landless adventurer scopes (Roads to Power)
+  ['new_landless_adventurer', 'character'],
+
+  // Dynastic cycle/situation scopes (output type uncertain)
+  ['dynastic_cycle', 'unknown'],
+
+  // Historical character references
+  ['historical_character', 'character'],
+
+  // Relationship/reason scopes (output type uncertain)
+  ['reason', 'unknown'],
+  ['house_feud_reason', 'unknown'],
+
+  // Artifact/item scopes (output type uncertain)
+  ['regional_mythical_creature_trinket', 'unknown'],
+
+  // Activity specific
+  ['activity', 'activity'],
+
+  // Culture scopes
+  ['culture_head', 'character'],
+
+  // Dynasty/house scopes
+  ['house_confederation', 'confederation'],
+
+  // Inspiration scopes
+  ['inspiration_sponsor', 'character'],
+
+  // Legend scopes
+  ['legend_owner', 'character'],
+
+  // Faction scopes
+  ['faction_leader', 'character'],
+  ['faction_war', 'war'],
+  ['joined_faction', 'faction'],
+
+  // Great Holy War scopes
+  ['ghw_beneficiary', 'character'],
+  ['great_holy_war', 'great_holy_war'],
+
+  // Title holder scopes
+  ['previous_holder', 'character'],
+  ['previous_owner', 'character'],
+
+  // War/combat scopes
+  ['primary_attacker', 'character'],
+  ['primary_defender', 'character'],
+  ['primary_partner', 'character'],
+  ['army_commander', 'character'],
+  ['army_owner', 'character'],
+  ['commanding_army', 'army'],
+  ['knight_army', 'army'],
+  ['side_commander', 'character'],
+
+  // Scheme scopes
+  ['scheme_defender', 'character'],
+  ['scheme_target_culture', 'culture'],
+  ['scheme_target_faith', 'faith'],
+  ['scheme_target_title', 'landed_title'],
+
+  // Travel scopes
+  ['travel_leader', 'character'],
+  ['next_destination_province', 'province'],
+
+  // Succession/heir scopes
+  ['current_heir', 'character'],
+  ['designated_diarch', 'character'],
+  ['diarchy_successor', 'character'],
+
+  // Special/misc scopes
+  ['special_character', 'character'],
+  ['special_title', 'landed_title'],
+  ['title_capital_county', 'landed_title'],
+  ['title_domicile', 'domicile'],
+  ['top_overlord', 'character'],
+  ['top_suzerain', 'character'],
+  ['creator', 'character'],
+  ['councillor_task_target', 'unknown'],
+  ['acclaimed_knight', 'character'],
+
+  // Location scopes
+  ['domicile_location', 'province'],
+  ['situation_center_province', 'province'],
 ]);
 
 /**

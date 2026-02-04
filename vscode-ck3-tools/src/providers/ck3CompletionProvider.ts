@@ -1055,7 +1055,7 @@ function analyzeModifierContext(blockPath: string[]): ModifierContext {
 
 /**
  * Get completions for a block context - triggers, effects, or weight blocks filtered by scope
- * If unknownScope is true, returns all completions without filtering
+ * If scope is 'unknown', returns all completions without filtering
  */
 function getSchemaForBlockContext(context: BlockContext, parentBlockName?: string): FieldSchema[] {
   if (context.type === 'trigger') {
@@ -1069,17 +1069,17 @@ function getSchemaForBlockContext(context: BlockContext, parentBlockName?: strin
           type: 'string',
           description: `Parameter for ${parentBlockName} block`,
         }));
-        const triggerSchema = context.unknownScope
+        const triggerSchema = context.scope === 'unknown'
           ? getAllTriggersSchema()
           : getTriggerSchemaForScope(context.scope);
         return [...extraParamsSchema, ...triggerSchema];
       }
     }
-    return context.unknownScope
+    return context.scope === 'unknown'
       ? getAllTriggersSchema()
       : getTriggerSchemaForScope(context.scope);
   } else if (context.type === 'effect') {
-    return context.unknownScope
+    return context.scope === 'unknown'
       ? getAllEffectsSchema()
       : getEffectSchemaForScope(context.scope);
   } else if (context.type === 'weight') {
