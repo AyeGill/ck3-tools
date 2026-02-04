@@ -1078,11 +1078,16 @@ export class CK3DiagnosticsProvider {
       // Check for simple field: name = value or name ?= value (no opening brace)
       // Regex captures: (1) identifier, (2) operator (= or ?=), (3) value
       // Includes $ for script variables like $CHARACTER$.liege
-      const fieldMatch = cleanLine.match(/^\s*([\w.:$]+)\s*(\?=|=)\s*([^{].*)$/);
+      // IMPORTANT: Use [^{]* (not [^{].*) to ensure value contains NO braces at all
+      // Otherwise " { ..." would match because space is [^{] and .* matches the rest
+      const fieldMatch = cleanLine.match(/^\s*([\w.:$]+)\s*(\?=|=)\s*([^{]*)$/);
       if (fieldMatch && blockStack.length > 0) {
         const fieldName = fieldMatch[1];
         const fieldOperator = fieldMatch[2];
         const currentBlock = blockStack[blockStack.length - 1];
+
+        // Determine if we should validate this field
+        let shouldValidate = true;
 
         // For ?= operator with simple values, this is a scope comparison
         // e.g., "house ?= top_liege.house" - comparing if scopes are equal
@@ -1100,16 +1105,16 @@ export class CK3DiagnosticsProvider {
               vscode.DiagnosticSeverity.Warning
             ));
           }
-          continue; // Don't validate ?= as effect/trigger
+          shouldValidate = false; // Don't validate ?= as effect/trigger
         }
 
         // Skip validation inside dynamic key blocks (e.g., stress_impact where keys are trait names)
-        if (DYNAMIC_KEY_BLOCKS.has(currentBlock.name)) {
-          continue;
+        if (shouldValidate && DYNAMIC_KEY_BLOCKS.has(currentBlock.name)) {
+          shouldValidate = false;
         }
 
-        // Only validate if we're in a known context
-        if (currentBlock.context !== 'unknown') {
+        // Only validate if we're in a known context and validation isn't skipped
+        if (shouldValidate && currentBlock.context !== 'unknown') {
           const diagnostic = this.validateFieldInContext(
             fieldName,
             currentBlock.context,

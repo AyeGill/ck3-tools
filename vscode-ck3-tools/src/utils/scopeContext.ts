@@ -287,6 +287,8 @@ export const KNOWN_SCOPE_CHANGERS: Map<string, ScopeType> = new Map([
   ['task_contract_employer', 'character'],
   ['task_contract_location', 'province'],
   ['task_contract_taker', 'character'],
+  ['task_contract_target', 'character'],
+  ['task_contract_destination', 'province'],
 
   // Titles
   ['title', 'landed_title'],
