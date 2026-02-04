@@ -81,10 +81,17 @@ So for example prompting for skill modifications in a trait template makes littl
 - [ ] Simple linting. If we have a comprehensive list of items that are valid in each space (that is, a proper, complete schema) we can mark any invalid ones. (I guess there should be a "ignore this particular invalid field forever" button). We can also detect name collisions (especially useful for events that are just named by numbers), at least within the same mod.
   - **IN PROGRESS**: `CK3DiagnosticsProvider` implemented with schema-based validation
   - Run `npx vitest run src/test/validateGameFiles.test.ts` to validate against vanilla game files (1,522 files)
-  - **Current output: 109 diagnostics** (down from 41,889 originally)
+  - **Current output: 61 diagnostics** (down from 41,889 originally)
   - [x] **Unknown effects/triggers base recognition** - All effects/triggers recognized via generated data + parameter overrides + scripted pattern heuristics
   - [x] **Sibling block misattribution** - Fixed regex and control flow bugs that caused false positives
-  - [ ] **Effect parameters flagged as unknown (4,542)** - Effects like `men_at_arms`, `name`, `create_task_contract` have parameters that get flagged as unknown effects. Need to add missing parameters to `effectParameterOverrides` in `src/data/index.ts`
+  - [x] **Block schema validation system** - Replaced coarse `DYNAMIC_KEY_BLOCKS` with fine-grained schema validation:
+    - Created `src/schemas/blockSchemas.ts` with schemas for special blocks
+    - Schema-only blocks (`men_at_arms`, `opinion`, `levies`, etc.) validate against fixed fields
+    - Nested blocks (`desc`, `first_valid`, `triggered_desc`) validate valid child blocks
+    - Hybrid blocks (`option`) validate schema fields + allow effects
+    - Pure dynamic key blocks (`stress_impact`, `switch`, `random_list`) skip validation
+    - Added `flavor`, `trait`, `clicksound`, `custom_tooltip` to `eventOptionSchema`
+    - Diagnostics dropped from 3,205 to 61 after this change
   - [ ] **Triggers used in effect context (292)** - Some are parameters (like `task_contract_tier`), others are valid usages in special blocks like `show_as_unavailable`
 - [ ] There should also be an option to "explicitify" the localization keys, by adding all the necessary localization key fields (with their default values) to an item (so if we have a trait foo_bar, doing this would add name = trait_foo_bar) and so on.
   - [ ] In general the localization generator should account for the whole structure of the current item when generating necessary localizations (so if you have an event with a bunch of options, it should generate the localizations for each option). But this seems quite hard so that's probably a low priority.
@@ -95,7 +102,8 @@ So for example prompting for skill modifications in a trait template makes littl
   - **DONE**: Added diagnostics provider tests and context detection tests
   - **DONE**: Added target validation tests (6 tests for trait reference validation)
   - **DONE**: Added operator handling tests (12 tests for =, ?=, >, <, >=, <= operators)
-  - Total: 145 tests passing
+  - **DONE**: Added block schema validation tests (`blockSchemaValidation.test.ts` - 9 tests)
+  - Total: 154 tests passing
 
 
 - What's up with accessory and artifact both being schemae? Should look in the game files and figure this out.
@@ -146,48 +154,37 @@ So for example prompting for skill modifications in a trait template makes littl
 
   # CK3 Diagnostics - Remaining Issues
 
-**Status:** 109 diagnostics remain (down from 4,917 after adding nested schema blocks to DYNAMIC_KEY_BLOCKS)
+**Status:** 61 diagnostics remain (down from 41,889 originally)
 
 ## Top Issues by Identifier Count
 
 | Identifier | Count | Category | Notes |
 |------------|-------|----------|-------|
-| `type` | 74 | Missing parameter | Various effect contexts |
-| `cb` | 41 | Missing parameter | Casus belli related |
-| `always` | 30 | Trigger in effect context | Valid trigger used in effect blocks |
-| `article` | 27 | Missing parameter | Localization related |
-| `key` | 23 | Missing parameter | Various effects |
-| `size`, `reinforce` | 17 each | Missing parameter | Army-related |
-| `matchmaker` | 10 | Unknown trigger | Game-specific, may need adding |
+| `custom` | 12 | Missing parameter | Iterator parameter not recognized |
+| `matchmaker` | 10 | Unknown trigger | DLC-specific, may need adding |
+| `gold` | 9 | Trigger in effect context | Used in `refund_cost` blocks |
+| `hegemony` | 4 | Unknown | DLC feature |
+| `clear_variable_list` | 4 | Invalid ?= usage | Not a scope changer |
 
 ## Issue Categories
 
-### A: Missing Effect Parameters (~150)
-Parameters to effects that aren't in `effectParameterOverrides`:
-```
-Unknown effect: "type" in "some_effect"
-Unknown effect: "cb" in "start_war"
-```
-**Fix:** Add missing parameters to `effectParameterOverrides` in `src/data/index.ts`
+### A: Unknown Triggers/Effects (~37)
+Identifiers not in our generated data, likely DLC-specific or undocumented:
+- `matchmaker` (10) - Matchmaking feature
+- `hegemony` (4) - Hegemony feature
+- Various typos in game files (`If`, `limiT`, `Not`, `NOt`)
 
-### B: Triggers Used in Effect Context (~100)
+### B: Triggers Used in Effect Context (~9)
 ```
-Trigger "always" used in effect context (in "show_as_unavailable")
-Trigger "gold" used in effect context (in "create_inspiration")
+Trigger "gold" used in effect context (in "refund_cost")
 ```
-Some are valid (e.g., `show_as_unavailable` takes triggers), others are effect parameters.
+The `refund_cost` block expects triggers, but we're flagging them as wrong context.
 
-### C: Unknown Triggers (~20)
-```
-Unknown trigger: "matchmaker" in "any_child"
-```
-Some game-specific triggers may be missing from our generated data.
-
-### D: Invalid ?= Usage (~13)
+### C: Invalid ?= Usage (~13)
 ```
 Invalid ?= usage: "obedience_target" is not a valid scope.
 ```
-Non-scope-changers used with the `?=` operator. May need to add more scope changers.
+Non-scope-changers used with the `?=` operator. May be DLC-specific scopes.
 
 ## Effect/Trigger Context Validation - False Positives
 

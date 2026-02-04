@@ -337,6 +337,9 @@ const effectParameterOverrides: Record<string, string[]> = {
   'every_knight': ['custom', 'even_if_dead'],
   'every_faction_member': ['custom'],
   'every_courtier_or_guest': ['custom'],
+  'every_held_county': ['custom'],
+  'every_situation_group_participant': ['custom'],
+  'every_theocratic_vassal': ['custom'],
   'every_child': ['custom', 'even_if_dead'],
   'every_councillor': ['custom'],
   'every_traveling_family_member': ['custom'],
@@ -408,6 +411,10 @@ const effectParameterOverrides: Record<string, string[]> = {
 
   // Global list iteration
   'ordered_in_global_list': ['list', 'variable', 'order_by', 'position', 'min', 'max', 'check_range_bounds'],
+
+  // Court position iterators (type specifies which court position)
+  'ordered_court_position_holder': ['type', 'order_by', 'position', 'min', 'max', 'check_range_bounds'],
+  // Note: random_court_position_holder is already defined above at line 317
 };
 
 /**
@@ -649,6 +656,15 @@ const triggerParameterOverrides: Record<string, string[]> = {
 
   // Casus belli triggers
   'has_cb_on': ['target', 'cb'],
+
+  // Travel triggers
+  'travel_danger_type': ['travel_plan', 'type', 'terrain'],
+
+  // Situation participant triggers
+  'any_situation_group_participant': ['count', 'percent'],
+
+  // Hook triggers
+  'can_add_hook': ['target', 'type', 'years'],
 };
 
 /**

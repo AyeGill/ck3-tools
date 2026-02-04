@@ -8,17 +8,15 @@
  * Fix: Changed block-start detection to find ALL `name = {` patterns on a line using matchAll.
  */
 import { describe, it, expect, vi } from 'vitest';
+import {
+  createMockDocument,
+  DiagnosticCollection,
+} from './mocks/vscode';
 
-// Mock vscode module
+// Mock vscode module with proper DiagnosticCollection
 vi.mock('vscode', () => ({
   languages: {
-    createDiagnosticCollection: () => ({
-      set: () => {},
-      get: () => [],
-      delete: () => {},
-      clear: () => {},
-      dispose: () => {},
-    }),
+    createDiagnosticCollection: () => new DiagnosticCollection(),
   },
   DiagnosticSeverity: { Error: 0, Warning: 1, Information: 2, Hint: 3 },
   Diagnostic: class {
@@ -58,32 +56,6 @@ vi.mock('vscode', () => ({
 }));
 
 import { CK3DiagnosticsProvider } from '../providers/ck3DiagnosticsProvider';
-
-function createMockDocument(content: string, fileName: string): any {
-  const lines = content.split('\n');
-  return {
-    fileName,
-    uri: { toString: () => `file://${fileName}`, fsPath: fileName },
-    languageId: 'ck3',
-    lineCount: lines.length,
-    getText: () => content,
-    lineAt: (line: number) => ({
-      text: lines[line] || '',
-      lineNumber: line,
-    }),
-    positionAt: (offset: number) => {
-      let remaining = offset;
-      for (let line = 0; line < lines.length; line++) {
-        const lineLength = lines[line].length + 1;
-        if (remaining < lineLength) {
-          return { line, character: remaining };
-        }
-        remaining -= lineLength;
-      }
-      return { line: lines.length - 1, character: lines[lines.length - 1]?.length || 0 };
-    },
-  };
-}
 
 describe('Context Detection Bug', () => {
   it('should detect trigger context for list inside any_in_list inside limit (simple)', () => {

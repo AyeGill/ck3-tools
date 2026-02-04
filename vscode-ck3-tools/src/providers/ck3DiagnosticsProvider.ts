@@ -34,6 +34,7 @@ import { onActionSchema, onActionSchemaMap } from '../schemas/onActionSchema';
 import { scriptedEffectSchema, scriptedEffectSchemaMap } from '../schemas/scriptedEffectsSchema';
 import { scriptedTriggerSchema, scriptedTriggerSchemaMap } from '../schemas/scriptedTriggersSchema';
 import { scriptedModifierSchema, scriptedModifierSchemaMap } from '../schemas/scriptedModifierSchema';
+import { BLOCK_SCHEMAS, getBlockSchemaMap } from '../schemas/blockSchemas';
 
 /**
  * Supported file types for diagnostics
@@ -89,32 +90,6 @@ const ITERATOR_PREFIXES = [
   'every_', 'random_', 'any_', 'ordered_',
 ];
 
-/**
- * Blocks where children are dynamic keys (not effects/triggers)
- * For example, stress_impact children are trait names, not effects
- */
-const DYNAMIC_KEY_BLOCKS = new Set([
-  'stress_impact',           // children are trait names
-  'ai_value_modifier',       // may have dynamic keys
-  'compare_value',           // comparison block
-  'value',                   // numeric value blocks
-  'option',                  // event options have schema fields + effects (temporary - see TODO)
-  'switch',                  // children are case keys (trait names, terrain types, yes/no, etc.)
-  'random_traits_list',      // children are trait names
-  'random_list',             // children are numeric weight keys (50 = { }, 25 = { })
-  'participants',            // children are participant role names
-  'properties',              // children are property names
-  'ai_frequency_by_tier',    // children are title tier names (barony, county, etc.)
-  // Nested schema blocks that have their own fields (not effects/triggers)
-  'name',                    // conditional name block in options: has trigger, text
-  'desc',                    // conditional desc block: has trigger, desc, first_valid
-  'men_at_arms',             // spawn_army parameter: has type, stacks
-  'levies',                  // spawn_army parameter: has value, multiply, etc.
-  'history',                 // various effects: has type, date, etc.
-  'opinion',                 // opinion blocks: has modifier, etc.
-  'first_valid',             // localization blocks: has trigger, text
-  'sub_region',              // start_situation parameter: has key, start_phase, geographical_regions, map_color
-]);
 
 /**
  * Control flow blocks that are transparent for parameter validation.
@@ -1084,8 +1059,10 @@ export class CK3DiagnosticsProvider {
           const parentBlockInfo = blockStack.length > 0 ? blockStack[blockStack.length - 1] : null;
           const parentBlockName = parentBlockInfo?.name || '';
 
-          // Skip validation inside dynamic key blocks
-          if (!DYNAMIC_KEY_BLOCKS.has(parentBlockName)) {
+          // Check if parent block has special schema validation
+          const parentBlockConfig = BLOCK_SCHEMAS.get(parentBlockName);
+          if (!parentBlockConfig) {
+            // Normal validation - parent block has no special schema
             const diagnostic = this.validateFieldInContext(
               blockName,
               parentContext,
@@ -1097,6 +1074,50 @@ export class CK3DiagnosticsProvider {
             );
             if (diagnostic) {
               diagnostics.push(diagnostic);
+            }
+          } else {
+            // Parent block has special schema - validate according to its type
+            switch (parentBlockConfig.childValidation) {
+              case 'none':
+                // Pure dynamic keys - skip validation
+                break;
+              case 'schema-only': {
+                // Only schema fields allowed
+                const schemaMap = getBlockSchemaMap(parentBlockName);
+                if (schemaMap && !schemaMap.has(blockName)) {
+                  const fieldStart = cleanLine.indexOf(blockName);
+                  const range = new vscode.Range(
+                    new vscode.Position(lineNum, fieldStart >= 0 ? fieldStart : 0),
+                    new vscode.Position(lineNum, fieldStart >= 0 ? fieldStart + blockName.length : cleanLine.length)
+                  );
+                  diagnostics.push(new vscode.Diagnostic(
+                    range,
+                    `Unknown field "${blockName}" in ${parentBlockName} block. Valid fields: ${[...schemaMap.keys()].join(', ')}`,
+                    vscode.DiagnosticSeverity.Warning
+                  ));
+                }
+                break;
+              }
+              case 'schema+effects': {
+                // Schema fields + effects allowed - validate as effect if not in schema
+                const schemaMap = getBlockSchemaMap(parentBlockName);
+                if (!schemaMap?.has(blockName)) {
+                  // Not a schema field - validate as effect/trigger
+                  const diagnostic = this.validateFieldInContext(
+                    blockName,
+                    parentContext,
+                    blockStack,
+                    lineNum,
+                    cleanLine,
+                    document,
+                    parentBlockInfo?.parentContext
+                  );
+                  if (diagnostic) {
+                    diagnostics.push(diagnostic);
+                  }
+                }
+                break;
+              }
             }
           }
 
@@ -1140,9 +1161,42 @@ export class CK3DiagnosticsProvider {
           shouldValidate = false; // Don't validate ?= as effect/trigger
         }
 
-        // Skip validation inside dynamic key blocks (e.g., stress_impact where keys are trait names)
-        if (shouldValidate && DYNAMIC_KEY_BLOCKS.has(currentBlock.name)) {
-          shouldValidate = false;
+        // Check if current block has special schema validation
+        const currentBlockConfig = BLOCK_SCHEMAS.get(currentBlock.name);
+        if (shouldValidate && currentBlockConfig) {
+          switch (currentBlockConfig.childValidation) {
+            case 'none':
+              // Pure dynamic keys - skip validation
+              shouldValidate = false;
+              break;
+            case 'schema-only': {
+              // Only schema fields allowed
+              const schemaMap = getBlockSchemaMap(currentBlock.name);
+              if (schemaMap && !schemaMap.has(fieldName)) {
+                const fieldStart = cleanLine.indexOf(fieldName);
+                const range = new vscode.Range(
+                  new vscode.Position(lineNum, fieldStart >= 0 ? fieldStart : 0),
+                  new vscode.Position(lineNum, fieldStart >= 0 ? fieldStart + fieldName.length : cleanLine.length)
+                );
+                diagnostics.push(new vscode.Diagnostic(
+                  range,
+                  `Unknown field "${fieldName}" in ${currentBlock.name} block. Valid fields: ${[...schemaMap.keys()].join(', ')}`,
+                  vscode.DiagnosticSeverity.Warning
+                ));
+              }
+              shouldValidate = false;
+              break;
+            }
+            case 'schema+effects': {
+              // Schema fields + effects allowed - only skip if it's a schema field
+              const schemaMap = getBlockSchemaMap(currentBlock.name);
+              if (schemaMap?.has(fieldName)) {
+                shouldValidate = false; // Known schema field, don't validate as effect
+              }
+              // Otherwise continue to effect/trigger validation
+              break;
+            }
+          }
         }
 
         // Only validate if we're in a known context and validation isn't skipped

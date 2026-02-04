@@ -524,6 +524,33 @@ export const eventOptionSchema: FieldSchema[] = [
     desc = option_default
 }`,
   },
+  {
+    name: 'flavor',
+    type: 'block',
+    description: 'Flavor text block shown with the option.',
+    example: `flavor = {
+    text = flavor_text_key
+    trigger = { ... }
+}`,
+  },
+  {
+    name: 'trait',
+    type: 'string',
+    description: 'Trait to show as associated with this option.',
+    example: 'trait = brave',
+  },
+  {
+    name: 'clicksound',
+    type: 'string',
+    description: 'Sound effect to play when option is clicked.',
+    example: 'clicksound = event_button_sound',
+  },
+  {
+    name: 'custom_tooltip',
+    type: 'string',
+    description: 'Custom tooltip localization key.',
+    example: 'custom_tooltip = my_custom_tooltip',
+  },
 ];
 
 export const eventOptionSchemaMap = new Map<string, FieldSchema>(
