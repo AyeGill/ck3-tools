@@ -22,27 +22,97 @@ export interface EntityLocation {
  * Types of entities we track
  */
 export type EntityType =
+  // Core scripting
   | 'script_value'
-  | 'trait'
-  | 'event'
-  | 'on_action'
   | 'scripted_modifier'
   | 'scripted_effect'
   | 'scripted_trigger'
-  | 'decision';
+  // Character-related
+  | 'trait'
+  | 'secret_type'
+  | 'scheme'
+  // Events and decisions
+  | 'event'
+  | 'on_action'
+  | 'decision'
+  // Activities
+  | 'activity'
+  // Culture
+  | 'culture'
+  | 'culture_tradition'
+  | 'culture_innovation'
+  | 'culture_pillar'
+  // Religion
+  | 'doctrine'
+  // Titles and holdings
+  | 'landed_title'
+  | 'holding_type'
+  | 'government_type'
+  // Dynasties
+  | 'dynasty'
+  | 'dynasty_house'
+  // War
+  | 'casus_belli_type'
+  | 'faction'
+  // DLC features
+  | 'legend'
+  | 'inspiration'
+  | 'struggle'
+  | 'epidemic'
+  | 'great_project'
+  | 'accolade_type'
+  | 'situation'
+  | 'story_cycle'
+  | 'court_position_type'
+  | 'artifact';
 
 /**
  * Mapping from entity type to the folder path pattern
  */
 const ENTITY_TYPE_PATHS: Record<EntityType, string> = {
+  // Core scripting
   script_value: '/common/script_values/',
-  trait: '/common/traits/',
-  event: '/events/',
-  on_action: '/common/on_action/',
   scripted_modifier: '/common/scripted_modifiers/',
   scripted_effect: '/common/scripted_effects/',
   scripted_trigger: '/common/scripted_triggers/',
+  // Character-related
+  trait: '/common/traits/',
+  secret_type: '/common/secret_types/',
+  scheme: '/common/schemes/scheme_types/',
+  // Events and decisions
+  event: '/events/',
+  on_action: '/common/on_action/',
   decision: '/common/decisions/',
+  // Activities
+  activity: '/common/activities/activity_types/',
+  // Culture
+  culture: '/common/culture/cultures/',
+  culture_tradition: '/common/culture/traditions/',
+  culture_innovation: '/common/culture/innovations/',
+  culture_pillar: '/common/culture/pillars/',
+  // Religion
+  doctrine: '/common/religion/doctrines/',
+  // Titles and holdings
+  landed_title: '/common/landed_titles/',
+  holding_type: '/common/holdings/',
+  government_type: '/common/governments/',
+  // Dynasties
+  dynasty: '/common/dynasties/',
+  dynasty_house: '/common/dynasty_houses/',
+  // War
+  casus_belli_type: '/common/casus_belli_types/',
+  faction: '/common/factions/',
+  // DLC features
+  legend: '/common/legends/legend_types/',
+  inspiration: '/common/inspirations/',
+  struggle: '/common/struggle/struggles/',
+  epidemic: '/common/epidemics/',
+  great_project: '/common/great_projects/',
+  accolade_type: '/common/accolade_types/',
+  situation: '/common/situation/situations/',
+  story_cycle: '/common/story_cycles/',
+  court_position_type: '/common/court_positions/',
+  artifact: '/common/artifacts/',
 };
 
 /**

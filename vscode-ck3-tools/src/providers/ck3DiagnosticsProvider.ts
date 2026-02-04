@@ -124,12 +124,53 @@ const RANDOM_LIST_WEIGHT_FIELDS = new Set([
  * Only includes target types that we can actually validate against the workspace index
  */
 const TARGET_TO_ENTITY_TYPE: Partial<Record<string, EntityType>> = {
-  'trait': 'trait',
-  'event': 'event',
+  // Core scripting
   'scripted_effect': 'scripted_effect',
   'scripted_trigger': 'scripted_trigger',
   'scripted_modifier': 'scripted_modifier',
+  // Character-related
+  'trait': 'trait',
+  'secret': 'secret_type',
+  'scheme': 'scheme',
+  // Events and decisions
+  'event': 'event',
   'decision': 'decision',
+  // Activities
+  'activity': 'activity',
+  'activity_type': 'activity', // Same as activity
+  // Culture
+  'culture': 'culture',
+  'culture_tradition': 'culture_tradition',
+  'culture_innovation': 'culture_innovation',
+  'culture_pillar': 'culture_pillar',
+  // Religion
+  // Note: doctrine is excluded because doctrines are nested inside religion files
+  // and can't be easily indexed with our simple top-level parser
+  // Titles and holdings
+  'landed_title': 'landed_title',
+  'holding_type': 'holding_type',
+  'government_type': 'government_type',
+  // Dynasties
+  'dynasty': 'dynasty',
+  'dynasty_house': 'dynasty_house',
+  // War
+  'casus_belli_type': 'casus_belli_type',
+  'faction': 'faction',
+  // DLC features
+  'legend': 'legend',
+  'legend_type': 'legend', // Same folder
+  'inspiration': 'inspiration',
+  'struggle': 'struggle',
+  'epidemic': 'epidemic',
+  'epidemic_type': 'epidemic', // Same folder
+  'great_project': 'great_project',
+  'great_project_type': 'great_project', // Same folder
+  'accolade': 'accolade_type',
+  'accolade_type': 'accolade_type',
+  'situation': 'situation',
+  'story': 'story_cycle',
+  'court_position_type': 'court_position_type',
+  'artifact': 'artifact',
 };
 
 /**
@@ -149,14 +190,14 @@ const PREFIX_TO_SCOPE_TYPE: Record<string, ScopeType> = {
 };
 
 /**
- * Resolve a scope path to its final type
- * e.g., "title:k_england.holder" -> "character"
- *       "title:k_england" -> "landed_title"
- *       "cp:councillor_chancellor" -> "character"
+ * Resolve a prefixed scope path to its final type
+ * e.g., "title:k_england.holder" -> "character" (last part .holder outputs character)
+ *       "title:k_england" -> "landed_title" (prefix determines type)
+ *       "cp:councillor_chancellor" -> "character" (cp prefix outputs character)
  *
  * @returns The final scope type, or null if unable to resolve
  */
-function resolveScopePathType(path: string): ScopeType | null {
+function resolvePrefixedScopePath(path: string): ScopeType | null {
   const colonIndex = path.indexOf(':');
   if (colonIndex <= 0) {
     return null; // No prefix
@@ -181,37 +222,43 @@ function resolveScopePathType(path: string): ScopeType | null {
     return initialType;
   }
 
-  // Split the path after the colon on dots
-  // e.g., "k_england.holder" -> ["k_england", "holder"]
+  // For paths with scope changers (e.g., "k_england.holder"),
+  // the final type is determined by the last scope changer
   const parts = rest.split('.');
+  const lastPart = parts[parts.length - 1];
 
-  // Start from the initial type and follow scope changers
-  let currentType: ScopeType = initialType;
+  const effect = effectsMap.get(lastPart);
+  const trigger = triggersMap.get(lastPart);
+  const definition = effect || trigger;
 
-  // Skip the first part (that's the database key, e.g., "k_england")
-  for (let i = 1; i < parts.length; i++) {
-    const scopeChanger = parts[i];
+  return definition?.outputScope ?? null;
+}
 
-    // Look up the scope changer in effects or triggers
-    const effect = effectsMap.get(scopeChanger);
-    const trigger = triggersMap.get(scopeChanger);
-    const definition = effect || trigger;
-
-    if (definition?.outputScope) {
-      // Check if the scope changer can be used from the current scope
-      if (definition.supportedScopes.includes(currentType) || definition.supportedScopes.includes('none')) {
-        currentType = definition.outputScope;
-      } else {
-        // Scope changer can't be used from current type - path is invalid
-        return null;
-      }
-    } else {
-      // Unknown scope changer - we can't resolve further
-      return null;
-    }
+/**
+ * Resolve a dot-separated scope path to its final type
+ * The output type is determined by the LAST scope changer in the path,
+ * since each scope changer has a fixed output type regardless of input.
+ *
+ * e.g., "prev.culture" -> "culture" (.culture always outputs culture)
+ *       "root.capital_county.holder" -> "character" (.holder always outputs character)
+ *       "some_var.primary_title" -> "landed_title"
+ *
+ * @returns The final scope type, or null if the last part isn't a known scope changer
+ */
+function resolveDotScopePath(path: string): ScopeType | null {
+  if (!path.includes('.')) {
+    return null; // Not a dot path
   }
 
-  return currentType;
+  const parts = path.split('.');
+  const lastPart = parts[parts.length - 1];
+
+  // Look up the last part as a scope changer - its outputScope is the final type
+  const effect = effectsMap.get(lastPart);
+  const trigger = triggersMap.get(lastPart);
+  const definition = effect || trigger;
+
+  return definition?.outputScope ?? null;
 }
 
 /**
@@ -1617,9 +1664,18 @@ export class CK3DiagnosticsProvider {
       return null;
     }
 
-    // Skip bare scope references (prev, this, root) - these reference the current/previous scope
+    // Skip bare scope references - these reference the current/previous scope
     // whose type depends on context and can't be statically validated
-    const bareScopes = ['prev', 'this', 'root', 'from', 'event_target', 'global_var', 'local_var'];
+    const bareScopes = [
+      // Basic scope changers
+      'prev', 'this', 'root', 'from',
+      // Variable accessors
+      'event_target', 'global_var', 'local_var',
+      // Context-specific scope variables (commonly used in iterations/events)
+      'involved_activity', 'activity', 'inspiration', 'scheme', 'secret',
+      'artifact', 'war', 'faction', 'legend', 'story', 'struggle',
+      'regiment_owning_title', 'target_title', 'landed_title',
+    ];
     if (bareScopes.includes(value)) {
       return null;
     }
@@ -1656,7 +1712,7 @@ export class CK3DiagnosticsProvider {
 
       // Try to resolve the scope path to its final type
       // e.g., "title:k_england.holder" -> "character"
-      const resolvedType = resolveScopePathType(cleanValue);
+      const resolvedType = resolvePrefixedScopePath(cleanValue);
 
       if (resolvedType) {
         // We could resolve the type - check if it matches what's expected
@@ -1678,6 +1734,34 @@ export class CK3DiagnosticsProvider {
       }
 
       // Couldn't resolve (unknown prefix or unknown scope changer) - skip validation
+      return null;
+    }
+
+    // Try to resolve dot-separated scope paths (root.culture, root.capital_county.holder)
+    // These resolve through scope changers to a final type
+    if (cleanValue.includes('.')) {
+      const resolvedType = resolveDotScopePath(cleanValue);
+
+      if (resolvedType) {
+        // We resolved the path - check if type matches expected targets
+        if (definition.supportedTargets.includes(resolvedType as any)) {
+          return null; // Type matches - valid reference
+        }
+        // Type doesn't match - flag it
+        const expectedType = definition.supportedTargets[0];
+        const valueStart = cleanLine.lastIndexOf(value);
+        const range = new vscode.Range(
+          new vscode.Position(lineNum, valueStart >= 0 ? valueStart : 0),
+          new vscode.Position(lineNum, valueStart >= 0 ? valueStart + value.length : cleanLine.length)
+        );
+        return new vscode.Diagnostic(
+          range,
+          `Expected ${expectedType}, got ${resolvedType}: "${cleanValue}"`,
+          vscode.DiagnosticSeverity.Warning
+        );
+      }
+
+      // Couldn't resolve (starts with prev/this/from or unknown changer) - skip validation
       return null;
     }
 

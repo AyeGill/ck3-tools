@@ -109,7 +109,7 @@ So for example prompting for skill modifications in a trait template makes littl
   - **DONE**: Added block schema validation tests (`blockSchemaValidation.test.ts` - 9 tests)
   - **DONE**: Added block parsing characterization tests (`blockParsing.test.ts` - 26 tests)
   - **DONE**: Unified block parsing logic into `src/utils/blockParser.ts` - All three providers (CompletionProvider, HoverProvider, DiagnosticsProvider) now share the same regex pattern and context determination logic
-  - Total: 180 tests passing
+  - Total: 194 tests passing
 
 
 - What's up with accessory and artifact both being schemae? Should look in the game files and figure this out.
@@ -149,8 +149,12 @@ So for example prompting for skill modifications in a trait template makes littl
   - [ ] **Autocomplete from index**: Suggest valid trait names when typing `add_trait =`, valid events for `trigger_event =`
   - [x] **Effect/trigger entity validation**: Use `supportedTargets` from effect definitions to validate references (e.g., `add_trait = brave` should check if `brave` is a defined trait)
     - **DONE**: Implemented `validateTargetValue()` in `ck3DiagnosticsProvider.ts`
-    - Validates references for all entity types: `trait`, `event`, `scripted_effect`, `scripted_trigger`, `scripted_modifier`, `decision`
-    - Added `decision` as new entity type in workspace index (files in `/common/decisions/`)
+    - **Extended workspace index to 27 entity types**: `trait`, `event`, `decision`, `scripted_effect`, `scripted_trigger`, `scripted_modifier`, `script_value`, `secret_type`, `scheme`, `on_action`, `activity`, `culture`, `culture_tradition`, `culture_innovation`, `culture_pillar`, `doctrine`, `landed_title`, `holding_type`, `government_type`, `dynasty`, `dynasty_house`, `casus_belli_type`, `faction`, `legend`, `inspiration`, `struggle`, `epidemic`, `great_project`, `accolade_type`, `situation`, `story_cycle`, `court_position_type`, `artifact`
+    - **Created `TARGET_TO_ENTITY_TYPE` map**: Maps effect/trigger `supportedTargets` to `EntityType` for 40+ target types
+    - **Scope path resolution**: Validates references with scope paths like `root.culture`, `prev.capital_county`, `title:k_england.holder`
+      - `resolveDotScopePath()`: Resolves paths like `root.culture` by looking up the last scope changer's output type
+      - `resolvePrefixedScopePath()`: Resolves prefixed paths like `title:k_england.holder`
+      - Key insight: Scope changers have fixed output types regardless of input context
     - Extended validation to triggers (not just effects) - e.g., `can_execute_decision`, `trait_is_sin`
     - Skips dynamic references (`scope:X`, `$VARIABLE$`, `flag:`, prefixed database keys like `trait:brave`)
   - [ ] **Index game files**: Currently only indexes workspace files; could also index game files from CK3 install path for complete validation
@@ -161,7 +165,7 @@ So for example prompting for skill modifications in a trait template makes littl
 
   # CK3 Diagnostics - Remaining Issues
 
-**Status:** 61 diagnostics remain (down from 41,889 originally)
+**Status:** 524 diagnostics remain (down from 41,889 originally; expanded validation adds more warnings for valid patterns)
 
 ## Top Issues by Identifier Count
 
