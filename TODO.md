@@ -92,6 +92,10 @@ So for example prompting for skill modifications in a trait template makes littl
     - Pure dynamic key blocks (`stress_impact`, `switch`, `random_list`) skip validation
     - Added `flavor`, `trait`, `clicksound`, `custom_tooltip` to `eventOptionSchema`
     - Diagnostics dropped from 3,205 to 61 after this change
+  - [x] **Synchronized BLOCK_SCHEMAS with hover/completion providers**:
+    - Completion provider now autocompletes fields for schema-only blocks (`triggered_desc`, `desc`, `first_valid`, `random_valid`, `men_at_arms`, `levies`, `opinion`, `history`, `sub_region`)
+    - Hover provider now shows documentation for fields in these structural blocks
+    - No duplication: shared `blockSchemas.ts` used by all three providers (diagnostics, completion, hover)
   - [ ] **Triggers used in effect context (292)** - Some are parameters (like `task_contract_tier`), others are valid usages in special blocks like `show_as_unavailable`
 - [ ] There should also be an option to "explicitify" the localization keys, by adding all the necessary localization key fields (with their default values) to an item (so if we have a trait foo_bar, doing this would add name = trait_foo_bar) and so on.
   - [ ] In general the localization generator should account for the whole structure of the current item when generating necessary localizations (so if you have an event with a bunch of options, it should generate the localizations for each option). But this seems quite hard so that's probably a low priority.
@@ -103,7 +107,9 @@ So for example prompting for skill modifications in a trait template makes littl
   - **DONE**: Added target validation tests (6 tests for trait reference validation)
   - **DONE**: Added operator handling tests (12 tests for =, ?=, >, <, >=, <= operators)
   - **DONE**: Added block schema validation tests (`blockSchemaValidation.test.ts` - 9 tests)
-  - Total: 154 tests passing
+  - **DONE**: Added block parsing characterization tests (`blockParsing.test.ts` - 26 tests)
+  - **DONE**: Unified block parsing logic into `src/utils/blockParser.ts` - All three providers (CompletionProvider, HoverProvider, DiagnosticsProvider) now share the same regex pattern and context determination logic
+  - Total: 180 tests passing
 
 
 - What's up with accessory and artifact both being schemae? Should look in the game files and figure this out.
@@ -143,9 +149,10 @@ So for example prompting for skill modifications in a trait template makes littl
   - [ ] **Autocomplete from index**: Suggest valid trait names when typing `add_trait =`, valid events for `trigger_event =`
   - [x] **Effect/trigger entity validation**: Use `supportedTargets` from effect definitions to validate references (e.g., `add_trait = brave` should check if `brave` is a defined trait)
     - **DONE**: Implemented `validateTargetValue()` in `ck3DiagnosticsProvider.ts`
-    - Validates trait references in `add_trait`, `remove_trait`, and 15 other trait-related effects
-    - Skips dynamic references (`scope:X`, `$VARIABLE$`, `flag:`) that can't be validated statically
-    - Currently validates traits; extensible to other entity types as workspace index expands
+    - Validates references for all entity types: `trait`, `event`, `scripted_effect`, `scripted_trigger`, `scripted_modifier`, `decision`
+    - Added `decision` as new entity type in workspace index (files in `/common/decisions/`)
+    - Extended validation to triggers (not just effects) - e.g., `can_execute_decision`, `trait_is_sin`
+    - Skips dynamic references (`scope:X`, `$VARIABLE$`, `flag:`, prefixed database keys like `trait:brave`)
   - [ ] **Index game files**: Currently only indexes workspace files; could also index game files from CK3 install path for complete validation
 - A number of schemas might not be quite right. Specifically:
   - I think the artifact schema just works for all the stuff in the artifacts subfolder. Actually these appear to be a number of different things and we're not really doing the right thing for any of them.
@@ -209,3 +216,23 @@ After implementing "Effect X used in trigger context" / "Trigger Y used in effec
 **Root cause:** Same as Type 1 - the regex bug caused `set_variable = {` to be matched as a field assignment when preceded by another `set_variable` block that wasn't properly popped. The fix to use `[^{]*` instead of `[^{].*` resolved this completely.
 
 **Status:** All 22 self-referential errors eliminated by the regex fix.
+
+### ✅ Type 3: Bare Identifiers Not Validated - FIXED
+
+**Problem:** Lines without operators (`=`, `?=`, etc.) inside blocks were completely skipped during validation. For example, `xyz` on its own line inside `immediate = { }` would not produce any diagnostic.
+
+**Root cause:** The field matching regex required an operator: `/^\s*([\w.:$]+)\s*(\?=|=)\s*([^{]*)$/`. Lines without operators never matched, so they were silently ignored.
+
+**Fix:** Added bare identifier detection after the field match check. For lines that:
+1. Don't match the field regex (no operator)
+2. Are inside a block
+3. Contain a bare identifier
+
+Now:
+- In list blocks (`events`, `on_actions`, etc.) → validate identifier against workspace index
+- In trigger/effect blocks → flag as error with message "Unexpected bare identifier, did you forget '= yes'?"
+
+**Files changed:**
+- `src/utils/scopeContext.ts` - Added `LIST_BLOCKS` constant
+- `src/providers/workspaceIndex.ts` - Added `on_action` entity type
+- `src/providers/ck3DiagnosticsProvider.ts` - Added bare identifier validation

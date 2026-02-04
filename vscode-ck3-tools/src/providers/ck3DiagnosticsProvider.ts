@@ -9,6 +9,7 @@ import {
   WEIGHT_BLOCKS,
   WEIGHT_BLOCK_PARAMS,
   TRIGGER_CONTEXT_BLOCKS_WITH_PARAMS,
+  LIST_BLOCKS,
   BlockContext,
   analyzeBlockContext,
   validateScopePath,
@@ -16,6 +17,11 @@ import {
   isScopeReference,
   KNOWN_SCOPE_CHANGERS,
 } from '../utils/scopeContext';
+import {
+  BLOCK_START_PATTERN,
+  SCRIPT_VALUE_BLOCKS,
+  determineBlockContext,
+} from '../utils/blockParser';
 
 // Import all schemas we want to validate
 import { traitSchema, traitSchemaMap } from '../schemas/traitSchema';
@@ -114,26 +120,16 @@ const RANDOM_LIST_WEIGHT_FIELDS = new Set([
 ]);
 
 /**
- * Blocks that establish script value context (math expressions)
- * Inside these blocks, math operations like value, add, multiply are valid
- */
-const SCRIPT_VALUE_BLOCKS = new Set([
-  'chance',                           // parameter of random effect
-  'add', 'subtract', 'multiply', 'divide',  // math operation blocks
-  'min', 'max',                       // bounds blocks
-  'factor',                           // multiplier block
-  'compare_modifier',                 // comparison with modifiers
-  'compatibility_modifier',           // compatibility calculations
-]);
-
-/**
  * Mapping from effect/trigger supportedTargets values to EntityType for validation
  * Only includes target types that we can actually validate against the workspace index
  */
 const TARGET_TO_ENTITY_TYPE: Partial<Record<string, EntityType>> = {
   'trait': 'trait',
-  // Future: add more as we expand workspace index tracking
-  // 'event': 'event',  // Would need special handling for namespace.id format
+  'event': 'event',
+  'scripted_effect': 'scripted_effect',
+  'scripted_trigger': 'scripted_trigger',
+  'scripted_modifier': 'scripted_modifier',
+  'decision': 'decision',
 };
 
 /**
@@ -976,23 +972,17 @@ export class CK3DiagnosticsProvider {
       const openBraces = (cleanLine.match(/\{/g) || []).length;
       const closeBraces = (cleanLine.match(/\}/g) || []).length;
 
-      // Check for ALL block starts on this line: name = { or name ?= { or name > { etc.
+      // Check for ALL block starts on this line using the unified regex pattern
       // A single line may contain multiple inline blocks like: limit = { scope:actor = { is_ai = yes } }
       // We need to push ALL of them to keep the stack balanced with closing braces
-      // The regex captures: (1) identifier, (2) operator (=, ?=, >, <, >=, <=)
-      // Identifier can include dots, colons for scope paths like faith.religious_head or scope:target
-      // Also includes $ for script variables like $CHARACTER$.liege
-      // Note: >, <, >=, <= are comparison operators that can take script value blocks
-      const blockStartRegex = /([\w.:$]+)\s*(\?=|>=|<=|=|>|<)\s*\{/g;
+      const blockStartRegex = new RegExp(BLOCK_START_PATTERN.source, 'g');
       const blockStarts = [...cleanLine.matchAll(blockStartRegex)];
       for (const match of blockStarts) {
         const blockName = match[1];
-        const operator = match[2]; // '=' or '?='
-        let context: 'trigger' | 'effect' | 'weight' | 'unknown' = 'unknown';
+        const operator = match[2];
         const parentContext = blockStack.length > 0 ? blockStack[blockStack.length - 1].context : 'unknown';
 
-        // For ?= operator, the LHS must be a valid scope (not an effect/trigger)
-        // ?= is a null-safe scope changer that only executes if the scope exists
+        // Validate ?= operator usage (must be valid scope changer)
         if (operator === '?=') {
           if (!this.isValidScopeChanger(blockName)) {
             const fieldStart = cleanLine.indexOf(blockName);
@@ -1006,55 +996,34 @@ export class CK3DiagnosticsProvider {
               vscode.DiagnosticSeverity.Warning
             ));
           }
-          // ?= always establishes a scope change context - inherit from parent
-          if (parentContext === 'trigger' || parentContext === 'effect') {
-            context = parentContext;
-          }
+        }
+
+        // Use unified context determination from blockParser
+        let context = determineBlockContext(blockName, operator, parentContext);
+
+        // For comparison and ?= operators, skip further block validation
+        if (operator === '?=' || operator === '>' || operator === '<' || operator === '>=' || operator === '<=') {
           blockStack.push({ name: blockName, context, parentContext });
-          continue; // Skip the rest of the block validation for ?= blocks
+          continue;
         }
 
-        // Comparison operators (>, <, >=, <=) create script value blocks
-        // These are used for comparing values: gold > { value = 100 }
-        if (operator === '>' || operator === '<' || operator === '>=' || operator === '<=') {
-          context = 'weight'; // Script value context
-          blockStack.push({ name: blockName, context, parentContext });
-          continue; // Skip the rest of the block validation for comparison blocks
-        }
-
-        // Determine context based on block name
-        if (WEIGHT_BLOCKS.has(blockName) || SCRIPT_VALUE_BLOCKS.has(blockName)) {
-          // Weight blocks (ai_will_do, ai_chance, etc.) and script value blocks (chance, add, multiply)
-          // establish weight context where math operations are valid
-          context = 'weight';
-        } else if (TRIGGER_BLOCKS.has(blockName)) {
-          context = 'trigger';
-        } else if (EFFECT_BLOCKS.has(blockName)) {
-          context = 'effect';
-        } else {
-          // Check for blocks that create trigger context with extra params
-          const blockConfig = TRIGGER_CONTEXT_BLOCKS_WITH_PARAMS.get(blockName);
-          if (blockConfig && (blockConfig.validIn === 'any' || blockConfig.validIn === parentContext)) {
-            // This block (e.g., modifier in weight context) creates trigger context inside
-            context = 'trigger';
-          } else if (parentContext !== 'unknown') {
-            // Inherit context from parent if this is a scope changer or iterator
-            if (parentContext === 'weight') {
-              // Inside weight context, non-special blocks don't change context
-              context = 'weight';
-            } else if (this.isValidScopeChanger(blockName) || this.isValidIterator(blockName, parentContext as 'trigger' | 'effect')) {
-              context = parentContext;
-            } else if (parentContext === 'effect' && effectsMap.has(blockName)) {
-              context = 'effect';
-            } else if (parentContext === 'trigger' && triggersMap.has(blockName)) {
-              context = 'trigger';
-            }
-          }
-        }
-
-        // Validate block names that are in a trigger/effect context but don't establish their own context
+        // Validate block names that are in a trigger/effect context but aren't explicitly recognized
         // These are potentially unknown effects/triggers with block values (e.g., `adsasd = { }`)
-        if (context === 'unknown' && (parentContext === 'trigger' || parentContext === 'effect')) {
+        // Check if the block is explicitly recognized (establishes its own context or is a known inheriting block)
+        const isExplicitlyRecognized = (
+          WEIGHT_BLOCKS.has(blockName) ||
+          SCRIPT_VALUE_BLOCKS.has(blockName) ||
+          TRIGGER_BLOCKS.has(blockName) ||
+          EFFECT_BLOCKS.has(blockName) ||
+          TRIGGER_CONTEXT_BLOCKS_WITH_PARAMS.has(blockName) ||
+          isScopeReference(blockName) ||
+          this.isValidScopeChanger(blockName) ||
+          this.isValidIterator(blockName, parentContext as 'trigger' | 'effect') ||
+          (parentContext === 'effect' && effectsMap.has(blockName)) ||
+          (parentContext === 'trigger' && triggersMap.has(blockName))
+        );
+
+        if (!isExplicitlyRecognized && (parentContext === 'trigger' || parentContext === 'effect')) {
           // Get the parent block info for validation
           const parentBlockInfo = blockStack.length > 0 ? blockStack[blockStack.length - 1] : null;
           const parentBlockName = parentBlockInfo?.name || '';
@@ -1214,8 +1183,8 @@ export class CK3DiagnosticsProvider {
             diagnostics.push(diagnostic);
           }
 
-          // Validate target value for effects that expect specific entity types
-          if (currentBlock.context === 'effect') {
+          // Validate target value for effects/triggers that expect specific entity types
+          if (currentBlock.context === 'effect' || currentBlock.context === 'trigger') {
             const fieldValue = fieldMatch[3].trim();
             const targetDiag = this.validateTargetValue(
               fieldName,
@@ -1226,6 +1195,46 @@ export class CK3DiagnosticsProvider {
             if (targetDiag) {
               diagnostics.push(targetDiag);
             }
+          }
+        }
+      }
+
+      // Check for bare identifiers (lines without operators) inside blocks
+      // These are valid in list blocks (events, on_actions) but errors in trigger/effect blocks
+      if (!fieldMatch && blockStack.length > 0) {
+        const bareIdentifierMatch = cleanLine.match(/^\s*([\w.:]+)\s*$/);
+        if (bareIdentifierMatch) {
+          const identifier = bareIdentifierMatch[1];
+          const currentBlock = blockStack[blockStack.length - 1];
+          const listBlockType = LIST_BLOCKS[currentBlock.name];
+
+          if (listBlockType) {
+            // This is a list block - validate the identifier exists
+            const entityType = listBlockType as EntityType;
+            if (this.workspaceIndex && !this.workspaceIndex.has(entityType, identifier)) {
+              const identifierStart = cleanLine.indexOf(identifier);
+              const range = new vscode.Range(
+                new vscode.Position(lineNum, identifierStart >= 0 ? identifierStart : 0),
+                new vscode.Position(lineNum, identifierStart >= 0 ? identifierStart + identifier.length : cleanLine.length)
+              );
+              diagnostics.push(new vscode.Diagnostic(
+                range,
+                `Unknown ${entityType} "${identifier}"`,
+                vscode.DiagnosticSeverity.Warning
+              ));
+            }
+          } else if (currentBlock.context === 'trigger' || currentBlock.context === 'effect') {
+            // Not a list block, but we're in a trigger/effect context - this is likely an error
+            const identifierStart = cleanLine.indexOf(identifier);
+            const range = new vscode.Range(
+              new vscode.Position(lineNum, identifierStart >= 0 ? identifierStart : 0),
+              new vscode.Position(lineNum, identifierStart >= 0 ? identifierStart + identifier.length : cleanLine.length)
+            );
+            diagnostics.push(new vscode.Diagnostic(
+              range,
+              `Unexpected bare identifier "${identifier}". Did you forget "= yes" or "= <value>"?`,
+              vscode.DiagnosticSeverity.Warning
+            ));
           }
         }
       }
@@ -1526,6 +1535,12 @@ export class CK3DiagnosticsProvider {
       return null;
     }
 
+    // Skip prefixed database references (trait:brave, culture:english, faith:catholic, etc.)
+    // These are explicit key references that don't match the expected supportedTargets validation
+    if (value.includes(':') && !value.startsWith('scope:')) {
+      return null;
+    }
+
     // Remove quotes if present
     const cleanValue = value.replace(/^["']|["']$/g, '');
 
@@ -1534,14 +1549,14 @@ export class CK3DiagnosticsProvider {
       return null;
     }
 
-    // Look up the effect definition
-    const effect = effectsMap.get(effectName);
-    if (!effect?.supportedTargets) {
+    // Look up the effect or trigger definition
+    const definition = effectsMap.get(effectName) || triggersMap.get(effectName);
+    if (!definition?.supportedTargets) {
       return null;
     }
 
     // Check if any supportedTargets maps to an entity type we track
-    for (const target of effect.supportedTargets) {
+    for (const target of definition.supportedTargets) {
       const entityType = TARGET_TO_ENTITY_TYPE[target];
       if (entityType) {
         // Check if value exists in index

@@ -10,6 +10,8 @@ import {
   WEIGHT_BLOCK_PARAMS,
   TRIGGER_CONTEXT_BLOCKS_WITH_PARAMS,
 } from '../utils/scopeContext';
+import { getImmediateParentBlock, createGetText } from '../utils/blockParser';
+import { getBlockSchemaMap } from '../schemas/blockSchemas';
 
 // Import all schema maps (mirroring ck3CompletionProvider imports)
 import { traitSchemaMap } from '../schemas/traitSchema';
@@ -753,9 +755,19 @@ export class CK3HoverProvider implements vscode.HoverProvider {
     position: vscode.Position,
     word: string
   ): vscode.Hover | null {
-    // Find the parent block by scanning backwards
-    const parentBlock = this.findParentBlock(document, position);
+    // Find the parent block by scanning backwards using unified parser
+    const getText = createGetText(document);
+    const parentBlock = getImmediateParentBlock(getText, position.line, position.character);
     if (!parentBlock) return null;
+
+    // Check BLOCK_SCHEMAS for structural block fields (triggered_desc, desc, men_at_arms, etc.)
+    const blockSchemaMap = getBlockSchemaMap(parentBlock);
+    if (blockSchemaMap) {
+      const fieldSchema = blockSchemaMap.get(word);
+      if (fieldSchema) {
+        return this.getBlockSchemaFieldHover(fieldSchema, parentBlock);
+      }
+    }
 
     // Check if this is a weight block parameter
     if (WEIGHT_BLOCKS.has(parentBlock) && WEIGHT_BLOCK_PARAMS.has(word)) {
@@ -890,53 +902,40 @@ export class CK3HoverProvider implements vscode.HoverProvider {
   }
 
   /**
-   * Find the parent block name by scanning backwards from the current position
+   * Get hover for a field from BLOCK_SCHEMAS (structural blocks like triggered_desc, men_at_arms, etc.)
    */
-  private findParentBlock(document: vscode.TextDocument, position: vscode.Position): string | null {
-    // Track brace depth to find the containing block
-    let braceDepth = 0;
+  private getBlockSchemaFieldHover(fieldSchema: FieldSchema, parentBlock: string): vscode.Hover {
+    const markdown = new vscode.MarkdownString();
+    markdown.appendMarkdown(`## ${fieldSchema.name}\n\n`);
+    markdown.appendMarkdown(`**Field of** \`${parentBlock}\` block\n\n`);
 
-    for (let lineNum = position.line; lineNum >= 0; lineNum--) {
-      const lineText = document.lineAt(lineNum).text;
-
-      // Count braces in this line (only portion before cursor on current line)
-      const textToCheck = lineNum === position.line
-        ? lineText.substring(0, position.character)
-        : lineText;
-
-      // Remove comments
-      const commentIdx = textToCheck.indexOf('#');
-      const cleanText = commentIdx >= 0 ? textToCheck.substring(0, commentIdx) : textToCheck;
-
-      // Count braces (from end of line backwards for proper nesting)
-      for (let i = cleanText.length - 1; i >= 0; i--) {
-        if (cleanText[i] === '}') {
-          braceDepth++;
-        } else if (cleanText[i] === '{') {
-          braceDepth--;
-          // When braceDepth goes negative, we've found a block start
-          if (braceDepth < 0) {
-            // Look for the block name before this brace
-            const beforeBrace = cleanText.substring(0, i);
-            const blockMatch = beforeBrace.match(/(\S+)\s*=\s*$/);
-            if (blockMatch) {
-              return blockMatch[1];
-            }
-            // Check previous line if block name not on same line
-            if (lineNum > 0) {
-              const prevLine = document.lineAt(lineNum - 1).text;
-              const prevMatch = prevLine.match(/(\S+)\s*=\s*$/);
-              if (prevMatch) {
-                return prevMatch[1];
-              }
-            }
-            braceDepth = 0; // Reset and continue looking
-          }
-        }
-      }
+    if (fieldSchema.description) {
+      markdown.appendMarkdown(`${fieldSchema.description}\n\n`);
     }
 
-    return null;
+    // Show type information
+    if (fieldSchema.type) {
+      markdown.appendMarkdown(`**Type:** \`${fieldSchema.type}\`\n\n`);
+    }
+
+    // Show valid values for enums
+    if (fieldSchema.values && fieldSchema.values.length > 0) {
+      const valuesList = fieldSchema.values.slice(0, 10).join(', ');
+      const suffix = fieldSchema.values.length > 10 ? `, ... (${fieldSchema.values.length} total)` : '';
+      markdown.appendMarkdown(`**Valid values:** ${valuesList}${suffix}\n\n`);
+    }
+
+    // Show required status
+    if (fieldSchema.required) {
+      markdown.appendMarkdown(`*Required field*\n\n`);
+    }
+
+    // Show example if available
+    if (fieldSchema.example) {
+      markdown.appendMarkdown(`**Example:**\n\`\`\`\n${fieldSchema.example}\n\`\`\`\n`);
+    }
+
+    return new vscode.Hover(markdown);
   }
 
   /**

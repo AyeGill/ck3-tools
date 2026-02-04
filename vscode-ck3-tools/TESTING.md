@@ -121,6 +121,19 @@ my_trait = {
 - No jump-to-definition for referenced traits (in `opposites`, etc.)
 - Parser is regex-based, not a full AST parser (may have edge cases)
 
+## Running Automated Tests
+
+Run tests from the `vscode-ck3-tools` directory:
+
+```bash
+cd vscode-ck3-tools
+npm test
+```
+
+This runs vitest with the proper configuration that mocks the `vscode` module. Running vitest from the root directory will fail because it won't find the `vitest.config.ts` that sets up the vscode alias.
+
+**Current test suite:** 7 test files, 154 tests
+
 ## Debugging
 
 If autocomplete doesn't work:

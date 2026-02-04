@@ -33,6 +33,8 @@ import {
   isNumericBlock,
   analyzeBlockContext,
 } from '../utils/scopeContext';
+import { parseBlockContext, createGetText } from '../utils/blockParser';
+import { BLOCK_SCHEMAS } from '../schemas/blockSchemas';
 import {
   eventSchema,
   eventSchemaMap,
@@ -1135,6 +1137,15 @@ function getSchemaWithTriggerEffectBlocks(
       // This is a modifier/opinion_modifier inside weight - return params + triggers
       return [...internalFields, ...getAllTriggersSchema()];
     }
+
+    // For control flow blocks (if, else_if, switch), also include context-appropriate completions
+    // These blocks have internal fields (limit) but also allow effects/triggers inside them
+    const controlFlowBlocks = new Set(['if', 'else_if', 'else', 'switch', 'trigger_if', 'trigger_else_if', 'trigger_else', 'trigger_switch']);
+    if (controlFlowBlocks.has(lastBlock) && blockContext.type !== 'unknown') {
+      const contextCompletions = getSchemaForBlockContext(blockContext, lastBlock);
+      return [...internalFields, ...contextCompletions];
+    }
+
     return internalFields;
   }
 
@@ -1303,6 +1314,13 @@ function getInternalFieldSchema(blockPath: string[], contextType: 'trigger' | 'e
       type: 'string',
       description: `Parameter for ${lastBlock} block`,
     }));
+  }
+
+  // Check BLOCK_SCHEMAS for schema-only structural blocks (triggered_desc, desc, men_at_arms, etc.)
+  // Skip hybrid blocks (schema+effects) since they have special handling elsewhere
+  const schemaConfig = BLOCK_SCHEMAS.get(lastBlock);
+  if (schemaConfig?.schemaFields && schemaConfig.childValidation === 'schema-only') {
+    return schemaConfig.schemaFields;
   }
 
   // Check trigger internal fields
@@ -2022,8 +2040,10 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
     const lineText = document.lineAt(position).text;
     const linePrefix = lineText.substring(0, position.character);
 
-    // Get brace depth and block path
-    const { depth, blockPath } = this.getBraceDepthAndPath(document, position);
+    // Get brace depth and block path using unified parser
+    const getText = createGetText(document);
+    const parsed = parseBlockContext(getText, document.lineCount, position.line, position.character);
+    const { depth, blockPath } = parsed;
 
     // Check if we're after an = sign
     const equalsMatch = linePrefix.match(/^\s*(\w+)\s*=\s*$/);
@@ -2056,60 +2076,6 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
       braceDepth: depth,
       blockPath,
     };
-  }
-
-  /**
-   * Get brace depth and block path
-   */
-  private getBraceDepthAndPath(
-    document: vscode.TextDocument,
-    position: vscode.Position
-  ): { depth: number; blockPath: string[] } {
-    let depth = 0;
-    const blockStack: string[] = [];
-
-    for (let i = 0; i <= position.line; i++) {
-      const line = document.lineAt(i).text;
-      const endChar = i === position.line ? position.character : line.length;
-
-      // Track positions of all "field = {" patterns on this line
-      // so we know which field name corresponds to which opening brace
-      // Pattern matches: identifier, prefix:identifier (scope:X, var:X, etc.), or numeric values
-      const fieldPositions: { name: string; bracePos: number }[] = [];
-      const fieldPattern = /((?:\w+:)?\w+)\s*=\s*\{/g;
-      let fieldMatch;
-      while ((fieldMatch = fieldPattern.exec(line)) !== null) {
-        // Find the position of the '{' in this match
-        const bracePos = fieldMatch.index + fieldMatch[0].length - 1;
-        if (bracePos < endChar) {
-          fieldPositions.push({ name: fieldMatch[1], bracePos });
-        }
-      }
-
-      let fieldPosIndex = 0;
-      for (let j = 0; j < endChar; j++) {
-        if (line[j] === '#') break; // Skip comments
-
-        if (line[j] === '{') {
-          depth++;
-          // Check if this brace has an associated field name
-          if (fieldPosIndex < fieldPositions.length && fieldPositions[fieldPosIndex].bracePos === j) {
-            if (depth > 1) {
-              blockStack.push(fieldPositions[fieldPosIndex].name);
-            }
-            fieldPosIndex++;
-          }
-        }
-        if (line[j] === '}') {
-          depth--;
-          if (blockStack.length > 0 && depth >= 1) {
-            blockStack.pop();
-          }
-        }
-      }
-    }
-
-    return { depth, blockPath: blockStack };
   }
 
   /**

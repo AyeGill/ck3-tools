@@ -25,9 +25,11 @@ export type EntityType =
   | 'script_value'
   | 'trait'
   | 'event'
+  | 'on_action'
   | 'scripted_modifier'
   | 'scripted_effect'
-  | 'scripted_trigger';
+  | 'scripted_trigger'
+  | 'decision';
 
 /**
  * Mapping from entity type to the folder path pattern
@@ -36,9 +38,11 @@ const ENTITY_TYPE_PATHS: Record<EntityType, string> = {
   script_value: '/common/script_values/',
   trait: '/common/traits/',
   event: '/events/',
+  on_action: '/common/on_action/',
   scripted_modifier: '/common/scripted_modifiers/',
   scripted_effect: '/common/scripted_effects/',
   scripted_trigger: '/common/scripted_triggers/',
+  decision: '/common/decisions/',
 };
 
 /**

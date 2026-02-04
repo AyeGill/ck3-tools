@@ -671,20 +671,34 @@ test.0001 = {
   });
 
   describe('Target validation', () => {
-    // Create a mock workspace index with known traits
+    // Create a mock workspace index with known entities
     function createMockWorkspaceIndex() {
       return {
         has: (type: string, name: string) => {
           if (type === 'trait') {
-            // Only 'brave', 'craven', and 'lustful' exist
             return ['brave', 'craven', 'lustful'].includes(name);
+          }
+          if (type === 'decision') {
+            return ['adopt_feudal_ways', 'convert_to_local_culture'].includes(name);
+          }
+          if (type === 'event') {
+            return ['test.0001', 'test.0002', 'my_event.0001'].includes(name);
+          }
+          if (type === 'scripted_effect') {
+            return ['my_scripted_effect', 'standard_effect'].includes(name);
+          }
+          if (type === 'scripted_trigger') {
+            return ['my_scripted_trigger', 'standard_trigger'].includes(name);
+          }
+          if (type === 'scripted_modifier') {
+            return ['my_scripted_modifier'].includes(name);
           }
           return false;
         },
         get: () => undefined,
         getAll: () => new Map(),
         getCount: () => 0,
-        getTotalCount: () => 3,
+        getTotalCount: () => 10,
       };
     }
 
@@ -798,6 +812,184 @@ test.0001 = {
       );
 
       expect(traitDiag).toBeUndefined();
+    });
+
+    it('should validate quoted trait values', () => {
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		add_trait = "nonexistent_trait"
+	}
+}`;
+      const diagnostics = getDiagnosticsWithIndex(content, '/mod/events/test.txt');
+
+      const traitDiag = diagnostics.find((d: any) =>
+        d.message.includes('Unknown trait') && d.message.includes('nonexistent_trait')
+      );
+
+      expect(traitDiag).toBeDefined();
+    });
+
+    it('should not flag valid quoted trait values', () => {
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		add_trait = "brave"
+	}
+}`;
+      const diagnostics = getDiagnosticsWithIndex(content, '/mod/events/test.txt');
+
+      const traitDiag = diagnostics.find((d: any) =>
+        d.message.includes('Unknown trait')
+      );
+
+      expect(traitDiag).toBeUndefined();
+    });
+
+    // Decision validation tests
+    it('should not flag valid decision in execute_decision', () => {
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		execute_decision = adopt_feudal_ways
+	}
+}`;
+      const diagnostics = getDiagnosticsWithIndex(content, '/mod/events/test.txt');
+
+      const decisionDiag = diagnostics.find((d: any) =>
+        d.message.includes('Unknown decision')
+      );
+
+      expect(decisionDiag).toBeUndefined();
+    });
+
+    it('should flag invalid decision in execute_decision', () => {
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		execute_decision = fake_decision_xyz
+	}
+}`;
+      const diagnostics = getDiagnosticsWithIndex(content, '/mod/events/test.txt');
+
+      const decisionDiag = diagnostics.find((d: any) =>
+        d.message.includes('Unknown decision') && d.message.includes('fake_decision_xyz')
+      );
+
+      expect(decisionDiag).toBeDefined();
+      expect(decisionDiag.severity).toBe(1); // Warning
+    });
+
+    // Trigger validation tests (not just effects)
+    // Note: has_trait doesn't have supportedTargets in generated data, so we test with trait_is_sin which does
+    it('should validate traits in trait_is_sin trigger', () => {
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	trigger = {
+		faith = {
+			trait_is_sin = unknown_trait_xyz
+		}
+	}
+}`;
+      const diagnostics = getDiagnosticsWithIndex(content, '/mod/events/test.txt');
+
+      const traitDiag = diagnostics.find((d: any) =>
+        d.message.includes('Unknown trait') && d.message.includes('unknown_trait_xyz')
+      );
+
+      expect(traitDiag).toBeDefined();
+    });
+
+    it('should not flag valid traits in trait_is_sin trigger', () => {
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	trigger = {
+		faith = {
+			trait_is_sin = brave
+		}
+	}
+}`;
+      const diagnostics = getDiagnosticsWithIndex(content, '/mod/events/test.txt');
+
+      const traitDiag = diagnostics.find((d: any) =>
+        d.message.includes('Unknown trait')
+      );
+
+      expect(traitDiag).toBeUndefined();
+    });
+
+    it('should validate decisions in can_execute_decision trigger', () => {
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	trigger = {
+		can_execute_decision = nonexistent_decision
+	}
+}`;
+      const diagnostics = getDiagnosticsWithIndex(content, '/mod/events/test.txt');
+
+      const decisionDiag = diagnostics.find((d: any) =>
+        d.message.includes('Unknown decision') && d.message.includes('nonexistent_decision')
+      );
+
+      expect(decisionDiag).toBeDefined();
+    });
+
+    it('should validate decisions in is_decision_on_cooldown trigger', () => {
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	trigger = {
+		is_decision_on_cooldown = fake_decision
+	}
+}`;
+      const diagnostics = getDiagnosticsWithIndex(content, '/mod/events/test.txt');
+
+      const decisionDiag = diagnostics.find((d: any) =>
+        d.message.includes('Unknown decision') && d.message.includes('fake_decision')
+      );
+
+      expect(decisionDiag).toBeDefined();
+    });
+
+    it('should not flag scope references in execute_decision', () => {
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		execute_decision = scope:saved_decision
+	}
+}`;
+      const diagnostics = getDiagnosticsWithIndex(content, '/mod/events/test.txt');
+
+      const decisionDiag = diagnostics.find((d: any) =>
+        d.message.includes('Unknown decision')
+      );
+
+      expect(decisionDiag).toBeUndefined();
+    });
+
+    it('should not flag variable references in execute_decision', () => {
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		execute_decision = $DECISION_VAR$
+	}
+}`;
+      const diagnostics = getDiagnosticsWithIndex(content, '/mod/events/test.txt');
+
+      const decisionDiag = diagnostics.find((d: any) =>
+        d.message.includes('Unknown decision')
+      );
+
+      expect(decisionDiag).toBeUndefined();
     });
   });
 
@@ -1171,6 +1363,96 @@ test.0001 = {
 
       expect(typeDiag).toBeUndefined();
       expect(stacksDiag).toBeUndefined();
+    });
+  });
+
+  describe('Bare identifier detection', () => {
+    it('should flag bare identifiers in effect blocks', () => {
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		xyz
+	}
+}`;
+      const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+      const bareIdentifierDiag = diagnostics.find((d: any) =>
+        d.message.includes('Unexpected bare identifier') && d.message.includes('xyz')
+      );
+
+      expect(bareIdentifierDiag).toBeDefined();
+      expect(bareIdentifierDiag.severity).toBe(1); // Warning
+    });
+
+    it('should flag bare identifiers in trigger blocks', () => {
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	trigger = {
+		abc
+	}
+}`;
+      const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+      const bareIdentifierDiag = diagnostics.find((d: any) =>
+        d.message.includes('Unexpected bare identifier') && d.message.includes('abc')
+      );
+
+      expect(bareIdentifierDiag).toBeDefined();
+      expect(bareIdentifierDiag.severity).toBe(1); // Warning
+    });
+
+    it('should NOT flag bare identifiers in events list blocks', () => {
+      // In on_action files, events = { event_id } is valid
+      const content = `on_birthday = {
+	events = {
+		test.0001
+	}
+}`;
+      const diagnostics = getDiagnostics(content, '/mod/common/on_action/test.txt');
+
+      const bareIdentifierDiag = diagnostics.find((d: any) =>
+        d.message.includes('Unexpected bare identifier')
+      );
+
+      // Should NOT be flagged as "unexpected bare identifier" since events block allows bare identifiers
+      expect(bareIdentifierDiag).toBeUndefined();
+    });
+
+    it('should validate events in events list blocks with workspace index', () => {
+      // Create a mock workspace index that knows about some events
+      const mockIndex = {
+        has: (type: string, name: string) => {
+          if (type === 'event') {
+            return ['known_event.0001', 'known_event.0002'].includes(name);
+          }
+          return false;
+        },
+        get: () => undefined,
+        getAll: () => new Map(),
+        getCount: () => 0,
+        getTotalCount: () => 2,
+      };
+
+      const providerWithIndex = new CK3DiagnosticsProvider(mockIndex as any);
+
+      const content = `on_birthday = {
+	events = {
+		unknown_event.9999
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/common/on_action/test.txt');
+      providerWithIndex.validateDocument(doc as any);
+      const collection = providerWithIndex.getDiagnosticCollection();
+      const diagnostics = (collection as any).get(doc.uri) || [];
+
+      const unknownEventDiag = diagnostics.find((d: any) =>
+        d.message.includes('Unknown event') && d.message.includes('unknown_event.9999')
+      );
+
+      expect(unknownEventDiag).toBeDefined();
+      expect(unknownEventDiag.severity).toBe(1); // Warning
     });
   });
 });

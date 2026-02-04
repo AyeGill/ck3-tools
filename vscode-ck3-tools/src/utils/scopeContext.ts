@@ -73,6 +73,18 @@ export const EFFECT_BLOCKS = new Set([
 ]);
 
 /**
+ * Blocks that contain bare identifiers (list items) instead of key=value pairs.
+ * Maps block name to the entity type expected for validation.
+ */
+export const LIST_BLOCKS: Record<string, 'event' | 'on_action'> = {
+  'events': 'event',
+  'first_valid': 'event',
+  'on_actions': 'on_action',
+  'first_valid_on_action': 'on_action',
+  'random_on_action': 'on_action',
+};
+
+/**
  * Check if a block name is a scope:X pattern (saved scope reference)
  * These have unknown target scope until runtime
  */
