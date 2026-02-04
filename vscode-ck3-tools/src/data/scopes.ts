@@ -78,7 +78,8 @@ export type ScopeType =
   | 'agent_slot'              // Agent slot in schemes
   | 'court_position_type'     // Court position type definition
   | 'holding_type'            // Holding type definition
-  | 'project_contribution';   // Great project contribution scope
+  | 'project_contribution'    // Great project contribution scope
+  | 'court_position';         // Court position scope (not the type definition)
 
 /**
  * Common scope aliases used in documentation

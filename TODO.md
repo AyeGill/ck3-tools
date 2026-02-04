@@ -385,18 +385,18 @@ These have nested structures requiring context-aware schema switching:
 
   # CK3 Diagnostics - Remaining Issues
 
-**Status:** 2703 diagnostics (after trait group fix)
+**Status:** 1411 diagnostics (after trait groups + scope changers fixes)
 
 ## Summary by Category
 
 | Category | Count | Unique | Notes |
 |----------|-------|--------|-------|
-| Unknown effect | ~1400 | 131 | Parameters, scripted modifiers, scope refs |
-| Unknown trigger | ~1177 | 84 | Parameters, scope refs |
-| Unknown trait | 8 | ~4 | ✅ **FIXED** - was 1125, trait groups now indexed |
+| Unknown trigger | 686 | ~60 | Parameters, missing iterators |
+| Unknown effect | 604 | ~50 | Parameters, scripted modifiers |
 | title_tier context | 94 | 1 | Trigger used in effect context |
-| Invalid ?= usage | 13 | 7 | DLC scopes or typos |
 | gold context | 9 | 1 | Trigger in refund_cost blocks |
+| Invalid ?= usage | 8 | ~5 | DLC scopes or typos |
+| Unknown trait | 8 | ~4 | ✅ Mostly fixed |
 | Bare identifier | 1 | 1 | Missing `= yes` |
 
 ## Issue Categories by Root Cause
@@ -407,31 +407,34 @@ The game uses trait group/equivalence names that weren't indexed:
 - `education_*` variants (77/58/55/54/48)
 - `intellect_good/bad` (47/73), `physique_good/bad` (74/41), `beauty_good/bad` (58/45)
 
-**Root cause:** `has_trait = lunatic` works because traits define `group_equivalence = lunatic` or `group = intellect_good`. We only indexed actual trait IDs (`lunatic_1`), not group names.
+**Fix:** Added `parseTraitGroups()` in `workspaceIndex.ts` to extract and index `group` and `group_equivalence` names from trait files.
 
-**Fix:** Added `parseTraitGroups()` in `workspaceIndex.ts` to extract and index `group` and `group_equivalence` names from trait files. The `has()` and `get()` methods now also check the `traitGroupIndex` for trait lookups.
+### ✅ B: Context-Specific Scope Changers - FIXED (reduced ~1000+ errors)
+Scope changers that only work in specific contexts were not in `KNOWN_SCOPE_CHANGERS`:
+- `inspiration_owner`, `legend_protagonist`, `side_primary_participant`
+- `travel_plan_owner`, `faction_target`, `pregnancy_real_father`
+- `dummy_male/female`, `dreaded_character`, `current_location`
+- `final_destination_province`, `departure_location`, `memory_owner`
+- And ~20 more context-specific scope changers
 
-### B: Unrecognized Effect/Trigger Parameters (~600+)
-- `even_if_dead` (116), `target_character` (183), `type_name` (152), `court_position` (122)
+**Fix:** Added ~30 scope changers to `KNOWN_SCOPE_CHANGERS` in `src/utils/scopeContext.ts`.
+
+### C: Unrecognized Effect/Trigger Parameters (~400+)
+- `even_if_dead` (116), `target_character` (183), `type_name` (152)
+- `primary_type` (86), `localization_key` (61)
 - These are parameters to effects/triggers not in our parameter lists
 
-**Fix needed:** Add missing parameters to `effectParameterOverrides` / `triggerParameterOverrides` in `data/index.ts`
+**Fix needed:** Add missing parameters to effect/trigger definitions in `data/index.ts`
 
-### C: Scripted Modifier References (~400+)
-- `japanese_new_house_name_modifiers` (331), `ai_value_modifier` (82)
+### D: Scripted Modifier References (~100+)
+- `ai_value_modifier` (82)
 - Various `*_modifier` names used in weight blocks
 
-**Root cause:** Scripted modifiers can be referenced by name in weight blocks. We don't index scripted modifiers for this purpose.
+**Root cause:** Scripted modifiers referenced by name in weight blocks not recognized.
 
-### D: Scope References Not Recognized
-- `legend_protagonist` (44), `dreaded_character` (61), `travel_plan_owner` (24)
-- `side_primary_participant` (22), `inspiration_owner` (52)
-
-**Root cause:** These are scope references (like event targets) that aren't in KNOWN_SCOPE_CHANGERS.
-
-### E: Iterator Variants Not in Data
-- `random_held_county` (64), `every_held_county` (51), `ordered_held_county`
-- `*_theocratic_vassal`, `*_theocratic_ruler` variants
+### E: Iterator Variants Not in Data (~100+)
+- `random_held_county` (64), `every_held_county` (51)
+- `any_theocratic_vassal` (10), `every_theocratic_vassal` (5)
 
 **Root cause:** Some iterators missing from generated effects/triggers data.
 
@@ -439,14 +442,9 @@ The game uses trait group/equivalence names that weren't indexed:
 - `title_tier` trigger in effect context (94) - in `random/every/ordered_held_title` blocks
 - `gold` trigger in effect context (9) - in `refund_cost` blocks
 
-**Root cause:** Some blocks have special validation rules (e.g., `refund_cost` expects triggers).
+**Root cause:** Some blocks have special validation rules (e.g., iterators accept `title_tier` for ordering).
 
-### G: Invalid ?= Usage (13)
-- `clear_variable_list`, `add_courtier`, `claimant`, `hegemony`, `obedience_target`
-
-**Root cause:** DLC-specific scope changers or typos in game files.
-
-### H: Typos in Game Files
+### G: Typos in Game Files
 - `If`, `limiT`, `Not`, `NOt`, `has_Trait`, `geographicaL_region`, `any_in_List`
 
 These are actual bugs in vanilla game files.

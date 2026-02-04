@@ -21,6 +21,8 @@ import {
   allTriggers,
   characterModifiers,
   ModifierDefinition,
+  effectParameterEntityTypes,
+  triggerParameterEntityTypes,
 } from '../data';
 import {
   TRIGGER_BLOCKS,
@@ -3026,33 +3028,55 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
       return [];
     }
 
-    // Check if the field name is an effect or trigger with supportedTargets
+    const items: vscode.CompletionItem[] = [];
+    const partialLower = context.partialValue?.toLowerCase() || '';
+
+    // Strategy 1: Check if the field name is an effect or trigger with supportedTargets
     const effectDef = effectsMap.get(context.fieldName);
     const triggerDef = triggersMap.get(context.fieldName);
     const definition = effectDef || triggerDef;
 
-    if (!definition?.supportedTargets) {
-      return [];
+    if (definition?.supportedTargets) {
+      for (const target of definition.supportedTargets) {
+        const entityType = TARGET_TO_ENTITY_TYPE[target];
+        if (!entityType) continue;
+
+        const entities = this.workspaceIndex.getAll(entityType);
+        for (const [name] of entities) {
+          if (partialLower && !name.toLowerCase().startsWith(partialLower)) {
+            continue;
+          }
+
+          const item = new vscode.CompletionItem(name, vscode.CompletionItemKind.Reference);
+          item.detail = entityType;
+          item.sortText = name;
+          items.push(item);
+        }
+      }
     }
 
-    const items: vscode.CompletionItem[] = [];
-    const partialLower = context.partialValue?.toLowerCase() || '';
+    // Strategy 2: Check if this is a typed parameter of a parent block
+    if (items.length === 0 && context.blockPath && context.blockPath.length > 0) {
+      const parentBlock = context.blockPath[context.blockPath.length - 1];
+      const paramTypes = effectParameterEntityTypes[parentBlock] || triggerParameterEntityTypes[parentBlock];
 
-    for (const target of definition.supportedTargets) {
-      const entityType = TARGET_TO_ENTITY_TYPE[target];
-      if (!entityType) continue;
+      if (paramTypes?.[context.fieldName]) {
+        const expectedType = paramTypes[context.fieldName];
+        const entityType = TARGET_TO_ENTITY_TYPE[expectedType];
 
-      const entities = this.workspaceIndex.getAll(entityType);
-      for (const [name, location] of entities) {
-        // Filter by partial value (case-insensitive prefix match)
-        if (partialLower && !name.toLowerCase().startsWith(partialLower)) {
-          continue;
+        if (entityType) {
+          const entities = this.workspaceIndex.getAll(entityType);
+          for (const [name] of entities) {
+            if (partialLower && !name.toLowerCase().startsWith(partialLower)) {
+              continue;
+            }
+
+            const item = new vscode.CompletionItem(name, vscode.CompletionItemKind.Reference);
+            item.detail = entityType;
+            item.sortText = name;
+            items.push(item);
+          }
         }
-
-        const item = new vscode.CompletionItem(name, vscode.CompletionItemKind.Reference);
-        item.detail = entityType;
-        item.sortText = name; // Sort alphabetically
-        items.push(item);
       }
     }
 

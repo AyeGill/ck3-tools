@@ -458,6 +458,57 @@ export const KNOWN_SCOPE_CHANGERS: Map<string, ScopeType> = new Map([
   // Location scopes
   ['domicile_location', 'province'],
   ['situation_center_province', 'province'],
+
+  // Inspiration scopes (Royal Court DLC)
+  ['inspiration_owner', 'character'],
+
+  // Legend scopes (Legends of the Dead DLC)
+  ['legend_protagonist', 'character'],
+  ['legend_type', 'legend'],
+
+  // Combat/war scopes - additional
+  ['side_primary_participant', 'character'],
+  ['involved_combat_side', 'combat_side'],
+
+  // Travel scopes (Roads to Power DLC) - additional
+  ['travel_plan_owner', 'character'],
+  ['travel_plan_activity', 'activity'],
+  ['current_location', 'province'],
+  ['final_destination_province', 'province'],
+  ['departure_location', 'province'],
+
+  // Faction scopes - additional
+  ['faction_target', 'character'],
+
+  // Family/pregnancy scopes
+  ['pregnancy_real_father', 'character'],
+
+  // Special/hypothetical character scopes
+  ['dummy_male', 'character'],
+  ['dummy_female', 'character'],
+  ['dreaded_character', 'character'],
+
+  // Title/regiment scopes
+  ['regiment_owning_title', 'landed_title'],
+  ['regiment_controlling_title', 'landed_title'],
+  ['county_controller', 'character'],
+  ['great_project_owner', 'character'],
+
+  // Court/position scopes
+  ['court_position', 'court_position'],
+  ['holy_order_patron', 'character'],
+
+  // Culture/domicile scopes
+  ['domicile_culture', 'culture'],
+
+  // Memory scopes
+  ['memory_owner', 'character'],
+
+  // DLC-specific scopes (EP3/Roads to Power)
+  ['obedience_target', 'character'],
+  ['tax_slot', 'tax_slot'],
+  ['situation_top_sub_region', 'province'],
+  ['epidemic_type', 'epidemic'],
 ]);
 
 /**

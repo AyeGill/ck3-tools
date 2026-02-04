@@ -20,6 +20,7 @@ export const TARGET_TO_ENTITY_TYPE: Partial<Record<string, EntityType>> = {
   'scheme': 'scheme',
   // Events and decisions
   'event': 'event',
+  'on_action': 'on_action',
   'decision': 'decision',
   // Activities
   'activity': 'activity',

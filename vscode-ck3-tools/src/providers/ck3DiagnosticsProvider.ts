@@ -1386,9 +1386,18 @@ export class CK3DiagnosticsProvider {
     }
 
     // Skip known fields inside random_list weight blocks (numeric parent names like "50", "25")
-    // These blocks can have desc, show_chance, trigger, modifier, weight plus actual effects
-    if (/^\d+$/.test(parentBlockName) && RANDOM_LIST_WEIGHT_FIELDS.has(fieldName)) {
-      return null;
+    // These blocks can have:
+    // 1. Weight params: desc, show_chance, trigger, modifier, weight, min, max
+    // 2. Scripted modifiers by name (for weight adjustment)
+    // 3. Actual effects (validated normally)
+    if (/^\d+$/.test(parentBlockName)) {
+      if (RANDOM_LIST_WEIGHT_FIELDS.has(fieldName)) {
+        return null;
+      }
+      // Scripted modifiers can be referenced by name in weight option blocks
+      if (this.workspaceIndex?.has('scripted_modifier', fieldName)) {
+        return null;
+      }
     }
 
     // Handle blocks that create trigger context with extra params

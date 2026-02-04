@@ -1235,5 +1235,124 @@ test.0001 = {
       // Should be empty or not contain entity-specific items
       expect(labels).not.toContain('brave');
     });
+
+    it('should suggest events for trigger_event id parameter', () => {
+      const mockIndex = createMockWorkspaceIndex({
+        trait: [],
+        event: ['test.0001', 'test.0002', 'other.1000'],
+        decision: [],
+        script_value: [],
+        scripted_modifier: [],
+        scripted_effect: [],
+        scripted_trigger: [],
+        secret_type: [],
+        scheme: [],
+        on_action: ['yearly_on_action', 'monthly_on_action'],
+        casus_belli: [],
+        interaction: [],
+        men_at_arms: [],
+        dynasty_perk: [],
+        lifestyle_perk: [],
+        holding: [],
+        culture_tradition: [],
+        law: [],
+        dynasty_legacy: [],
+        building: [],
+        terrain: [],
+        government: [],
+        trait_group: [],
+        modifier: [],
+        opinion_modifier: [],
+        activity: [],
+        struggle: [],
+        situation: [],
+        story_cycle: [],
+        court_position_type: [],
+        artifact: [],
+      });
+      const providerWithIndex = new CK3CompletionProvider(mockIndex);
+
+      const content = `namespace = test
+test.0001 = {
+	immediate = {
+		trigger_event = {
+			id =
+		}
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/events/test_events.txt');
+      const position = new Position(4, 8); // After id =
+
+      const result = providerWithIndex.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      expect(labels).toContain('test.0001');
+      expect(labels).toContain('test.0002');
+      expect(labels).toContain('other.1000');
+    });
+
+    it('should suggest on_actions for trigger_event on_action parameter', () => {
+      const mockIndex = createMockWorkspaceIndex({
+        trait: [],
+        event: ['test.0001'],
+        decision: [],
+        script_value: [],
+        scripted_modifier: [],
+        scripted_effect: [],
+        scripted_trigger: [],
+        secret_type: [],
+        scheme: [],
+        on_action: ['yearly_on_action', 'monthly_on_action'],
+        casus_belli: [],
+        interaction: [],
+        men_at_arms: [],
+        dynasty_perk: [],
+        lifestyle_perk: [],
+        holding: [],
+        culture_tradition: [],
+        law: [],
+        dynasty_legacy: [],
+        building: [],
+        terrain: [],
+        government: [],
+        trait_group: [],
+        modifier: [],
+        opinion_modifier: [],
+        activity: [],
+        struggle: [],
+        situation: [],
+        story_cycle: [],
+        court_position_type: [],
+        artifact: [],
+      });
+      const providerWithIndex = new CK3CompletionProvider(mockIndex);
+
+      const content = `namespace = test
+test.0001 = {
+	immediate = {
+		trigger_event = {
+			on_action =
+		}
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/events/test_events.txt');
+      const position = new Position(4, 14); // After on_action =
+
+      const result = providerWithIndex.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      expect(labels).toContain('yearly_on_action');
+      expect(labels).toContain('monthly_on_action');
+    });
   });
 });
