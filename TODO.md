@@ -95,7 +95,8 @@ So for example prompting for skill modifications in a trait template makes littl
   - **DONE**: Added completion provider tests (`ck3CompletionProvider.test.ts` - 23 tests)
   - **DONE**: Added hover provider tests (`ck3HoverProvider.test.ts` - 17 tests)
   - **DONE**: Added diagnostics provider tests and context detection tests
-  - Total: 107 tests passing
+  - **DONE**: Added target validation tests (6 tests for trait reference validation)
+  - Total: 125 tests passing
 
 
 - What's up with accessory and artifact both being schemae? Should look in the game files and figure this out.
@@ -133,7 +134,11 @@ So for example prompting for skill modifications in a trait template makes littl
   - [ ] **Go to Definition**: Click on `add_trait = brave` to jump to trait definition
   - [ ] **Find References**: Find all uses of a trait/event/scripted effect
   - [ ] **Autocomplete from index**: Suggest valid trait names when typing `add_trait =`, valid events for `trigger_event =`
-  - [ ] **Effect/trigger entity validation**: Use `supportedTargets` from effect definitions to validate references (e.g., `add_trait = brave` should check if `brave` is a defined trait)
+  - [x] **Effect/trigger entity validation**: Use `supportedTargets` from effect definitions to validate references (e.g., `add_trait = brave` should check if `brave` is a defined trait)
+    - **DONE**: Implemented `validateTargetValue()` in `ck3DiagnosticsProvider.ts`
+    - Validates trait references in `add_trait`, `remove_trait`, and 15 other trait-related effects
+    - Skips dynamic references (`scope:X`, `$VARIABLE$`, `flag:`) that can't be validated statically
+    - Currently validates traits; extensible to other entity types as workspace index expands
   - [ ] **Index game files**: Currently only indexes workspace files; could also index game files from CK3 install path for complete validation
 - A number of schemas might not be quite right. Specifically:
   - I think the artifact schema just works for all the stuff in the artifacts subfolder. Actually these appear to be a number of different things and we're not really doing the right thing for any of them.

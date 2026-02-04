@@ -530,6 +530,44 @@ test.0001 = {
       expect(unknownEffectDiag).toBeDefined();
     });
 
+    it('should flag effects used in trigger context (add_trait in is_shown)', () => {
+      const content = `test_decision = {
+	is_shown = {
+		any_vassal = {
+			add_trait = foobarbaz
+		}
+	}
+}`;
+      const diagnostics = getDiagnostics(content, '/mod/common/decisions/test.txt');
+
+      // add_trait is an effect, not a trigger - should be flagged with specific message
+      const wrongContextDiag = diagnostics.find((d: any) =>
+        d.message.includes('Effect') && d.message.includes('add_trait') && d.message.includes('trigger context')
+      );
+
+      expect(wrongContextDiag).toBeDefined();
+      expect(wrongContextDiag.message).toContain('Effect "add_trait" used in trigger context');
+    });
+
+    it('should flag triggers used in effect context (is_adult in effect)', () => {
+      const content = `test_decision = {
+	effect = {
+		every_vassal = {
+			is_adult = yes
+		}
+	}
+}`;
+      const diagnostics = getDiagnostics(content, '/mod/common/decisions/test.txt');
+
+      // is_adult is a trigger, not an effect - should be flagged with specific message
+      const wrongContextDiag = diagnostics.find((d: any) =>
+        d.message.includes('Trigger') && d.message.includes('is_adult') && d.message.includes('effect context')
+      );
+
+      expect(wrongContextDiag).toBeDefined();
+      expect(wrongContextDiag.message).toContain('Trigger "is_adult" used in effect context');
+    });
+
     it('should NOT flag valid effects/triggers with block values', () => {
       const content = `namespace = test
 test.0001 = {
@@ -629,6 +667,137 @@ test.0001 = {
       );
 
       expect(assignDiag).toBeUndefined();
+    });
+  });
+
+  describe('Target validation', () => {
+    // Create a mock workspace index with known traits
+    function createMockWorkspaceIndex() {
+      return {
+        has: (type: string, name: string) => {
+          if (type === 'trait') {
+            // Only 'brave', 'craven', and 'lustful' exist
+            return ['brave', 'craven', 'lustful'].includes(name);
+          }
+          return false;
+        },
+        get: () => undefined,
+        getAll: () => new Map(),
+        getCount: () => 0,
+        getTotalCount: () => 3,
+      };
+    }
+
+    function getDiagnosticsWithIndex(content: string, fileName: string): any[] {
+      const mockIndex = createMockWorkspaceIndex();
+      const providerWithIndex = new CK3DiagnosticsProvider(mockIndex as any);
+      const doc = createMockDocument(content, fileName);
+      providerWithIndex.validateDocument(doc as any);
+      const collection = providerWithIndex.getDiagnosticCollection();
+      return (collection as any).get(doc.uri) || [];
+    }
+
+    it('should not flag valid trait in add_trait', () => {
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		add_trait = brave
+	}
+}`;
+      const diagnostics = getDiagnosticsWithIndex(content, '/mod/events/test.txt');
+
+      const traitDiag = diagnostics.find((d: any) =>
+        d.message.includes('Unknown trait')
+      );
+
+      expect(traitDiag).toBeUndefined();
+    });
+
+    it('should flag invalid trait in add_trait', () => {
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		add_trait = nonexistent_trait_xyz
+	}
+}`;
+      const diagnostics = getDiagnosticsWithIndex(content, '/mod/events/test.txt');
+
+      const traitDiag = diagnostics.find((d: any) =>
+        d.message.includes('Unknown trait') && d.message.includes('nonexistent_trait_xyz')
+      );
+
+      expect(traitDiag).toBeDefined();
+      expect(traitDiag.severity).toBe(1); // Warning
+    });
+
+    it('should flag invalid trait in remove_trait', () => {
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		remove_trait = fake_trait_123
+	}
+}`;
+      const diagnostics = getDiagnosticsWithIndex(content, '/mod/events/test.txt');
+
+      const traitDiag = diagnostics.find((d: any) =>
+        d.message.includes('Unknown trait') && d.message.includes('fake_trait_123')
+      );
+
+      expect(traitDiag).toBeDefined();
+    });
+
+    it('should not flag scope references in add_trait', () => {
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		add_trait = scope:saved_trait
+	}
+}`;
+      const diagnostics = getDiagnosticsWithIndex(content, '/mod/events/test.txt');
+
+      const traitDiag = diagnostics.find((d: any) =>
+        d.message.includes('Unknown trait')
+      );
+
+      expect(traitDiag).toBeUndefined();
+    });
+
+    it('should not flag variable references in add_trait', () => {
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		add_trait = $TRAIT_PARAM$
+	}
+}`;
+      const diagnostics = getDiagnosticsWithIndex(content, '/mod/events/test.txt');
+
+      const traitDiag = diagnostics.find((d: any) =>
+        d.message.includes('Unknown trait')
+      );
+
+      expect(traitDiag).toBeUndefined();
+    });
+
+    it('should not flag flag: references in add_trait', () => {
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		add_trait = flag:my_trait_flag
+	}
+}`;
+      const diagnostics = getDiagnosticsWithIndex(content, '/mod/events/test.txt');
+
+      const traitDiag = diagnostics.find((d: any) =>
+        d.message.includes('Unknown trait')
+      );
+
+      expect(traitDiag).toBeUndefined();
     });
   });
 });

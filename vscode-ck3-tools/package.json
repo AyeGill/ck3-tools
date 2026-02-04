@@ -79,6 +79,10 @@
       {
         "command": "ck3-tools.goToLocalization",
         "title": "CK3: Go to Localization"
+      },
+      {
+        "command": "ck3-tools.validateDirectory",
+        "title": "CK3: Validate Directory"
       }
     ],
     "configuration": {
@@ -92,6 +96,13 @@
       }
     },
     "menus": {
+      "explorer/context": [
+        {
+          "command": "ck3-tools.validateDirectory",
+          "when": "explorerResourceIsFolder",
+          "group": "ck3-tools@1"
+        }
+      ],
       "editor/context": [
         {
           "command": "ck3-tools.addTrait",

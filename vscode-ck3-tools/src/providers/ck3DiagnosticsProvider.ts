@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
+import * as fs from 'fs';
 import { FieldSchema } from '../schemas/traitSchema';
 import { effectsMap, triggersMap, modifiersMap, matchesModifierTemplate, ScopeType } from '../data';
-import { CK3WorkspaceIndex } from './workspaceIndex';
+import { CK3WorkspaceIndex, EntityType } from './workspaceIndex';
 import {
   TRIGGER_BLOCKS,
   EFFECT_BLOCKS,
@@ -126,6 +127,16 @@ const SCRIPT_VALUE_BLOCKS = new Set([
   'compare_modifier',                 // comparison with modifiers
   'compatibility_modifier',           // compatibility calculations
 ]);
+
+/**
+ * Mapping from effect/trigger supportedTargets values to EntityType for validation
+ * Only includes target types that we can actually validate against the workspace index
+ */
+const TARGET_TO_ENTITY_TYPE: Partial<Record<string, EntityType>> = {
+  'trait': 'trait',
+  // Future: add more as we expand workspace index tracking
+  // 'event': 'event',  // Would need special handling for namespace.id format
+};
 
 /**
  * Parsed field with context information
@@ -322,6 +333,122 @@ export class CK3DiagnosticsProvider {
    */
   public clearDiagnostics(uri: vscode.Uri): void {
     this.diagnosticCollection.delete(uri);
+  }
+
+  /**
+   * Validate a file from URI without opening it in VS Code
+   * Returns the diagnostics array for the file
+   */
+  public validateFile(uri: vscode.Uri): vscode.Diagnostic[] {
+    const filePath = uri.fsPath;
+
+    // Read file content
+    let content: string;
+    try {
+      content = fs.readFileSync(filePath, 'utf-8');
+    } catch {
+      return [];
+    }
+
+    // Create a mock document
+    const mockDocument = this.createMockDocument(content, filePath, uri);
+
+    // Validate using the existing method (which sets diagnostics on the collection)
+    this.validateDocument(mockDocument as vscode.TextDocument);
+
+    // Return the diagnostics that were set
+    return this.diagnosticCollection.get(uri) as vscode.Diagnostic[] || [];
+  }
+
+  /**
+   * Validate all .txt files in a directory recursively
+   * Returns total number of files validated
+   */
+  public async validateDirectory(
+    dirUri: vscode.Uri,
+    progress?: vscode.Progress<{ message?: string; increment?: number }>
+  ): Promise<{ fileCount: number; diagnosticCount: number }> {
+    const files = this.findTxtFiles(dirUri.fsPath);
+    const totalFiles = files.length;
+    let diagnosticCount = 0;
+
+    for (let i = 0; i < files.length; i++) {
+      const filePath = files[i];
+      const uri = vscode.Uri.file(filePath);
+
+      if (progress) {
+        progress.report({
+          message: `Validating ${i + 1}/${totalFiles}: ${filePath.split('/').pop()}`,
+          increment: 100 / totalFiles
+        });
+      }
+
+      const diagnostics = this.validateFile(uri);
+      diagnosticCount += diagnostics.length;
+    }
+
+    return { fileCount: totalFiles, diagnosticCount };
+  }
+
+  /**
+   * Create a mock TextDocument for validation without opening in VS Code
+   */
+  private createMockDocument(content: string, fileName: string, uri: vscode.Uri): Partial<vscode.TextDocument> {
+    const lines = content.split('\n');
+    return {
+      fileName,
+      uri,
+      languageId: 'ck3',
+      lineCount: lines.length,
+      getText: () => content,
+      lineAt: (lineOrPosition: number | vscode.Position) => {
+        const lineNum = typeof lineOrPosition === 'number' ? lineOrPosition : lineOrPosition.line;
+        return {
+          text: lines[lineNum] || '',
+          lineNumber: lineNum,
+          range: new vscode.Range(lineNum, 0, lineNum, (lines[lineNum] || '').length),
+          rangeIncludingLineBreak: new vscode.Range(lineNum, 0, lineNum + 1, 0),
+          firstNonWhitespaceCharacterIndex: (lines[lineNum] || '').search(/\S/),
+          isEmptyOrWhitespace: !(lines[lineNum] || '').trim(),
+        } as vscode.TextLine;
+      },
+      positionAt: (offset: number) => {
+        let remaining = offset;
+        for (let line = 0; line < lines.length; line++) {
+          const lineLength = lines[line].length + 1;
+          if (remaining < lineLength) {
+            return new vscode.Position(line, remaining);
+          }
+          remaining -= lineLength;
+        }
+        return new vscode.Position(lines.length - 1, lines[lines.length - 1]?.length || 0);
+      },
+    };
+  }
+
+  /**
+   * Recursively find all .txt files in a directory
+   */
+  private findTxtFiles(dir: string): string[] {
+    const files: string[] = [];
+
+    try {
+      const entries = fs.readdirSync(dir, { withFileTypes: true });
+
+      for (const entry of entries) {
+        const fullPath = `${dir}/${entry.name}`;
+
+        if (entry.isDirectory()) {
+          files.push(...this.findTxtFiles(fullPath));
+        } else if (entry.isFile() && entry.name.endsWith('.txt')) {
+          files.push(fullPath);
+        }
+      }
+    } catch {
+      // Skip directories we can't read
+    }
+
+    return files;
   }
 
   /**
@@ -995,6 +1122,20 @@ export class CK3DiagnosticsProvider {
           if (diagnostic) {
             diagnostics.push(diagnostic);
           }
+
+          // Validate target value for effects that expect specific entity types
+          if (currentBlock.context === 'effect') {
+            const fieldValue = fieldMatch[3].trim();
+            const targetDiag = this.validateTargetValue(
+              fieldName,
+              fieldValue,
+              lineNum,
+              cleanLine
+            );
+            if (targetDiag) {
+              diagnostics.push(targetDiag);
+            }
+          }
         }
       }
 
@@ -1165,9 +1306,24 @@ export class CK3DiagnosticsProvider {
 
     // Check if it's a valid effect/trigger for the context
     if (context === 'effect') {
-      if (!effectsMap.has(fieldName) && !triggersMap.has(fieldName)) {
-        // Could be a scripted effect - those start with various prefixes
-        // Be lenient: only flag if it doesn't look like a scripted effect
+      const isKnownEffect = effectsMap.has(fieldName);
+      const isKnownTrigger = triggersMap.has(fieldName);
+
+      if (!isKnownEffect) {
+        // Not a known effect - check if it's a trigger used in wrong context
+        if (isKnownTrigger) {
+          const fieldStart = cleanLine.indexOf(fieldName);
+          const range = new vscode.Range(
+            new vscode.Position(lineNum, fieldStart >= 0 ? fieldStart : 0),
+            new vscode.Position(lineNum, fieldStart >= 0 ? fieldStart + fieldName.length : cleanLine.length)
+          );
+          return new vscode.Diagnostic(
+            range,
+            `Trigger "${fieldName}" used in effect context (in "${parentBlockName}")`,
+            vscode.DiagnosticSeverity.Warning
+          );
+        }
+        // Unknown - could be a scripted effect
         if (!this.couldBeScriptedEffectOrTrigger(fieldName)) {
           const fieldStart = cleanLine.indexOf(fieldName);
           const range = new vscode.Range(
@@ -1182,8 +1338,24 @@ export class CK3DiagnosticsProvider {
         }
       }
     } else if (context === 'trigger') {
-      if (!triggersMap.has(fieldName) && !effectsMap.has(fieldName)) {
-        // Could be a scripted trigger
+      const isKnownEffect = effectsMap.has(fieldName);
+      const isKnownTrigger = triggersMap.has(fieldName);
+
+      if (!isKnownTrigger) {
+        // Not a known trigger - check if it's an effect used in wrong context
+        if (isKnownEffect) {
+          const fieldStart = cleanLine.indexOf(fieldName);
+          const range = new vscode.Range(
+            new vscode.Position(lineNum, fieldStart >= 0 ? fieldStart : 0),
+            new vscode.Position(lineNum, fieldStart >= 0 ? fieldStart + fieldName.length : cleanLine.length)
+          );
+          return new vscode.Diagnostic(
+            range,
+            `Effect "${fieldName}" used in trigger context (in "${parentBlockName}")`,
+            vscode.DiagnosticSeverity.Warning
+          );
+        }
+        // Unknown - could be a scripted trigger
         if (!this.couldBeScriptedEffectOrTrigger(fieldName)) {
           const fieldStart = cleanLine.indexOf(fieldName);
           const range = new vscode.Range(
@@ -1193,6 +1365,73 @@ export class CK3DiagnosticsProvider {
           return new vscode.Diagnostic(
             range,
             `Unknown trigger: "${fieldName}" in "${parentBlockName}"`,
+            vscode.DiagnosticSeverity.Warning
+          );
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Validate that an effect/trigger target value exists in the workspace index
+   * For effects like `add_trait = brave`, checks that 'brave' is a valid trait
+   */
+  private validateTargetValue(
+    effectName: string,
+    value: string,
+    lineNum: number,
+    cleanLine: string
+  ): vscode.Diagnostic | null {
+    // Skip if no workspace index
+    if (!this.workspaceIndex) {
+      return null;
+    }
+
+    // Skip scope references (scope:X) - these are dynamic
+    if (value.startsWith('scope:')) {
+      return null;
+    }
+
+    // Skip variable references ($VARIABLE$)
+    if (value.startsWith('$') && value.endsWith('$')) {
+      return null;
+    }
+
+    // Skip flag: references (flag:some_flag)
+    if (value.startsWith('flag:')) {
+      return null;
+    }
+
+    // Remove quotes if present
+    const cleanValue = value.replace(/^["']|["']$/g, '');
+
+    // Skip empty values
+    if (!cleanValue) {
+      return null;
+    }
+
+    // Look up the effect definition
+    const effect = effectsMap.get(effectName);
+    if (!effect?.supportedTargets) {
+      return null;
+    }
+
+    // Check if any supportedTargets maps to an entity type we track
+    for (const target of effect.supportedTargets) {
+      const entityType = TARGET_TO_ENTITY_TYPE[target];
+      if (entityType) {
+        // Check if value exists in index
+        if (!this.workspaceIndex.has(entityType, cleanValue)) {
+          const valueStart = cleanLine.lastIndexOf(value);
+          const range = new vscode.Range(
+            new vscode.Position(lineNum, valueStart >= 0 ? valueStart : 0),
+            new vscode.Position(lineNum, valueStart >= 0 ? valueStart + value.length : cleanLine.length)
+          );
+          return new vscode.Diagnostic(
+            range,
+            `Unknown ${entityType}: "${cleanValue}"`,
             vscode.DiagnosticSeverity.Warning
           );
         }

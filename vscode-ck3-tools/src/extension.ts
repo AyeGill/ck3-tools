@@ -69,18 +69,25 @@ export function activate(context: vscode.ExtensionContext) {
   // Create workspace index for cross-file validation
   const workspaceIndex = new CK3WorkspaceIndex();
 
-  // Index workspace files in background
-  workspaceIndex.indexWorkspace().then(() => {
-    console.log(`CK3 workspace index ready: ${workspaceIndex.getTotalCount()} workspace entities indexed`);
-  });
-
-  // Index game files if path is configured
+  // Index workspace and game files, then validate open documents
   const gamePath = vscode.workspace.getConfiguration('ck3-tools').get<string>('gamePath');
+
+  // Build list of indexing tasks
+  const indexingTasks: Promise<void>[] = [workspaceIndex.indexWorkspace()];
   if (gamePath) {
-    workspaceIndex.indexGameFiles(gamePath).then(() => {
-      console.log(`CK3 game files indexed: ${workspaceIndex.getTotalCount()} total entities`);
-    });
+    indexingTasks.push(workspaceIndex.indexGameFiles(gamePath));
   }
+
+  // Wait for all indexing to complete before validating
+  Promise.all(indexingTasks).then(() => {
+    console.log(`CK3 workspace index ready: ${workspaceIndex.getTotalCount()} entities indexed`);
+    // Now validate all currently open documents
+    vscode.workspace.textDocuments.forEach(doc => {
+      if (doc.languageId === 'ck3') {
+        diagnosticsProvider.validateDocument(doc);
+      }
+    });
+  });
 
   // Listen for configuration changes
   context.subscriptions.push(
@@ -106,17 +113,42 @@ export function activate(context: vscode.ExtensionContext) {
   const diagnosticsProvider = new CK3DiagnosticsProvider(workspaceIndex);
   context.subscriptions.push(diagnosticsProvider.getDiagnosticCollection());
 
-  // Validate all currently open documents
-  vscode.workspace.textDocuments.forEach(doc => {
-    if (doc.languageId === 'ck3') {
-      diagnosticsProvider.validateDocument(doc);
-    }
-  });
+  // Register command to validate a directory
+  context.subscriptions.push(
+    vscode.commands.registerCommand('ck3-tools.validateDirectory', async (uri?: vscode.Uri) => {
+      // If no URI provided (command palette), use workspace root
+      let targetUri = uri;
+      if (!targetUri) {
+        const workspaceFolders = vscode.workspace.workspaceFolders;
+        if (!workspaceFolders || workspaceFolders.length === 0) {
+          vscode.window.showErrorMessage('No workspace folder open');
+          return;
+        }
+        targetUri = workspaceFolders[0].uri;
+      }
+
+      // Run validation with progress
+      await vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+          title: 'Validating CK3 files',
+          cancellable: false,
+        },
+        async (progress) => {
+          const result = await diagnosticsProvider.validateDirectory(targetUri!, progress);
+          vscode.window.showInformationMessage(
+            `Validated ${result.fileCount} files, found ${result.diagnosticCount} issues`
+          );
+        }
+      );
+    })
+  );
 
   // Register document change listeners
   context.subscriptions.push(
     vscode.workspace.onDidOpenTextDocument(doc => {
-      if (doc.languageId === 'ck3') {
+      // Only validate if index is ready (prevents false positives during startup)
+      if (doc.languageId === 'ck3' && workspaceIndex.isInitialized()) {
         diagnosticsProvider.validateDocument(doc);
       }
     }),

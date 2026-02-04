@@ -166,6 +166,18 @@ export class CK3WorkspaceIndex {
   }
 
   /**
+   * Check if a file is inside the workspace
+   */
+  private isInWorkspace(uri: vscode.Uri): boolean {
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+    if (!workspaceFolders) return false;
+
+    return workspaceFolders.some(folder =>
+      uri.fsPath.startsWith(folder.uri.fsPath)
+    );
+  }
+
+  /**
    * Index a single file
    */
   public async indexFile(uri: vscode.Uri): Promise<void> {
@@ -182,12 +194,24 @@ export class CK3WorkspaceIndex {
     this.removeFile(uri.toString());
 
     // Read and parse the file
+    // For workspace files, try VS Code's document API first (handles already-open files)
+    // For game files (outside workspace), read directly to avoid triggering document events
     let text: string;
-    try {
-      const doc = await vscode.workspace.openTextDocument(uri);
-      text = doc.getText();
-    } catch {
-      // File might not be open, read directly
+    const inWorkspace = this.isInWorkspace(uri);
+
+    if (inWorkspace) {
+      try {
+        const doc = await vscode.workspace.openTextDocument(uri);
+        text = doc.getText();
+      } catch {
+        try {
+          text = fs.readFileSync(filePath, 'utf-8');
+        } catch {
+          return;
+        }
+      }
+    } else {
+      // Game files: read directly, don't open in VS Code
       try {
         text = fs.readFileSync(filePath, 'utf-8');
       } catch {
