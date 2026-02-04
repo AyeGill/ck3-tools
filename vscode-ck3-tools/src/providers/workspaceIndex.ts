@@ -124,6 +124,12 @@ export class CK3WorkspaceIndex {
   private initialized = false;
   private indexingPromise: Promise<void> | null = null;
 
+  // Separate index for trait group names (group and group_equivalence)
+  // Maps group name -> location of first trait that defines it
+  private traitGroupIndex: Map<string, EntityLocation> = new Map();
+  // Track which files contributed which trait groups (for cleanup)
+  private fileToTraitGroups: Map<string, Set<string>> = new Map();
+
   constructor() {
     this.indices = new Map();
     this.fileToEntities = new Map();
@@ -138,14 +144,21 @@ export class CK3WorkspaceIndex {
    * Check if an entity exists
    */
   public has(type: EntityType, name: string): boolean {
-    return this.indices.get(type)?.has(name) ?? false;
+    if (this.indices.get(type)?.has(name)) return true;
+    // For traits, also check trait group names (group and group_equivalence)
+    if (type === 'trait' && this.traitGroupIndex.has(name)) return true;
+    return false;
   }
 
   /**
    * Get an entity's location
    */
   public get(type: EntityType, name: string): EntityLocation | undefined {
-    return this.indices.get(type)?.get(name);
+    const result = this.indices.get(type)?.get(name);
+    if (result) return result;
+    // For traits, also check trait group names (group and group_equivalence)
+    if (type === 'trait') return this.traitGroupIndex.get(name);
+    return undefined;
   }
 
   /**
@@ -406,6 +419,11 @@ export class CK3WorkspaceIndex {
     }
 
     this.fileToEntities.set(uri.toString(), fileEntities);
+
+    // For trait files, also parse group and group_equivalence names
+    if (entityType === 'trait') {
+      this.parseTraitGroups(text, uri.toString());
+    }
   }
 
   /**
@@ -413,24 +431,33 @@ export class CK3WorkspaceIndex {
    */
   public removeFile(uriString: string): void {
     const fileEntities = this.fileToEntities.get(uriString);
-    if (!fileEntities) {
-      return;
-    }
+    if (fileEntities) {
+      for (const [entityType, names] of fileEntities) {
+        const index = this.indices.get(entityType);
+        if (!index) continue;
 
-    for (const [entityType, names] of fileEntities) {
-      const index = this.indices.get(entityType);
-      if (!index) continue;
-
-      for (const name of names) {
-        // Only remove if this file owns the entry
-        const existing = index.get(name);
-        if (existing && existing.uri === uriString) {
-          index.delete(name);
+        for (const name of names) {
+          // Only remove if this file owns the entry
+          const existing = index.get(name);
+          if (existing && existing.uri === uriString) {
+            index.delete(name);
+          }
         }
       }
+      this.fileToEntities.delete(uriString);
     }
 
-    this.fileToEntities.delete(uriString);
+    // Also clean up trait groups from this file
+    const traitGroups = this.fileToTraitGroups.get(uriString);
+    if (traitGroups) {
+      for (const groupName of traitGroups) {
+        const existing = this.traitGroupIndex.get(groupName);
+        if (existing && existing.uri === uriString) {
+          this.traitGroupIndex.delete(groupName);
+        }
+      }
+      this.fileToTraitGroups.delete(uriString);
+    }
   }
 
   /**
@@ -510,6 +537,71 @@ export class CK3WorkspaceIndex {
     }
 
     return entities;
+  }
+
+  /**
+   * Parse trait files to extract group and group_equivalence names
+   * These allow the game to reference traits by group name (e.g., has_trait = lunatic)
+   */
+  private parseTraitGroups(text: string, uriString: string): void {
+    const lines = text.split('\n');
+    let currentTrait: { name: string; line: number } | null = null;
+    let braceDepth = 0;
+
+    // Track groups found in this file for cleanup
+    const groupsInFile = new Set<string>();
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const trimmed = line.trim();
+
+      // Skip comments and empty lines
+      if (trimmed.startsWith('#') || trimmed === '') continue;
+
+      const commentIdx = line.indexOf('#');
+      const cleanLine = commentIdx >= 0 ? line.substring(0, commentIdx) : line;
+
+      const openBraces = (cleanLine.match(/\{/g) || []).length;
+      const closeBraces = (cleanLine.match(/\}/g) || []).length;
+
+      // At depth 0, detect trait start
+      if (braceDepth === 0 && openBraces > 0) {
+        const match = cleanLine.match(/^\s*(\w+)\s*=\s*\{/);
+        if (match) {
+          currentTrait = { name: match[1], line: i };
+        }
+      }
+
+      // At depth 1 (inside a trait), look for group/group_equivalence
+      if (braceDepth === 1 && currentTrait) {
+        const groupMatch = cleanLine.match(/^\s*(group|group_equivalence)\s*=\s*(\w+)/);
+        if (groupMatch) {
+          const groupName = groupMatch[2];
+          groupsInFile.add(groupName);
+
+          // Only store first occurrence (don't override)
+          if (!this.traitGroupIndex.has(groupName)) {
+            this.traitGroupIndex.set(groupName, {
+              uri: uriString,
+              line: currentTrait.line,
+              name: currentTrait.name,
+            });
+          }
+        }
+      }
+
+      braceDepth += openBraces - closeBraces;
+
+      // Reset when we exit the trait
+      if (braceDepth === 0) {
+        currentTrait = null;
+      }
+    }
+
+    // Track file -> groups mapping for cleanup
+    if (groupsInFile.size > 0) {
+      this.fileToTraitGroups.set(uriString, groupsInFile);
+    }
   }
 
   /**

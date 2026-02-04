@@ -385,37 +385,71 @@ These have nested structures requiring context-aware schema switching:
 
   # CK3 Diagnostics - Remaining Issues
 
-**Status:** 524 diagnostics remain (down from 41,889 originally; expanded validation adds more warnings for valid patterns)
+**Status:** 2703 diagnostics (after trait group fix)
 
-## Top Issues by Identifier Count
+## Summary by Category
 
-| Identifier | Count | Category | Notes |
-|------------|-------|----------|-------|
-| `custom` | 12 | Missing parameter | Iterator parameter not recognized |
-| `matchmaker` | 10 | Unknown trigger | DLC-specific, may need adding |
-| `gold` | 9 | Trigger in effect context | Used in `refund_cost` blocks |
-| `hegemony` | 4 | Unknown | DLC feature |
-| `clear_variable_list` | 4 | Invalid ?= usage | Not a scope changer |
+| Category | Count | Unique | Notes |
+|----------|-------|--------|-------|
+| Unknown effect | ~1400 | 131 | Parameters, scripted modifiers, scope refs |
+| Unknown trigger | ~1177 | 84 | Parameters, scope refs |
+| Unknown trait | 8 | ~4 | ✅ **FIXED** - was 1125, trait groups now indexed |
+| title_tier context | 94 | 1 | Trigger used in effect context |
+| Invalid ?= usage | 13 | 7 | DLC scopes or typos |
+| gold context | 9 | 1 | Trigger in refund_cost blocks |
+| Bare identifier | 1 | 1 | Missing `= yes` |
 
-## Issue Categories
+## Issue Categories by Root Cause
 
-### A: Unknown Triggers/Effects (~37)
-Identifiers not in our generated data, likely DLC-specific or undocumented:
-- `matchmaker` (10) - Matchmaking feature
-- `hegemony` (4) - Hegemony feature
-- Various typos in game files (`If`, `limiT`, `Not`, `NOt`)
+### ✅ A: Trait Group Names - FIXED (was 1125, now 8)
+The game uses trait group/equivalence names that weren't indexed:
+- `lunatic` (190), `possessed` (104), `depressed` (59), `eunuch` (32)
+- `education_*` variants (77/58/55/54/48)
+- `intellect_good/bad` (47/73), `physique_good/bad` (74/41), `beauty_good/bad` (58/45)
 
-### B: Triggers Used in Effect Context (~9)
-```
-Trigger "gold" used in effect context (in "refund_cost")
-```
-The `refund_cost` block expects triggers, but we're flagging them as wrong context.
+**Root cause:** `has_trait = lunatic` works because traits define `group_equivalence = lunatic` or `group = intellect_good`. We only indexed actual trait IDs (`lunatic_1`), not group names.
 
-### C: Invalid ?= Usage (~13)
-```
-Invalid ?= usage: "obedience_target" is not a valid scope.
-```
-Non-scope-changers used with the `?=` operator. May be DLC-specific scopes.
+**Fix:** Added `parseTraitGroups()` in `workspaceIndex.ts` to extract and index `group` and `group_equivalence` names from trait files. The `has()` and `get()` methods now also check the `traitGroupIndex` for trait lookups.
+
+### B: Unrecognized Effect/Trigger Parameters (~600+)
+- `even_if_dead` (116), `target_character` (183), `type_name` (152), `court_position` (122)
+- These are parameters to effects/triggers not in our parameter lists
+
+**Fix needed:** Add missing parameters to `effectParameterOverrides` / `triggerParameterOverrides` in `data/index.ts`
+
+### C: Scripted Modifier References (~400+)
+- `japanese_new_house_name_modifiers` (331), `ai_value_modifier` (82)
+- Various `*_modifier` names used in weight blocks
+
+**Root cause:** Scripted modifiers can be referenced by name in weight blocks. We don't index scripted modifiers for this purpose.
+
+### D: Scope References Not Recognized
+- `legend_protagonist` (44), `dreaded_character` (61), `travel_plan_owner` (24)
+- `side_primary_participant` (22), `inspiration_owner` (52)
+
+**Root cause:** These are scope references (like event targets) that aren't in KNOWN_SCOPE_CHANGERS.
+
+### E: Iterator Variants Not in Data
+- `random_held_county` (64), `every_held_county` (51), `ordered_held_county`
+- `*_theocratic_vassal`, `*_theocratic_ruler` variants
+
+**Root cause:** Some iterators missing from generated effects/triggers data.
+
+### F: Context Mismatches (103)
+- `title_tier` trigger in effect context (94) - in `random/every/ordered_held_title` blocks
+- `gold` trigger in effect context (9) - in `refund_cost` blocks
+
+**Root cause:** Some blocks have special validation rules (e.g., `refund_cost` expects triggers).
+
+### G: Invalid ?= Usage (13)
+- `clear_variable_list`, `add_courtier`, `claimant`, `hegemony`, `obedience_target`
+
+**Root cause:** DLC-specific scope changers or typos in game files.
+
+### H: Typos in Game Files
+- `If`, `limiT`, `Not`, `NOt`, `has_Trait`, `geographicaL_region`, `any_in_List`
+
+These are actual bugs in vanilla game files.
 
 ## Effect/Trigger Context Validation - False Positives
 
