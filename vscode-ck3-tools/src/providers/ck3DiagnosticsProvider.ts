@@ -1765,6 +1765,18 @@ export class CK3DiagnosticsProvider {
       return null;
     }
 
+    // Check if the value is a bare scope changer that outputs the expected type
+    // e.g., "primary_title" is a scope changer that outputs landed_title
+    const scopeChangerDef = effectsMap.get(cleanValue) || triggersMap.get(cleanValue);
+    if (scopeChangerDef?.outputScope) {
+      // This is a scope changer - check if its output type matches what's expected
+      if (definition.supportedTargets.includes(scopeChangerDef.outputScope as any)) {
+        return null; // Valid - scope changer outputs the right type
+      }
+      // Output type doesn't match - could flag it, but skip for now to avoid false positives
+      return null;
+    }
+
     // Check if any supportedTargets maps to an entity type we track
     for (const target of definition.supportedTargets) {
       const entityType = TARGET_TO_ENTITY_TYPE[target];
