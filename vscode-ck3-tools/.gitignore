@@ -27,6 +27,10 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+#but not the ck3 doclogs
+
+!src/data/script_docs/*.log
+
 # Environment variables
 .env
 .env.local
