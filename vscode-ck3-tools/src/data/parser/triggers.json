@@ -1618,7 +1618,8 @@
       "none"
     ],
     "parameters": [
-      "name"
+      "name",
+      "target"
     ]
   },
   {
@@ -4220,7 +4221,10 @@
       "days",
       "months",
       "year"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "target": "character"
+    }
   },
   {
     "name": "can_afford_enact_treasury_budget_costs",
@@ -4323,7 +4327,10 @@
     "supportedTargets": [
       "legend"
     ],
-    "valueType": "legend scope"
+    "valueType": "legend scope",
+    "parameterEntityTypes": {
+      "can_become_owner_of_legend": "legend"
+    }
   },
   {
     "name": "can_benefit_from_artifact",
@@ -4556,7 +4563,10 @@
     "parameters": [
       "type_name",
       "province"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "province": "province"
+    }
   },
   {
     "name": "can_sponsor_inspiration",
@@ -6899,8 +6909,12 @@
     ],
     "valueType": "<, <=, =, !=, >, >=",
     "parameters": [
-      "trait"
-    ]
+      "trait",
+      "track"
+    ],
+    "parameterEntityTypes": {
+      "trait": "trait"
+    }
   },
   {
     "name": "has_treasury",

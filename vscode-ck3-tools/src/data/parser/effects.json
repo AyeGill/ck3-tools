@@ -443,7 +443,10 @@
       "government",
       "prefix",
       "adjective"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "holder": "character"
+    }
   },
   {
     "name": "create_betrothal",
@@ -533,7 +536,10 @@
       "capital",
       "name",
       "coat_of_arms"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "coat_of_arms": "coat_of_arms"
+    }
   },
   {
     "name": "create_nomad_title",
@@ -548,7 +554,10 @@
       "government",
       "prefix",
       "adjective"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "holder": "character"
+    }
   },
   {
     "name": "create_title_and_vassal_change",
@@ -703,7 +712,9 @@
       "skill",
       "challenge_variable",
       "target",
-      "localization"
+      "localization",
+      "skills",
+      "challenge_variables"
     ]
   },
   {
@@ -3489,7 +3500,8 @@
       "none"
     ],
     "parameters": [
-      "name"
+      "name",
+      "target"
     ]
   },
   {
@@ -3522,7 +3534,8 @@
       "none"
     ],
     "parameters": [
-      "name"
+      "name",
+      "target"
     ]
   },
   {
@@ -3661,7 +3674,10 @@
     ],
     "parameters": [
       "some_character"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "set_ruler_objective_decision": "decision"
+    }
   },
   {
     "name": "set_variable",
@@ -3795,7 +3811,11 @@
       "days",
       "months",
       "years"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "id": "event",
+      "on_action": "on_action"
+    }
   },
   {
     "name": "try_create_important_action",
@@ -4344,8 +4364,12 @@
       "character"
     ],
     "parameters": [
-      "trait"
-    ]
+      "trait",
+      "track"
+    ],
+    "parameterEntityTypes": {
+      "trait": "trait"
+    }
   },
   {
     "name": "add_treasury",
@@ -4912,7 +4936,10 @@
       "name",
       "coat_of_arms",
       "spread_to_descendants"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "coat_of_arms": "coat_of_arms"
+    }
   },
   {
     "name": "create_character_memory",
@@ -4938,7 +4965,10 @@
       "name",
       "type",
       "leader"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "leader": "dynasty_house"
+    }
   },
   {
     "name": "create_divergent_culture",
@@ -4976,7 +5006,11 @@
       "name",
       "coat_of_arms",
       "spread_to_descendants"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "prefix": "localization",
+      "coat_of_arms": "coat_of_arms"
+    }
   },
   {
     "name": "create_faction",
@@ -13008,7 +13042,10 @@
     ],
     "supportedTargets": [
       "landed_title"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "set_primary_title_to": "landed_title"
+    }
   },
   {
     "name": "set_promoted_legend",
@@ -13681,7 +13718,11 @@
     "parameters": [
       "target",
       "investor"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "target": "character",
+      "investor": "character"
+    }
   },
   {
     "name": "change_appointment_investment_for_anyone",
@@ -13693,7 +13734,11 @@
     "parameters": [
       "target",
       "investor"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "target": "character",
+      "investor": "character"
+    }
   },
   {
     "name": "change_county_control",
@@ -15607,7 +15652,10 @@
     ],
     "supportedTargets": [
       "faith"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "set_state_faith": "faith"
+    }
   },
   {
     "name": "set_title_color",
@@ -15837,7 +15885,14 @@
       "target",
       "location",
       "artifact"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "key": "localization",
+      "character": "character",
+      "target": "character",
+      "location": "province",
+      "artifact": "artifact"
+    }
   },
   {
     "name": "add_to_current_phase_guest_subset",
@@ -16776,7 +16831,10 @@
     ],
     "supportedTargets": [
       "character"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "set_house_head": "character"
+    }
   },
   {
     "name": "set_house_name",
@@ -17507,7 +17565,8 @@
       "defenders",
       "faction",
       "piety",
-      "prestige"
+      "prestige",
+      "default"
     ]
   },
   {
@@ -18087,7 +18146,10 @@
     "syntax": "Will fail with an error if there is a great building slot already available in the province, regardless of whether it is filled or not.\nNotice that buildings must satisfy the can_construct_potential flag to be selectable by the player.\nIf you want to just add the great building to the province without having the player explicitly start construction, use add_great_building instead.\nusage:\nscope:province = {\nadd_great_building_slot = <building_name>\n}",
     "supportedScopes": [
       "province"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "add_great_building_slot": "building"
+    }
   },
   {
     "name": "add_legend_spread",
@@ -18579,7 +18641,10 @@
     "syntax": "Will error if there is a great building slot already available in the province, and set the slot to the specified type potentially destroying existing buildings.\nNotice that buildings must satisfy the can_construct_potential flag to be selectable by the player.\nIf you want to just add the great building to the province without having the player explicitly start construction, use add_great_building instead.\nusage:\nscope:province = {\nset_great_building_slot = <building_name>\n}",
     "supportedScopes": [
       "province"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "set_great_building_slot": "building"
+    }
   },
   {
     "name": "set_holding_type",
@@ -19420,7 +19485,10 @@
     ],
     "supportedTargets": [
       "character"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "add_character_realm_to_sub_region": "character"
+    }
   },
   {
     "name": "add_dejure_title_to_sub_region",
@@ -19431,7 +19499,10 @@
     ],
     "supportedTargets": [
       "landed_title"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "add_dejure_title_to_sub_region": "landed_title"
+    }
   },
   {
     "name": "add_geographical_region",
@@ -19661,7 +19732,10 @@
     ],
     "supportedTargets": [
       "character"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "remove_character_realm_from_sub_region": "character"
+    }
   },
   {
     "name": "remove_dejure_title_from_sub_region",
@@ -19672,7 +19746,10 @@
     ],
     "supportedTargets": [
       "landed_title"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "remove_dejure_title_from_sub_region": "landed_title"
+    }
   },
   {
     "name": "remove_geographical_region",
@@ -20157,7 +20234,10 @@
     ],
     "parameters": [
       "name"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "localization_key": "localization"
+    }
   },
   {
     "name": "set_legend_property",
@@ -20297,7 +20377,10 @@
     "parameters": [
       "target",
       "desc"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "target": "culture"
+    }
   },
   {
     "name": "clear_culture_traditions",
@@ -20413,7 +20496,10 @@
     ],
     "supportedTargets": [
       "culture"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "get_all_innovations_from": "culture"
+    }
   },
   {
     "name": "get_random_innovation_from",
@@ -20739,7 +20825,10 @@
     "parameters": [
       "set_cultural_accpetance",
       "target"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "target": "culture"
+    }
   },
   {
     "name": "set_culture_name",
@@ -21705,7 +21794,10 @@
     ],
     "parameters": [
       "add_member"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "add_member": "character"
+    }
   },
   {
     "name": "add_confederation_member_house",
@@ -21716,7 +21808,10 @@
     ],
     "supportedTargets": [
       "dynasty_house"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "add_confederation_member_house": "dynasty_house"
+    }
   },
   {
     "name": "change_cohesion",
@@ -21832,7 +21927,10 @@
     ],
     "parameters": [
       "remove_member"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "remove_member": "character"
+    }
   },
   {
     "name": "remove_confederation_member_house",
@@ -21846,7 +21944,10 @@
     ],
     "parameters": [
       "remove_member_house"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "remove_member_house": "dynasty_house"
+    }
   },
   {
     "name": "set_cohesion",
@@ -21879,7 +21980,10 @@
     ],
     "supportedTargets": [
       "dynasty_house"
-    ]
+    ],
+    "parameterEntityTypes": {
+      "set_leading_house": "dynasty_house"
+    }
   },
   {
     "name": "end_story",

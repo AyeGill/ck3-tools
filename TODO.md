@@ -57,6 +57,10 @@ So for example prompting for skill modifications in a trait template makes littl
   - [x] Parser script to import effects/triggers from game data
     - `parseOldEnt.ts` can fetch from OldEnt's repo or parse local `script_docs` output
     - Generated **1343 effects** and **1145 triggers** with scope metadata
+    - Enhanced parser to extract more parameters (optional params in parens, filter params, params after angle brackets)
+    - Added entity type extraction from angle bracket patterns (e.g., `<event ID>` → `id: 'event'`)
+    - Built `effectParameterEntityTypes` and `triggerParameterEntityTypes` from generated data
+    - Removed 8 redundant parameter overrides from `index.ts` that are now auto-generated
   - [x] Scope tracking for nested blocks (detect scope-changing effects like `every_vassal`, `liege`, and update current scope accordingly)
     - **DONE**: `analyzeBlockContext()` walks block path and tracks scope via `outputScope` from effects/triggers
     - **DONE**: Merged manual scope changers (`liege`, `father`, `primary_title`, etc.) with auto-generated data

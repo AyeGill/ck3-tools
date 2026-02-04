@@ -26,6 +26,7 @@ interface ParsedEffect {
   supportedScopes: string[];
   supportedTargets?: string[];
   parameters?: string[];
+  parameterEntityTypes?: Record<string, string>;  // param name -> entity type
 }
 
 interface ParsedTrigger {
@@ -36,6 +37,7 @@ interface ParsedTrigger {
   supportedTargets?: string[];
   valueType?: string; // e.g., "yes/no", "<, <=, =, !=, >, >="
   parameters?: string[];
+  parameterEntityTypes?: Record<string, string>;  // param name -> entity type
 }
 
 /**
@@ -55,6 +57,89 @@ const KNOWN_EFFECTS_TRIGGERS = new Set([
   // Control flow
   'if', 'else', 'else_if', 'and', 'or', 'not', 'limit',
 ]);
+
+/**
+ * Map angle bracket type hints to entity types for go-to-definition
+ * Pattern: param = <type_name> or <type_key> or <type_ID>
+ */
+const ANGLE_BRACKET_TO_ENTITY: Record<string, string> = {
+  // Events and actions
+  'event': 'event',
+  'on_action': 'on_action',
+  // Traits and characters
+  'trait': 'trait',
+  'character': 'character',
+  // Buildings and holdings
+  'building': 'building',
+  'holding': 'holding_type',
+  // Religion
+  'doctrine': 'doctrine',
+  'holy_site': 'holy_site',
+  'faith': 'faith',
+  'religion': 'religion',
+  // Culture
+  'culture': 'culture',
+  'innovation': 'culture_innovation',
+  'tradition': 'culture_tradition',
+  'pillar': 'culture_pillar',
+  // Titles and geography
+  'title': 'landed_title',
+  'province': 'province',
+  'region': 'geographical_region',
+  // Other entities
+  'legend': 'legend',
+  'coa': 'coat_of_arms',
+  'loc': 'localization',
+  'decision': 'decision',
+  'scheme': 'scheme',
+  'secret': 'secret_type',
+  'artifact': 'artifact',
+  'court_position': 'court_position_type',
+  'council_position': 'council_position_type',
+  'government': 'government_type',
+  'law': 'law',
+  'modifier': 'modifier',
+  'activity': 'activity',
+  'story': 'story_cycle',
+  'struggle': 'struggle',
+  'casus_belli': 'casus_belli_type',
+  'dynasty': 'dynasty',
+  'house': 'dynasty_house',
+  'accolade': 'accolade_type',
+  'inspiration': 'inspiration',
+  'great_project': 'great_project',
+  'epidemic': 'epidemic',
+  'mercenary_company': 'mercenary_company',
+  'task_contract': 'task_contract_type',
+};
+
+/**
+ * Extract entity types from syntax documentation
+ * Looks for patterns like "param = <entity_type_name>" or "param = <entity_type_key>"
+ */
+function extractParameterEntityTypes(syntax: string | undefined): Record<string, string> {
+  if (!syntax) return {};
+
+  const entityTypes: Record<string, string> = {};
+
+  // Pattern: param = <type> or param = <type_name> or <type_key> or <type_ID> or <type name> (with space)
+  // Examples: id = <event ID>, trait = <trait_key>, add_building = <building_name>
+  // The type can have underscore or space before name/key/ID suffix
+  const regex = /([a-z_][a-z0-9_]*)\s*=\s*<([a-z_]+?)(?:[_\s](?:name|key|ID|id))?\s*>/gi;
+
+  let match;
+  while ((match = regex.exec(syntax)) !== null) {
+    const paramName = match[1].toLowerCase();
+    const angleBracketType = match[2].toLowerCase();
+
+    const entityType = ANGLE_BRACKET_TO_ENTITY[angleBracketType];
+    if (entityType) {
+      entityTypes[paramName] = entityType;
+    }
+  }
+
+  return entityTypes;
+}
 
 /**
  * Extract parameter names from syntax documentation
@@ -102,10 +187,35 @@ function extractParameters(syntax: string | undefined, name: string): string[] {
     addParam(match[1]);
   }
 
+  // Match parameters after closing angle bracket: "> param = value"
+  // This catches space-separated params like "{ trait = <trait_key> track = <track_key> }"
+  const afterBracketParamRegex = />\s+([a-z_][a-z0-9_]*)\s*=/gi;
+  while ((match = afterBracketParamRegex.exec(syntax)) !== null) {
+    addParam(match[1]);
+  }
+
   // Also extract from angle bracket patterns like <count=num/all>
   const bracketRegex = /<([a-z_][a-z0-9_]*)=/gi;
   while ((match = bracketRegex.exec(syntax)) !== null) {
     params.add(match[1].toLowerCase());
+  }
+
+  // Match optional parameters in parentheses like (skills = { ... })
+  // These appear in duel and other effects with optional block params
+  const optionalParamRegex = /\(([a-z_][a-z0-9_]*)\s*=/gi;
+  while ((match = optionalParamRegex.exec(syntax)) !== null) {
+    addParam(match[1]);
+  }
+
+  // Match filter parameters for iterators like: any_task_contract = { task_contract_type = value }
+  // These are params that appear in example usage lines before the standard iterator syntax
+  const filterParamRegex = /^[a-z_]+\s*=\s*\{\s*([a-z_][a-z0-9_]*)\s*=/gim;
+  while ((match = filterParamRegex.exec(syntax)) !== null) {
+    const param = match[1].toLowerCase();
+    // Skip common non-filter params
+    if (!['count', 'percent', 'limit', 'triggers', 'effects'].includes(param)) {
+      addParam(match[1]);
+    }
   }
 
   return Array.from(params);
@@ -176,6 +286,9 @@ function parseEffects(content: string): ParsedEffect[] {
     // Extract parameters from syntax documentation
     const parameters = extractParameters(syntax, name);
 
+    // Extract entity types for parameters
+    const parameterEntityTypes = extractParameterEntityTypes(syntax);
+
     effects.push({
       name,
       description,
@@ -183,6 +296,7 @@ function parseEffects(content: string): ParsedEffect[] {
       supportedScopes,
       supportedTargets: supportedTargets.length > 0 ? supportedTargets : undefined,
       parameters: parameters.length > 0 ? parameters : undefined,
+      parameterEntityTypes: Object.keys(parameterEntityTypes).length > 0 ? parameterEntityTypes : undefined,
     });
   }
 
@@ -250,6 +364,9 @@ function parseTriggers(content: string): ParsedTrigger[] {
     // Extract parameters from syntax documentation
     const parameters = extractParameters(syntax, name);
 
+    // Extract entity types for parameters
+    const parameterEntityTypes = extractParameterEntityTypes(syntax);
+
     triggers.push({
       name,
       description,
@@ -258,6 +375,7 @@ function parseTriggers(content: string): ParsedTrigger[] {
       supportedTargets: supportedTargets.length > 0 ? supportedTargets : undefined,
       valueType,
       parameters: parameters.length > 0 ? parameters : undefined,
+      parameterEntityTypes: Object.keys(parameterEntityTypes).length > 0 ? parameterEntityTypes : undefined,
     });
   }
 
@@ -338,6 +456,7 @@ function generateEffectsCode(effects: ParsedEffect[]): string {
     '  isIterator?: boolean;',
     '  syntax?: string;',
     '  parameters?: string[];',
+    '  parameterEntityTypes?: Record<string, string>;',
     '}',
     '',
   ];
@@ -387,9 +506,12 @@ function generateEffectsCode(effects: ParsedEffect[]): string {
       const params = effect.parameters?.length
         ? `, parameters: [${effect.parameters.map(p => `'${p}'`).join(', ')}]`
         : '';
+      const paramEntityTypes = effect.parameterEntityTypes && Object.keys(effect.parameterEntityTypes).length > 0
+        ? `, parameterEntityTypes: ${JSON.stringify(effect.parameterEntityTypes)}`
+        : '';
 
       const desc = effect.description.replace(/'/g, "\\'");
-      lines.push(`  { name: '${effect.name}', description: '${desc}', supportedScopes: [${scopes}]${targets}${outputScope}${iteratorFlag}${syntax}${params} },`);
+      lines.push(`  { name: '${effect.name}', description: '${desc}', supportedScopes: [${scopes}]${targets}${outputScope}${iteratorFlag}${syntax}${params}${paramEntityTypes} },`);
     }
 
     lines.push(`];`);
@@ -461,6 +583,7 @@ function generateTriggersCode(triggers: ParsedTrigger[]): string {
     "  valueType?: 'boolean' | 'comparison' | 'value' | 'block';",
     '  syntax?: string;',
     '  parameters?: string[];',
+    '  parameterEntityTypes?: Record<string, string>;',
     '}',
     '',
   ];
@@ -523,9 +646,12 @@ function generateTriggersCode(triggers: ParsedTrigger[]): string {
       const params = trigger.parameters?.length
         ? `, parameters: [${trigger.parameters.map(p => `'${p}'`).join(', ')}]`
         : '';
+      const paramEntityTypes = trigger.parameterEntityTypes && Object.keys(trigger.parameterEntityTypes).length > 0
+        ? `, parameterEntityTypes: ${JSON.stringify(trigger.parameterEntityTypes)}`
+        : '';
 
       const desc = trigger.description.replace(/'/g, "\\'");
-      lines.push(`  { name: '${trigger.name}', description: '${desc}', supportedScopes: [${scopes}]${targets}${outputScope}${iteratorFlag}${valueType}${syntax}${params} },`);
+      lines.push(`  { name: '${trigger.name}', description: '${desc}', supportedScopes: [${scopes}]${targets}${outputScope}${iteratorFlag}${valueType}${syntax}${params}${paramEntityTypes} },`);
     }
 
     lines.push(`];`);

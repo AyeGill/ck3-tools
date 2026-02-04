@@ -124,9 +124,7 @@ const effectParameterOverrides: Record<string, string[]> = {
 
   // Interface effects
   'custom_tooltip': ['text', 'subject', 'object'],
-  'custom_description': ['text'],
   'send_interface_message': ['type', 'title', 'desc', 'tooltip', 'left_icon', 'right_icon', 'goto'],
-  'send_interface_toast': ['type', 'title', 'desc', 'left_icon', 'right_icon'],
 
   // Death effect
   'death': ['death_reason', 'killer'],
@@ -160,10 +158,7 @@ const effectParameterOverrides: Record<string, string[]> = {
   'add_scheme_modifier': ['type', 'days', 'months', 'weeks', 'years'],
   'add_character_modifier': ['modifier', 'days', 'months', 'weeks', 'years', 'desc'],
   'add_county_modifier': ['modifier', 'days', 'months', 'weeks', 'years', 'desc'],
-  'add_province_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
   'add_realm_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
-  'add_dynasty_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
-  'add_house_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
   'add_culture_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
   'add_faith_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
   'add_activity_modifier': ['modifier', 'days', 'months', 'weeks', 'years'],
@@ -176,14 +171,8 @@ const effectParameterOverrides: Record<string, string[]> = {
   'add_title_flag': ['flag', 'days', 'months', 'weeks', 'years'],
 
   // Save scope
-  'save_scope_as': [],  // Takes just a name, not block params
   'save_scope_value_as': ['name', 'value'],
-  'save_temporary_scope_as': [],
   'save_temporary_scope_value_as': ['name', 'value'],
-
-  // Spawn effects - supplement the generated parameters
-  // Generated has: levies, men_at_arms, type, location, origin, war, war_keep_on_attacker_victory, inheritable, uses_supply, army, name, men, stacks
-  'spawn_army': ['name', 'levies', 'men_at_arms', 'location', 'inheritable', 'uses_supply', 'war', 'origin', 'war_keep_on_attacker_victory', 'army', 'type', 'men', 'stacks'],
 
   // Regiment effects
   'change_maa_regiment_size': ['size', 'reinforce'],
@@ -497,12 +486,27 @@ const effectSupportedTargetsOverrides: Record<string, string[]> = {
 };
 
 /**
+ * Manual overrides for effect parameter entity types
+ * Used when the parser doesn't extract the correct entity types
+ */
+const effectParameterEntityTypeOverrides: Record<string, Record<string, string>> = {
+  // Add manual overrides here if the parser misses any
+};
+
+/**
  * Maps effect parameters to the entity types they accept
  * Used for Go to Definition and validation of parameter values
+ * Built from generated data with manual overrides applied
  */
 export const effectParameterEntityTypes: Record<string, Record<string, string>> = {
-  'trigger_event': { 'id': 'event', 'on_action': 'on_action' },
-  // Add more as needed
+  // Start with generated data
+  ...Object.fromEntries(
+    allEffects
+      .filter(e => e.parameterEntityTypes && Object.keys(e.parameterEntityTypes).length > 0)
+      .map(e => [e.name, e.parameterEntityTypes!])
+  ),
+  // Apply manual overrides
+  ...effectParameterEntityTypeOverrides,
 };
 
 /**
@@ -703,11 +707,27 @@ const triggerSupportedTargetsOverrides: Record<string, string[]> = {
 };
 
 /**
+ * Manual overrides for trigger parameter entity types
+ * Used when the parser doesn't extract the correct entity types
+ */
+const triggerParameterEntityTypeOverrides: Record<string, Record<string, string>> = {
+  // Add manual overrides here if the parser misses any
+};
+
+/**
  * Maps trigger parameters to the entity types they accept
  * Used for Go to Definition and validation of parameter values
+ * Built from generated data with manual overrides applied
  */
 export const triggerParameterEntityTypes: Record<string, Record<string, string>> = {
-  // Triggers with typed block parameters (if any)
+  // Start with generated data
+  ...Object.fromEntries(
+    allTriggers
+      .filter(t => t.parameterEntityTypes && Object.keys(t.parameterEntityTypes).length > 0)
+      .map(t => [t.name, t.parameterEntityTypes!])
+  ),
+  // Apply manual overrides
+  ...triggerParameterEntityTypeOverrides,
 };
 
 /**
