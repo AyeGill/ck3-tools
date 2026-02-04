@@ -1337,21 +1337,25 @@ export class CK3DiagnosticsProvider {
           const currentBlock = blockStack[blockStack.length - 1];
           const listBlockType = LIST_BLOCKS[currentBlock.name];
 
-          if (listBlockType) {
-            // This is a list block - validate the identifier exists
-            const entityType = listBlockType as EntityType;
-            if (this.workspaceIndex && !this.workspaceIndex.has(entityType, identifier)) {
-              const identifierStart = cleanLine.indexOf(identifier);
-              const range = new vscode.Range(
-                new vscode.Position(lineNum, identifierStart >= 0 ? identifierStart : 0),
-                new vscode.Position(lineNum, identifierStart >= 0 ? identifierStart + identifier.length : cleanLine.length)
-              );
-              diagnostics.push(new vscode.Diagnostic(
-                range,
-                `Unknown ${entityType} "${identifier}"`,
-                vscode.DiagnosticSeverity.Warning
-              ));
+          if (listBlockType !== undefined) {
+            // This is a list block
+            if (listBlockType !== null) {
+              // Validate the identifier exists against entity registry
+              const entityType = listBlockType as EntityType;
+              if (this.workspaceIndex && !this.workspaceIndex.has(entityType, identifier)) {
+                const identifierStart = cleanLine.indexOf(identifier);
+                const range = new vscode.Range(
+                  new vscode.Position(lineNum, identifierStart >= 0 ? identifierStart : 0),
+                  new vscode.Position(lineNum, identifierStart >= 0 ? identifierStart + identifier.length : cleanLine.length)
+                );
+                diagnostics.push(new vscode.Diagnostic(
+                  range,
+                  `Unknown ${entityType} "${identifier}"`,
+                  vscode.DiagnosticSeverity.Warning
+                ));
+              }
             }
+            // If listBlockType is null, bare identifiers are allowed without validation
           } else if (currentBlock.context === 'trigger' || currentBlock.context === 'effect') {
             // Not a list block, but we're in a trigger/effect context - this is likely an error
             const identifierStart = cleanLine.indexOf(identifier);

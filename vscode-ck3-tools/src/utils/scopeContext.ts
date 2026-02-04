@@ -74,14 +74,31 @@ export const EFFECT_BLOCKS = new Set([
 
 /**
  * Blocks that contain bare identifiers (list items) instead of key=value pairs.
- * Maps block name to the entity type expected for validation.
+ * Maps block name to:
+ * - Entity type string ('event', 'on_action') for validated lists
+ * - null for blocks that allow bare identifiers without entity validation
  */
-export const LIST_BLOCKS: Record<string, 'event' | 'on_action'> = {
+export const LIST_BLOCKS: Record<string, 'event' | 'on_action' | null> = {
+  // Event/on_action lists - validate against workspace index
   'events': 'event',
   'first_valid': 'event',
   'on_actions': 'on_action',
   'first_valid_on_action': 'on_action',
   'random_on_action': 'on_action',
+  // Casus belli lists - no validation (too many CB types)
+  'cb': null,
+  // Title target lists - contains scope references
+  'target_titles': null,
+  // Skill stat blocks in create_character/scripted_character_templates
+  // These contain numeric ranges OR template identifiers
+  'martial': null,
+  'diplomacy': null,
+  'stewardship': null,
+  'intrigue': null,
+  'learning': null,
+  'prowess': null,
+  // Skills block in duel - contains skill names as bare identifiers
+  'skills': null,
 };
 
 /**
