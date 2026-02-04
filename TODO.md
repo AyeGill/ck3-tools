@@ -76,18 +76,16 @@ So for example prompting for skill modifications in a trait template makes littl
 - [ ] Syntax highlighting
   - [x] Barebones syntax highlighting done.
 - [ ] Reflect all the information gathered into the schemas (and everywhere else) in the plain-text documentation we're also producing.
+
+### Linting
 - [ ] Simple linting. If we have a comprehensive list of items that are valid in each space (that is, a proper, complete schema) we can mark any invalid ones. (I guess there should be a "ignore this particular invalid field forever" button). We can also detect name collisions (especially useful for events that are just named by numbers), at least within the same mod.
   - **IN PROGRESS**: `CK3DiagnosticsProvider` implemented with schema-based validation
   - Run `npx vitest run src/test/validateGameFiles.test.ts` to validate against vanilla game files (1,522 files)
-  - Current output: 17,269 diagnostics (down from 41,889)
-  - [x] **Unknown effects** - ~~Effects not in `src/data/effects.ts`~~ **DONE**: All effects now recognized via generated data + parameter overrides + scripted pattern heuristics
-  - [x] **Unknown triggers** - ~~Triggers not in `src/data/triggers.ts`~~ **DONE**: All triggers now recognized via generated data + parameter overrides + special pattern handling
-  - [ ] **Unknown fields (13,591)** - Many game file fields not yet in schemas. Audit game files and add missing fields to `src/schemas/`
-  - [ ] **Missing required fields (1,949)** - May be flagging fields that aren't actually required in all contexts
-  - [ ] **Type mismatches (~1,700)** - Validator flags script value references (like `expensive_building_tier_3_cost`) as type errors. Options: accept identifiers as numeric values, build list of known script values, or add "script_value" type
-  - [ ] **Boolean type mismatches (95)** - Fields like `auto_accept` expect `yes/no` but sometimes take block values for conditional logic
-  - [ ] **Dynamic key blocks** - Currently using a hardcoded `DYNAMIC_KEY_BLOCKS` set (e.g., `stress_impact`) to skip validation for blocks where children are trait names or other dynamic keys rather than effects/triggers. This is a quick fix; a more careful approach might define this in the schema itself (e.g., a `childKeyType: 'trait'` property) so the validator knows what kind of keys to expect.
-  - [ ] **Mixed schema/effect blocks** - Some blocks like `option` contain both schema fields (`name`, `flavor`, `trigger`) AND effects. Currently these schema fields get flagged as unknown effects. Need to recognize when we're inside a schema-defined block and check children against both the sub-schema AND the effects list.
+  - **Current output: 4,917 diagnostics** (down from 41,889 originally)
+  - [x] **Unknown effects/triggers base recognition** - All effects/triggers recognized via generated data + parameter overrides + scripted pattern heuristics
+  - [x] **Sibling block misattribution** - Fixed regex and control flow bugs that caused false positives
+  - [ ] **Effect parameters flagged as unknown (4,542)** - Effects like `men_at_arms`, `name`, `create_task_contract` have parameters that get flagged as unknown effects. Need to add missing parameters to `effectParameterOverrides` in `src/data/index.ts`
+  - [ ] **Triggers used in effect context (292)** - Some are parameters (like `task_contract_tier`), others are valid usages in special blocks like `show_as_unavailable`
 - [ ] There should also be an option to "explicitify" the localization keys, by adding all the necessary localization key fields (with their default values) to an item (so if we have a trait foo_bar, doing this would add name = trait_foo_bar) and so on.
   - [ ] In general the localization generator should account for the whole structure of the current item when generating necessary localizations (so if you have an event with a bunch of options, it should generate the localizations for each option). But this seems quite hard so that's probably a low priority.
 - [x] Add some unit tests
@@ -147,104 +145,75 @@ So for example prompting for skill modifications in a trait template makes littl
 
   # CK3 Diagnostics - Remaining Issues
 
-**Status:** 4,478 diagnostics remain (68% reduction from 14,046)
+**Status:** 4,917 diagnostics remain
 
-## Interaction Schema Context Problem
+## Top Issues by Identifier Count
 
-The remaining false positives are mostly about **interaction schema context** - where we're inside an interaction definition and need to distinguish schema fields from trigger/effect commands.
+| Identifier | Count | Category | Notes |
+|------------|-------|----------|-------|
+| `text` | 3005 | Missing parameter | Used in `custom_description`, `custom_tooltip`, etc. |
+| `type` | 558 | Missing parameter | Used in `men_at_arms`, `history`, etc. |
+| `stacks` | 332 | Missing parameter | Used in `men_at_arms` |
+| `custom` | 232 | Missing parameter | Various effects |
+| `task_contract_tier` | 177 | Trigger in effect context | Parameter to `create_task_contract` |
+| `origin` | 157 | Missing parameter | Various effects |
+| `men` | 77 | Missing parameter | Likely `men_at_arms` related |
+| `cb` | 41 | Missing parameter | Casus belli related |
+| `level` | 37 | Missing parameter | `tributary_contract_set_obligation_level` |
+| `always` | 30 | Trigger in effect context | May be false positive |
+| `matchmaker` | 10 | Unknown trigger | Game-specific, may need adding |
 
-### Issue A: Interaction Parameters When Called as Effects
+## Issue Categories
+
+### A: Missing Effect Parameters (~4,500)
+Most diagnostics are parameters to effects that aren't in `effectParameterOverrides`:
 ```
-Unknown effect: "interface" in "join_vassal_war_interaction"
-Unknown effect: "icon" in "diarch_shift_privileges_interaction"
-Unknown effect: "cooldown" in "diarch_shift_privileges_interaction"
-Unknown effect: "greeting" in "join_vassal_war_interaction"
+Unknown effect: "type" in "men_at_arms"
+Unknown effect: "stacks" in "men_at_arms"
+Unknown effect: "level" in "tributary_contract_set_obligation_level"
+Unknown effect: "text" in "custom_tooltip"
 ```
-When interactions are called inside effect contexts, their schema parameters (`interface`, `icon`, `cooldown`, `greeting`, `flag`) get validated as effects.
+**Fix:** Add missing parameters to `effectParameterOverrides` in `src/data/index.ts`
 
-### Issue B: `send_option` Block Fields
+### B: Triggers Used in Effect Context (~200)
 ```
-Unknown trigger: "flag" in "send_option"
-Unknown trigger: "localization" in "send_option"
+Trigger "task_contract_tier" used in effect context (in "create_task_contract")
+Trigger "gold" used in effect context (in "create_inspiration")
 ```
-`send_option` is an interaction schema block with fields `flag`, `localization`, `is_valid`.
+These are often parameters to effects, not actual triggers. Need to add to parameter overrides.
 
-### Issue C: Weight-like Blocks Not Recognized
+### C: Unknown Triggers (~10)
 ```
-Unknown trigger: "base" in "ai_intermediary_accept"
+Unknown trigger: "matchmaker" in "any_child"
 ```
-`ai_intermediary_accept` is a weight-like block that takes `base` and modifiers.
+Some game-specific triggers may be missing from our generated data.
 
-### Issue D: Nested `cooldown` Block
+### D: Invalid ?= Usage (~36)
 ```
-Unknown trigger: "cooldown" in "cooldown"
+Invalid ?= usage: "add_courtier" is not a valid scope.
 ```
-Self-referential pattern - the `cooldown` block has its own schema fields.
-
-### Issue E: `is_valid` Block Fields
-```
-Unknown trigger: "flag" in "is_valid"
-Unknown trigger: "localization" in "is_valid"
-```
-`is_valid` blocks (in interaction context) can have schema siblings like `flag`, `localization`.
-
-## Possible Solutions
-
-1. **Add more fields to CONTROL_FLOW_FIELDS** (simple but coarse)
-   - Add `flag`, `localization`, `icon`, `interface`, `greeting`, `cooldown`, `base`
-   - Risk: Might hide real errors
-
-2. **Add `send_option` and similar to DYNAMIC_KEY_BLOCKS** (targeted)
-   - Skip validation for children of specific schema blocks
-   - Requires identifying all such blocks
-
-3. **Detect interaction context** (complex but correct)
-   - Recognize when we're inside an interaction definition
-   - Apply interaction schema validation instead of effect/trigger validation
+Effects incorrectly used with the `?=` scope operator.
 
 ## Effect/Trigger Context Validation - False Positives
 
-After implementing "Effect X used in trigger context" / "Trigger Y used in effect context" validation, ~570 new diagnostics appeared on vanilla game files. Two types of false positives identified:
+After implementing "Effect X used in trigger context" / "Trigger Y used in effect context" validation, ~570 new diagnostics appeared on vanilla game files. Two types of false positives were identified and fixed:
 
-### Type 1: Sibling Block Misattribution (~9 cases)
+### ✅ Type 1: Sibling Block Misattribution - FIXED
 
-**Example error:** `Effect "add_character_modifier" used in trigger context (in "limit")`
+**Root cause identified:** Two bugs in the field validation code:
 
-**Problem:** When we have sibling blocks at the same level:
-```
-some_effect = {
-    limit = { ... }           # trigger context
-    add_character_modifier = { ... }  # effect context - but flagged as "in limit"
-}
-```
+1. **Regex bug:** The fieldMatch regex `/^\s*([\w.:$]+)\s*(\?=|=)\s*([^{].*)$/` was matching lines with `{` in the value because `[^{]` would match a space before `{`, then `.*` matched the rest including `{`. Fixed by changing to `[^{]*` which ensures NO braces in the value.
 
-The block stack tracking may incorrectly attribute sibling blocks to the previous block's context. Need to verify that the "parent block" attribution is correct - the effect is NOT inside `limit`, it's a sibling at the same level.
+2. **Control flow bug:** `continue` statements in the fieldMatch handling for `?=` operators and DYNAMIC_KEY_BLOCKS were skipping to the next line entirely, which also skipped the brace depth update and stack popping at the end of the line. This caused inline blocks like `owner.culture ?= { ... }` to not pop their closing braces, leaving stale entries on the stack that caused subsequent sibling blocks to have incorrect parent context.
 
-**Location in code:** `ck3DiagnosticsProvider.ts` around lines 1307-1373 in `validateFieldInContext()`. The `parentBlockName` logic may need to distinguish between "inside this block" vs "sibling of this block".
+**Fix:** Replaced `continue` statements with a `shouldValidate` flag that skips only the validation logic without skipping the brace handling.
 
-### Type 2: Effect Parameters Flagged as Trigger Context (~22 cases)
+### ✅ Type 2: Self-Referential Errors - FIXED
 
-**Example errors:**
+**Example errors that were occurring:**
 - `Effect "set_variable" used in trigger context (in "set_variable")`
-- `Effect "change_variable" used in trigger context (in "change_variable")`
-- `Effect "clamp_variable" used in trigger context (in "clamp_variable")`
+- `Effect "trigger_event" used in trigger context (in "trigger_event")`
 
-**Problem:** Effects that take block parameters have their parameter names flagged. For example:
-```
-set_variable = {
-    name = my_var      # "name" is a parameter, not a trigger
-    value = 5          # "value" is a parameter, not a trigger
-    add = 1            # "add" is a parameter, but also happens to be an effect name
-}
-```
+**Root cause:** Same as Type 1 - the regex bug caused `set_variable = {` to be matched as a field assignment when preceded by another `set_variable` block that wasn't properly popped. The fix to use `[^{]*` instead of `[^{].*` resolved this completely.
 
-The validator sees `add = 1` inside `set_variable = { }` and thinks: "We're inside an effect block, so children should be effects. `add` is a known effect, but context looks like trigger... flag it!"
-
-**Root cause:** Effects with block parameters (like `set_variable`, `change_variable`, `clamp_variable`, `trigger_event`, etc.) shouldn't have their children validated as effects/triggers at all - they're schema parameters.
-
-**Solution options:**
-1. Add these effects to a `PARAMETER_BLOCK_EFFECTS` set and skip effect/trigger validation for their children
-2. Use `effectParameterOverrides` - already exists in `src/data/index.ts` - to know when a field is a parameter
-3. Check if fieldName matches a known parameter of the parent effect before flagging
-
-**Location in code:** `ck3DiagnosticsProvider.ts` lines 1307-1373. Before flagging "Effect X used in trigger context (in Y)", check if X is a known parameter of effect Y using `effectParameterOverrides[Y]`.
+**Status:** All 22 self-referential errors eliminated by the regex fix.
