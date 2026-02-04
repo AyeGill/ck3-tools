@@ -56,7 +56,6 @@ export const dynastyHouseSchema: FieldSchema[] = [
     name: 'dynasty',
     type: 'string',
     description: 'Parent dynasty ID.',
-    required: true,
     example: 'dynasty = 25',
   },
   {

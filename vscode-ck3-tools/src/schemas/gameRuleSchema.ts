@@ -10,7 +10,6 @@ export const gameRuleSchema: FieldSchema[] = [
     name: 'default',
     type: 'string',
     description: 'The default option for this game rule.',
-    required: true,
     example: 'default = "default"',
   },
   {
@@ -65,7 +64,6 @@ export const gameRuleOptionSchema: FieldSchema[] = [
     name: 'name',
     type: 'string',
     description: 'Internal name of the option.',
-    required: true,
     example: 'name = "default"',
   },
   {

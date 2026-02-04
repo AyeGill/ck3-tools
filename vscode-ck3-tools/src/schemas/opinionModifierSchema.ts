@@ -10,7 +10,6 @@ export const opinionModifierSchema: FieldSchema[] = [
     name: 'opinion',
     type: 'integer',
     description: 'The opinion value (positive or negative).',
-    required: true,
     example: 'opinion = 20',
   },
   {

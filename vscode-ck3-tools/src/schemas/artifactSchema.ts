@@ -43,7 +43,6 @@ export const artifactSchema: FieldSchema[] = [
     type: 'enum',
     description: 'The equipment slot this artifact occupies.',
     values: [...ARTIFACT_SLOTS],
-    required: true,
     example: 'slot = primary_armament',
   },
   {
@@ -115,13 +114,13 @@ export const artifactSchema: FieldSchema[] = [
   // Repair and reforge
   {
     name: 'can_repair',
-    type: 'boolean',
-    description: 'Whether the artifact can be repaired.',
+    type: 'block',
+    description: 'Whether the artifact can be repaired. Can be a trigger block for conditional checks.',
   },
   {
     name: 'can_reforge',
-    type: 'boolean',
-    description: 'Whether the artifact can be reforged.',
+    type: 'block',
+    description: 'Whether the artifact can be reforged. Can be a trigger block for conditional checks.',
   },
 
   // Visual configuration

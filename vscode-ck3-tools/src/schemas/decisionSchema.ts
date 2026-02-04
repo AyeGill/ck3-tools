@@ -178,7 +178,6 @@ export const decisionPictureSchema: FieldSchema[] = [
     name: 'reference',
     type: 'string',
     description: 'Path to the image file.',
-    required: true,
     example: 'reference = "gfx/interface/illustrations/decisions/decision_misc.dds"',
   },
   {

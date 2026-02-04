@@ -10,7 +10,6 @@ export const bookmarkSchema: FieldSchema[] = [
     name: 'start_date',
     type: 'string',
     description: 'The start date for this bookmark.',
-    required: true,
     example: 'start_date = "867.1.1"',
   },
   {

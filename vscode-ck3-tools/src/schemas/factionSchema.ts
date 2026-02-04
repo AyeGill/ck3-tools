@@ -18,7 +18,6 @@ export const factionSchema: FieldSchema[] = [
     name: 'casus_belli',
     type: 'string',
     description: 'The casus belli used when the faction presses demands.',
-    required: true,
     example: 'casus_belli = independence_faction_war',
   },
   {

@@ -460,7 +460,6 @@ export const eventOptionSchema: FieldSchema[] = [
     name: 'name',
     type: 'string',
     description: 'Localization key for the option text.',
-    required: true,
     example: 'name = my_event.0001.a',
   },
   {
@@ -539,7 +538,6 @@ export const portraitBlockSchema: FieldSchema[] = [
     name: 'character',
     type: 'string',
     description: 'The character to display (scope reference).',
-    required: true,
     example: 'character = root',
   },
   {

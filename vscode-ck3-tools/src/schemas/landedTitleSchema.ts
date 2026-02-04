@@ -136,7 +136,6 @@ export const baronySchema: FieldSchema[] = [
     name: 'province',
     type: 'integer',
     description: 'Province ID for this barony.',
-    required: true,
     example: 'province = 1234',
   },
   {

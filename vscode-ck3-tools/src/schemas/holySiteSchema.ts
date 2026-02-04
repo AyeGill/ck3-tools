@@ -10,7 +10,6 @@ export const holySiteSchema: FieldSchema[] = [
     name: 'county',
     type: 'string',
     description: 'The county where this holy site is located.',
-    required: true,
     example: 'county = c_roma',
   },
   {

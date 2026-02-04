@@ -19,7 +19,6 @@ export const councilTaskSchema: FieldSchema[] = [
     type: 'enum',
     description: 'The council position that performs this task.',
     values: [...COUNCIL_POSITIONS],
-    required: true,
     example: 'position = councillor_steward',
   },
   {

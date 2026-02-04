@@ -29,7 +29,6 @@ export const schemeSchema: FieldSchema[] = [
     type: 'enum',
     description: 'The skill used for this scheme.',
     values: [...SCHEME_SKILLS],
-    required: true,
     example: 'skill = intrigue',
   },
   {
@@ -246,10 +245,11 @@ export const schemeSchema: FieldSchema[] = [
   // UI
   {
     name: 'use_secrecy',
-    type: 'boolean',
-    description: 'Whether the scheme uses secrecy mechanics.',
-    default: true,
-    example: 'use_secrecy = no',
+    type: 'block',
+    description: 'Whether the scheme uses secrecy mechanics. Can be a trigger block for conditional checks.',
+    example: `use_secrecy = no
+# or with conditions:
+use_secrecy = { always = yes }`,
   },
 
   // Additional scheme properties

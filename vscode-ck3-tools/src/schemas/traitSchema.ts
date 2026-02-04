@@ -55,7 +55,6 @@ export const traitSchema: FieldSchema[] = [
     type: 'enum',
     description: 'The category of the trait. Determines behavior and constraints.',
     values: [...TRAIT_CATEGORIES],
-    required: true,
     example: 'category = personality',
   },
   {
@@ -516,13 +515,15 @@ export const traitSchema: FieldSchema[] = [
   },
   {
     name: 'bastard',
-    type: 'boolean',
-    description: 'Whether this trait marks the character as a bastard.',
+    type: 'enum',
+    values: ['yes', 'no', 'legitimate', 'illegitimate'],
+    description: 'Whether this trait marks the character as a bastard. Can specify legitimacy status.',
   },
   {
     name: 'claim_inheritance_blocker',
-    type: 'boolean',
-    description: 'Whether this trait blocks claim inheritance.',
+    type: 'enum',
+    values: ['yes', 'no', 'all'],
+    description: 'Whether this trait blocks claim inheritance. "all" blocks all inheritance.',
   },
   {
     name: 'index',

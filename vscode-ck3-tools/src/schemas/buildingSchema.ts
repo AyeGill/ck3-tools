@@ -309,8 +309,8 @@ export const buildingSchema: FieldSchema[] = [
   },
   {
     name: 'can_rebuild',
-    type: 'boolean',
-    description: 'Whether this building can be rebuilt after destruction.',
+    type: 'block',
+    description: 'Whether this building can be rebuilt after destruction. Can be a trigger block for conditional checks.',
   },
   {
     name: 'rebuild_cost',

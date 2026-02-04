@@ -192,10 +192,14 @@ export const interactionSchema: FieldSchema[] = [
   // Auto-accept
   {
     name: 'auto_accept',
-    type: 'boolean',
-    description: 'If yes, the interaction is automatically accepted.',
-    default: false,
-    example: 'auto_accept = yes',
+    type: 'block',
+    description: 'If yes, the interaction is automatically accepted. Can be a trigger block for conditional acceptance.',
+    example: `auto_accept = yes
+# or with conditions:
+auto_accept = {
+    is_ai = yes
+    opinion = { target = scope:actor value >= 50 }
+}`,
   },
   {
     name: 'hidden',
@@ -206,10 +210,11 @@ export const interactionSchema: FieldSchema[] = [
   },
   {
     name: 'use_diplomatic_range',
-    type: 'boolean',
-    description: 'If yes, requires diplomatic range to target.',
-    default: true,
-    example: 'use_diplomatic_range = no',
+    type: 'block',
+    description: 'If yes, requires diplomatic range to target. Can be a trigger block for conditional checks.',
+    example: `use_diplomatic_range = no
+# or with conditions:
+use_diplomatic_range = { always = yes }`,
   },
 
   // AI

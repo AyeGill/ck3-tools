@@ -86,9 +86,25 @@ export const scriptedModifierSchema: FieldSchema[] = [
     type: 'block',
     description: 'Use the first valid modifier from a list.',
   },
+  {
+    name: 'compatibility_modifier',
+    type: 'block',
+    description: 'Built-in modifier that calculates compatibility between two characters.',
+    example: `compatibility_modifier = {
+    who = scope:actor
+    compatibility_target = scope:recipient
+    multiplier = 0.5
+}`,
+  },
 
-  // TODO: Scripted modifiers can include other scripted modifiers by name.
-  // This is a wildcard situation - need to parse common/scripted_modifiers/ to get the list.
+  // Wildcard: weight blocks can include other scripted modifiers by name
+  // e.g., `compatibility_modifier = yes` includes the scripted modifier named "compatibility_modifier"
+  {
+    name: '*',
+    type: 'modifier',
+    isWildcard: true,
+    description: 'Any scripted modifier can be included by name in a weight block.',
+  },
 ];
 
 // Map for quick lookup

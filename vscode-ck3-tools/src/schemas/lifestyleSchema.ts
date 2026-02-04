@@ -19,7 +19,6 @@ export const lifestyleSchema: FieldSchema[] = [
     type: 'enum',
     description: 'The skill associated with this lifestyle.',
     values: [...LIFESTYLE_SKILLS],
-    required: true,
     example: 'skill = martial',
   },
   {
