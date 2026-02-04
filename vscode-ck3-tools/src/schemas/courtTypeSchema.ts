@@ -2,7 +2,7 @@
  * Schema definition for CK3 Court Types - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const courtTypeSchema: FieldSchema[] = [
   // Basic Properties

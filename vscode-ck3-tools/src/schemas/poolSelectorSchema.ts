@@ -2,7 +2,7 @@
  * Schema definition for CK3 Pool Character Selectors - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const poolSelectorSchema: FieldSchema[] = [
   // Basic Properties

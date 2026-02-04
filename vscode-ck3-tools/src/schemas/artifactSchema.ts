@@ -2,7 +2,7 @@
  * Schema definition for CK3 Artifacts - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const ARTIFACT_SLOTS = [
   'primary_armament',

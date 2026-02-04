@@ -2,7 +2,7 @@
  * Schema definition for CK3 Inspirations (Royal Court DLC) - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const INSPIRATION_TYPES = [
   'weapon',

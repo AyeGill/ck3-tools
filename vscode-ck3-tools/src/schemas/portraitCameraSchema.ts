@@ -2,7 +2,7 @@
  * Schema definition for CK3 Portrait Cameras - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const portraitCameraSchema: FieldSchema[] = [
   // Basic Properties

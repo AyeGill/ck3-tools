@@ -4,7 +4,7 @@
  * Replaces the coarse DYNAMIC_KEY_BLOCKS set with fine-grained validation.
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 import { eventOptionSchema } from './eventSchema';
 
 /**

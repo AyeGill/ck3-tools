@@ -2,7 +2,7 @@
  * Schema definition for CK3 character interactions - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const INTERACTION_CATEGORIES = [
   'interaction_category_diplomacy',

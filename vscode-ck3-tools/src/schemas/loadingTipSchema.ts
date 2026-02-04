@@ -2,7 +2,7 @@
  * Schema definition for CK3 Loading Tips - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const loadingTipSchema: FieldSchema[] = [
   // Basic Properties

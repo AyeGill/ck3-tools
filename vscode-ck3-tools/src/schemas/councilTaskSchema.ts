@@ -2,7 +2,7 @@
  * Schema definition for CK3 Council Tasks - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const COUNCIL_POSITIONS = [
   'councillor_chancellor',

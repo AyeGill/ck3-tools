@@ -2,7 +2,7 @@
  * Schema definition for CK3 Men-at-Arms Types - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const menAtArmsTypeSchema: FieldSchema[] = [
   // Basic Properties

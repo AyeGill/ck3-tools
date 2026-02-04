@@ -2,7 +2,7 @@
  * Schema definition for CK3 Activity Locales - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const activityLocaleSchema: FieldSchema[] = [
   // Basic Properties

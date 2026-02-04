@@ -2,7 +2,7 @@
  * Schema definition for CK3 Court Positions - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const COURT_POSITION_CATEGORIES = [
   'court_position_category_common',

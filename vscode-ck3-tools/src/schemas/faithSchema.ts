@@ -2,7 +2,7 @@
  * Schema definition for CK3 Faiths and Religions - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const RELIGION_FAMILIES = [
   'rf_pagan',

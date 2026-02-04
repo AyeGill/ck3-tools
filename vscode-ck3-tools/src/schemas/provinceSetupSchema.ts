@@ -2,7 +2,7 @@
  * Schema definition for CK3 Province Setup - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const provinceSetupSchema: FieldSchema[] = [
   // Basic Properties

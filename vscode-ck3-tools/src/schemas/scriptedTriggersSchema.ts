@@ -8,7 +8,7 @@
  * The wildcard entry below tells the completion/validation system to accept all triggers.
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 // Schema for scripted triggers
 // The wildcard entry means any trigger is valid at top level

@@ -2,7 +2,7 @@
  * Schema definition for CK3 Domiciles (Roads to Power DLC) - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const DOMICILE_TYPES = [
   'manor',

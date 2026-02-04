@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import { FieldSchema } from '../schemas/traitSchema';
+import { FieldSchema } from '../schemas/registry/types';
 import { effectsMap, triggersMap, modifiersMap, matchesModifierTemplate, ScopeType } from '../data';
 import { CK3WorkspaceIndex, EntityType } from './workspaceIndex';
 import {
@@ -23,34 +23,9 @@ import {
   determineBlockContext,
 } from '../utils/blockParser';
 
-// Import all schemas we want to validate
-import { traitSchema, traitSchemaMap } from '../schemas/traitSchema';
-import { eventSchema, eventSchemaMap } from '../schemas/eventSchema';
-import { decisionSchema, decisionSchemaMap } from '../schemas/decisionSchema';
-import { interactionSchema, interactionSchemaMap } from '../schemas/interactionSchema';
-import { buildingSchema, buildingSchemaMap } from '../schemas/buildingSchema';
-import { artifactSchema, artifactSchemaMap } from '../schemas/artifactSchema';
-import { schemeSchema, schemeSchemaMap } from '../schemas/schemeSchema';
-import { opinionModifierSchema, opinionModifierSchemaMap } from '../schemas/opinionModifierSchema';
-import { nicknameSchema, nicknameSchemaMap } from '../schemas/nicknameSchema';
-import { modifierSchema, modifierSchemaMap } from '../schemas/modifierSchema';
-import { secretSchema, secretSchemaMap } from '../schemas/secretSchema';
-import { activitySchema, activitySchemaMap } from '../schemas/activitySchema';
-import { onActionSchema, onActionSchemaMap } from '../schemas/onActionSchema';
-import { scriptedEffectSchema, scriptedEffectSchemaMap } from '../schemas/scriptedEffectsSchema';
-import { scriptedTriggerSchema, scriptedTriggerSchemaMap } from '../schemas/scriptedTriggersSchema';
-import { scriptedModifierSchema, scriptedModifierSchemaMap } from '../schemas/scriptedModifierSchema';
 import { BLOCK_SCHEMAS, getBlockSchemaMap } from '../schemas/blockSchemas';
+import { schemaRegistry } from '../schemas/registry/schemaRegistry';
 
-/**
- * Supported file types for diagnostics
- */
-type DiagnosticFileType =
-  | 'trait' | 'event' | 'decision' | 'interaction' | 'building'
-  | 'artifact' | 'scheme' | 'opinion_modifier' | 'nickname'
-  | 'modifier' | 'secret' | 'activity' | 'on_action'
-  | 'scripted_effect' | 'scripted_trigger' | 'scripted_modifier'
-  | 'unknown';
 
 /**
  * Represents a parsed entity from a CK3 file
@@ -269,24 +244,6 @@ interface ParsedFieldWithContext extends ParsedField {
   blockPath: string[];
 }
 
-const SCHEMA_REGISTRY: Map<DiagnosticFileType, { schema: FieldSchema[], schemaMap: Map<string, FieldSchema> }> = new Map([
-  ['trait', { schema: traitSchema, schemaMap: traitSchemaMap }],
-  ['event', { schema: eventSchema, schemaMap: eventSchemaMap }],
-  ['decision', { schema: decisionSchema, schemaMap: decisionSchemaMap }],
-  ['interaction', { schema: interactionSchema, schemaMap: interactionSchemaMap }],
-  ['building', { schema: buildingSchema, schemaMap: buildingSchemaMap }],
-  ['artifact', { schema: artifactSchema, schemaMap: artifactSchemaMap }],
-  ['scheme', { schema: schemeSchema, schemaMap: schemeSchemaMap }],
-  ['opinion_modifier', { schema: opinionModifierSchema, schemaMap: opinionModifierSchemaMap }],
-  ['nickname', { schema: nicknameSchema, schemaMap: nicknameSchemaMap }],
-  ['modifier', { schema: modifierSchema, schemaMap: modifierSchemaMap }],
-  ['secret', { schema: secretSchema, schemaMap: secretSchemaMap }],
-  ['activity', { schema: activitySchema, schemaMap: activitySchemaMap }],
-  ['on_action', { schema: onActionSchema, schemaMap: onActionSchemaMap }],
-  ['scripted_effect', { schema: scriptedEffectSchema, schemaMap: scriptedEffectSchemaMap }],
-  ['scripted_trigger', { schema: scriptedTriggerSchema, schemaMap: scriptedTriggerSchemaMap }],
-  ['scripted_modifier', { schema: scriptedModifierSchema, schemaMap: scriptedModifierSchemaMap }],
-]);
 
 /**
  * CK3 Diagnostics Provider
@@ -340,25 +297,20 @@ export class CK3DiagnosticsProvider {
       return;
     }
 
-    const fileType = this.getFileType(document.fileName);
-    if (fileType === 'unknown') {
+    // Get schema for this file using the centralized registry
+    const schemaInfo = schemaRegistry.getForFile(document.fileName);
+    if (!schemaInfo) {
       // Clear diagnostics for unknown file types
       this.diagnosticCollection.set(document.uri, []);
       return;
     }
 
+    const fileType = schemaInfo.fileType;
     const diagnostics: vscode.Diagnostic[] = [];
     const text = document.getText();
 
     // Parse entities from the document
     const entities = this.parseEntities(text);
-
-    // Get schema for this file type
-    const schemaInfo = SCHEMA_REGISTRY.get(fileType);
-    if (!schemaInfo) {
-      this.diagnosticCollection.set(document.uri, []);
-      return;
-    }
 
     // Check for name collisions within the file
     // Skip for on_action since multiple definitions extend the same on_action (additive)
@@ -586,32 +538,6 @@ export class CK3DiagnosticsProvider {
   }
 
   /**
-   * Determine file type from path
-   */
-  private getFileType(filePath: string): DiagnosticFileType {
-    const normalizedPath = filePath.replace(/\\/g, '/');
-
-    if (normalizedPath.includes('/common/traits/')) return 'trait';
-    if (normalizedPath.includes('/events/')) return 'event';
-    if (normalizedPath.includes('/common/decisions/')) return 'decision';
-    if (normalizedPath.includes('/common/character_interactions/')) return 'interaction';
-    if (normalizedPath.includes('/common/buildings/')) return 'building';
-    if (normalizedPath.includes('/common/artifacts/')) return 'artifact';
-    if (normalizedPath.includes('/common/schemes/')) return 'scheme';
-    if (normalizedPath.includes('/common/opinion_modifiers/')) return 'opinion_modifier';
-    if (normalizedPath.includes('/common/nicknames/')) return 'nickname';
-    if (normalizedPath.includes('/common/modifiers/')) return 'modifier';
-    if (normalizedPath.includes('/common/secret_types/')) return 'secret';
-    if (normalizedPath.includes('/common/activities/')) return 'activity';
-    if (normalizedPath.includes('/common/on_action/')) return 'on_action';
-    if (normalizedPath.includes('/common/scripted_effects/')) return 'scripted_effect';
-    if (normalizedPath.includes('/common/scripted_triggers/')) return 'scripted_trigger';
-    if (normalizedPath.includes('/common/scripted_modifiers/')) return 'scripted_modifier';
-
-    return 'unknown';
-  }
-
-  /**
    * Parse entities from document text
    * Returns top-level entity definitions (e.g., trait_name = { ... })
    */
@@ -742,7 +668,7 @@ export class CK3DiagnosticsProvider {
     entity: ParsedEntity,
     schema: FieldSchema[],
     schemaMap: Map<string, FieldSchema>,
-    fileType: DiagnosticFileType
+    fileType: string
   ): Array<{ name: string; line: number }> {
     const invalid: Array<{ name: string; line: number }> = [];
 

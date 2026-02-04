@@ -2,7 +2,7 @@
  * Schema definition for CK3 Languages - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const languageSchema: FieldSchema[] = [
   // Basic Properties

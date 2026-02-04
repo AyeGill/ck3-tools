@@ -2,7 +2,7 @@
  * Schema definition for CK3 Scripted Rules - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const scriptedRulesSchema: FieldSchema[] = [
   // These are essentially trigger blocks that return yes/no

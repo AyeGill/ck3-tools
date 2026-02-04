@@ -109,7 +109,12 @@ So for example prompting for skill modifications in a trait template makes littl
   - **DONE**: Added block schema validation tests (`blockSchemaValidation.test.ts` - 9 tests)
   - **DONE**: Added block parsing characterization tests (`blockParsing.test.ts` - 26 tests)
   - **DONE**: Unified block parsing logic into `src/utils/blockParser.ts` - All three providers (CompletionProvider, HoverProvider, DiagnosticsProvider) now share the same regex pattern and context determination logic
-  - Total: 194 tests passing
+  - **DONE**: Unified schema registry - Created centralized `src/schemas/registry/schemaRegistry.ts` with ~200 file type patterns. All three providers (CompletionProvider, HoverProvider, DiagnosticsProvider) now use this registry instead of maintaining separate copies:
+    - Removed ~180 duplicate schema imports from HoverProvider
+    - Removed SCHEMA_REGISTRY map from DiagnosticsProvider
+    - Removed ~650 lines of `getFileType()` if-else chains from CompletionProvider
+    - Added context-aware schema resolution via `getSchemaForContext()` callbacks
+  - Total: 193 tests passing
 
 
 - What's up with accessory and artifact both being schemae? Should look in the game files and figure this out.

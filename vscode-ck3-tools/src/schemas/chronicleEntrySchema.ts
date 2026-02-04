@@ -2,7 +2,7 @@
  * Schema definition for CK3 Chronicle Entries - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const chronicleEntrySchema: FieldSchema[] = [
   // Basic Properties

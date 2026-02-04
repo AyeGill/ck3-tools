@@ -2,7 +2,7 @@
  * Schema definition for CK3 AI Budgets - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const aiBudgetSchema: FieldSchema[] = [
   // Basic Properties

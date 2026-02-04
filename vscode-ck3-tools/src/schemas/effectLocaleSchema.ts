@@ -2,7 +2,7 @@
  * Schema definition for CK3 Effect Locales - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const effectLocaleSchema: FieldSchema[] = [
   // Basic Properties

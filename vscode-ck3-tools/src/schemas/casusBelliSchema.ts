@@ -2,7 +2,7 @@
  * Schema definition for CK3 Casus Belli (CB) - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const CB_GROUPS = [
   'conquest',

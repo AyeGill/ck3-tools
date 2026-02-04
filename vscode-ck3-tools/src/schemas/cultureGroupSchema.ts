@@ -2,7 +2,7 @@
  * Schema definition for CK3 Culture Groups - autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const cultureGroupSchema: FieldSchema[] = [
   // Basic Properties

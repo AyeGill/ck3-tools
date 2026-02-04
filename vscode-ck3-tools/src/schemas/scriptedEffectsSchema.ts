@@ -8,7 +8,7 @@
  * The wildcard entry below tells the completion/validation system to accept all effects.
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 // Schema for scripted effects
 // The wildcard entry means any effect is valid at top level

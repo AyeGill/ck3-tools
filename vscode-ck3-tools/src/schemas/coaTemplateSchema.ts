@@ -2,7 +2,7 @@
  * Schema definition for CK3 Coat of Arms Templates - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const coaTemplateSchema: FieldSchema[] = [
   // Basic Properties

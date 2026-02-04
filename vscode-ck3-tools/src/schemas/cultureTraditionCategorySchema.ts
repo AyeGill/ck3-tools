@@ -2,7 +2,7 @@
  * Schema definition for CK3 Culture Tradition Categories - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const cultureTraditionCategorySchema: FieldSchema[] = [
   // Basic Properties

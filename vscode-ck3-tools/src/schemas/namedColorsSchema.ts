@@ -2,7 +2,7 @@
  * Schema definition for CK3 Named Colors - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const namedColorsSchema: FieldSchema[] = [
   // Color definitions are simple: name = { r g b } or name = hsv { h s v }

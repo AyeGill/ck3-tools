@@ -2,7 +2,7 @@
  * Schema definition for CK3 Accessories - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const accessorySchema: FieldSchema[] = [
   // Basic Properties

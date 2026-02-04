@@ -2,7 +2,7 @@
  * Schema definition for CK3 Artifact Features - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const artifactFeatureSchema: FieldSchema[] = [
   // Basic Properties

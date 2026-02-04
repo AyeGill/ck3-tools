@@ -2,7 +2,7 @@
  * Schema definition for CK3 Combat Phases - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const combatPhaseSchema: FieldSchema[] = [
   // Basic Properties

@@ -2,7 +2,7 @@
  * Schema definition for CK3 Heritages - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const heritageSchema: FieldSchema[] = [
   // Basic Properties

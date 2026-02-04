@@ -2,7 +2,7 @@
  * Schema definition for CK3 House Unity - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const houseUnitySchema: FieldSchema[] = [
   // Basic Properties

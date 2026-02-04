@@ -2,7 +2,7 @@
  * Schema definition for CK3 Courtier/Guest Management - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const courtierGuestManagementSchema: FieldSchema[] = [
   // Basic Properties

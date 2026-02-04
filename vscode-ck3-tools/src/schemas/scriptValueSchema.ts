@@ -2,7 +2,7 @@
  * Schema definition for CK3 Script Values - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const scriptValueSchema: FieldSchema[] = [
   // Basic value types - script values are essentially math expressions

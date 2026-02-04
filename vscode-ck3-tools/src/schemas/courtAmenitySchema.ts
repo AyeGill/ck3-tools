@@ -2,7 +2,7 @@
  * Schema definition for CK3 Court Amenities - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const AMENITY_TYPES = [
   'court_lodging',

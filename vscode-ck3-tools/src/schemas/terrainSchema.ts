@@ -2,7 +2,7 @@
  * Schema definition for CK3 Terrain Types - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const terrainSchema: FieldSchema[] = [
   // Basic Properties

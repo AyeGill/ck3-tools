@@ -2,7 +2,7 @@
  * Schema definition for CK3 Cultures - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const CULTURE_ERAS = [
   'culture_era_tribal',

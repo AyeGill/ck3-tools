@@ -2,7 +2,7 @@
  * Schema definition for CK3 Execution Methods - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const executionMethodSchema: FieldSchema[] = [
   // Basic Properties

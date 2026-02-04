@@ -2,7 +2,7 @@
  * Schema definition for CK3 Title History - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const titleHistorySchema: FieldSchema[] = [
   // Holder

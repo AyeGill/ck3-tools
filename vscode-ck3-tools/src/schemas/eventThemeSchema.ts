@@ -2,7 +2,7 @@
  * Schema definition for CK3 Event Themes - powers autocomplete and hover documentation
  */
 
-import { FieldSchema } from './traitSchema';
+import { FieldSchema } from './registry/types';
 
 export const eventThemeSchema: FieldSchema[] = [
   // Basic Properties
