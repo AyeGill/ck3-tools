@@ -5,7 +5,8 @@
 - When writing tests, remember to check every outcome - both that something is highlighted when it should be (for example), and not highlighted when it shouldn't be.
 - When the user asks you an open-ended debugging question (like, to run some diagnostics and gather information), don't implement a fix right away, just get the information and present it to the user (maybe with a suggested fix)
 - When choosing how to implement or represent something, strive towards simplicity. Never implement something by case analysis if it could be implemented in a unified way. Never duplicate logic. 
-
+- Rememeber to keep TODO.md up to date. Both by marking done what we get done, and by noting anything in progress.
+- Remember that TODO.md is in the to-level directory Gottfried, not in vscode-ck3-tools.
 
 # Task flow
 
