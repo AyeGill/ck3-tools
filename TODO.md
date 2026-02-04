@@ -201,3 +201,50 @@ Unknown trigger: "localization" in "is_valid"
 3. **Detect interaction context** (complex but correct)
    - Recognize when we're inside an interaction definition
    - Apply interaction schema validation instead of effect/trigger validation
+
+## Effect/Trigger Context Validation - False Positives
+
+After implementing "Effect X used in trigger context" / "Trigger Y used in effect context" validation, ~570 new diagnostics appeared on vanilla game files. Two types of false positives identified:
+
+### Type 1: Sibling Block Misattribution (~9 cases)
+
+**Example error:** `Effect "add_character_modifier" used in trigger context (in "limit")`
+
+**Problem:** When we have sibling blocks at the same level:
+```
+some_effect = {
+    limit = { ... }           # trigger context
+    add_character_modifier = { ... }  # effect context - but flagged as "in limit"
+}
+```
+
+The block stack tracking may incorrectly attribute sibling blocks to the previous block's context. Need to verify that the "parent block" attribution is correct - the effect is NOT inside `limit`, it's a sibling at the same level.
+
+**Location in code:** `ck3DiagnosticsProvider.ts` around lines 1307-1373 in `validateFieldInContext()`. The `parentBlockName` logic may need to distinguish between "inside this block" vs "sibling of this block".
+
+### Type 2: Effect Parameters Flagged as Trigger Context (~22 cases)
+
+**Example errors:**
+- `Effect "set_variable" used in trigger context (in "set_variable")`
+- `Effect "change_variable" used in trigger context (in "change_variable")`
+- `Effect "clamp_variable" used in trigger context (in "clamp_variable")`
+
+**Problem:** Effects that take block parameters have their parameter names flagged. For example:
+```
+set_variable = {
+    name = my_var      # "name" is a parameter, not a trigger
+    value = 5          # "value" is a parameter, not a trigger
+    add = 1            # "add" is a parameter, but also happens to be an effect name
+}
+```
+
+The validator sees `add = 1` inside `set_variable = { }` and thinks: "We're inside an effect block, so children should be effects. `add` is a known effect, but context looks like trigger... flag it!"
+
+**Root cause:** Effects with block parameters (like `set_variable`, `change_variable`, `clamp_variable`, `trigger_event`, etc.) shouldn't have their children validated as effects/triggers at all - they're schema parameters.
+
+**Solution options:**
+1. Add these effects to a `PARAMETER_BLOCK_EFFECTS` set and skip effect/trigger validation for their children
+2. Use `effectParameterOverrides` - already exists in `src/data/index.ts` - to know when a field is a parameter
+3. Check if fieldName matches a known parameter of the parent effect before flagging
+
+**Location in code:** `ck3DiagnosticsProvider.ts` lines 1307-1373. Before flagging "Effect X used in trigger context (in Y)", check if X is a known parameter of effect Y using `effectParameterOverrides[Y]`.
