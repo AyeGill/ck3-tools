@@ -42,8 +42,11 @@ export function activate(context: vscode.ExtensionContext) {
   registerGenerateLocalizationCommand(context, generator);
   registerGoToLocalizationCommand(context);
 
+  // Create workspace index for cross-file validation (needed by completion provider)
+  const workspaceIndex = new CK3WorkspaceIndex();
+
   // Register unified completion and hover providers for all entity types
-  const ck3CompletionProvider = new CK3CompletionProvider();
+  const ck3CompletionProvider = new CK3CompletionProvider(workspaceIndex);
   const ck3HoverProvider = new CK3HoverProvider();
 
   // Register hover provider for ALL CK3 files (using language ID)
@@ -65,9 +68,6 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   console.log('Registered completion providers for all CK3 entity types');
-
-  // Create workspace index for cross-file validation
-  const workspaceIndex = new CK3WorkspaceIndex();
 
   // Index workspace and game files, then validate open documents
   const gamePath = vscode.workspace.getConfiguration('ck3-tools').get<string>('gamePath');

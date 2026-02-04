@@ -5,6 +5,7 @@
  */
 import { describe, it, expect, beforeAll } from 'vitest';
 import { CK3CompletionProvider } from '../providers/ck3CompletionProvider';
+import { CK3WorkspaceIndex, EntityType, EntityLocation } from '../providers/workspaceIndex';
 import {
   createMockDocument,
   Position,
@@ -12,6 +13,29 @@ import {
   CompletionTriggerKind,
   CompletionList,
 } from './mocks/vscode';
+
+/**
+ * Create a mock workspace index with predefined entities
+ */
+function createMockWorkspaceIndex(entities: Record<EntityType, string[]>): CK3WorkspaceIndex {
+  const index = new CK3WorkspaceIndex();
+  // Access the private indices map via any to add test entities
+  const indices = (index as any).indices as Map<EntityType, Map<string, EntityLocation>>;
+
+  for (const [type, names] of Object.entries(entities)) {
+    const entityMap = indices.get(type as EntityType) || new Map();
+    for (const name of names) {
+      entityMap.set(name, {
+        uri: 'file:///mock/path.txt',
+        line: 0,
+        name,
+      });
+    }
+    indices.set(type as EntityType, entityMap);
+  }
+
+  return index;
+}
 
 describe('CK3CompletionProvider', () => {
   let provider: CK3CompletionProvider;
@@ -1063,6 +1087,153 @@ test.0001 = {
       expect(labels).toContain('add_prestige');
       expect(labels).toContain('trigger_event');
       expect(labels).not.toContain('base');
+    });
+  });
+
+  describe('Entity reference completions', () => {
+    it('should suggest traits for add_trait = ', () => {
+      const mockIndex = createMockWorkspaceIndex({
+        trait: ['brave', 'craven', 'beauty'],
+        event: [],
+        decision: [],
+        script_value: [],
+        scripted_modifier: [],
+        scripted_effect: [],
+        scripted_trigger: [],
+        secret_type: [],
+        scheme: [],
+        on_action: [],
+        activity: [],
+        culture: [],
+        culture_tradition: [],
+        culture_innovation: [],
+        culture_pillar: [],
+        doctrine: [],
+        landed_title: [],
+        holding_type: [],
+        government_type: [],
+        dynasty: [],
+        dynasty_house: [],
+        casus_belli_type: [],
+        faction: [],
+        legend: [],
+        inspiration: [],
+        struggle: [],
+        epidemic: [],
+        great_project: [],
+        accolade_type: [],
+        situation: [],
+        story_cycle: [],
+        court_position_type: [],
+        artifact: [],
+      });
+      const providerWithIndex = new CK3CompletionProvider(mockIndex);
+
+      const content = `namespace = test
+test.0001 = {
+	immediate = {
+		add_trait =
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/events/test_events.txt');
+      const position = new Position(3, 14); // After add_trait =
+
+      const result = providerWithIndex.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      expect(labels).toContain('brave');
+      expect(labels).toContain('craven');
+      expect(labels).toContain('beauty');
+    });
+
+    it('should filter traits by partial input', () => {
+      const mockIndex = createMockWorkspaceIndex({
+        trait: ['brave', 'craven', 'beauty', 'brilliant'],
+        event: [],
+        decision: [],
+        script_value: [],
+        scripted_modifier: [],
+        scripted_effect: [],
+        scripted_trigger: [],
+        secret_type: [],
+        scheme: [],
+        on_action: [],
+        activity: [],
+        culture: [],
+        culture_tradition: [],
+        culture_innovation: [],
+        culture_pillar: [],
+        doctrine: [],
+        landed_title: [],
+        holding_type: [],
+        government_type: [],
+        dynasty: [],
+        dynasty_house: [],
+        casus_belli_type: [],
+        faction: [],
+        legend: [],
+        inspiration: [],
+        struggle: [],
+        epidemic: [],
+        great_project: [],
+        accolade_type: [],
+        situation: [],
+        story_cycle: [],
+        court_position_type: [],
+        artifact: [],
+      });
+      const providerWithIndex = new CK3CompletionProvider(mockIndex);
+
+      const content = `namespace = test
+test.0001 = {
+	immediate = {
+		add_trait = br
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/events/test_events.txt');
+      const position = new Position(3, 16); // After add_trait = br
+
+      const result = providerWithIndex.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      expect(labels).toContain('brave');
+      expect(labels).toContain('brilliant');
+      expect(labels).not.toContain('craven');
+      expect(labels).not.toContain('beauty');
+    });
+
+    it('should not suggest entities when workspace index is not provided', () => {
+      const providerWithoutIndex = new CK3CompletionProvider(); // No index
+
+      const content = `namespace = test
+test.0001 = {
+	immediate = {
+		add_trait =
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/events/test_events.txt');
+      const position = new Position(3, 14); // After add_trait =
+
+      const result = providerWithoutIndex.provideCompletionItems(
+        doc as any,
+        position,
+        CancellationToken as any,
+        { triggerKind: CompletionTriggerKind.Invoke }
+      );
+
+      const labels = getCompletionLabels(result);
+      // Should be empty or not contain entity-specific items
+      expect(labels).not.toContain('brave');
     });
   });
 });

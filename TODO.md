@@ -151,7 +151,11 @@ So for example prompting for skill modifications in a trait template makes littl
 - [ ] **Workspace Index Extensions**: The `CK3WorkspaceIndex` class now tracks entities across the workspace. Future extensions:
   - [ ] **Go to Definition**: Click on `add_trait = brave` to jump to trait definition
   - [ ] **Find References**: Find all uses of a trait/event/scripted effect
-  - [ ] **Autocomplete from index**: Suggest valid trait names when typing `add_trait =`, valid events for `trigger_event =`
+  - [x] **Autocomplete from index**: Suggest valid trait names when typing `add_trait =`, valid events for `trigger_event =`
+    - **DONE**: Implemented `getEntityReferenceCompletions()` in `ck3CompletionProvider.ts`
+    - Effects/triggers with `supportedTargets` now autocomplete from workspace index
+    - Case-insensitive prefix filtering (e.g., `add_trait = bra` suggests "brave", "brazen")
+    - Extracted `TARGET_TO_ENTITY_TYPE` to shared `src/utils/entityMapping.ts`
   - [x] **Effect/trigger entity validation**: Use `supportedTargets` from effect definitions to validate references (e.g., `add_trait = brave` should check if `brave` is a defined trait)
     - **DONE**: Implemented `validateTargetValue()` in `ck3DiagnosticsProvider.ts`
     - **Extended workspace index to 27 entity types**: `trait`, `event`, `decision`, `scripted_effect`, `scripted_trigger`, `scripted_modifier`, `script_value`, `secret_type`, `scheme`, `on_action`, `activity`, `culture`, `culture_tradition`, `culture_innovation`, `culture_pillar`, `doctrine`, `landed_title`, `holding_type`, `government_type`, `dynasty`, `dynasty_house`, `casus_belli_type`, `faction`, `legend`, `inspiration`, `struggle`, `epidemic`, `great_project`, `accolade_type`, `situation`, `story_cycle`, `court_position_type`, `artifact`

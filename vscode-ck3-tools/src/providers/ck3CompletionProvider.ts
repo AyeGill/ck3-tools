@@ -36,6 +36,8 @@ import {
 import { parseBlockContext, createGetText } from '../utils/blockParser';
 import { BLOCK_SCHEMAS } from '../schemas/blockSchemas';
 import { schemaRegistry } from '../schemas/registry/schemaRegistry';
+import { CK3WorkspaceIndex } from './workspaceIndex';
+import { TARGET_TO_ENTITY_TYPE } from '../utils/entityMapping';
 import {
   eventSchema,
   eventSchemaMap,
@@ -1343,6 +1345,11 @@ function getInternalFieldSchema(blockPath: string[], contextType: 'trigger' | 'e
  * Unified completion provider for all CK3 file types
  */
 export class CK3CompletionProvider implements vscode.CompletionItemProvider {
+  private workspaceIndex: CK3WorkspaceIndex | undefined;
+
+  constructor(workspaceIndex?: CK3WorkspaceIndex) {
+    this.workspaceIndex = workspaceIndex;
+  }
 
   provideCompletionItems(
     document: vscode.TextDocument,
@@ -2938,7 +2945,11 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
 
     const schemaMap = this.getSchemaMapForContext(fileType, context.blockPath || []);
     const field = schemaMap.get(context.fieldName);
-    if (!field) return [];
+
+    // If no schema field found, try entity reference completions
+    if (!field) {
+      return this.getEntityReferenceCompletions(context);
+    }
 
     const items: vscode.CompletionItem[] = [];
 
@@ -2996,6 +3007,53 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
           this.createSimpleCompletion('1.0', 'One')
         );
         break;
+    }
+
+    // If no schema completions found, try entity reference completions
+    if (items.length === 0) {
+      const entityCompletions = this.getEntityReferenceCompletions(context);
+      items.push(...entityCompletions);
+    }
+
+    return items;
+  }
+
+  /**
+   * Get completions for entity references (e.g., trait names for add_trait)
+   */
+  private getEntityReferenceCompletions(context: ParseContext): vscode.CompletionItem[] {
+    if (!this.workspaceIndex || !context.fieldName) {
+      return [];
+    }
+
+    // Check if the field name is an effect or trigger with supportedTargets
+    const effectDef = effectsMap.get(context.fieldName);
+    const triggerDef = triggersMap.get(context.fieldName);
+    const definition = effectDef || triggerDef;
+
+    if (!definition?.supportedTargets) {
+      return [];
+    }
+
+    const items: vscode.CompletionItem[] = [];
+    const partialLower = context.partialValue?.toLowerCase() || '';
+
+    for (const target of definition.supportedTargets) {
+      const entityType = TARGET_TO_ENTITY_TYPE[target];
+      if (!entityType) continue;
+
+      const entities = this.workspaceIndex.getAll(entityType);
+      for (const [name, location] of entities) {
+        // Filter by partial value (case-insensitive prefix match)
+        if (partialLower && !name.toLowerCase().startsWith(partialLower)) {
+          continue;
+        }
+
+        const item = new vscode.CompletionItem(name, vscode.CompletionItemKind.Reference);
+        item.detail = entityType;
+        item.sortText = name; // Sort alphabetically
+        items.push(item);
+      }
     }
 
     return items;
