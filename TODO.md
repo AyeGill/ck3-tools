@@ -118,6 +118,214 @@ So for example prompting for skill modifications in a trait template makes littl
 
 
 - What's up with accessory and artifact both being schemae? Should look in the game files and figure this out.
+
+### Schema Expansion (in progress)
+
+**Status:** 138 documented types in game (.info files), ~180 schema files exist, 17 types validated
+
+**Note:** Existing schema files (except validated ones) are suspect - likely auto-generated or guessed, not based on `.info` docs. When enabling validation for a type, rewrite the schema from the `.info` documentation rather than trusting the existing file. Example: governmentSchema had wrong types (boolean vs enum), missing fields, and fields that don't exist.
+
+- [x] **Government schema**: Rewrote to match `_governments.info` documentation
+  - Added `government_rules`, `ai`, `flags` blocks
+  - Fixed `royal_court` from boolean to enum (none/any/top_liege)
+  - Added ~40 fields: `mechanic_type`, `domicile_type`, `max_dread`, `color`, etc.
+  - Validation enabled - down to 61 total diagnostics (from 268 with old schema)
+
+#### Currently validated types (17)
+trait, event, decision, interaction, building, artifact, scheme, opinion_modifier, nickname, modifier, secret, activity, on_action, scripted_effect, scripted_trigger, scripted_modifier, government
+
+#### FLAT schemas (78 types) - straightforward to implement from .info docs
+These have simple top-level entity structures without nested sub-entities:
+
+**Core gameplay:**
+- [ ] faction
+- [ ] hook_types
+- [ ] casus_belli_types
+- [ ] men_at_arms_types
+- [ ] holdings
+- [ ] buildings (already validated but verify)
+
+**Characters & dynasties:**
+- [ ] dynasty_legacies
+- [ ] dynasty_perks
+- [ ] dynasty_house_mottos
+- [ ] dynasty_house_motto_inserts
+- [ ] lifestyle_perks
+- [ ] lifestyles
+- [ ] focuses
+- [ ] inspirations
+- [ ] traits (already validated but verify)
+- [ ] nicknames (already validated but verify)
+- [ ] secret_types
+
+**Court & council:**
+- [ ] court_amenities
+- [ ] vassal_stances
+
+**Religion:**
+- [ ] religion/doctrines
+- [ ] religion/holy_sites
+- [ ] religion/fervor_modifiers
+- [ ] religion/religion_families
+
+**Culture:**
+- [ ] culture/pillars
+- [ ] culture/traditions
+- [ ] culture/innovations
+- [ ] culture/eras
+- [ ] culture/name_lists
+- [ ] culture/aesthetics_bundles
+- [ ] culture/creation_names
+- [ ] culture/name_equivalency
+
+**Events & UI:**
+- [ ] event_backgrounds
+- [ ] event_themes
+- [ ] messages
+- [ ] message_filter_types
+- [ ] message_group_types
+- [ ] important_actions
+- [ ] suggestions
+- [ ] playable_difficulty_infos
+
+**Scripted content:**
+- [ ] script_values
+- [ ] scripted_animations
+- [ ] scripted_modifiers (already validated but verify)
+- [ ] scripted_relations
+- [ ] on_action (already validated but verify)
+- [ ] customizable_localization
+- [ ] trigger_localization
+- [ ] effect_localization
+
+**Modifiers & definitions:**
+- [ ] modifiers (already validated but verify)
+- [ ] opinion_modifiers (already validated but verify)
+- [ ] modifier_definition_formats
+- [ ] deathreasons
+- [ ] flavorization
+- [ ] game_rules
+- [ ] genes
+- [ ] dna_data
+- [ ] terrain_types
+
+**Combat:**
+- [ ] ai_war_stances
+- [ ] combat_effects
+- [ ] combat_phase_events
+- [ ] graphical_unit_types
+
+**Activities (flat parts):**
+- [ ] activities/activity_group_types
+- [ ] activities/pulse_actions
+
+**Schemes (flat parts):**
+- [ ] schemes/agent_types
+- [ ] schemes/pulse_actions
+- [ ] schemes/scheme_countermeasures
+
+**Other:**
+- [ ] achievements
+- [ ] bookmarks/bookmarks
+- [ ] bookmarks/groups
+- [ ] pool_character_selectors
+- [ ] succession_appointment
+- [ ] succession_election
+- [ ] lease_contracts
+- [ ] task_contracts
+- [ ] house_aspirations
+- [ ] house_relation_types
+- [ ] confederation_types
+- [ ] situation/catalysts
+- [ ] situation/situation_group_types
+- [ ] struggle/catalysts
+- [ ] tutorial_lesson_chains
+- [ ] accolade_icons
+- [ ] raids/intents
+
+#### NESTED schemas (60 types) - need design work for sub-entities
+These have nested structures requiring context-aware schema switching:
+
+**Major systems:**
+- [ ] **law** - law_groups → individual laws
+- [ ] **religion/religions** - religion → faiths → holy_order_names
+- [ ] **culture/cultures** - conditional DLC blocks, graphical culture groups
+- [ ] **landed_titles** - nested title hierarchy (empire → kingdom → duchy → county → barony)
+
+**Characters & court:**
+- [ ] **council_tasks** - nested `asset {}` blocks, multiple modifier types
+- [ ] **council_positions** - modifier, council_owner_modifier, on_get_position blocks
+- [ ] **court_positions/types** - court_position_asset, scaling modifiers
+- [ ] **court_positions/tasks**
+- [ ] **court_types** - level_perk blocks
+- [ ] **character_memory_types** - description, participants blocks
+- [ ] **accolade_types** - ranks with liege_modifier, knight_modifier
+- [ ] **accolade_names** - option blocks
+
+**Dynasty:**
+- [ ] **house_unities** - nested level structures
+- [ ] **legitimacy** - repeating `level {}` blocks
+
+**Activities:**
+- [ ] **activities/activity_types** - complex with phases
+- [ ] **activities/activity_locales**
+- [ ] **activities/intents** - is_shown, is_valid blocks
+- [ ] **activities/guest_invite_rules** - named blocks with effects
+
+**Schemes:**
+- [ ] **schemes/scheme_types** - agent handling, phases
+
+**Stories & struggles:**
+- [ ] **story_cycles** - `effect_group` with triggered_effect
+- [ ] **struggle/struggles** - catalysts, phases
+- [ ] **situation/situations** - window, illustration blocks
+- [ ] **legends/legend_types**
+- [ ] **legends/legend_seeds**
+- [ ] **legends/chronicles**
+
+**Epidemics & projects:**
+- [ ] **epidemics** - infection_levels, outbreak_intensities
+- [ ] **great_projects/types** - phases
+
+**Artifacts (6 sub-schemas):**
+- [ ] **artifacts/blueprints**
+- [ ] **artifacts/features**
+- [ ] **artifacts/feature_groups**
+- [ ] **artifacts/templates**
+- [ ] **artifacts/types**
+- [ ] **artifacts/visuals**
+
+**Government & contracts:**
+- [ ] **diarchies/diarchy_types**
+- [ ] **diarchies/diarchy_mandates**
+- [ ] **domiciles/types**
+- [ ] **domiciles/buildings**
+- [ ] **subject_contracts/contracts**
+- [ ] **subject_contracts/groups**
+- [ ] **tax_slots/types**
+- [ ] **tax_slots/obligations**
+
+**Travel:**
+- [ ] **travel/travel_options**
+- [ ] **travel/point_of_interest_types**
+
+**Events:**
+- [ ] **event_2d_effects** - effect_2d blocks
+- [ ] **event_transitions** - transition blocks
+
+**Bookmarks:**
+- [ ] **bookmarks/challenge_characters** - character sub-block
+
+**Coat of arms:**
+- [ ] **coat_of_arms/dynamic_definitions**
+
+**Tutorial:**
+- [ ] **tutorial_lessons** - lesson_step blocks
+
+**Other:**
+- [ ] **ruler_objective_advice_types** - decisions, is_valid_advice blocks
+- [ ] **decision_group_types**
+
 ## Issues
 
 - [ ] While editing events, the option to automatically generate localization is missing. It needs to be added.

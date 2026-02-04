@@ -37,6 +37,7 @@ const VALIDATED_FILE_TYPES = new Set([
   'artifact', 'scheme', 'opinion_modifier', 'nickname',
   'modifier', 'secret', 'activity', 'on_action',
   'scripted_effect', 'scripted_trigger', 'scripted_modifier',
+  'government',  // Testing
 ]);
 
 /**
