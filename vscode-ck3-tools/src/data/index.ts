@@ -147,8 +147,8 @@ const effectParameterOverrides: Record<string, string[]> = {
   // Scheme effects
   'start_scheme': ['type', 'target'],
 
-  // Create character
-  'create_character': ['template', 'name', 'age', 'gender', 'culture', 'faith', 'dynasty', 'location', 'employer', 'trait', 'save_scope_as'],
+  // Create character (includes skill names which are also triggers)
+  'create_character': ['template', 'name', 'age', 'gender', 'culture', 'faith', 'dynasty', 'dynasty_house', 'location', 'employer', 'trait', 'save_scope_as', 'save_temporary_scope_as', 'mother', 'father', 'real_father', 'random_traits', 'health', 'fertility', 'ethnicity', 'after_creation', 'martial', 'diplomacy', 'intrigue', 'stewardship', 'learning', 'prowess'],
 
   // Modifier effects
   'add_scheme_modifier': ['type', 'days', 'months', 'weeks', 'years'],

@@ -23,7 +23,10 @@ export const TRIGGER_BLOCKS = new Set([
   'trigger', 'is_shown', 'is_valid', 'is_valid_showing_failures_only',
   'ai_potential', 'can_be_picked', 'can_pick',
   'is_highlighted', 'auto_accept', 'can_send', 'can_be_picked_artifact',
-  'limit', // Note: 'modifier' removed - it's context-dependent (see TRIGGER_CONTEXT_BLOCKS_WITH_PARAMS)
+  'limit', 'alternative_limit', // Trigger blocks that can appear inside effects
+  'modifier', // Contains triggers for conditional weight modification
+  // Boolean operators - these contain triggers
+  'OR', 'AND', 'NOT', 'NOR', 'NAND', 'calc_true_if',
 ]);
 
 /**
@@ -63,6 +66,9 @@ export const EFFECT_BLOCKS = new Set([
   'on_use', 'on_expire', 'on_invalidated', // Hook effect blocks
   'on_discover', 'on_expose', // Secret effect blocks
   'on_start', 'on_end', 'on_monthly', 'on_yearly', // on_action effect blocks
+  'on_success', 'on_failure', 'on_progress', // Scheme effect blocks
+  'on_complete', 'on_cancel', 'on_ready', // Additional scheme/activity blocks
+  'random_list', // Random selection among effects
 ]);
 
 /**
