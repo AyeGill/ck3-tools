@@ -135,3 +135,6 @@ So for example prompting for skill modifications in a trait template makes littl
   - [ ] **Autocomplete from index**: Suggest valid trait names when typing `add_trait =`, valid events for `trigger_event =`
   - [ ] **Effect/trigger entity validation**: Use `supportedTargets` from effect definitions to validate references (e.g., `add_trait = brave` should check if `brave` is a defined trait)
   - [ ] **Index game files**: Currently only indexes workspace files; could also index game files from CK3 install path for complete validation
+- A number of schemas might not be quite right. Specifically:
+  - I think the artifact schema just works for all the stuff in the artifacts subfolder. Actually these appear to be a number of different things and we're not really doing the right thing for any of them.
+  - A number of schemas have fields that are required sometimes conditional on other fields. Currently these have all been simply marked as not required. This was just done based on inspecting the game files by script and can probably be done more carefully.
