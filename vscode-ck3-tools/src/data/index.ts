@@ -438,6 +438,7 @@ const logicalTriggers: TriggerDefinition[] = [
  */
 const undocumentedTriggers: TriggerDefinition[] = [
   { name: 'can_afford_enact_treasury_budget_costs', description: 'UNDOCUMENTED: Check if character can afford treasury budget costs. Found in game files but not in official documentation - may be internal or deprecated.', supportedScopes: ['character'], valueType: 'boolean' },
+  { name: 'title_tier', description: 'UNDOCUMENTED: Compare title tier (e.g., title_tier >= county). Found in game files.', supportedScopes: ['landed_title'], valueType: 'comparison' },
 ];
 
 /**

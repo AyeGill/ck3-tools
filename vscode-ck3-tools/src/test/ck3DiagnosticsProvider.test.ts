@@ -1455,4 +1455,262 @@ test.0001 = {
       expect(unknownEventDiag.severity).toBe(1); // Warning
     });
   });
+
+  describe('Event ID handling (should NOT be confused with scope paths)', () => {
+    // Event IDs have the format "namespace.event_id" (e.g., "test.0001", "fp3_temptation.0001")
+    // These contain dots but should NOT be treated as scope paths like "liege.capital_county"
+
+    it('should NOT flag event IDs in trigger_event id field', () => {
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		trigger_event = {
+			id = fp3_temptation.0001
+			days = 10
+		}
+	}
+}`;
+      const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+      // The event ID should not be flagged as unknown anything
+      const eventDiag = diagnostics.find((d: any) =>
+        d.message.includes('fp3_temptation.0001') || d.message.includes('fp3_temptation')
+      );
+
+      expect(eventDiag).toBeUndefined();
+    });
+
+    it('should NOT flag event IDs in on_action events list', () => {
+      const content = `on_birthday = {
+	events = {
+		fp3_temptation.0001
+		test.9999
+	}
+}`;
+      const diagnostics = getDiagnostics(content, '/mod/common/on_action/test.txt');
+
+      // Without a workspace index, these should just be allowed (not flagged as bare identifiers)
+      const bareIdentifierDiag = diagnostics.find((d: any) =>
+        d.message.includes('Unexpected bare identifier')
+      );
+
+      expect(bareIdentifierDiag).toBeUndefined();
+    });
+
+    it('should flag event IDs used as field names when no underscore (not valid scope changers)', () => {
+      // If someone mistakenly uses an event ID as a field name with a block, it should be flagged
+      // Note: Event IDs with underscores (like fp3_temptation.0002) are NOT flagged because
+      // underscores trigger the "could be scripted effect" heuristic (to avoid false positives)
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		myevent.0002 = {
+			add_prestige = 100
+		}
+	}
+}`;
+      const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+      // "myevent.0002" has no underscores, so it should be flagged as unknown
+      const unknownDiag = diagnostics.find((d: any) =>
+        d.message.includes('myevent.0002') && d.message.includes('Unknown')
+      );
+
+      expect(unknownDiag).toBeDefined();
+    });
+
+    it('should flag event-like patterns with underscores (no longer using heuristics)', () => {
+      // We now check the actual workspace index for scripted effects/triggers
+      // instead of using name-based heuristics. Without a workspace index,
+      // unknown identifiers should be flagged even if they have underscores.
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		fp3_temptation.0002 = {
+			add_prestige = 100
+		}
+	}
+}`;
+      const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+      // "fp3_temptation.0002" is not in the workspace index, so it IS flagged
+      const unknownDiag = diagnostics.find((d: any) =>
+        d.message.includes('fp3_temptation.0002') && d.message.includes('Unknown')
+      );
+
+      expect(unknownDiag).toBeDefined();
+    });
+
+    it('should NOT flag actual scripted effects from workspace index', () => {
+      // Create a mock workspace index with a scripted effect
+      const mockIndex = {
+        has: (type: string, name: string) => {
+          if (type === 'scripted_effect') {
+            return ['my_custom_effect', 'fp3_some_effect'].includes(name);
+          }
+          return false;
+        },
+        get: () => undefined,
+        getAll: () => new Map(),
+        getCount: () => 0,
+        getTotalCount: () => 2,
+      };
+
+      const providerWithIndex = new CK3DiagnosticsProvider(mockIndex as any);
+
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		my_custom_effect = yes
+		unknown_effect_xyz = yes
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/events/test.txt');
+      providerWithIndex.validateDocument(doc as any);
+      const collection = providerWithIndex.getDiagnosticCollection();
+      const diagnostics = (collection as any).get(doc.uri) || [];
+
+      // my_custom_effect is in the index, should NOT be flagged
+      const knownEffectDiag = diagnostics.find((d: any) =>
+        d.message.includes('my_custom_effect') && d.message.includes('Unknown')
+      );
+      expect(knownEffectDiag).toBeUndefined();
+
+      // unknown_effect_xyz is NOT in the index, SHOULD be flagged
+      const unknownEffectDiag = diagnostics.find((d: any) =>
+        d.message.includes('unknown_effect_xyz') && d.message.includes('Unknown')
+      );
+      expect(unknownEffectDiag).toBeDefined();
+    });
+
+    it('should NOT flag actual scripted triggers from workspace index', () => {
+      // Create a mock workspace index with a scripted trigger
+      const mockIndex = {
+        has: (type: string, name: string) => {
+          if (type === 'scripted_trigger') {
+            return ['my_custom_trigger', 'is_valid_target'].includes(name);
+          }
+          return false;
+        },
+        get: () => undefined,
+        getAll: () => new Map(),
+        getCount: () => 0,
+        getTotalCount: () => 2,
+      };
+
+      const providerWithIndex = new CK3DiagnosticsProvider(mockIndex as any);
+
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	trigger = {
+		my_custom_trigger = yes
+		unknown_trigger_xyz = yes
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/events/test.txt');
+      providerWithIndex.validateDocument(doc as any);
+      const collection = providerWithIndex.getDiagnosticCollection();
+      const diagnostics = (collection as any).get(doc.uri) || [];
+
+      // my_custom_trigger is in the index, should NOT be flagged
+      const knownTriggerDiag = diagnostics.find((d: any) =>
+        d.message.includes('my_custom_trigger') && d.message.includes('Unknown')
+      );
+      expect(knownTriggerDiag).toBeUndefined();
+
+      // unknown_trigger_xyz is NOT in the index, SHOULD be flagged
+      const unknownTriggerDiag = diagnostics.find((d: any) =>
+        d.message.includes('unknown_trigger_xyz') && d.message.includes('Unknown')
+      );
+      expect(unknownTriggerDiag).toBeDefined();
+    });
+
+    it('should NOT confuse event namespace with scope changer (namespace is not a scope changer)', () => {
+      // "test.0001" - "test" is not a known scope changer, so this should NOT be treated as a scope path
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		test.0002 = yes
+	}
+}`;
+      const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+      // This should be flagged as unknown effect (not silently treated as a scope path)
+      const unknownDiag = diagnostics.find((d: any) =>
+        d.message.includes('test.0002') && d.message.includes('Unknown')
+      );
+
+      expect(unknownDiag).toBeDefined();
+    });
+
+    it('should distinguish real scope paths from event-like patterns', () => {
+      // "liege.primary_title" is a valid scope path (liege is a known scope changer)
+      // "my_namespace.0001" is NOT a valid scope path (my_namespace is not a scope changer)
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		liege.primary_title = {
+			add_prestige = 100
+		}
+	}
+}`;
+      const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+      // "liege.primary_title" IS a valid scope path and should NOT be flagged
+      const liegeDiag = diagnostics.find((d: any) =>
+        d.message.includes('liege.primary_title')
+      );
+
+      expect(liegeDiag).toBeUndefined();
+    });
+
+    it('should validate events in trigger_event with workspace index', () => {
+      // Create a mock workspace index that knows about some events
+      const mockIndex = {
+        has: (type: string, name: string) => {
+          if (type === 'event') {
+            return ['known_namespace.0001', 'known_namespace.0002'].includes(name);
+          }
+          return false;
+        },
+        get: () => undefined,
+        getAll: () => new Map(),
+        getCount: () => 0,
+        getTotalCount: () => 2,
+      };
+
+      const providerWithIndex = new CK3DiagnosticsProvider(mockIndex as any);
+
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		trigger_event = {
+			id = unknown_namespace.9999
+		}
+	}
+}`;
+      const doc = createMockDocument(content, '/mod/events/test.txt');
+      providerWithIndex.validateDocument(doc as any);
+      const collection = providerWithIndex.getDiagnosticCollection();
+      const diagnostics = (collection as any).get(doc.uri) || [];
+
+      // Currently we don't validate trigger_event id values against the index
+      // This test documents current behavior - if we add validation later, update this test
+      const unknownEventDiag = diagnostics.find((d: any) =>
+        d.message.includes('Unknown event') && d.message.includes('unknown_namespace.9999')
+      );
+
+      // For now, this is NOT validated (would need to track that 'id' inside 'trigger_event' expects an event)
+      // This documents expected current behavior
+      expect(unknownEventDiag).toBeUndefined();
+    });
+  });
 });

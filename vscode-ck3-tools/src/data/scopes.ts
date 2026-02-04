@@ -56,6 +56,7 @@ export type ScopeType =
   | 'doctrine'                // Faith doctrine scope
   | 'government_type'         // Government type scope
   | 'vassal_contract'         // Feudal contract scope
+  | 'vassal_contract_obligation_level' // Vassal contract obligation level
   | 'title_and_vassal_change' // Title transfer change scope
   // Roads to Power DLC scopes
   | 'task_contract'           // Task contracts

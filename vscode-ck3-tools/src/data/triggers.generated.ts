@@ -23,6 +23,122 @@ export interface TriggerDefinition {
 }
 
 /**
+ * Triggers for accolade scope (8 triggers)
+ */
+export const accoladeTriggers: TriggerDefinition[] = [
+  { name: 'accolade_rank', description: 'How many ranks does this Accolade have unlocked?', supportedScopes: ['accolade'], valueType: 'comparison', syntax: "accolade_rank > 2" },
+  { name: 'has_accolade_category', description: 'Does any of the Accolades types have the given category flag?', supportedScopes: ['accolade'], syntax: "has_accolade_category = flag" },
+  { name: 'has_accolade_parameter', description: 'Does any of the Accolades unlocked ranks have the given parameter flag?', supportedScopes: ['accolade'], syntax: "has_accolade_parameter = flag" },
+  { name: 'has_accolade_type', description: 'Does the Accolade have the given type?', supportedScopes: ['accolade'], syntax: "has_accolade_type = key" },
+  { name: 'has_potential_accolade_successors', description: 'Does the given Accolade\'s Owner have any character in their court ( including guests ) that could act as Successor of this Accolade if made into a Knight?', supportedScopes: ['accolade'], valueType: 'boolean' },
+  { name: 'is_accolade_active', description: 'Is the scoped Accolade active, i.e. assinged by their Liege?', supportedScopes: ['accolade'], valueType: 'boolean' },
+  { name: 'primary_tier', description: 'Is the scoped Accolade\'s primary type tier equal to?', supportedScopes: ['accolade'] },
+  { name: 'secondary_tier', description: 'Is the scoped Accolade\'s secondary type tier equal to?', supportedScopes: ['accolade'] },
+];
+
+/**
+ * Triggers for accolade_type scope (2 triggers)
+ */
+export const accoladetypeTriggers: TriggerDefinition[] = [
+  { name: 'accolade_type_tier', description: 'Is the scoped Accolade Type\'s tier equal to?', supportedScopes: ['accolade_type'] },
+  { name: 'type_has_accolade_category', description: 'Does the scoped Accolade Type have the given category?', supportedScopes: ['accolade_type'], syntax: "type_has_accolade_category = flag" },
+];
+
+/**
+ * Triggers for activity scope (23 triggers)
+ */
+export const activityTriggers: TriggerDefinition[] = [
+  { name: 'any_activity_phase_location', description: 'Iterate through all province locations of the phases of the activity, optionally limited to unique locations.', supportedScopes: ['activity'], supportedTargets: ['province'], outputScope: 'province', isIterator: true, valueType: 'block', syntax: "any/every/random_activity_phase_location {\nunique = yes/no\n}\nany_activity_phase_location = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['unique', 'count', 'percent'] },
+  { name: 'any_activity_phase_location_future', description: 'Iterate through all future province locations of the phases of the activity, optionally limited to unique locations. (\'future\' does not include any started phase)', supportedScopes: ['activity'], supportedTargets: ['province'], outputScope: 'province', isIterator: true, valueType: 'block', syntax: "any/every/random_activity_phase_location_future {\nunique = yes/no\n}\nany_activity_phase_location_future = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['unique', 'count', 'percent'] },
+  { name: 'any_activity_phase_location_past', description: 'Iterate through all past province locations of the phases of the activity, optionally limited to unique locations. (\'past\' only includes ended phases)', supportedScopes: ['activity'], supportedTargets: ['province'], outputScope: 'province', isIterator: true, valueType: 'block', syntax: "any/every/random_activity_phase_location_future {\nunique = yes/no\n}\nany_activity_phase_location_past = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['unique', 'count', 'percent'] },
+  { name: 'any_attending_character', description: 'Iterate through all characters attending an activity.', supportedScopes: ['activity'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "Invited guests that have not accepted/declined yet are not part of this list.\nSupports an optional state the character must be in.\nany_attending_character = { state = travel/passive/active }\nany_attending_character = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['state', 'count', 'percent'] },
+  { name: 'any_guest_subset', description: 'any/every/random_guest_subset = {', supportedScopes: ['activity'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "name = <subset_key>\nphase = <phase_key> # Optional\n}\nIterates through characteres within the specified subset for past, current and\nfuture phases. If phase is specified it will only iterate through characters\nsubsets of that particular phase type.\nany_guest_subset = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['name', 'phase', 'count', 'percent'] },
+  { name: 'any_guest_subset_current_phase', description: 'any/every/random_guest_subset_current_phase = {', supportedScopes: ['activity'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "name = <subset_key>\n}\nIterates through characteres within the specified subset of the current phase.\nany_guest_subset_current_phase = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['name', 'count', 'percent'] },
+  { name: 'any_invited_character', description: 'Iterate through all characters invited to an activity. Once they accept/decline, they are removed from this list.', supportedScopes: ['activity'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_invited_character = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_special_guest', description: 'Iterate through all special guests of an activity.', supportedScopes: ['activity'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_special_guest = { ... }\nany_special_guest = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'has_active_locale', description: 'Does the scoped activity have the designated locale active?', supportedScopes: ['activity'], syntax: "has_active_locale = locale_key" },
+  { name: 'has_activity_option', description: 'has_activity_option = { category = key option = key }', supportedScopes: ['activity'], syntax: "Does the scoped activity have the option in the given category active" },
+  { name: 'has_activity_type', description: 'has_activity_type = key', supportedScopes: ['activity'], supportedTargets: ['activity_type'], syntax: "Does the scoped activity have the given activity type" },
+  { name: 'has_current_phase', description: 'has_current_phase = key', supportedScopes: ['activity'], syntax: "Does the scoped activity have the given phase active" },
+  { name: 'has_phase', description: 'Check if a phase exists on this activity. You can search for just a type directly, or a complex trigger with  only `type`, `location` or both.', supportedScopes: ['activity'], syntax: "has_phase = name_of_phase\nhas_phase = {\ntype = name_of_phase\nlocation = scope:province\n}", parameters: ['type', 'location'] },
+  { name: 'has_phase_future', description: 'Check if a past phase exists on this activity. You can search for just a type directly, or a complex trigger with  only `type`, `location` or both.', supportedScopes: ['activity'], syntax: "has_phase = name_of_phase\nhas_phase = {\ntype = name_of_phase\nlocation = scope:province\n}", parameters: ['has_phase', 'type', 'location'] },
+  { name: 'has_phase_past', description: 'Check if a past phase exists on this activity. You can search for just a type directly, or a complex trigger with  only `type`, `location` or both.', supportedScopes: ['activity'], syntax: "has_phase = name_of_phase\nhas_phase = {\ntype = name_of_phase\nlocation = scope:province\n}", parameters: ['has_phase', 'type', 'location'] },
+  { name: 'is_activity_complete', description: 'Check if the current activity is completed or not, this doesn\'t have much use for content since we delete an activity as soon as we can, but in multiplayer it exists until everyone stops viewing it so we use this to cancel some delayed events', supportedScopes: ['activity'], valueType: 'boolean', syntax: "is_activity_complete = yes/no" },
+  { name: 'is_current_phase_active', description: 'Check if the current activity phase is in the active state (else it is in the passive state)', supportedScopes: ['activity'], valueType: 'boolean', syntax: "is_current_phase_active = yes/no" },
+  { name: 'is_open_invite_activity', description: 'Check if the scoped activity is an open invite activity', supportedScopes: ['activity'], valueType: 'boolean', syntax: "is_open_invite_activity = yes/no" },
+  { name: 'is_required_special_guest', description: 'Is the target character a required special guest in the scoped activity.', supportedScopes: ['activity'], syntax: "is_required_special_guest = character" },
+  { name: 'is_special_guest', description: 'Is the target character a special guest in the scoped activity, optionally for a specific type.', supportedScopes: ['activity'], syntax: "is_special_guest = character\nis_special_guest = { target = character type = key }", parameters: ['target'] },
+  { name: 'num_future_phases', description: 'The number of future phases for the scoped activity.', supportedScopes: ['activity'], valueType: 'comparison', syntax: "num_future_phases > 5" },
+  { name: 'num_past_phases', description: 'The number of past phases for the scoped activity.', supportedScopes: ['activity'], valueType: 'comparison', syntax: "num_past_phases > 5" },
+  { name: 'num_phases', description: 'The number total number of planned phases for the scoped activity.', supportedScopes: ['activity'], valueType: 'comparison', syntax: "num_phases > 5" },
+];
+
+/**
+ * Triggers for agent_slot scope (4 triggers)
+ */
+export const agentslotTriggers: TriggerDefinition[] = [
+  { name: 'agent_slot_contribution', description: 'The contribution value given by the scoped filled agent slot.', supportedScopes: ['agent_slot'], valueType: 'comparison' },
+  { name: 'agent_slot_has_contribution_type', description: 'Does the agent slot have provide the given type of contribution?', supportedScopes: ['agent_slot'], syntax: "Supported types: 'secrecy', 'success_chance', 'success_chance_growth', 'success_chance_max' and 'speed'\nagent_slot_has_contribution_type = <type>" },
+  { name: 'is_agent_slot_type', description: 'Does the Agent Slot have the given type?', supportedScopes: ['agent_slot'], syntax: "is_agent_slot_type = key" },
+  { name: 'is_filled', description: 'Is this agent slot filled?', supportedScopes: ['agent_slot'], valueType: 'boolean' },
+];
+
+/**
+ * Triggers for army scope (20 triggers)
+ */
+export const armyTriggers: TriggerDefinition[] = [
+  { name: 'any_army_maa_regiment', description: 'Iterate through all MaA regiments in the army', supportedScopes: ['army'], supportedTargets: ['regiment'], outputScope: 'regiment', isIterator: true, valueType: 'block', syntax: "scope:army = {\nany_army_maa_regiment = {\ninclude_hired = yes # should it include merc and holy order regiments (yes by default)\n}\n}\nany_army_maa_regiment = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['include_hired', 'count', 'percent'] },
+  { name: 'army_is_moving', description: 'is this army moving?', supportedScopes: ['army'], valueType: 'boolean' },
+  { name: 'army_max_size', description: 'what size is this army\'s max size?', supportedScopes: ['army'], valueType: 'comparison' },
+  { name: 'army_size', description: 'what size is this army?', supportedScopes: ['army'], valueType: 'comparison' },
+  { name: 'army_supply', description: 'Can we disband this army?', supportedScopes: ['army'], valueType: 'comparison' },
+  { name: 'barter_loot', description: 'How much barter loot is the army carrying?', supportedScopes: ['army'], valueType: 'comparison' },
+  { name: 'can_disband_army', description: 'Can we disband this army?', supportedScopes: ['army'], valueType: 'boolean' },
+  { name: 'is_army_in_combat', description: 'Is the scoped army in combat?', supportedScopes: ['army'], valueType: 'boolean' },
+  { name: 'is_army_in_raid', description: 'Is the scoped army in a raid (this includes a raid interrupted by combat)?', supportedScopes: ['army'], valueType: 'boolean' },
+  { name: 'is_army_in_siege', description: 'Is the scoped army in a siege (this includes a siege interrupted by combat)?', supportedScopes: ['army'], valueType: 'boolean' },
+  { name: 'is_army_in_siege_relevant_for', description: 'Is the scoped army in a siege that is relevant to the target character?', supportedScopes: ['army'], supportedTargets: ['character'], syntax: "is_army_in_siege_relevant_for = scope:character" },
+  { name: 'is_barter_army', description: 'Is the scoped army a barter army?', supportedScopes: ['army'], valueType: 'boolean' },
+  { name: 'is_raid_army', description: 'Is the scoped army a raid army?', supportedScopes: ['army'], valueType: 'boolean' },
+  { name: 'raid_intent', description: 'Does the Army have the given raid intent?', supportedScopes: ['army'], syntax: "raid_intent = key" },
+  { name: 'raid_loot', description: 'How much raid loot is the army carrying?', supportedScopes: ['army'], valueType: 'comparison' },
+  { name: 'total_army_damage', description: 'What is the army\'s total damage stat in its current location?', supportedScopes: ['army'], valueType: 'comparison' },
+  { name: 'total_army_pursuit', description: 'What is the army\'s total pursuit stat in its current location?', supportedScopes: ['army'], valueType: 'comparison' },
+  { name: 'total_army_screen', description: 'What is the army\'s total screen stat in its current location?', supportedScopes: ['army'], valueType: 'comparison' },
+  { name: 'total_army_siege_value', description: 'What is the army\'s total siege value stat in its current location?', supportedScopes: ['army'], valueType: 'comparison' },
+  { name: 'total_army_toughness', description: 'What is the army\'s total toughness stat in its current location?', supportedScopes: ['army'], valueType: 'comparison' },
+];
+
+/**
+ * Triggers for artifact scope (16 triggers)
+ */
+export const artifactTriggers: TriggerDefinition[] = [
+  { name: 'any_artifact_claimant', description: 'Iterate through all characters with a claim on the scoped artifact', supportedScopes: ['artifact'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_artifact_claimant = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_artifact_house_claimant', description: 'Iterate through all dynasty houses with a claim on the scoped artifact', supportedScopes: ['artifact'], supportedTargets: ['dynasty_house'], outputScope: 'dynasty_house', isIterator: true, valueType: 'block', syntax: "any_artifact_house_claimant = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'artifact_durability', description: 'does this artifact have the required durability?', supportedScopes: ['artifact'], valueType: 'comparison' },
+  { name: 'artifact_max_durability', description: 'does this artifact have the required max durability?', supportedScopes: ['artifact'], valueType: 'comparison' },
+  { name: 'artifact_slot_type', description: 'is the artifact of the given inventory slot type?', supportedScopes: ['artifact'] },
+  { name: 'artifact_type', description: 'is the artifact of the given type?', supportedScopes: ['artifact'] },
+  { name: 'can_be_claimed_by', description: 'Can the scoped artifact be claimed by the given character?', supportedScopes: ['artifact'], supportedTargets: ['character'] },
+  { name: 'category', description: 'is the scoped artifact of given category?', supportedScopes: ['artifact'] },
+  { name: 'has_artifact_feature', description: 'Does the artifact have the given feature?', supportedScopes: ['artifact'], syntax: "has_artifact_feature = key" },
+  { name: 'has_artifact_feature_group', description: 'Does the artifact have the given feature group?', supportedScopes: ['artifact'], syntax: "has_artifact_feature_group = key" },
+  { name: 'has_artifact_modifier', description: 'Does the artifact have the given modifier?', supportedScopes: ['artifact'], syntax: "has_artifact_modifier  = key" },
+  { name: 'is_equipped', description: 'is the scoped artifact currently equipped in its owners inventory?', supportedScopes: ['artifact'], valueType: 'boolean' },
+  { name: 'is_unique', description: 'Is the scoped artifact unique', supportedScopes: ['artifact'], valueType: 'boolean', syntax: "defined in the scripted template of the artifact" },
+  { name: 'num_artifact_kills', description: 'How many kills has this artifact been used in?', supportedScopes: ['artifact'], valueType: 'comparison' },
+  { name: 'rarity', description: 'is the scoped artifact of given rarity?', supportedScopes: ['artifact'] },
+  { name: 'should_decay', description: 'should the scoped artifact decay with time?', supportedScopes: ['artifact'], valueType: 'boolean' },
+];
+
+/**
+ * Triggers for casus_belli scope (1 triggers)
+ */
+export const casusbelliTriggers: TriggerDefinition[] = [
+  { name: 'any_target_title', description: 'Iterate through all casus belli\'s target titles', supportedScopes: ['casus_belli'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, valueType: 'block', syntax: "any_target_title = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+];
+
+/**
  * Triggers for character scope (945 triggers)
  */
 export const characterTriggers: TriggerDefinition[] = [
@@ -974,6 +1090,375 @@ export const characterTriggers: TriggerDefinition[] = [
 ];
 
 /**
+ * Triggers for character_memory scope (8 triggers)
+ */
+export const charactermemoryTriggers: TriggerDefinition[] = [
+  { name: 'any_memory_participant', description: 'Iterate through all participating character of a memory', supportedScopes: ['character_memory'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_memory_participant = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'has_memory_category', description: 'has_memory_category = happy', supportedScopes: ['character_memory'], syntax: "Does the character memory have this memory category?" },
+  { name: 'has_memory_participant', description: 'has_memory_participant = character', supportedScopes: ['character_memory'], supportedTargets: ['character'], syntax: "Does the character memory have this target character as a participant?" },
+  { name: 'has_memory_type', description: 'has_memory_type = battle', supportedScopes: ['character_memory'], syntax: "Does the character memory have this memory type?" },
+  { name: 'is_memory_of_travel', description: 'Is the scoped memory a memory of a specific travel plan? is_memory_of_travel = travel_plan', supportedScopes: ['character_memory'], supportedTargets: ['travel_plan'] },
+  { name: 'memory_age_years', description: 'How many years since the memory was created (rounded down).', supportedScopes: ['character_memory'], valueType: 'comparison' },
+  { name: 'memory_creation_date', description: 'Date when the memory was created.', supportedScopes: ['character_memory'], valueType: 'comparison' },
+  { name: 'memory_end_date', description: 'Date when the memory will be forgotten. (this may change over time)', supportedScopes: ['character_memory'], valueType: 'comparison' },
+];
+
+/**
+ * Triggers for combat scope (3 triggers)
+ */
+export const combatTriggers: TriggerDefinition[] = [
+  { name: 'any_combat_side', description: 'Iterate over both sides ( attacker and defender ) of the given combat', supportedScopes: ['combat'], supportedTargets: ['combat_side'], outputScope: 'combat_side', isIterator: true, valueType: 'block', syntax: "any_combat_side = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'num_total_troops', description: 'Number of total troops on boths sides.', supportedScopes: ['combat'], valueType: 'comparison', syntax: "num_total_troops >= 2000" },
+  { name: 'warscore_value', description: 'Warscore value.', supportedScopes: ['combat'], valueType: 'comparison', syntax: "warscore_value >= 25" },
+];
+
+/**
+ * Triggers for combat_side scope (18 triggers)
+ */
+export const combatsideTriggers: TriggerDefinition[] = [
+  { name: 'allow_early_retreat', description: 'Is this side allowed to retreat early (when losing)? (set via script effect `set_allow_early_retreat = yes`)', supportedScopes: ['combat_side'], valueType: 'boolean', syntax: "allow_early_retreat = yes" },
+  { name: 'any_side_commander', description: 'Iterate through all commanders (the commanders of every army on the side, not just the one leading the battle)', supportedScopes: ['combat_side'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_side_commander = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_side_knight', description: 'Iterate through all knights', supportedScopes: ['combat_side'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_side_knight = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_side_participant', description: 'Returns all participants in a combat side', supportedScopes: ['combat_side'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_side_participant = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'disallowed_retreat', description: 'Is this side disallowed from retreating via script? (via effect `set_disallowed_retreat = yes`)', supportedScopes: ['combat_side'], valueType: 'boolean', syntax: "disallowed_retreat = yes" },
+  { name: 'has_maa_of_type', description: 'Does this combat side have at least one MaA of the given regiment type? has_maa_of_type = onager', supportedScopes: ['combat_side'] },
+  { name: 'is_combat_side_attacker', description: 'whether the combat side was the attacker or not', supportedScopes: ['combat_side'], valueType: 'boolean' },
+  { name: 'is_combat_side_pursuing', description: 'is this side the winner of the combat', supportedScopes: ['combat_side'], valueType: 'boolean' },
+  { name: 'is_combat_side_retreating', description: 'is this side defeated in the combat', supportedScopes: ['combat_side'], valueType: 'boolean' },
+  { name: 'is_forced_winner', description: 'is this side the forced winner of the combat? (via `forced_winner = yes`)', supportedScopes: ['combat_side'], valueType: 'boolean', syntax: "is_forced_winner = yes" },
+  { name: 'num_enemies_killed', description: 'Number of troops killed on the opposite side.', supportedScopes: ['combat_side'], valueType: 'comparison', syntax: "num_enemies_killed >= 500" },
+  { name: 'percent_enemies_killed', description: 'Percantage of enemies killed out of total number of enemy soldiers.', supportedScopes: ['combat_side'], valueType: 'comparison', syntax: "percent_enemies_killed >= 80" },
+  { name: 'side_army_size', description: 'what is the current size of all armies combined on this combat side?', supportedScopes: ['combat_side'], valueType: 'comparison' },
+  { name: 'side_max_army_size', description: 'what is the max possible size of all armies combined on this combat side?', supportedScopes: ['combat_side'], valueType: 'comparison' },
+  { name: 'side_soldiers', description: 'How many soldiers does this side have still fighting?', supportedScopes: ['combat_side'], valueType: 'comparison' },
+  { name: 'side_strength', description: 'How strong is this side (based on soldiers still fighting)? Scaled down by a factor of 1000 so it doesn\'t get too large to do math on', supportedScopes: ['combat_side'], valueType: 'comparison' },
+  { name: 'skip_pursuit', description: 'Is this side skipping the persuit phase (if losing)? (set via script effect `set_skip_pursuit = yes`)', supportedScopes: ['combat_side'], valueType: 'boolean', syntax: "skip_pursuit = yes" },
+  { name: 'troops_ratio', description: 'Side\'s troops/opposide side\'s troops.ntroops_ratio < 0.5', supportedScopes: ['combat_side'], valueType: 'comparison' },
+];
+
+/**
+ * Triggers for confederation scope (9 triggers)
+ */
+export const confederationTriggers: TriggerDefinition[] = [
+  { name: 'any_confederation_member', description: 'Iterates through all member characters of the scoped confederation', supportedScopes: ['confederation'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_confederation_member = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_confederation_member_house', description: 'Iterates through all member houses of the scoped confederation', supportedScopes: ['confederation'], supportedTargets: ['dynasty_house'], outputScope: 'dynasty_house', isIterator: true, valueType: 'block', syntax: "any_confederation_member_house = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'cohesion', description: 'Current total cohesion of the confederation/bloc.', supportedScopes: ['confederation'], valueType: 'comparison' },
+  { name: 'combined_military_strength', description: 'Current combined military power of the confederation/bloc.', supportedScopes: ['confederation'], valueType: 'comparison' },
+  { name: 'has_cohesion', description: 'Does the confederation/bloc have a cohesion?', supportedScopes: ['confederation'], valueType: 'boolean' },
+  { name: 'has_cohesion_level_parameter', description: 'Does current cohesion level of the given confederation/bloc have the given parameter?', supportedScopes: ['confederation'], syntax: "usage:\n<bloc> = {\nhas_house_power_parameter = <parameter_key>\n}", parameters: ['has_house_power_parameter'] },
+  { name: 'has_leading_house', description: 'Does the confederation have a leading house?', supportedScopes: ['confederation'], valueType: 'boolean' },
+  { name: 'is_house_based', description: 'Is the confederation house based? i.e bloc', supportedScopes: ['confederation'], valueType: 'boolean' },
+  { name: 'member_count', description: 'Number of members in the scoped confederation', supportedScopes: ['confederation'], valueType: 'comparison' },
+];
+
+/**
+ * Triggers for council_task scope (1 triggers)
+ */
+export const counciltaskTriggers: TriggerDefinition[] = [
+  { name: 'can_fire_position', description: 'Check if the scope task\'s councillor can be fired. Will check both can_fire and things like it being illegal to reassing the position', supportedScopes: ['council_task'], valueType: 'boolean', syntax: "scope:task = { position_can_be_fired = yes }", parameters: ['position_can_be_fired'] },
+];
+
+/**
+ * Triggers for culture scope (37 triggers)
+ */
+export const cultureTriggers: TriggerDefinition[] = [
+  { name: 'any_culture_county', description: 'Iterate through all counties of the culture', supportedScopes: ['culture'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, valueType: 'block', syntax: "any_culture_county = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_culture_duchy', description: 'Iterate through all duchies of the culture (duchies with at least one county of the culture', supportedScopes: ['culture'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, valueType: 'block', syntax: "any_culture_duchy = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_culture_empire', description: 'Iterate through all empires of the culture (empires with at least one county of the culture', supportedScopes: ['culture'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, valueType: 'block', syntax: "any_culture_empire = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_culture_kingdom', description: 'Iterate through all kingdoms of the culture (kingdoms with at least one county of the culture', supportedScopes: ['culture'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, valueType: 'block', syntax: "any_culture_kingdom = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_known_innovation', description: 'Iterate through all innovations known to the given culture', supportedScopes: ['culture'], supportedTargets: ['culture_innovation'], outputScope: 'culture_innovation', isIterator: true, valueType: 'block', syntax: "any_known_innovation = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_parent_culture', description: 'Iterate through all parent cultures', supportedScopes: ['culture'], supportedTargets: ['culture'], outputScope: 'culture', isIterator: true, valueType: 'block', syntax: "any_parent_culture = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_parent_culture_or_above', description: 'Iterate through all parent cultures or above', supportedScopes: ['culture'], supportedTargets: ['culture'], outputScope: 'culture', isIterator: true, valueType: 'block', syntax: "any_parent_culture_or_above = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_tradition', description: 'Iterate through all traditions of the given culture', supportedScopes: ['culture'], supportedTargets: ['culture_tradition'], outputScope: 'culture_tradition', isIterator: true, valueType: 'block', syntax: "any_tradition = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'can_get_innovation_from', description: 'Get random applicable innovation from another culture', supportedScopes: ['culture'] },
+  { name: 'cultural_acceptance', description: 'The cultural acceptance of the scoped culture with the target culture', supportedScopes: ['culture'], valueType: 'comparison', syntax: "cultural_acceptance = { target = culture value > 50 }", parameters: ['target'] },
+  { name: 'culture_age', description: 'Checks the age of the scope culture in years. If the culture has no creation date set, this will simply return the current year', supportedScopes: ['culture'], valueType: 'comparison', syntax: "culture_age >= 200" },
+  { name: 'culture_has_any_fascination', description: 'Is the culture currently Fascinated by an innovation?', supportedScopes: ['culture'], valueType: 'boolean', syntax: "usage:\n<culture> = {\nculture_has_any_fascination = yes\n}" },
+  { name: 'culture_number_of_counties', description: 'How many counties are there of this culture?', supportedScopes: ['culture'], valueType: 'comparison', syntax: "culture_number_of_counties > 10" },
+  { name: 'culture_overlaps_geographical_region', description: 'Checks if any county with this culture is in the given geographical region', supportedScopes: ['culture'], supportedTargets: ['geographical_region'] },
+  { name: 'free_tradition_slot', description: 'How many free tradition slot are in the scoped culturescope:culture = { free_tradition_slot > 1 }', supportedScopes: ['culture'], valueType: 'comparison' },
+  { name: 'has_all_innovations', description: 'Has the culture discovered all innovations matching the filter?', supportedScopes: ['culture'], syntax: "has_all_innovations = {\nwith_flag = flag_name # innovation matches if it has the flag; optional\nwithout_flag = flag_name # innovation matches if it does not have the flag; optional\nculture_era = era_key # innovation matches if it is from the era; optional\n}", parameters: ['with_flag', 'without_flag', 'culture_era'] },
+  { name: 'has_building_gfx', description: 'Does the culture have this building gfx?', supportedScopes: ['culture'], syntax: "<culture> = { has_building_gfx = mena_building_gfx }" },
+  { name: 'has_clothing_gfx', description: 'Does the culture have this clothing gfx?', supportedScopes: ['culture'], syntax: "<culture> = { has_building_gfx = mena_clothing_gfx }", parameters: ['has_building_gfx'] },
+  { name: 'has_coa_gfx', description: 'Does the culture have this CoA gfx?', supportedScopes: ['culture'], syntax: "<culture> = { has_building_gfx = mena_coa_gfx }", parameters: ['has_building_gfx'] },
+  { name: 'has_cultural_era_or_later', description: 'Has this culture achieved specified era<culture> = { has_cultural_era_or_later = culture_era_early_medieval }', supportedScopes: ['culture'] },
+  { name: 'has_cultural_parameter', description: 'Does the culture have this cultural parameter?', supportedScopes: ['culture'], syntax: "<culture> = { has_cultural_parameter = name }" },
+  { name: 'has_cultural_pillar', description: 'Does the culture have this cultural pillar?', supportedScopes: ['culture'], syntax: "<culture> = { has_cultural_pillar = name }" },
+  { name: 'has_cultural_tradition', description: 'Does the culture have this cultural tradition scope?', supportedScopes: ['culture'], supportedTargets: ['culture_tradition'], syntax: "<culture> = { has_cultural_tradition = scope:traditon }" },
+  { name: 'has_innovation', description: 'Have the culture discovered this innovation?', supportedScopes: ['culture'], supportedTargets: ['culture_innovation'] },
+  { name: 'has_innovation_flag', description: 'Has the culture discovered an innovation with this flag? has_innovation_flag = flag', supportedScopes: ['culture'] },
+  { name: 'has_name_list', description: 'Does the culture have this name list?', supportedScopes: ['culture'], syntax: "<culture> = { has_name_list = name }" },
+  { name: 'has_primary_name_list', description: 'Does the culture have this name list as its first name list?', supportedScopes: ['culture'], syntax: "<culture> = { has_primary_name_list = name }" },
+  { name: 'has_same_culture_ethos', description: 'Does the culture have the same ethos as the target?', supportedScopes: ['culture'], supportedTargets: ['culture'] },
+  { name: 'has_same_culture_head_determination', description: 'Does the culture have the same head determination as the target?', supportedScopes: ['culture'], supportedTargets: ['culture'] },
+  { name: 'has_same_culture_heritage', description: 'Does the culture have the same heritage as the target?', supportedScopes: ['culture'], supportedTargets: ['culture'] },
+  { name: 'has_same_culture_language', description: 'Does the culture have the same language as the target?', supportedScopes: ['culture'], supportedTargets: ['culture'] },
+  { name: 'has_same_culture_martial_tradition', description: 'Does the culture have the same martial tradition as the target?', supportedScopes: ['culture'], supportedTargets: ['culture'] },
+  { name: 'has_unit_gfx', description: 'Does the culture have this unit gfx?', supportedScopes: ['culture'], syntax: "<culture> = { has_unit_gfx = mena_unit_gfx }" },
+  { name: 'is_divergent_culture', description: 'Checks if the scope culture was created by diverging from a single parent culture and returns yes if true or no if false.', supportedScopes: ['culture'], valueType: 'boolean', syntax: "is_divergent_culture = yes" },
+  { name: 'is_hybrid_culture', description: 'Checks if the scope culture was created from a hybridization of two cultures and returns yes if true or no if false.', supportedScopes: ['culture'], valueType: 'boolean', syntax: "is_hybrid_culture = yes" },
+  { name: 'num_discovered_innovations', description: 'Does the culture have the required number of discovered innovations?', supportedScopes: ['culture'], valueType: 'comparison', syntax: "num_discovered_innovations > 20" },
+  { name: 'num_discovered_innovations_in_era', description: 'Does the scoped culture have the required number of active discovered innovations in the specified era?', supportedScopes: ['culture'], valueType: 'comparison', syntax: "num_discovered_innovations_in_era = {\ntarget = culture_era_early_medieval\nvalue > 5\n}\nnum_discovered_innovations_in_era:culture_era_early_medieval > 15\nnum_discovered_innovations_in_era:culture_era_early_medieval >\n\"scope:target_culture.num_discovered_innovations_in_era:culture_era_early_medieval", parameters: ['target'] },
+];
+
+/**
+ * Triggers for culture_innovation scope (7 triggers)
+ */
+export const cultureinnovationTriggers: TriggerDefinition[] = [
+  { name: 'culture_can_know_innovation', description: 'Can the culture gain progress towards this innovation?', supportedScopes: ['culture_innovation'], supportedTargets: ['culture'], syntax: "usage:\n<innovation> = {\nculture_can_know_innovation = scope:target_culture\n}" },
+  { name: 'has_innovation_parameter', description: 'Does the innovation type have this parameter?', supportedScopes: ['culture_innovation'], syntax: "<innovation> = { has_innovation_parameter = name }" },
+  { name: 'innovation_era', description: 'Does the scoped innovation belong to the specified era?', supportedScopes: ['culture_innovation'], syntax: "scope:innovation = { innovation_era = culture_era_early_medieval }" },
+  { name: 'innovation_is_regional', description: 'Is the scoped innovation regional?', supportedScopes: ['culture_innovation'], valueType: 'boolean', syntax: "scope:innovation = { innovation_is_regional = yes }" },
+  { name: 'innovation_key', description: 'Is the scoped innovation the same as the specified one?', supportedScopes: ['culture_innovation'], syntax: "scope:innovation = { innovation_key = gunpowder }" },
+  { name: 'is_ahead_of_time_for_culture', description: 'Is scoped innovation ahead of time for the specified culture? same as checking if innovation era > current culture era.', supportedScopes: ['culture_innovation'], supportedTargets: ['culture'], syntax: "scope:innovation = { is_ahead_of_time_for_culture = scope:culture }" },
+  { name: 'is_known_by_culture', description: 'Is scoped innovation known by the specified culture?', supportedScopes: ['culture_innovation'], supportedTargets: ['culture'], syntax: "scope:innovation = { is_known_by_culture = scope:culture }" },
+];
+
+/**
+ * Triggers for culture_tradition scope (1 triggers)
+ */
+export const culturetraditionTriggers: TriggerDefinition[] = [
+  { name: 'has_tradition_category', description: 'has_tradition_category = realm', supportedScopes: ['culture_tradition'], syntax: "Does the scoped tradition belong to the specified category?" },
+];
+
+/**
+ * Triggers for domicile scope (18 triggers)
+ */
+export const domicileTriggers: TriggerDefinition[] = [
+  { name: 'domicile_building_has_free_internal_slot', description: 'Does scoped domicile have building with any free internal building slots?', supportedScopes: ['domicile'], syntax: "scope:domicile = { domicile_building_has_free_internal_slot = domicile building key }" },
+  { name: 'domicile_uses_culture_and_faith', description: 'Does the scoped domicile use culture and faith?', supportedScopes: ['domicile'], valueType: 'boolean' },
+  { name: 'domicile_uses_provisions', description: 'Does the scoped domicile use provisions?', supportedScopes: ['domicile'], valueType: 'boolean' },
+  { name: 'external_domicile_building_slots', description: 'Total amount of external building slots for scoped domicile', supportedScopes: ['domicile'], valueType: 'comparison', syntax: "scope:domicile = { external_domicile_building_slots == 5 }" },
+  { name: 'free_external_domicile_building_slots', description: 'Amount of free external building slots for scoped domicile', supportedScopes: ['domicile'], valueType: 'comparison', syntax: "scope:domicile = { free_external_domicile_building_slots < 1 }" },
+  { name: 'has_domicile_building', description: 'Does scoped domicile have building of specified type?', supportedScopes: ['domicile'], syntax: "scope:domicile = { has_domicile_building = domicile building key }" },
+  { name: 'has_domicile_building_or_higher', description: 'Does scoped domicile have building or one of its upgrades?', supportedScopes: ['domicile'], syntax: "scope:domicile = { has_domicile_building_or_higher = domicile building key }" },
+  { name: 'has_domicile_construction', description: 'Is the scoped domicile currently constructing the specified building?', supportedScopes: ['domicile'], syntax: "scope:domicile = { has_domicile_construction = domicile building key }" },
+  { name: 'has_domicile_parameter', description: 'Does scoped domicile have parameter in one or more of its buildings?', supportedScopes: ['domicile'], syntax: "scope:domicile = { has_domicile_parameter = parameter_name }" },
+  { name: 'has_ongoing_domicile_construction', description: 'Does the scoped domicile have an ongoing construction?)', supportedScopes: ['domicile'], valueType: 'boolean', syntax: "scope:domicile = {\nhas_ongoing_domicile_construction = yes/no\n}" },
+  { name: 'herd', description: 'does the scoped domicile have the required herd?', supportedScopes: ['domicile'], valueType: 'comparison' },
+  { name: 'horde', description: 'what is the amount of currently raised horde (or potential horde if none are raised) of the scoped domicile?', supportedScopes: ['domicile'], valueType: 'comparison' },
+  { name: 'is_domicile_type', description: 'Is the scoped domicile of domicile type?', supportedScopes: ['domicile'], syntax: "scope:domicile = { is_domicile_type = domicile_type_key }" },
+  { name: 'max_herd', description: 'what is the herd limit of the scoped domicile?', supportedScopes: ['domicile'], valueType: 'comparison' },
+  { name: 'max_provisions', description: 'does the scoped domicile have the required max provisions?', supportedScopes: ['domicile'], valueType: 'comparison' },
+  { name: 'num_domicile_buildings', description: 'Amount of buildings constructed for scoped domicile', supportedScopes: ['domicile'], valueType: 'comparison', syntax: "scope:domicile = { num_domicile_buildings > 0 }" },
+  { name: 'provision_cost_to_owner', description: 'Is the provision cost from the domicile\'s current location to it\'s owner.', supportedScopes: ['domicile'], valueType: 'comparison', syntax: "In order to calculate the cost we will operate in three stages:\n1. Check if the from and to provinces are direct neighbours.\n2. Check any travel plan the domicile owner might have and see if the from and\nto are part of the travel plan. This will require domicile's location to be\nthe first entry in the travel plan.\n3. Do a pathfind between the domicile and domicile owner's current location,\nusing that path for the cost.\nscope:domicile = {\nprovision_cost_to_owner < 100\n}" },
+  { name: 'provisions', description: 'does the scoped domicile have the required provisions?', supportedScopes: ['domicile'], valueType: 'comparison' },
+];
+
+/**
+ * Triggers for dynasty scope (30 triggers)
+ */
+export const dynastyTriggers: TriggerDefinition[] = [
+  { name: 'any_dynasty_house', description: 'Iterate through all houses in dynasty', supportedScopes: ['dynasty'], supportedTargets: ['dynasty_house'], outputScope: 'dynasty_house', isIterator: true, valueType: 'block', syntax: "any_dynasty_house = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_dynasty_member', description: 'Iterate through all dynasty members', supportedScopes: ['dynasty'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_dynasty_member = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'blood_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
+  { name: 'ce1_heroic_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
+  { name: 'ce1_legitimacy_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
+  { name: 'dynasty_can_unlock_relevant_perk', description: 'Can the scoped dynasty unlock a \'relevant\' perk? Relevant meaning one that isn\'t the first in its track unless the dynasty has no partially filled tracks', supportedScopes: ['dynasty'], valueType: 'boolean' },
+  { name: 'dynasty_num_unlocked_perks', description: 'does the dynasty has the required number of unlocked dynasty perks?', supportedScopes: ['dynasty'], valueType: 'comparison' },
+  { name: 'dynasty_prestige', description: 'does the dynasty have the required prestige?', supportedScopes: ['dynasty'], valueType: 'comparison' },
+  { name: 'dynasty_prestige_level', description: 'does the dynasty have the required prestige level?', supportedScopes: ['dynasty'], valueType: 'comparison' },
+  { name: 'ep1_culture_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
+  { name: 'ep2_activities_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
+  { name: 'ep3_administrative_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
+  { name: 'erudition_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
+  { name: 'fp1_adventure_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
+  { name: 'fp1_pillage_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
+  { name: 'fp2_coterie_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
+  { name: 'fp2_urbanism_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
+  { name: 'fp3_khvarenah_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
+  { name: 'glory_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
+  { name: 'guile_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
+  { name: 'has_dynasty_modifier', description: 'Does the scoped dynasty have a given modifier', supportedScopes: ['dynasty'], syntax: "has_dynasty_modifier = name" },
+  { name: 'has_dynasty_modifier_duration_remaining', description: 'Does the scoped dynasty have the duration remaining on a given modifier', supportedScopes: ['dynasty'], syntax: "has_dynasty_modifier_duration_remaining = name" },
+  { name: 'has_dynasty_perk', description: 'Does the dynasty have this dynasty perk? has_dynasty_perk = key', supportedScopes: ['dynasty'] },
+  { name: 'kin_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
+  { name: 'law_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
+  { name: 'mpo_nomad_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
+  { name: 'tgp_china_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
+  { name: 'tgp_japan_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
+  { name: 'tgp_southeast_asia_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
+  { name: 'warfare_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
+];
+
+/**
+ * Triggers for dynasty_house scope (24 triggers)
+ */
+export const dynastyhouseTriggers: TriggerDefinition[] = [
+  { name: 'any_house_claimed_artifact', description: 'Iterate through all claimed artifacts of the scoped house', supportedScopes: ['dynasty_house'], supportedTargets: ['artifact'], outputScope: 'artifact', isIterator: true, valueType: 'block', syntax: "any_house_claimed_artifact = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_house_member', description: 'Iterate through all house members', supportedScopes: ['dynasty_house'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_house_member = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_house_relation', description: 'Iterate over all house relations of the given house', supportedScopes: ['dynasty_house'], supportedTargets: ['house_relation'], outputScope: 'house_relation', isIterator: true, valueType: 'block', syntax: "any_house_relation = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_house_unity_member', description: 'Iterate through all valid house unity members', supportedScopes: ['dynasty_house'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_house_unity_member = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'can_change_house_aspiration', description: 'Can the scoped Dynasty House change/upgrade their House Aspiration?', supportedScopes: ['dynasty_house'], valueType: 'boolean', syntax: "scope:house = { can_change_house_aspiration = yes/no }" },
+  { name: 'has_base_name', description: 'Does the given house have the given base name? Remember that characters can be lowborn and have no house.', supportedScopes: ['dynasty_house'], syntax: "usage:\nscope:character = {\nhouse ?= { has_base_name = \"dynn_name_key\" }\n}" },
+  { name: 'has_default_house_aspiration', description: 'does the house have a default House Aspiration?', supportedScopes: ['dynasty_house'], valueType: 'boolean' },
+  { name: 'has_house_artifact_claim', description: 'Does the scoped dynasty house have a personal claim on the target artifact', supportedScopes: ['dynasty_house'], supportedTargets: ['artifact'] },
+  { name: 'has_house_head_parameter', description: 'Does the given house a house head with the given parameter?', supportedScopes: ['dynasty_house'], syntax: "Can only check for boolean parameters.\nhas_house_head_parameter = parameter_key" },
+  { name: 'has_house_modifier', description: 'Does the scoped house have a given modifier', supportedScopes: ['dynasty_house'], syntax: "has_house_modifier = name" },
+  { name: 'has_house_modifier_duration_remaining', description: 'Does the scoped house have the duration remaining on a given modifier', supportedScopes: ['dynasty_house'], syntax: "has_house_modifier_duration_remaining = name" },
+  { name: 'has_house_power_parameter', description: 'Does the given house a house power/aspiration with the given parameter?', supportedScopes: ['dynasty_house'], syntax: "Can only check for boolean parameters.\nhas_house_power_parameter = parameter_key" },
+  { name: 'has_house_relation_with', description: 'Is there a House Relation between the two houses?', supportedScopes: ['dynasty_house'], supportedTargets: ['dynasty_house'], syntax: "usage:\n<some_house> = {\nhas_house_relation_with = <other_house>\n}" },
+  { name: 'has_house_unity', description: 'Is the given dynasty house has house unity', supportedScopes: ['dynasty_house'], valueType: 'boolean' },
+  { name: 'has_house_unity_modifier', description: 'Does the scoped house with unity have a given modifier', supportedScopes: ['dynasty_house'], syntax: "has_house_unity_modifier = name" },
+  { name: 'has_house_unity_modifier_duration_remaining', description: 'Does the scoped house have the duration remaining on a given modifier', supportedScopes: ['dynasty_house'], syntax: "has_house_unity_modifier_duration_remaining = name" },
+  { name: 'has_house_unity_parameter', description: 'Does the given house unity have the given parameter? Can only check for bool parameters. has_house_unity_parameter = parameter_key', supportedScopes: ['dynasty_house'] },
+  { name: 'has_house_unity_stage', description: 'Is the given house unity the given stage?.', supportedScopes: ['dynasty_house'], syntax: "has_house_unity_stage = house_unity_stage_key" },
+  { name: 'has_same_house_power_as', description: 'Does this house have the same house power/aspiration as the target house?', supportedScopes: ['dynasty_house'], supportedTargets: ['dynasty_house'], syntax: "usage:\n<house> = {\nhas_same_house_power_as = scope:target_house\n}" },
+  { name: 'house_land_share_in_realm', description: 'Calculate the percentage of counties held in the target top liege\'s realm by the house.', supportedScopes: ['dynasty_house'], valueType: 'comparison', syntax: "Only the direct vassals of the top liege are counted - if a house member holds land but is not a direct vassal it's as if they had none for this calculation.\nOnly rulers with the same government type as the top liege's are counted.\nscope:house = {\nhouse_land_share_in_realm = {\ntarget = scope:liege\nvalue > 0.5\n}\n}", parameters: ['target'] },
+  { name: 'house_power', description: 'Compare house power: scope:house = { house_power >= value }', supportedScopes: ['dynasty_house'], valueType: 'comparison' },
+  { name: 'house_unity_value', description: 'does the dynasty house have the required house unity value?', supportedScopes: ['dynasty_house'], valueType: 'comparison' },
+  { name: 'is_dominant_family', description: 'Is the given house considered dominant: scope:house = { is_dominant_family = yes }', supportedScopes: ['dynasty_house'], valueType: 'boolean' },
+  { name: 'is_powerful_family', description: 'Is the given house considered powerful: scope:house = { is_powerful_family = yes }', supportedScopes: ['dynasty_house'], valueType: 'boolean' },
+];
+
+/**
+ * Triggers for epidemic scope (5 triggers)
+ */
+export const epidemicTriggers: TriggerDefinition[] = [
+  { name: 'any_infected_province', description: 'Gets all provinces infected by the scoped epidemic', supportedScopes: ['epidemic'], supportedTargets: ['province'], outputScope: 'province', isIterator: true, valueType: 'block', syntax: "any_infected_province = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'days_since_outbreak_start', description: 'Number of days since the epidemic outbreak started.', supportedScopes: ['epidemic'], valueType: 'comparison', syntax: "days_since_outbreak_start >= 20" },
+  { name: 'outbreak_intensity', description: 'Get the outbreak intensity of this epidemic.', supportedScopes: ['epidemic'], syntax: "outbreak_intensity = major" },
+  { name: 'outbreak_start_date', description: 'Date when the epidemic outbreak began.', supportedScopes: ['epidemic'], valueType: 'comparison' },
+  { name: 'total_infected_provinces', description: 'Get the total number of provinces infected over the lifetime of this epidemic.', supportedScopes: ['epidemic'], valueType: 'comparison', syntax: "total_infected_provinces >= 20" },
+];
+
+/**
+ * Triggers for faction scope (16 triggers)
+ */
+export const factionTriggers: TriggerDefinition[] = [
+  { name: 'any_faction_county_member', description: 'Iterate through all faction county members', supportedScopes: ['faction'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, valueType: 'block', syntax: "any_faction_county_member = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_faction_member', description: 'Iterate through all faction character members', supportedScopes: ['faction'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_faction_member = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'average_faction_opinion', description: 'Average opinion of all the characters of the faction scope target', supportedScopes: ['faction'], valueType: 'comparison' },
+  { name: 'average_faction_opinion_not_powerful_vassal', description: 'Average opinion of the character that are NOT powerful vassals of the faction scope target', supportedScopes: ['faction'], valueType: 'comparison' },
+  { name: 'average_faction_opinion_powerful_vassal', description: 'Average opinion of the character that are powerful vassals of the faction scope target', supportedScopes: ['faction'], valueType: 'comparison' },
+  { name: 'discontent_per_month', description: 'How much is the Faction\'s Discontent increasing each month?', supportedScopes: ['faction'], valueType: 'comparison' },
+  { name: 'faction_can_press_demands', description: 'Can the scope faction press demands?', supportedScopes: ['faction'], valueType: 'boolean' },
+  { name: 'faction_discontent', description: 'Current discontent of the faction', supportedScopes: ['faction'], valueType: 'comparison' },
+  { name: 'faction_is_at_war', description: 'Is the scope faction at war?', supportedScopes: ['faction'], valueType: 'boolean' },
+  { name: 'faction_is_type', description: 'Is the faction of this type?', supportedScopes: ['faction'] },
+  { name: 'faction_power', description: 'Current power of the faction', supportedScopes: ['faction'], valueType: 'comparison' },
+  { name: 'faction_power_threshold', description: 'Current power threshold of the faction', supportedScopes: ['faction'], valueType: 'comparison' },
+  { name: 'has_special_character', description: 'Has the faction a special character assigned?', supportedScopes: ['faction'], valueType: 'boolean' },
+  { name: 'has_special_title', description: 'Has the faction a special title assigned?', supportedScopes: ['faction'], valueType: 'boolean' },
+  { name: 'months_until_max_discontent', description: 'How many months until Discontent is max (100)?', supportedScopes: ['faction'], valueType: 'comparison' },
+  { name: 'number_of_faction_members_in_council', description: 'Current number of faction members in faction', supportedScopes: ['faction'], valueType: 'comparison' },
+];
+
+/**
+ * Triggers for faith scope (26 triggers)
+ */
+export const faithTriggers: TriggerDefinition[] = [
+  { name: 'is_in_family', description: 'Is the scoped faith/religion in a given religious family', supportedScopes: ['faith', 'religion'], syntax: "is_in_family = abrhamic" },
+  { name: 'any_defensive_great_holy_wars', description: 'Iterate through all great holy wars this faith is defending against', supportedScopes: ['faith'], supportedTargets: ['great_holy_war'], outputScope: 'great_holy_war', isIterator: true, valueType: 'block', syntax: "any_defensive_great_holy_wars = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_faith_character', description: 'Iterate through characters of the scoped faith', supportedScopes: ['faith'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_faith_character = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_faith_holy_order', description: 'Iterate through all holy orders of the faith', supportedScopes: ['faith'], supportedTargets: ['holy_order'], outputScope: 'holy_order', isIterator: true, valueType: 'block', syntax: "any_faith_holy_order = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_faith_playable_ruler', description: 'Iterate through playable rulers of the scoped faith', supportedScopes: ['faith'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_faith_playable_ruler = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_faith_ruler', description: 'Iterate through rulers of the scoped faith', supportedScopes: ['faith'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_faith_ruler = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_holy_site', description: 'Iterate through all holy site baronies of a faith', supportedScopes: ['faith'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, valueType: 'block', syntax: "any_holy_site = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'controls_holy_site', description: 'Does the faith control a holy site? controls_holy_site = key_of_holy_site', supportedScopes: ['faith'] },
+  { name: 'controls_holy_site_with_flag', description: 'Does the faith control a holy site with the given flag? controls_holy_site_with_flag = some flag', supportedScopes: ['faith'] },
+  { name: 'estimated_faith_strength', description: 'How strong is the scoped faith? *Expensive*, if you\'re gonna use the value repeatedly, save it to a scope first! This is scaled by a factor of 1000, so \'1\' means 1000 men. This is due to the cap of ~2 million, which would be too low in many cases', supportedScopes: ['faith'], valueType: 'comparison' },
+  { name: 'faith_hostility_level', description: 'What is the faith\'s hostility level towards the target faith? faith_hostility_level { target = scope:some_faith value > 1 }', supportedScopes: ['faith'], valueType: 'comparison' },
+  { name: 'faith_hostility_level_comparison', description: 'Compares the scoped faith\'s hostility level towards two other faiths. faith_hostility_level_comparison { faith1 > faith2 }', supportedScopes: ['faith'] },
+  { name: 'fervor', description: 'What is the faith\'s fervor?', supportedScopes: ['faith'], valueType: 'comparison' },
+  { name: 'has_allowed_gender_for_clergy', description: 'Is the target character of the allowed gender to be clergy of the faith?', supportedScopes: ['faith'] },
+  { name: 'has_doctrine', description: 'Does the given faith have the given doctrine?? has_doctrine = doctrine_key', supportedScopes: ['faith'], supportedTargets: ['doctrine'] },
+  { name: 'has_doctrine_parameter', description: 'Does the given faith have the given doctrine parameter? Can only check for bool parameters. has_doctrine_parameter = parameter_key', supportedScopes: ['faith'] },
+  { name: 'has_dominant_ruling_gender', description: 'Is the target character\'s gender a dominant ruling gender of the faith? Also evaluates to true if there\'s no dominant ruling gender', supportedScopes: ['faith'] },
+  { name: 'has_graphical_faith', description: 'Does the faith have this graphical faith?', supportedScopes: ['faith'], syntax: "<faith> = { has_graphical_faith = orthodoxgfx }" },
+  { name: 'has_icon', description: 'Does the faith have the given icon', supportedScopes: ['faith'], syntax: "has_icon = some_cool_custom_icon" },
+  { name: 'has_preferred_gender_for_clergy', description: 'Is the target character of the preferred gender to be clergy of the faith?', supportedScopes: ['faith'] },
+  { name: 'holy_sites_controlled', description: 'How many holy sites does the faith control? holy_sites_controlled > 1', supportedScopes: ['faith'], valueType: 'comparison' },
+  { name: 'num_character_followers', description: 'Returns how many characters follow the given faith', supportedScopes: ['faith'], valueType: 'comparison', syntax: "num_character_followers > 0" },
+  { name: 'num_county_followers', description: 'Returns how many counties follow the given faith', supportedScopes: ['faith'], valueType: 'comparison', syntax: "num_county_followers > 0" },
+  { name: 'religion_tag', description: 'checks the tag of the religion of the current faith', supportedScopes: ['faith'] },
+  { name: 'trait_is_sin', description: 'Does the scoped faith consider the given trait a sin?', supportedScopes: ['faith'], supportedTargets: ['trait'], syntax: "trait_is_sin = lustful" },
+  { name: 'trait_is_virtue', description: 'Does the scoped faith consider the given trait a virtue?', supportedScopes: ['faith'], supportedTargets: ['trait'], syntax: "trait_is_virtue = lustful" },
+];
+
+/**
+ * Triggers for geographical_region scope (2 triggers)
+ */
+export const geographicalregionTriggers: TriggerDefinition[] = [
+  { name: 'region_is_adjacent', description: 'Checks if given region is adjacent or overlaps with the target region.', supportedScopes: ['geographical_region', 'situation_sub_region'], supportedTargets: ['geographical_region'], syntax: "You can use both situation subregions or geographical regions as scopes. Targets a geographical bregion.\nusage:\nscope:situation_subregion/geographical_region:key = {\nregion_is_adjacent = scope:geographical_region\n}" },
+  { name: 'region_is_adjacent_situation_subregion', description: 'Checks if given region is adjacent or overlaps with the target region.', supportedScopes: ['geographical_region', 'situation_sub_region'], supportedTargets: ['situation_sub_region'], syntax: "You can use both situation subregions or geographical regions as scopes. Targets a situation subregion.\nusage:\nscope:situation_subregion/geographical_region:key = {\nregion_is_adjacent_situation_subregion = scope:situation_subregion\n}" },
+];
+
+/**
+ * Triggers for great_holy_war scope (12 triggers)
+ */
+export const greatholywarTriggers: TriggerDefinition[] = [
+  { name: 'any_pledged_attacker', description: 'Iterate through all pledged attackers within a great holy war', supportedScopes: ['great_holy_war'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_pledged_attacker = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_pledged_defender', description: 'Iterate through all pledged defenders within a great holy war', supportedScopes: ['great_holy_war'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_pledged_defender = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'days_until_ghw_launch', description: 'How many days is it until the given GHW launches its war?', supportedScopes: ['great_holy_war'], valueType: 'comparison' },
+  { name: 'ghw_attackers_strength', description: 'What is the max (if all levies were fully reinforced) military strength of the pledged attackers in the given Great Holy War?', supportedScopes: ['great_holy_war'], valueType: 'comparison' },
+  { name: 'ghw_defenders_strength', description: 'What is the max (if all levies were fully reinforced) military strength of the pledged defenders in the given Great Holy War?', supportedScopes: ['great_holy_war'], valueType: 'comparison' },
+  { name: 'ghw_war_chest_gold', description: 'How much gold is in the great holy war\'s war chest?', supportedScopes: ['great_holy_war'], valueType: 'comparison' },
+  { name: 'ghw_war_chest_piety', description: 'How much piety is in the great holy war\'s war chest?', supportedScopes: ['great_holy_war'], valueType: 'comparison' },
+  { name: 'ghw_war_chest_prestige', description: 'How much prestige is in the great holy war\'s war chest?', supportedScopes: ['great_holy_war'], valueType: 'comparison' },
+  { name: 'has_forced_defender', description: 'Is the target character forced to be a defender in the given Great Holy War?', supportedScopes: ['great_holy_war'], supportedTargets: ['character'] },
+  { name: 'has_pledged_attacker', description: 'Is the target character pledged as an attacker in the given Great Holy War?', supportedScopes: ['great_holy_war'], supportedTargets: ['character'] },
+  { name: 'has_pledged_defender', description: 'Is the target character pledged as a defender in the given Great Holy War?', supportedScopes: ['great_holy_war'], supportedTargets: ['character'] },
+  { name: 'is_directed_ghw', description: 'Is the scoped GHW a directed GHW?', supportedScopes: ['great_holy_war'], valueType: 'boolean' },
+];
+
+/**
+ * Triggers for great_project scope (5 triggers)
+ */
+export const greatprojectTriggers: TriggerDefinition[] = [
+  { name: 'any_contribution', description: 'Iterate through all Contributions of a given Great Project, regardless of whether they were funded or not.', supportedScopes: ['great_project'], supportedTargets: ['project_contribution'], outputScope: 'project_contribution', isIterator: true, valueType: 'block', syntax: "any_contribution = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'great_project_build_progress', description: 'The project\'s build progress in percentage (from 0 to 1). If the project is not being built this is 0.', supportedScopes: ['great_project'], valueType: 'comparison', syntax: "usage:\n<scope:great_project> = {\ngreat_project_build_progress > 0.5\n}" },
+  { name: 'great_project_construction_phase_is', description: 'Compare against the current construction phase of this project.', supportedScopes: ['great_project'], syntax: "Possible values are:\n* planned = the project is gathering funds\n* in_progress = the project has started\n* completed = the project was completed\nusage:\n<scope:great_project> = {\ngreat_project_construction_phase = in_progress\n}", parameters: ['great_project_construction_phase'] },
+  { name: 'great_project_days_to_completion', description: 'The number of days until the project is built, taking into account the current province holder for progress bonuses. If the project is not being built this is -1.', supportedScopes: ['great_project'], valueType: 'comparison', syntax: "usage:\n<scope:great_project> = {\ngreat_project_days_to_completion > 365\n}" },
+  { name: 'great_project_type', description: 'Check if the project is of the given type. Use the key from the project definition to compare.', supportedScopes: ['great_project'], syntax: "usage:\n<scope:great_project> = {\ngreat_project_type = great_wall\n}" },
+];
+
+/**
+ * Triggers for great_project_type scope (1 triggers)
+ */
+export const greatprojecttypeTriggers: TriggerDefinition[] = [
+  { name: 'great_project_type_is_important', description: 'Check if the specified project type is marked as important. Used to drive the notification system.', supportedScopes: ['great_project_type'], valueType: 'boolean', syntax: "usage:\nscope:great_project_type = {\ngreat_project_type_is_important = yes\n}" },
+];
+
+/**
+ * Triggers for holding_type scope (3 triggers)
+ */
+export const holdingtypeTriggers: TriggerDefinition[] = [
+  { name: 'any_required_heir_government_type', description: 'Iterate through all defined required government types for a holding type', supportedScopes: ['holding_type'], supportedTargets: ['government_type'], outputScope: 'government_type', isIterator: true, valueType: 'block', syntax: "any_required_heir_government_type = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'has_holding_parameter', description: 'Does the scoped holding type have the given parameter?', supportedScopes: ['holding_type'], syntax: "has_holding_parameter = parameter" },
+  { name: 'has_required_heir_governments', description: 'Does the scoped holding type have required heir government types defined?', supportedScopes: ['holding_type'], valueType: 'boolean', syntax: "has_required_heir_governments = yes/no" },
+];
+
+/**
+ * Triggers for holy_order scope (2 triggers)
+ */
+export const holyorderTriggers: TriggerDefinition[] = [
+  { name: 'any_leased_title', description: 'Iterate through all titles leased to a holy order', supportedScopes: ['holy_order'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, valueType: 'block', syntax: "any_leased_title = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'num_leased_titles', description: 'How many holdings the holy order has under lease', supportedScopes: ['holy_order'], valueType: 'comparison' },
+];
+
+/**
+ * Triggers for house_relation scope (3 triggers)
+ */
+export const houserelationTriggers: TriggerDefinition[] = [
+  { name: 'any_relation_house', description: 'Iterate over both houses in the given relation', supportedScopes: ['house_relation'], supportedTargets: ['dynasty_house'], outputScope: 'dynasty_house', isIterator: true, valueType: 'block', syntax: "any_relation_house = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'has_house_relation_level', description: 'Does this house relation have the given level?', supportedScopes: ['house_relation'], syntax: "usage:\n<house_relation> = {\nhas_house_relation_level = <level>\n}" },
+  { name: 'has_house_relation_parameter', description: 'Does this house relation have the given parameter?', supportedScopes: ['house_relation'], syntax: "usage:\n<house_relation> = {\nhas_house_relation_parameter = <parameter>\n}" },
+];
+
+/**
+ * Triggers for inspiration scope (6 triggers)
+ */
+export const inspirationTriggers: TriggerDefinition[] = [
+  { name: 'base_inspiration_gold_cost', description: 'base_inspiration_gold_cost > 5', supportedScopes: ['inspiration'], valueType: 'comparison', syntax: "Gets the base gold cost of the scoped inspiration" },
+  { name: 'days_since_creation', description: 'days_since_creation > 5', supportedScopes: ['inspiration'], valueType: 'comparison', syntax: "Gets the days since creation of the scoped inspiration" },
+  { name: 'days_since_sponsorship', description: 'days_since_sponsorship > 5', supportedScopes: ['inspiration'], valueType: 'comparison', syntax: "Gets the days since sponsorship started of the scoped inspiration" },
+  { name: 'has_inspiration_type', description: 'has_inspiration_type = type', supportedScopes: ['inspiration'], syntax: "Checks if the scoped inspiration has the given inspiration database type" },
+  { name: 'inspiration_gold_invested', description: 'inspiration_gold_invested > 5', supportedScopes: ['inspiration'], valueType: 'comparison', syntax: "Gets the amount of gold invested in the scoped inspiration" },
+  { name: 'inspiration_progress', description: 'inspiration_progress > 5', supportedScopes: ['inspiration'], valueType: 'comparison', syntax: "Gets the progress of the scoped inspiration" },
+];
+
+/**
  * Triggers for landed_title scope (122 triggers)
  */
 export const landedtitleTriggers: TriggerDefinition[] = [
@@ -1102,6 +1587,45 @@ export const landedtitleTriggers: TriggerDefinition[] = [
 ];
 
 /**
+ * Triggers for legend scope (16 triggers)
+ */
+export const legendTriggers: TriggerDefinition[] = [
+  { name: 'any_legend_promoter', description: 'Gets all promoters of the scoped legend', supportedScopes: ['legend'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_legend_promoter = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_spread_province', description: 'Gets all provinces the scoped legend has spread into', supportedScopes: ['legend'], supportedTargets: ['province'], outputScope: 'province', isIterator: true, valueType: 'block', syntax: "any_spread_province = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'days_since_legend_completion', description: 'Days since when the legend was completed.', supportedScopes: ['legend'], valueType: 'comparison' },
+  { name: 'days_since_legend_start_date', description: 'Days since when the legend was created.', supportedScopes: ['legend'], valueType: 'comparison' },
+  { name: 'has_legend_chapter', description: 'Does the legend have the given localization key set for the named chapter.', supportedScopes: ['legend'], syntax: "has_legend_chapter = { name = opening localization_key = default_legend_opening }\nhas_legend_chapter = opening", parameters: ['name'] },
+  { name: 'has_legend_chronicle', description: 'Does the scoped legend have the specified legend chronicle.', supportedScopes: ['legend'], syntax: "has_legend_chronicle = beast_slayer" },
+  { name: 'has_legend_county_modifier', description: 'Does the scoped legend have a given modifier affecting the counties', supportedScopes: ['legend'], syntax: "has_legend_county_modifier = name" },
+  { name: 'has_legend_county_modifier_duration_remaining', description: 'Does the scoped legend have the duration remaining on a given modifier affecting the counties', supportedScopes: ['legend'], syntax: "has_legend_county_modifier_duration_remaining = name" },
+  { name: 'has_legend_owner_modifier', description: 'Does the scoped legend have a given modifier affecting the owner', supportedScopes: ['legend'], syntax: "has_legend_owner_modifier = name" },
+  { name: 'has_legend_owner_modifier_duration_remaining', description: 'Does the scoped legend have the duration remaining on a given modifier affecting the owner', supportedScopes: ['legend'], syntax: "has_legend_owner_modifier_duration_remaining = name" },
+  { name: 'has_legend_province_modifier', description: 'Does the scoped legend have a given modifier affecting the provinces', supportedScopes: ['legend'], syntax: "has_legend_province_modifier = name" },
+  { name: 'has_legend_province_modifier_duration_remaining', description: 'Does the scoped legend have the duration remaining on a given modifier affecting the provinces', supportedScopes: ['legend'], syntax: "has_legend_province_modifier_duration_remaining = name" },
+  { name: 'is_legend_completed', description: 'Is the scoped legend completed?.', supportedScopes: ['legend'], valueType: 'boolean', syntax: "scope:legend = {\nis_legend_completed = yes\n}" },
+  { name: 'legend_completion_date', description: 'Date when the legend was completed.', supportedScopes: ['legend'], valueType: 'comparison' },
+  { name: 'legend_quality', description: 'Get the quality of this legend.', supportedScopes: ['legend'], syntax: "legend_quality = famed" },
+  { name: 'legend_start_date', description: 'Date when the legend was created.', supportedScopes: ['legend'], valueType: 'comparison' },
+];
+
+/**
+ * Triggers for mercenary_company scope (1 triggers)
+ */
+export const mercenarycompanyTriggers: TriggerDefinition[] = [
+  { name: 'mercenary_company_expiration_days', description: 'How many days are left in the mercenary contract. 0 if not hired.', supportedScopes: ['mercenary_company'], valueType: 'comparison' },
+];
+
+/**
+ * Triggers for project_contribution scope (4 triggers)
+ */
+export const projectcontributionTriggers: TriggerDefinition[] = [
+  { name: 'any_potential_contributor', description: 'Iterate through all characters that may contribute to this contribution. The list depends on the allowed_contributor_filter field of the great project for this contribution.', supportedScopes: ['project_contribution'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "Keep in mind that dead founders and non-ruler founders will yield empty lists. Contributions that don't accept funding will likewise yield empty lists.\nany_potential_contributor = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'contribution_id', description: 'Checks if the Contribution in scope is of the specified type (by key).', supportedScopes: ['project_contribution'], syntax: "usage:\n<scope:great_project_contribution> = {\ncontribution_id = great_ballista\n}" },
+  { name: 'contribution_is_funded', description: 'Checks if the Contribution in scope was already funded.', supportedScopes: ['project_contribution'], valueType: 'boolean', syntax: "usage:\n<scope:great_project_contribution> = {\ncontribution_is_funded = yes\n}" },
+  { name: 'contribution_is_required', description: 'Checks if the Contribution in scope must be funded in order to be able to start the Great Project.', supportedScopes: ['project_contribution'], valueType: 'boolean', syntax: "usage:\n<scope:great_project_contribution> = {\ncontribution_is_required = yes\n}" },
+];
+
+/**
  * Triggers for province scope (51 triggers)
  */
 export const provinceTriggers: TriggerDefinition[] = [
@@ -1159,193 +1683,6 @@ export const provinceTriggers: TriggerDefinition[] = [
 ];
 
 /**
- * Triggers for dynasty scope (30 triggers)
- */
-export const dynastyTriggers: TriggerDefinition[] = [
-  { name: 'any_dynasty_house', description: 'Iterate through all houses in dynasty', supportedScopes: ['dynasty'], supportedTargets: ['dynasty_house'], outputScope: 'dynasty_house', isIterator: true, valueType: 'block', syntax: "any_dynasty_house = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_dynasty_member', description: 'Iterate through all dynasty members', supportedScopes: ['dynasty'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_dynasty_member = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'blood_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
-  { name: 'ce1_heroic_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
-  { name: 'ce1_legitimacy_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
-  { name: 'dynasty_can_unlock_relevant_perk', description: 'Can the scoped dynasty unlock a \'relevant\' perk? Relevant meaning one that isn\'t the first in its track unless the dynasty has no partially filled tracks', supportedScopes: ['dynasty'], valueType: 'boolean' },
-  { name: 'dynasty_num_unlocked_perks', description: 'does the dynasty has the required number of unlocked dynasty perks?', supportedScopes: ['dynasty'], valueType: 'comparison' },
-  { name: 'dynasty_prestige', description: 'does the dynasty have the required prestige?', supportedScopes: ['dynasty'], valueType: 'comparison' },
-  { name: 'dynasty_prestige_level', description: 'does the dynasty have the required prestige level?', supportedScopes: ['dynasty'], valueType: 'comparison' },
-  { name: 'ep1_culture_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
-  { name: 'ep2_activities_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
-  { name: 'ep3_administrative_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
-  { name: 'erudition_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
-  { name: 'fp1_adventure_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
-  { name: 'fp1_pillage_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
-  { name: 'fp2_coterie_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
-  { name: 'fp2_urbanism_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
-  { name: 'fp3_khvarenah_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
-  { name: 'glory_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
-  { name: 'guile_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
-  { name: 'has_dynasty_modifier', description: 'Does the scoped dynasty have a given modifier', supportedScopes: ['dynasty'], syntax: "has_dynasty_modifier = name" },
-  { name: 'has_dynasty_modifier_duration_remaining', description: 'Does the scoped dynasty have the duration remaining on a given modifier', supportedScopes: ['dynasty'], syntax: "has_dynasty_modifier_duration_remaining = name" },
-  { name: 'has_dynasty_perk', description: 'Does the dynasty have this dynasty perk? has_dynasty_perk = key', supportedScopes: ['dynasty'] },
-  { name: 'kin_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
-  { name: 'law_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
-  { name: 'mpo_nomad_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
-  { name: 'tgp_china_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
-  { name: 'tgp_japan_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
-  { name: 'tgp_southeast_asia_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
-  { name: 'warfare_legacy_track_perks', description: 'How many perks in the lifestyle does this dynasty have?', supportedScopes: ['dynasty'], valueType: 'comparison' },
-];
-
-/**
- * Triggers for dynasty_house scope (24 triggers)
- */
-export const dynastyhouseTriggers: TriggerDefinition[] = [
-  { name: 'any_house_claimed_artifact', description: 'Iterate through all claimed artifacts of the scoped house', supportedScopes: ['dynasty_house'], supportedTargets: ['artifact'], outputScope: 'artifact', isIterator: true, valueType: 'block', syntax: "any_house_claimed_artifact = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_house_member', description: 'Iterate through all house members', supportedScopes: ['dynasty_house'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_house_member = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_house_relation', description: 'Iterate over all house relations of the given house', supportedScopes: ['dynasty_house'], supportedTargets: ['house_relation'], outputScope: 'house_relation', isIterator: true, valueType: 'block', syntax: "any_house_relation = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_house_unity_member', description: 'Iterate through all valid house unity members', supportedScopes: ['dynasty_house'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_house_unity_member = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'can_change_house_aspiration', description: 'Can the scoped Dynasty House change/upgrade their House Aspiration?', supportedScopes: ['dynasty_house'], valueType: 'boolean', syntax: "scope:house = { can_change_house_aspiration = yes/no }" },
-  { name: 'has_base_name', description: 'Does the given house have the given base name? Remember that characters can be lowborn and have no house.', supportedScopes: ['dynasty_house'], syntax: "usage:\nscope:character = {\nhouse ?= { has_base_name = \"dynn_name_key\" }\n}" },
-  { name: 'has_default_house_aspiration', description: 'does the house have a default House Aspiration?', supportedScopes: ['dynasty_house'], valueType: 'boolean' },
-  { name: 'has_house_artifact_claim', description: 'Does the scoped dynasty house have a personal claim on the target artifact', supportedScopes: ['dynasty_house'], supportedTargets: ['artifact'] },
-  { name: 'has_house_head_parameter', description: 'Does the given house a house head with the given parameter?', supportedScopes: ['dynasty_house'], syntax: "Can only check for boolean parameters.\nhas_house_head_parameter = parameter_key" },
-  { name: 'has_house_modifier', description: 'Does the scoped house have a given modifier', supportedScopes: ['dynasty_house'], syntax: "has_house_modifier = name" },
-  { name: 'has_house_modifier_duration_remaining', description: 'Does the scoped house have the duration remaining on a given modifier', supportedScopes: ['dynasty_house'], syntax: "has_house_modifier_duration_remaining = name" },
-  { name: 'has_house_power_parameter', description: 'Does the given house a house power/aspiration with the given parameter?', supportedScopes: ['dynasty_house'], syntax: "Can only check for boolean parameters.\nhas_house_power_parameter = parameter_key" },
-  { name: 'has_house_relation_with', description: 'Is there a House Relation between the two houses?', supportedScopes: ['dynasty_house'], supportedTargets: ['dynasty_house'], syntax: "usage:\n<some_house> = {\nhas_house_relation_with = <other_house>\n}" },
-  { name: 'has_house_unity', description: 'Is the given dynasty house has house unity', supportedScopes: ['dynasty_house'], valueType: 'boolean' },
-  { name: 'has_house_unity_modifier', description: 'Does the scoped house with unity have a given modifier', supportedScopes: ['dynasty_house'], syntax: "has_house_unity_modifier = name" },
-  { name: 'has_house_unity_modifier_duration_remaining', description: 'Does the scoped house have the duration remaining on a given modifier', supportedScopes: ['dynasty_house'], syntax: "has_house_unity_modifier_duration_remaining = name" },
-  { name: 'has_house_unity_parameter', description: 'Does the given house unity have the given parameter? Can only check for bool parameters. has_house_unity_parameter = parameter_key', supportedScopes: ['dynasty_house'] },
-  { name: 'has_house_unity_stage', description: 'Is the given house unity the given stage?.', supportedScopes: ['dynasty_house'], syntax: "has_house_unity_stage = house_unity_stage_key" },
-  { name: 'has_same_house_power_as', description: 'Does this house have the same house power/aspiration as the target house?', supportedScopes: ['dynasty_house'], supportedTargets: ['dynasty_house'], syntax: "usage:\n<house> = {\nhas_same_house_power_as = scope:target_house\n}" },
-  { name: 'house_land_share_in_realm', description: 'Calculate the percentage of counties held in the target top liege\'s realm by the house.', supportedScopes: ['dynasty_house'], valueType: 'comparison', syntax: "Only the direct vassals of the top liege are counted - if a house member holds land but is not a direct vassal it's as if they had none for this calculation.\nOnly rulers with the same government type as the top liege's are counted.\nscope:house = {\nhouse_land_share_in_realm = {\ntarget = scope:liege\nvalue > 0.5\n}\n}", parameters: ['target'] },
-  { name: 'house_power', description: 'Compare house power: scope:house = { house_power >= value }', supportedScopes: ['dynasty_house'], valueType: 'comparison' },
-  { name: 'house_unity_value', description: 'does the dynasty house have the required house unity value?', supportedScopes: ['dynasty_house'], valueType: 'comparison' },
-  { name: 'is_dominant_family', description: 'Is the given house considered dominant: scope:house = { is_dominant_family = yes }', supportedScopes: ['dynasty_house'], valueType: 'boolean' },
-  { name: 'is_powerful_family', description: 'Is the given house considered powerful: scope:house = { is_powerful_family = yes }', supportedScopes: ['dynasty_house'], valueType: 'boolean' },
-];
-
-/**
- * Triggers for culture scope (37 triggers)
- */
-export const cultureTriggers: TriggerDefinition[] = [
-  { name: 'any_culture_county', description: 'Iterate through all counties of the culture', supportedScopes: ['culture'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, valueType: 'block', syntax: "any_culture_county = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_culture_duchy', description: 'Iterate through all duchies of the culture (duchies with at least one county of the culture', supportedScopes: ['culture'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, valueType: 'block', syntax: "any_culture_duchy = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_culture_empire', description: 'Iterate through all empires of the culture (empires with at least one county of the culture', supportedScopes: ['culture'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, valueType: 'block', syntax: "any_culture_empire = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_culture_kingdom', description: 'Iterate through all kingdoms of the culture (kingdoms with at least one county of the culture', supportedScopes: ['culture'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, valueType: 'block', syntax: "any_culture_kingdom = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_known_innovation', description: 'Iterate through all innovations known to the given culture', supportedScopes: ['culture'], supportedTargets: ['culture_innovation'], outputScope: 'culture_innovation', isIterator: true, valueType: 'block', syntax: "any_known_innovation = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_parent_culture', description: 'Iterate through all parent cultures', supportedScopes: ['culture'], supportedTargets: ['culture'], outputScope: 'culture', isIterator: true, valueType: 'block', syntax: "any_parent_culture = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_parent_culture_or_above', description: 'Iterate through all parent cultures or above', supportedScopes: ['culture'], supportedTargets: ['culture'], outputScope: 'culture', isIterator: true, valueType: 'block', syntax: "any_parent_culture_or_above = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_tradition', description: 'Iterate through all traditions of the given culture', supportedScopes: ['culture'], supportedTargets: ['culture_tradition'], outputScope: 'culture_tradition', isIterator: true, valueType: 'block', syntax: "any_tradition = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'can_get_innovation_from', description: 'Get random applicable innovation from another culture', supportedScopes: ['culture'] },
-  { name: 'cultural_acceptance', description: 'The cultural acceptance of the scoped culture with the target culture', supportedScopes: ['culture'], valueType: 'comparison', syntax: "cultural_acceptance = { target = culture value > 50 }", parameters: ['target'] },
-  { name: 'culture_age', description: 'Checks the age of the scope culture in years. If the culture has no creation date set, this will simply return the current year', supportedScopes: ['culture'], valueType: 'comparison', syntax: "culture_age >= 200" },
-  { name: 'culture_has_any_fascination', description: 'Is the culture currently Fascinated by an innovation?', supportedScopes: ['culture'], valueType: 'boolean', syntax: "usage:\n<culture> = {\nculture_has_any_fascination = yes\n}" },
-  { name: 'culture_number_of_counties', description: 'How many counties are there of this culture?', supportedScopes: ['culture'], valueType: 'comparison', syntax: "culture_number_of_counties > 10" },
-  { name: 'culture_overlaps_geographical_region', description: 'Checks if any county with this culture is in the given geographical region', supportedScopes: ['culture'], supportedTargets: ['geographical_region'] },
-  { name: 'free_tradition_slot', description: 'How many free tradition slot are in the scoped culturescope:culture = { free_tradition_slot > 1 }', supportedScopes: ['culture'], valueType: 'comparison' },
-  { name: 'has_all_innovations', description: 'Has the culture discovered all innovations matching the filter?', supportedScopes: ['culture'], syntax: "has_all_innovations = {\nwith_flag = flag_name # innovation matches if it has the flag; optional\nwithout_flag = flag_name # innovation matches if it does not have the flag; optional\nculture_era = era_key # innovation matches if it is from the era; optional\n}", parameters: ['with_flag', 'without_flag', 'culture_era'] },
-  { name: 'has_building_gfx', description: 'Does the culture have this building gfx?', supportedScopes: ['culture'], syntax: "<culture> = { has_building_gfx = mena_building_gfx }" },
-  { name: 'has_clothing_gfx', description: 'Does the culture have this clothing gfx?', supportedScopes: ['culture'], syntax: "<culture> = { has_building_gfx = mena_clothing_gfx }", parameters: ['has_building_gfx'] },
-  { name: 'has_coa_gfx', description: 'Does the culture have this CoA gfx?', supportedScopes: ['culture'], syntax: "<culture> = { has_building_gfx = mena_coa_gfx }", parameters: ['has_building_gfx'] },
-  { name: 'has_cultural_era_or_later', description: 'Has this culture achieved specified era<culture> = { has_cultural_era_or_later = culture_era_early_medieval }', supportedScopes: ['culture'] },
-  { name: 'has_cultural_parameter', description: 'Does the culture have this cultural parameter?', supportedScopes: ['culture'], syntax: "<culture> = { has_cultural_parameter = name }" },
-  { name: 'has_cultural_pillar', description: 'Does the culture have this cultural pillar?', supportedScopes: ['culture'], syntax: "<culture> = { has_cultural_pillar = name }" },
-  { name: 'has_cultural_tradition', description: 'Does the culture have this cultural tradition scope?', supportedScopes: ['culture'], supportedTargets: ['culture_tradition'], syntax: "<culture> = { has_cultural_tradition = scope:traditon }" },
-  { name: 'has_innovation', description: 'Have the culture discovered this innovation?', supportedScopes: ['culture'], supportedTargets: ['culture_innovation'] },
-  { name: 'has_innovation_flag', description: 'Has the culture discovered an innovation with this flag? has_innovation_flag = flag', supportedScopes: ['culture'] },
-  { name: 'has_name_list', description: 'Does the culture have this name list?', supportedScopes: ['culture'], syntax: "<culture> = { has_name_list = name }" },
-  { name: 'has_primary_name_list', description: 'Does the culture have this name list as its first name list?', supportedScopes: ['culture'], syntax: "<culture> = { has_primary_name_list = name }" },
-  { name: 'has_same_culture_ethos', description: 'Does the culture have the same ethos as the target?', supportedScopes: ['culture'], supportedTargets: ['culture'] },
-  { name: 'has_same_culture_head_determination', description: 'Does the culture have the same head determination as the target?', supportedScopes: ['culture'], supportedTargets: ['culture'] },
-  { name: 'has_same_culture_heritage', description: 'Does the culture have the same heritage as the target?', supportedScopes: ['culture'], supportedTargets: ['culture'] },
-  { name: 'has_same_culture_language', description: 'Does the culture have the same language as the target?', supportedScopes: ['culture'], supportedTargets: ['culture'] },
-  { name: 'has_same_culture_martial_tradition', description: 'Does the culture have the same martial tradition as the target?', supportedScopes: ['culture'], supportedTargets: ['culture'] },
-  { name: 'has_unit_gfx', description: 'Does the culture have this unit gfx?', supportedScopes: ['culture'], syntax: "<culture> = { has_unit_gfx = mena_unit_gfx }" },
-  { name: 'is_divergent_culture', description: 'Checks if the scope culture was created by diverging from a single parent culture and returns yes if true or no if false.', supportedScopes: ['culture'], valueType: 'boolean', syntax: "is_divergent_culture = yes" },
-  { name: 'is_hybrid_culture', description: 'Checks if the scope culture was created from a hybridization of two cultures and returns yes if true or no if false.', supportedScopes: ['culture'], valueType: 'boolean', syntax: "is_hybrid_culture = yes" },
-  { name: 'num_discovered_innovations', description: 'Does the culture have the required number of discovered innovations?', supportedScopes: ['culture'], valueType: 'comparison', syntax: "num_discovered_innovations > 20" },
-  { name: 'num_discovered_innovations_in_era', description: 'Does the scoped culture have the required number of active discovered innovations in the specified era?', supportedScopes: ['culture'], valueType: 'comparison', syntax: "num_discovered_innovations_in_era = {\ntarget = culture_era_early_medieval\nvalue > 5\n}\nnum_discovered_innovations_in_era:culture_era_early_medieval > 15\nnum_discovered_innovations_in_era:culture_era_early_medieval >\n\"scope:target_culture.num_discovered_innovations_in_era:culture_era_early_medieval", parameters: ['target'] },
-];
-
-/**
- * Triggers for culture_innovation scope (7 triggers)
- */
-export const cultureinnovationTriggers: TriggerDefinition[] = [
-  { name: 'culture_can_know_innovation', description: 'Can the culture gain progress towards this innovation?', supportedScopes: ['culture_innovation'], supportedTargets: ['culture'], syntax: "usage:\n<innovation> = {\nculture_can_know_innovation = scope:target_culture\n}" },
-  { name: 'has_innovation_parameter', description: 'Does the innovation type have this parameter?', supportedScopes: ['culture_innovation'], syntax: "<innovation> = { has_innovation_parameter = name }" },
-  { name: 'innovation_era', description: 'Does the scoped innovation belong to the specified era?', supportedScopes: ['culture_innovation'], syntax: "scope:innovation = { innovation_era = culture_era_early_medieval }" },
-  { name: 'innovation_is_regional', description: 'Is the scoped innovation regional?', supportedScopes: ['culture_innovation'], valueType: 'boolean', syntax: "scope:innovation = { innovation_is_regional = yes }" },
-  { name: 'innovation_key', description: 'Is the scoped innovation the same as the specified one?', supportedScopes: ['culture_innovation'], syntax: "scope:innovation = { innovation_key = gunpowder }" },
-  { name: 'is_ahead_of_time_for_culture', description: 'Is scoped innovation ahead of time for the specified culture? same as checking if innovation era > current culture era.', supportedScopes: ['culture_innovation'], supportedTargets: ['culture'], syntax: "scope:innovation = { is_ahead_of_time_for_culture = scope:culture }" },
-  { name: 'is_known_by_culture', description: 'Is scoped innovation known by the specified culture?', supportedScopes: ['culture_innovation'], supportedTargets: ['culture'], syntax: "scope:innovation = { is_known_by_culture = scope:culture }" },
-];
-
-/**
- * Triggers for faith scope (26 triggers)
- */
-export const faithTriggers: TriggerDefinition[] = [
-  { name: 'is_in_family', description: 'Is the scoped faith/religion in a given religious family', supportedScopes: ['faith', 'religion'], syntax: "is_in_family = abrhamic" },
-  { name: 'any_defensive_great_holy_wars', description: 'Iterate through all great holy wars this faith is defending against', supportedScopes: ['faith'], supportedTargets: ['great_holy_war'], outputScope: 'great_holy_war', isIterator: true, valueType: 'block', syntax: "any_defensive_great_holy_wars = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_faith_character', description: 'Iterate through characters of the scoped faith', supportedScopes: ['faith'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_faith_character = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_faith_holy_order', description: 'Iterate through all holy orders of the faith', supportedScopes: ['faith'], supportedTargets: ['holy_order'], outputScope: 'holy_order', isIterator: true, valueType: 'block', syntax: "any_faith_holy_order = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_faith_playable_ruler', description: 'Iterate through playable rulers of the scoped faith', supportedScopes: ['faith'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_faith_playable_ruler = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_faith_ruler', description: 'Iterate through rulers of the scoped faith', supportedScopes: ['faith'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_faith_ruler = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_holy_site', description: 'Iterate through all holy site baronies of a faith', supportedScopes: ['faith'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, valueType: 'block', syntax: "any_holy_site = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'controls_holy_site', description: 'Does the faith control a holy site? controls_holy_site = key_of_holy_site', supportedScopes: ['faith'] },
-  { name: 'controls_holy_site_with_flag', description: 'Does the faith control a holy site with the given flag? controls_holy_site_with_flag = some flag', supportedScopes: ['faith'] },
-  { name: 'estimated_faith_strength', description: 'How strong is the scoped faith? *Expensive*, if you\'re gonna use the value repeatedly, save it to a scope first! This is scaled by a factor of 1000, so \'1\' means 1000 men. This is due to the cap of ~2 million, which would be too low in many cases', supportedScopes: ['faith'], valueType: 'comparison' },
-  { name: 'faith_hostility_level', description: 'What is the faith\'s hostility level towards the target faith? faith_hostility_level { target = scope:some_faith value > 1 }', supportedScopes: ['faith'], valueType: 'comparison' },
-  { name: 'faith_hostility_level_comparison', description: 'Compares the scoped faith\'s hostility level towards two other faiths. faith_hostility_level_comparison { faith1 > faith2 }', supportedScopes: ['faith'] },
-  { name: 'fervor', description: 'What is the faith\'s fervor?', supportedScopes: ['faith'], valueType: 'comparison' },
-  { name: 'has_allowed_gender_for_clergy', description: 'Is the target character of the allowed gender to be clergy of the faith?', supportedScopes: ['faith'] },
-  { name: 'has_doctrine', description: 'Does the given faith have the given doctrine?? has_doctrine = doctrine_key', supportedScopes: ['faith'], supportedTargets: ['doctrine'] },
-  { name: 'has_doctrine_parameter', description: 'Does the given faith have the given doctrine parameter? Can only check for bool parameters. has_doctrine_parameter = parameter_key', supportedScopes: ['faith'] },
-  { name: 'has_dominant_ruling_gender', description: 'Is the target character\'s gender a dominant ruling gender of the faith? Also evaluates to true if there\'s no dominant ruling gender', supportedScopes: ['faith'] },
-  { name: 'has_graphical_faith', description: 'Does the faith have this graphical faith?', supportedScopes: ['faith'], syntax: "<faith> = { has_graphical_faith = orthodoxgfx }" },
-  { name: 'has_icon', description: 'Does the faith have the given icon', supportedScopes: ['faith'], syntax: "has_icon = some_cool_custom_icon" },
-  { name: 'has_preferred_gender_for_clergy', description: 'Is the target character of the preferred gender to be clergy of the faith?', supportedScopes: ['faith'] },
-  { name: 'holy_sites_controlled', description: 'How many holy sites does the faith control? holy_sites_controlled > 1', supportedScopes: ['faith'], valueType: 'comparison' },
-  { name: 'num_character_followers', description: 'Returns how many characters follow the given faith', supportedScopes: ['faith'], valueType: 'comparison', syntax: "num_character_followers > 0" },
-  { name: 'num_county_followers', description: 'Returns how many counties follow the given faith', supportedScopes: ['faith'], valueType: 'comparison', syntax: "num_county_followers > 0" },
-  { name: 'religion_tag', description: 'checks the tag of the religion of the current faith', supportedScopes: ['faith'] },
-  { name: 'trait_is_sin', description: 'Does the scoped faith consider the given trait a sin?', supportedScopes: ['faith'], supportedTargets: ['trait'], syntax: "trait_is_sin = lustful" },
-  { name: 'trait_is_virtue', description: 'Does the scoped faith consider the given trait a virtue?', supportedScopes: ['faith'], supportedTargets: ['trait'], syntax: "trait_is_virtue = lustful" },
-];
-
-/**
- * Triggers for religion scope (1 triggers)
- */
-export const religionTriggers: TriggerDefinition[] = [
-  { name: 'any_faith', description: 'Iterate through all faiths within a religion', supportedScopes: ['religion'], supportedTargets: ['faith'], outputScope: 'faith', isIterator: true, valueType: 'block', syntax: "any_faith = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-];
-
-/**
- * Triggers for army scope (20 triggers)
- */
-export const armyTriggers: TriggerDefinition[] = [
-  { name: 'any_army_maa_regiment', description: 'Iterate through all MaA regiments in the army', supportedScopes: ['army'], supportedTargets: ['regiment'], outputScope: 'regiment', isIterator: true, valueType: 'block', syntax: "scope:army = {\nany_army_maa_regiment = {\ninclude_hired = yes # should it include merc and holy order regiments (yes by default)\n}\n}\nany_army_maa_regiment = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['include_hired', 'count', 'percent'] },
-  { name: 'army_is_moving', description: 'is this army moving?', supportedScopes: ['army'], valueType: 'boolean' },
-  { name: 'army_max_size', description: 'what size is this army\'s max size?', supportedScopes: ['army'], valueType: 'comparison' },
-  { name: 'army_size', description: 'what size is this army?', supportedScopes: ['army'], valueType: 'comparison' },
-  { name: 'army_supply', description: 'Can we disband this army?', supportedScopes: ['army'], valueType: 'comparison' },
-  { name: 'barter_loot', description: 'How much barter loot is the army carrying?', supportedScopes: ['army'], valueType: 'comparison' },
-  { name: 'can_disband_army', description: 'Can we disband this army?', supportedScopes: ['army'], valueType: 'boolean' },
-  { name: 'is_army_in_combat', description: 'Is the scoped army in combat?', supportedScopes: ['army'], valueType: 'boolean' },
-  { name: 'is_army_in_raid', description: 'Is the scoped army in a raid (this includes a raid interrupted by combat)?', supportedScopes: ['army'], valueType: 'boolean' },
-  { name: 'is_army_in_siege', description: 'Is the scoped army in a siege (this includes a siege interrupted by combat)?', supportedScopes: ['army'], valueType: 'boolean' },
-  { name: 'is_army_in_siege_relevant_for', description: 'Is the scoped army in a siege that is relevant to the target character?', supportedScopes: ['army'], supportedTargets: ['character'], syntax: "is_army_in_siege_relevant_for = scope:character" },
-  { name: 'is_barter_army', description: 'Is the scoped army a barter army?', supportedScopes: ['army'], valueType: 'boolean' },
-  { name: 'is_raid_army', description: 'Is the scoped army a raid army?', supportedScopes: ['army'], valueType: 'boolean' },
-  { name: 'raid_intent', description: 'Does the Army have the given raid intent?', supportedScopes: ['army'], syntax: "raid_intent = key" },
-  { name: 'raid_loot', description: 'How much raid loot is the army carrying?', supportedScopes: ['army'], valueType: 'comparison' },
-  { name: 'total_army_damage', description: 'What is the army\'s total damage stat in its current location?', supportedScopes: ['army'], valueType: 'comparison' },
-  { name: 'total_army_pursuit', description: 'What is the army\'s total pursuit stat in its current location?', supportedScopes: ['army'], valueType: 'comparison' },
-  { name: 'total_army_screen', description: 'What is the army\'s total screen stat in its current location?', supportedScopes: ['army'], valueType: 'comparison' },
-  { name: 'total_army_siege_value', description: 'What is the army\'s total siege value stat in its current location?', supportedScopes: ['army'], valueType: 'comparison' },
-  { name: 'total_army_toughness', description: 'What is the army\'s total toughness stat in its current location?', supportedScopes: ['army'], valueType: 'comparison' },
-];
-
-/**
  * Triggers for regiment scope (13 triggers)
  */
 export const regimentTriggers: TriggerDefinition[] = [
@@ -1362,6 +1699,13 @@ export const regimentTriggers: TriggerDefinition[] = [
   { name: 'maa_current_troops_count', description: 'Get current number of soldiers in MaA regiment', supportedScopes: ['regiment'], valueType: 'comparison' },
   { name: 'maa_max_troops_count', description: 'Get max number of soldiers in MaA regiment', supportedScopes: ['regiment'], valueType: 'comparison' },
   { name: 'maa_size', description: 'Get regiment size - number of subregiments in it', supportedScopes: ['regiment'], valueType: 'comparison' },
+];
+
+/**
+ * Triggers for religion scope (1 triggers)
+ */
+export const religionTriggers: TriggerDefinition[] = [
+  { name: 'any_faith', description: 'Iterate through all faiths within a religion', supportedScopes: ['religion'], supportedTargets: ['faith'], outputScope: 'faith', isIterator: true, valueType: 'block', syntax: "any_faith = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
 ];
 
 /**
@@ -1395,80 +1739,6 @@ export const schemeTriggers: TriggerDefinition[] = [
 ];
 
 /**
- * Triggers for war scope (17 triggers)
- */
-export const warTriggers: TriggerDefinition[] = [
-  { name: 'any_war_attacker', description: 'Iterate through all attackers in the war', supportedScopes: ['war'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_war_attacker = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_war_defender', description: 'Iterate through all defenders in the war', supportedScopes: ['war'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_war_defender = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_war_participant', description: 'Iterate through all participants in the war', supportedScopes: ['war'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_war_participant = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'attacker_war_score', description: 'compares the attacker war score', supportedScopes: ['war'], valueType: 'comparison' },
-  { name: 'days_since_max_war_score', description: 'Number of days since the war score has been at max (+100 or -100). Returns -1 if the war score is not +100 or -100', supportedScopes: ['war'], valueType: 'comparison' },
-  { name: 'defender_war_score', description: 'compares the defender war score', supportedScopes: ['war'], valueType: 'comparison' },
-  { name: 'has_valid_casus_belli', description: 'does the war interaction still have a valid casus belli (those should be automatically removed on daily tick, but can exist for a tick)', supportedScopes: ['war'], valueType: 'boolean' },
-  { name: 'is_attacker', description: 'is the target character in the scope war as an attacker?', supportedScopes: ['war'] },
-  { name: 'is_civil_war', description: 'Check if the scope war is a civil war or not', supportedScopes: ['war'], valueType: 'boolean' },
-  { name: 'is_defender', description: 'is the target character in the scope war as a defender?', supportedScopes: ['war'] },
-  { name: 'is_participant', description: 'is the target character participating in the scope war as an attacker or defender?', supportedScopes: ['war'] },
-  { name: 'is_war_leader', description: 'is the target character leading one of the sides in the scope war?', supportedScopes: ['war'] },
-  { name: 'is_white_peace_possible', description: 'Check if the scoped war\'s CB has is_white_peace_possible = yes', supportedScopes: ['war'], valueType: 'boolean' },
-  { name: 'using_cb', description: 'is the scope war using the specified CB? using_cb = religious_war', supportedScopes: ['war'] },
-  { name: 'war_contribution', description: 'Checks how much a character has contributed to the scoped war', supportedScopes: ['war'], valueType: 'comparison', syntax: "war_contribution = {\ntarget = some character\nvalue > 5\n}", parameters: ['target'] },
-  { name: 'war_days', description: 'compares the number of days the war is going on for', supportedScopes: ['war'], valueType: 'comparison' },
-  { name: 'was_called', description: 'has the target character been called to the scope war already?', supportedScopes: ['war'] },
-];
-
-/**
- * Triggers for activity scope (23 triggers)
- */
-export const activityTriggers: TriggerDefinition[] = [
-  { name: 'any_activity_phase_location', description: 'Iterate through all province locations of the phases of the activity, optionally limited to unique locations.', supportedScopes: ['activity'], supportedTargets: ['province'], outputScope: 'province', isIterator: true, valueType: 'block', syntax: "any/every/random_activity_phase_location {\nunique = yes/no\n}\nany_activity_phase_location = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['unique', 'count', 'percent'] },
-  { name: 'any_activity_phase_location_future', description: 'Iterate through all future province locations of the phases of the activity, optionally limited to unique locations. (\'future\' does not include any started phase)', supportedScopes: ['activity'], supportedTargets: ['province'], outputScope: 'province', isIterator: true, valueType: 'block', syntax: "any/every/random_activity_phase_location_future {\nunique = yes/no\n}\nany_activity_phase_location_future = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['unique', 'count', 'percent'] },
-  { name: 'any_activity_phase_location_past', description: 'Iterate through all past province locations of the phases of the activity, optionally limited to unique locations. (\'past\' only includes ended phases)', supportedScopes: ['activity'], supportedTargets: ['province'], outputScope: 'province', isIterator: true, valueType: 'block', syntax: "any/every/random_activity_phase_location_future {\nunique = yes/no\n}\nany_activity_phase_location_past = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['unique', 'count', 'percent'] },
-  { name: 'any_attending_character', description: 'Iterate through all characters attending an activity.', supportedScopes: ['activity'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "Invited guests that have not accepted/declined yet are not part of this list.\nSupports an optional state the character must be in.\nany_attending_character = { state = travel/passive/active }\nany_attending_character = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['state', 'count', 'percent'] },
-  { name: 'any_guest_subset', description: 'any/every/random_guest_subset = {', supportedScopes: ['activity'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "name = <subset_key>\nphase = <phase_key> # Optional\n}\nIterates through characteres within the specified subset for past, current and\nfuture phases. If phase is specified it will only iterate through characters\nsubsets of that particular phase type.\nany_guest_subset = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['name', 'phase', 'count', 'percent'] },
-  { name: 'any_guest_subset_current_phase', description: 'any/every/random_guest_subset_current_phase = {', supportedScopes: ['activity'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "name = <subset_key>\n}\nIterates through characteres within the specified subset of the current phase.\nany_guest_subset_current_phase = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['name', 'count', 'percent'] },
-  { name: 'any_invited_character', description: 'Iterate through all characters invited to an activity. Once they accept/decline, they are removed from this list.', supportedScopes: ['activity'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_invited_character = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_special_guest', description: 'Iterate through all special guests of an activity.', supportedScopes: ['activity'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_special_guest = { ... }\nany_special_guest = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'has_active_locale', description: 'Does the scoped activity have the designated locale active?', supportedScopes: ['activity'], syntax: "has_active_locale = locale_key" },
-  { name: 'has_activity_option', description: 'has_activity_option = { category = key option = key }', supportedScopes: ['activity'], syntax: "Does the scoped activity have the option in the given category active" },
-  { name: 'has_activity_type', description: 'has_activity_type = key', supportedScopes: ['activity'], supportedTargets: ['activity_type'], syntax: "Does the scoped activity have the given activity type" },
-  { name: 'has_current_phase', description: 'has_current_phase = key', supportedScopes: ['activity'], syntax: "Does the scoped activity have the given phase active" },
-  { name: 'has_phase', description: 'Check if a phase exists on this activity. You can search for just a type directly, or a complex trigger with  only `type`, `location` or both.', supportedScopes: ['activity'], syntax: "has_phase = name_of_phase\nhas_phase = {\ntype = name_of_phase\nlocation = scope:province\n}", parameters: ['type', 'location'] },
-  { name: 'has_phase_future', description: 'Check if a past phase exists on this activity. You can search for just a type directly, or a complex trigger with  only `type`, `location` or both.', supportedScopes: ['activity'], syntax: "has_phase = name_of_phase\nhas_phase = {\ntype = name_of_phase\nlocation = scope:province\n}", parameters: ['has_phase', 'type', 'location'] },
-  { name: 'has_phase_past', description: 'Check if a past phase exists on this activity. You can search for just a type directly, or a complex trigger with  only `type`, `location` or both.', supportedScopes: ['activity'], syntax: "has_phase = name_of_phase\nhas_phase = {\ntype = name_of_phase\nlocation = scope:province\n}", parameters: ['has_phase', 'type', 'location'] },
-  { name: 'is_activity_complete', description: 'Check if the current activity is completed or not, this doesn\'t have much use for content since we delete an activity as soon as we can, but in multiplayer it exists until everyone stops viewing it so we use this to cancel some delayed events', supportedScopes: ['activity'], valueType: 'boolean', syntax: "is_activity_complete = yes/no" },
-  { name: 'is_current_phase_active', description: 'Check if the current activity phase is in the active state (else it is in the passive state)', supportedScopes: ['activity'], valueType: 'boolean', syntax: "is_current_phase_active = yes/no" },
-  { name: 'is_open_invite_activity', description: 'Check if the scoped activity is an open invite activity', supportedScopes: ['activity'], valueType: 'boolean', syntax: "is_open_invite_activity = yes/no" },
-  { name: 'is_required_special_guest', description: 'Is the target character a required special guest in the scoped activity.', supportedScopes: ['activity'], syntax: "is_required_special_guest = character" },
-  { name: 'is_special_guest', description: 'Is the target character a special guest in the scoped activity, optionally for a specific type.', supportedScopes: ['activity'], syntax: "is_special_guest = character\nis_special_guest = { target = character type = key }", parameters: ['target'] },
-  { name: 'num_future_phases', description: 'The number of future phases for the scoped activity.', supportedScopes: ['activity'], valueType: 'comparison', syntax: "num_future_phases > 5" },
-  { name: 'num_past_phases', description: 'The number of past phases for the scoped activity.', supportedScopes: ['activity'], valueType: 'comparison', syntax: "num_past_phases > 5" },
-  { name: 'num_phases', description: 'The number total number of planned phases for the scoped activity.', supportedScopes: ['activity'], valueType: 'comparison', syntax: "num_phases > 5" },
-];
-
-/**
- * Triggers for artifact scope (16 triggers)
- */
-export const artifactTriggers: TriggerDefinition[] = [
-  { name: 'any_artifact_claimant', description: 'Iterate through all characters with a claim on the scoped artifact', supportedScopes: ['artifact'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_artifact_claimant = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_artifact_house_claimant', description: 'Iterate through all dynasty houses with a claim on the scoped artifact', supportedScopes: ['artifact'], supportedTargets: ['dynasty_house'], outputScope: 'dynasty_house', isIterator: true, valueType: 'block', syntax: "any_artifact_house_claimant = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'artifact_durability', description: 'does this artifact have the required durability?', supportedScopes: ['artifact'], valueType: 'comparison' },
-  { name: 'artifact_max_durability', description: 'does this artifact have the required max durability?', supportedScopes: ['artifact'], valueType: 'comparison' },
-  { name: 'artifact_slot_type', description: 'is the artifact of the given inventory slot type?', supportedScopes: ['artifact'] },
-  { name: 'artifact_type', description: 'is the artifact of the given type?', supportedScopes: ['artifact'] },
-  { name: 'can_be_claimed_by', description: 'Can the scoped artifact be claimed by the given character?', supportedScopes: ['artifact'], supportedTargets: ['character'] },
-  { name: 'category', description: 'is the scoped artifact of given category?', supportedScopes: ['artifact'] },
-  { name: 'has_artifact_feature', description: 'Does the artifact have the given feature?', supportedScopes: ['artifact'], syntax: "has_artifact_feature = key" },
-  { name: 'has_artifact_feature_group', description: 'Does the artifact have the given feature group?', supportedScopes: ['artifact'], syntax: "has_artifact_feature_group = key" },
-  { name: 'has_artifact_modifier', description: 'Does the artifact have the given modifier?', supportedScopes: ['artifact'], syntax: "has_artifact_modifier  = key" },
-  { name: 'is_equipped', description: 'is the scoped artifact currently equipped in its owners inventory?', supportedScopes: ['artifact'], valueType: 'boolean' },
-  { name: 'is_unique', description: 'Is the scoped artifact unique', supportedScopes: ['artifact'], valueType: 'boolean', syntax: "defined in the scripted template of the artifact" },
-  { name: 'num_artifact_kills', description: 'How many kills has this artifact been used in?', supportedScopes: ['artifact'], valueType: 'comparison' },
-  { name: 'rarity', description: 'is the scoped artifact of given rarity?', supportedScopes: ['artifact'] },
-  { name: 'should_decay', description: 'should the scoped artifact decay with time?', supportedScopes: ['artifact'], valueType: 'boolean' },
-];
-
-/**
  * Triggers for secret scope (11 triggers)
  */
 export const secretTriggers: TriggerDefinition[] = [
@@ -1486,52 +1756,65 @@ export const secretTriggers: TriggerDefinition[] = [
 ];
 
 /**
- * Triggers for faction scope (16 triggers)
+ * Triggers for situation scope (21 triggers)
  */
-export const factionTriggers: TriggerDefinition[] = [
-  { name: 'any_faction_county_member', description: 'Iterate through all faction county members', supportedScopes: ['faction'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, valueType: 'block', syntax: "any_faction_county_member = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_faction_member', description: 'Iterate through all faction character members', supportedScopes: ['faction'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_faction_member = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'average_faction_opinion', description: 'Average opinion of all the characters of the faction scope target', supportedScopes: ['faction'], valueType: 'comparison' },
-  { name: 'average_faction_opinion_not_powerful_vassal', description: 'Average opinion of the character that are NOT powerful vassals of the faction scope target', supportedScopes: ['faction'], valueType: 'comparison' },
-  { name: 'average_faction_opinion_powerful_vassal', description: 'Average opinion of the character that are powerful vassals of the faction scope target', supportedScopes: ['faction'], valueType: 'comparison' },
-  { name: 'discontent_per_month', description: 'How much is the Faction\'s Discontent increasing each month?', supportedScopes: ['faction'], valueType: 'comparison' },
-  { name: 'faction_can_press_demands', description: 'Can the scope faction press demands?', supportedScopes: ['faction'], valueType: 'boolean' },
-  { name: 'faction_discontent', description: 'Current discontent of the faction', supportedScopes: ['faction'], valueType: 'comparison' },
-  { name: 'faction_is_at_war', description: 'Is the scope faction at war?', supportedScopes: ['faction'], valueType: 'boolean' },
-  { name: 'faction_is_type', description: 'Is the faction of this type?', supportedScopes: ['faction'] },
-  { name: 'faction_power', description: 'Current power of the faction', supportedScopes: ['faction'], valueType: 'comparison' },
-  { name: 'faction_power_threshold', description: 'Current power threshold of the faction', supportedScopes: ['faction'], valueType: 'comparison' },
-  { name: 'has_special_character', description: 'Has the faction a special character assigned?', supportedScopes: ['faction'], valueType: 'boolean' },
-  { name: 'has_special_title', description: 'Has the faction a special title assigned?', supportedScopes: ['faction'], valueType: 'boolean' },
-  { name: 'months_until_max_discontent', description: 'How many months until Discontent is max (100)?', supportedScopes: ['faction'], valueType: 'comparison' },
-  { name: 'number_of_faction_members_in_council', description: 'Current number of faction members in faction', supportedScopes: ['faction'], valueType: 'comparison' },
+export const situationTriggers: TriggerDefinition[] = [
+  { name: 'any_participant_group', description: 'Iterate through all participant groups of the situation (in all sub-regions)', supportedScopes: ['situation'], supportedTargets: ['situation_participant_group'], outputScope: 'situation_participant_group', isIterator: true, valueType: 'block', syntax: "any_participant_group = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_situation_county', description: 'Iterate through all counties that are involved in a situation', supportedScopes: ['situation'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, valueType: 'block', syntax: "any_situation_county = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_situation_participant', description: 'Iterate through all characters that are participating in a situation.', supportedScopes: ['situation'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_situation_participant = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_situation_sub_region', description: 'Iterate through all sub-regions of a situation', supportedScopes: ['situation'], supportedTargets: ['situation_sub_region'], outputScope: 'situation_sub_region', isIterator: true, valueType: 'block', syntax: "any_situation_sub_region = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'has_situation_top_phase_parameter', description: 'Checks if top sub-region has phase parameter or not', supportedScopes: ['situation'], syntax: "has_situation_top_phase_parameter = parameter_key" },
+  { name: 'is_manual_participant', description: 'Is this character considered a manual participant candidate in this situation?', supportedScopes: ['situation'], supportedTargets: ['character'], syntax: "is_manual_participant = yes/no" },
+  { name: 'is_situation_unique', description: 'Is the type of scoped situation unique.', supportedScopes: ['situation'], valueType: 'boolean', syntax: "is_situation_unique = yes/no" },
+  { name: 'situation_current_phase', description: 'Checks if situation current phase equals phase_type_key (will take first sub-region)', supportedScopes: ['situation'], syntax: "situation_current_phase = phase_type_key" },
+  { name: 'situation_days_since_end_date', description: 'Days since when the situation was completed.', supportedScopes: ['situation'], valueType: 'comparison' },
+  { name: 'situation_days_since_start_date', description: 'Days since the situation started.', supportedScopes: ['situation'], valueType: 'comparison' },
+  { name: 'situation_end_date', description: 'Date when the situation was completed.', supportedScopes: ['situation'], valueType: 'comparison' },
+  { name: 'situation_has_catalyst', description: 'Checks if any sub-region of the situation has any of their future phases affected by the given catalyst.', supportedScopes: ['situation'], syntax: "has_situation_top_catalyst = situation_catalyst_key", parameters: ['has_situation_top_catalyst'] },
+  { name: 'situation_start_date', description: 'Date when the situation started.', supportedScopes: ['situation'], valueType: 'comparison' },
+  { name: 'situation_top_has_catalyst', description: 'Checks if top sub-region of situation has any of the future phases affected by the given catalyst', supportedScopes: ['situation'], syntax: "has_situation_top_catalyst = situation_catalyst_key", parameters: ['has_situation_top_catalyst'] },
+  { name: 'situation_top_has_county', description: 'Checks if top sub-region of situation contains county', supportedScopes: ['situation'], supportedTargets: ['province'], syntax: "situation_top_has_county = scope:county" },
+  { name: 'situation_top_has_province', description: 'Checks if top sub-region of situation contains province', supportedScopes: ['situation'], supportedTargets: ['province'], syntax: "situation_top_has_province = scope:province" },
+  { name: 'situation_top_phase_days_since_start_date', description: 'Days since the situation top phase started.', supportedScopes: ['situation'], valueType: 'comparison' },
+  { name: 'situation_top_phase_days_until_end_date', description: 'Days until the situation top phase completes.', supportedScopes: ['situation'], valueType: 'comparison' },
+  { name: 'situation_top_phase_end_date', description: 'Date when the situation top phase Ended.', supportedScopes: ['situation'], valueType: 'comparison' },
+  { name: 'situation_top_phase_start_date', description: 'Date when the situation top phase started.', supportedScopes: ['situation'], valueType: 'comparison' },
+  { name: 'situation_type', description: 'Is the scoped situation of a specific situation type?', supportedScopes: ['situation'], syntax: "situation_type = situation_key" },
 ];
 
 /**
- * Triggers for holy_order scope (2 triggers)
+ * Triggers for situation_participant_group scope (8 triggers)
  */
-export const holyorderTriggers: TriggerDefinition[] = [
-  { name: 'any_leased_title', description: 'Iterate through all titles leased to a holy order', supportedScopes: ['holy_order'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, valueType: 'block', syntax: "any_leased_title = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'num_leased_titles', description: 'How many holdings the holy order has under lease', supportedScopes: ['holy_order'], valueType: 'comparison' },
+export const situationparticipantgroupTriggers: TriggerDefinition[] = [
+  { name: 'any_situation_group_participant', description: 'Iterate through all characters that are part of a participation group in a situation.', supportedScopes: ['situation_participant_group'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_situation_group_participant = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'auto_add_rulers', description: 'If region rulers are automatically checked to be valid participants for this group.', supportedScopes: ['situation_participant_group'], valueType: 'boolean', syntax: "If disabled, only manually added characters could join..\nauto_add_rulers = yes/no" },
+  { name: 'has_participant_group_parameter', description: 'Checks if scoped participant group currently has the parameter or not', supportedScopes: ['situation_participant_group'], syntax: "has_participant_group_parameter = parameter_key" },
+  { name: 'participant_group_has_character', description: 'Is this character a participant in this participant group?', supportedScopes: ['situation_participant_group'], supportedTargets: ['character'], syntax: "participant_group_has_character = scope:character" },
+  { name: 'participant_group_type', description: 'Is the scoped participant group of a specific type?', supportedScopes: ['situation_participant_group'], syntax: "participant_group_type = group_key" },
+  { name: 'require_capital_in_sub_region', description: 'Is it required that the capital of participants is in the sub-region?', supportedScopes: ['situation_participant_group'], valueType: 'boolean', syntax: "require_capital_in_sub_region = yes/no" },
+  { name: 'require_domain_in_sub_region', description: 'Is it required that some part of the domain of participants is in the sub-region?', supportedScopes: ['situation_participant_group'], valueType: 'boolean', syntax: "require_domain_in_sub_region = yes/no" },
+  { name: 'require_realm_in_sub_region', description: 'Is it required that some part of the realm of participants is in the sub-region?', supportedScopes: ['situation_participant_group'], valueType: 'boolean', syntax: "require_realm_in_sub_region = yes/no" },
 ];
 
 /**
- * Triggers for mercenary_company scope (1 triggers)
+ * Triggers for situation_sub_region scope (15 triggers)
  */
-export const mercenarycompanyTriggers: TriggerDefinition[] = [
-  { name: 'mercenary_company_expiration_days', description: 'How many days are left in the mercenary contract. 0 if not hired.', supportedScopes: ['mercenary_company'], valueType: 'comparison' },
-];
-
-/**
- * Triggers for inspiration scope (6 triggers)
- */
-export const inspirationTriggers: TriggerDefinition[] = [
-  { name: 'base_inspiration_gold_cost', description: 'base_inspiration_gold_cost > 5', supportedScopes: ['inspiration'], valueType: 'comparison', syntax: "Gets the base gold cost of the scoped inspiration" },
-  { name: 'days_since_creation', description: 'days_since_creation > 5', supportedScopes: ['inspiration'], valueType: 'comparison', syntax: "Gets the days since creation of the scoped inspiration" },
-  { name: 'days_since_sponsorship', description: 'days_since_sponsorship > 5', supportedScopes: ['inspiration'], valueType: 'comparison', syntax: "Gets the days since sponsorship started of the scoped inspiration" },
-  { name: 'has_inspiration_type', description: 'has_inspiration_type = type', supportedScopes: ['inspiration'], syntax: "Checks if the scoped inspiration has the given inspiration database type" },
-  { name: 'inspiration_gold_invested', description: 'inspiration_gold_invested > 5', supportedScopes: ['inspiration'], valueType: 'comparison', syntax: "Gets the amount of gold invested in the scoped inspiration" },
-  { name: 'inspiration_progress', description: 'inspiration_progress > 5', supportedScopes: ['inspiration'], valueType: 'comparison', syntax: "Gets the progress of the scoped inspiration" },
+export const situationsubregionTriggers: TriggerDefinition[] = [
+  { name: 'any_situation_sub_region_county', description: 'Iterate through all counties of a situation sub-region (warning: not fast)', supportedScopes: ['situation_sub_region'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, valueType: 'block', syntax: "any_situation_sub_region_county = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_situation_sub_region_geographical_region', description: 'Iterate through all geographical regions of a situation sub-region', supportedScopes: ['situation_sub_region'], supportedTargets: ['geographical_region'], outputScope: 'geographical_region', isIterator: true, valueType: 'block', syntax: "any_situation_sub_region_geographical_region = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_situation_sub_region_participant', description: 'Iterate through all characters that are participating in a situation, in a specific subregion', supportedScopes: ['situation_sub_region'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_situation_sub_region_participant = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_situation_sub_region_participant_group', description: 'Iterate through all participant groups of the situation sub-region', supportedScopes: ['situation_sub_region'], supportedTargets: ['situation_participant_group'], outputScope: 'situation_participant_group', isIterator: true, valueType: 'block', syntax: "any_situation_sub_region_participant_group = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'has_sub_region_phase_parameter', description: 'Checks if sub-region has phase parameter or not', supportedScopes: ['situation_sub_region'], syntax: "has_sub_region_phase_parameter = parameter_key" },
+  { name: 'phase_takeover_duration_days', description: 'Checks the takeover days left of a future phase in this sub-region.', supportedScopes: ['situation_sub_region'], valueType: 'comparison', syntax: "phase_takeover_duration_days:future_phase_key <= scripted_value" },
+  { name: 'phase_takeover_points', description: 'Checks the takeover points of a future phase in this sub-region.', supportedScopes: ['situation_sub_region'], valueType: 'comparison', syntax: "phase_takeover_points:future_phase_key <= scripted_value" },
+  { name: 'situation_sub_region_has_county', description: 'Checks if scoped sub-region of a situation contains county', supportedScopes: ['situation_sub_region'], supportedTargets: ['landed_title'], syntax: "situation_sub_region_has_county = scope:county" },
+  { name: 'situation_sub_region_has_geographical_region', description: 'Is geographical region part of situation sub-region?', supportedScopes: ['situation_sub_region'], supportedTargets: ['geographical_region'], syntax: "situation_sub_region_has_geographical_region = scope:geographical_region" },
+  { name: 'situation_sub_region_has_province', description: 'Checks if scoped sub-region of a situation contains province', supportedScopes: ['situation_sub_region'], supportedTargets: ['province'], syntax: "situation_sub_region_has_province = scope:province" },
+  { name: 'sub_region_current_phase', description: 'Checks if sub-region current phase equals phase_type', supportedScopes: ['situation_sub_region'], syntax: "sub_region_current_phase = phase_type" },
+  { name: 'sub_region_current_phase_days_since_start_date', description: 'Days since the sub region current situation phase started.', supportedScopes: ['situation_sub_region'], valueType: 'comparison' },
+  { name: 'sub_region_current_phase_days_until_end_date', description: 'Days until the sub region current situation phase ends.', supportedScopes: ['situation_sub_region'], valueType: 'comparison' },
+  { name: 'sub_region_current_phase_end_date', description: 'Date when the sub region current situation phase ends.', supportedScopes: ['situation_sub_region'], valueType: 'comparison' },
+  { name: 'sub_region_current_phase_start_date', description: 'Date when the sub region current situation phase started.', supportedScopes: ['situation_sub_region'], valueType: 'comparison' },
 ];
 
 /**
@@ -1542,10 +1825,50 @@ export const storyTriggers: TriggerDefinition[] = [
 ];
 
 /**
- * Triggers for casus_belli scope (1 triggers)
+ * Triggers for struggle scope (9 triggers)
  */
-export const casusbelliTriggers: TriggerDefinition[] = [
-  { name: 'any_target_title', description: 'Iterate through all casus belli\'s target titles', supportedScopes: ['casus_belli'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, valueType: 'block', syntax: "any_target_title = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+export const struggleTriggers: TriggerDefinition[] = [
+  { name: 'any_interloper_ruler', description: 'Iterate through all characters that are interloper in a struggle.', supportedScopes: ['struggle'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_interloper_ruler = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_involved_county', description: 'Iterate through all counties that are involved in a struggle', supportedScopes: ['struggle'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, valueType: 'block', syntax: "any_involved_county = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_involved_ruler', description: 'Iterate through all characters that are involved in a struggle.', supportedScopes: ['struggle'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_involved_ruler = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'has_struggle_phase_parameter', description: 'Does the given struggle\'s current phase have the given parameter? Can only check for bool parameters. has_struggle_phase_parameter = parameter_key', supportedScopes: ['struggle'] },
+  { name: 'is_culture_involved_in_struggle', description: 'is the culture involved in struggle?', supportedScopes: ['struggle'], supportedTargets: ['culture'], syntax: "is_culture_involved_in_struggle = culture:english" },
+  { name: 'is_faith_involved_in_struggle', description: 'is the faith involved in struggle?', supportedScopes: ['struggle'], supportedTargets: ['faith'], syntax: "is_faith_involved_in_struggle  = faith:baltic_pagan" },
+  { name: 'is_struggle_phase', description: 'is the scope struggle\'s current phase particular phase?', supportedScopes: ['struggle'], syntax: "is_struggle_phase = struggle_iberia_phase_opportunity" },
+  { name: 'is_struggle_type', description: 'is the scope struggle\'s type particular type?', supportedScopes: ['struggle'], syntax: "is_struggle_type = iberian_struggle" },
+  { name: 'phase_has_catalyst', description: 'Is any of the future phases affected by the given catalyst?phase_has_catalyst = catalyst_key', supportedScopes: ['struggle'] },
+];
+
+/**
+ * Triggers for task_contract scope (6 triggers)
+ */
+export const taskcontractTriggers: TriggerDefinition[] = [
+  { name: 'has_task_contract_group', description: 'Has task contract of the group', supportedScopes: ['task_contract'], syntax: "scope:character = { has_task_contract_group = group }" },
+  { name: 'has_task_contract_type', description: 'has task contract with type', supportedScopes: ['task_contract'], syntax: "scope:task_contract = { has_task_contract_type = type_name }" },
+  { name: 'is_criminal', description: 'Is the contract type of criminal nature?', supportedScopes: ['task_contract'], valueType: 'boolean' },
+  { name: 'is_valid_to_keep', description: 'Is contract valid to keep?', supportedScopes: ['task_contract'], valueType: 'boolean' },
+  { name: 'task_contract_tier', description: 'Tier value for task contract', supportedScopes: ['task_contract'], valueType: 'comparison', syntax: "scope:task_contract = { task_contract_tier = num }" },
+  { name: 'time_since_contract_taken', description: 'Days since the task contract was accepted.', supportedScopes: ['task_contract'], valueType: 'comparison' },
+];
+
+/**
+ * Triggers for tax_slot scope (4 triggers)
+ */
+export const taxslotTriggers: TriggerDefinition[] = [
+  { name: 'any_tax_slot_vassal', description: 'Iterates through all Vassals assigned to the scoped Tax Slot', supportedScopes: ['tax_slot'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_tax_slot_vassal = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'available_taxpayer_slots', description: 'How many slots for taxpayers are available in scoped tax slot?', supportedScopes: ['tax_slot'], valueType: 'comparison', syntax: "scope:tax_slot = { available_tax_player_slots > 2 }" },
+  { name: 'has_tax_collector', description: 'has_tax_collector = yes', supportedScopes: ['tax_slot'], valueType: 'boolean', syntax: "Does the scoped Tax Slot have any Tax Collector employed?" },
+  { name: 'is_active_obligation', description: 'Is this the current active tax obligation?', supportedScopes: ['tax_slot'], syntax: "scope:tax_slot = { is_active_obligation = obligation_key }" },
+];
+
+/**
+ * Triggers for trait scope (4 triggers)
+ */
+export const traitTriggers: TriggerDefinition[] = [
+  { name: 'any_opposite_trait', description: 'Iterate through all opposite traits of the scoped trait', supportedScopes: ['trait'], supportedTargets: ['trait'], outputScope: 'trait', isIterator: true, valueType: 'block', syntax: "any_opposite_trait = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'has_trait_category', description: 'Does the scoped trait belong to the given trait cateogry.', supportedScopes: ['trait'], syntax: "has_trait_category = health" },
+  { name: 'has_trait_flag', description: 'Does the scoped trait have the given flag.', supportedScopes: ['trait'], syntax: "has_trait_flag = can_not_marry" },
+  { name: 'is_opposite_of_trait', description: 'Is the scoped trait an opposite trait of the target trait.', supportedScopes: ['trait'], supportedTargets: ['trait'], syntax: "is_opposite_of_trait = scope:trait" },
 ];
 
 /**
@@ -1582,229 +1905,33 @@ export const travelplanTriggers: TriggerDefinition[] = [
 ];
 
 /**
- * Triggers for council_task scope (1 triggers)
+ * Triggers for vassal_contract_obligation_level scope (1 triggers)
  */
-export const counciltaskTriggers: TriggerDefinition[] = [
-  { name: 'can_fire_position', description: 'Check if the scope task\'s councillor can be fired. Will check both can_fire and things like it being illegal to reassing the position', supportedScopes: ['council_task'], valueType: 'boolean', syntax: "scope:task = { position_can_be_fired = yes }", parameters: ['position_can_be_fired'] },
+export const vassalcontractobligationlevelTriggers: TriggerDefinition[] = [
+  { name: 'obligation_level_score', description: 'The score in favour of the vassal for the scoped vassal contract obligation level', supportedScopes: ['vassal_contract_obligation_level'], valueType: 'comparison', syntax: "obligation_level_score > 2" },
 ];
 
 /**
- * Triggers for great_holy_war scope (12 triggers)
+ * Triggers for war scope (17 triggers)
  */
-export const greatholywarTriggers: TriggerDefinition[] = [
-  { name: 'any_pledged_attacker', description: 'Iterate through all pledged attackers within a great holy war', supportedScopes: ['great_holy_war'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_pledged_attacker = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_pledged_defender', description: 'Iterate through all pledged defenders within a great holy war', supportedScopes: ['great_holy_war'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_pledged_defender = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'days_until_ghw_launch', description: 'How many days is it until the given GHW launches its war?', supportedScopes: ['great_holy_war'], valueType: 'comparison' },
-  { name: 'ghw_attackers_strength', description: 'What is the max (if all levies were fully reinforced) military strength of the pledged attackers in the given Great Holy War?', supportedScopes: ['great_holy_war'], valueType: 'comparison' },
-  { name: 'ghw_defenders_strength', description: 'What is the max (if all levies were fully reinforced) military strength of the pledged defenders in the given Great Holy War?', supportedScopes: ['great_holy_war'], valueType: 'comparison' },
-  { name: 'ghw_war_chest_gold', description: 'How much gold is in the great holy war\'s war chest?', supportedScopes: ['great_holy_war'], valueType: 'comparison' },
-  { name: 'ghw_war_chest_piety', description: 'How much piety is in the great holy war\'s war chest?', supportedScopes: ['great_holy_war'], valueType: 'comparison' },
-  { name: 'ghw_war_chest_prestige', description: 'How much prestige is in the great holy war\'s war chest?', supportedScopes: ['great_holy_war'], valueType: 'comparison' },
-  { name: 'has_forced_defender', description: 'Is the target character forced to be a defender in the given Great Holy War?', supportedScopes: ['great_holy_war'], supportedTargets: ['character'] },
-  { name: 'has_pledged_attacker', description: 'Is the target character pledged as an attacker in the given Great Holy War?', supportedScopes: ['great_holy_war'], supportedTargets: ['character'] },
-  { name: 'has_pledged_defender', description: 'Is the target character pledged as a defender in the given Great Holy War?', supportedScopes: ['great_holy_war'], supportedTargets: ['character'] },
-  { name: 'is_directed_ghw', description: 'Is the scoped GHW a directed GHW?', supportedScopes: ['great_holy_war'], valueType: 'boolean' },
-];
-
-/**
- * Triggers for struggle scope (9 triggers)
- */
-export const struggleTriggers: TriggerDefinition[] = [
-  { name: 'any_interloper_ruler', description: 'Iterate through all characters that are interloper in a struggle.', supportedScopes: ['struggle'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_interloper_ruler = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_involved_county', description: 'Iterate through all counties that are involved in a struggle', supportedScopes: ['struggle'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, valueType: 'block', syntax: "any_involved_county = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_involved_ruler', description: 'Iterate through all characters that are involved in a struggle.', supportedScopes: ['struggle'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_involved_ruler = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'has_struggle_phase_parameter', description: 'Does the given struggle\'s current phase have the given parameter? Can only check for bool parameters. has_struggle_phase_parameter = parameter_key', supportedScopes: ['struggle'] },
-  { name: 'is_culture_involved_in_struggle', description: 'is the culture involved in struggle?', supportedScopes: ['struggle'], supportedTargets: ['culture'], syntax: "is_culture_involved_in_struggle = culture:english" },
-  { name: 'is_faith_involved_in_struggle', description: 'is the faith involved in struggle?', supportedScopes: ['struggle'], supportedTargets: ['faith'], syntax: "is_faith_involved_in_struggle  = faith:baltic_pagan" },
-  { name: 'is_struggle_phase', description: 'is the scope struggle\'s current phase particular phase?', supportedScopes: ['struggle'], syntax: "is_struggle_phase = struggle_iberia_phase_opportunity" },
-  { name: 'is_struggle_type', description: 'is the scope struggle\'s type particular type?', supportedScopes: ['struggle'], syntax: "is_struggle_type = iberian_struggle" },
-  { name: 'phase_has_catalyst', description: 'Is any of the future phases affected by the given catalyst?phase_has_catalyst = catalyst_key', supportedScopes: ['struggle'] },
-];
-
-/**
- * Triggers for legend scope (16 triggers)
- */
-export const legendTriggers: TriggerDefinition[] = [
-  { name: 'any_legend_promoter', description: 'Gets all promoters of the scoped legend', supportedScopes: ['legend'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_legend_promoter = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_spread_province', description: 'Gets all provinces the scoped legend has spread into', supportedScopes: ['legend'], supportedTargets: ['province'], outputScope: 'province', isIterator: true, valueType: 'block', syntax: "any_spread_province = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'days_since_legend_completion', description: 'Days since when the legend was completed.', supportedScopes: ['legend'], valueType: 'comparison' },
-  { name: 'days_since_legend_start_date', description: 'Days since when the legend was created.', supportedScopes: ['legend'], valueType: 'comparison' },
-  { name: 'has_legend_chapter', description: 'Does the legend have the given localization key set for the named chapter.', supportedScopes: ['legend'], syntax: "has_legend_chapter = { name = opening localization_key = default_legend_opening }\nhas_legend_chapter = opening", parameters: ['name'] },
-  { name: 'has_legend_chronicle', description: 'Does the scoped legend have the specified legend chronicle.', supportedScopes: ['legend'], syntax: "has_legend_chronicle = beast_slayer" },
-  { name: 'has_legend_county_modifier', description: 'Does the scoped legend have a given modifier affecting the counties', supportedScopes: ['legend'], syntax: "has_legend_county_modifier = name" },
-  { name: 'has_legend_county_modifier_duration_remaining', description: 'Does the scoped legend have the duration remaining on a given modifier affecting the counties', supportedScopes: ['legend'], syntax: "has_legend_county_modifier_duration_remaining = name" },
-  { name: 'has_legend_owner_modifier', description: 'Does the scoped legend have a given modifier affecting the owner', supportedScopes: ['legend'], syntax: "has_legend_owner_modifier = name" },
-  { name: 'has_legend_owner_modifier_duration_remaining', description: 'Does the scoped legend have the duration remaining on a given modifier affecting the owner', supportedScopes: ['legend'], syntax: "has_legend_owner_modifier_duration_remaining = name" },
-  { name: 'has_legend_province_modifier', description: 'Does the scoped legend have a given modifier affecting the provinces', supportedScopes: ['legend'], syntax: "has_legend_province_modifier = name" },
-  { name: 'has_legend_province_modifier_duration_remaining', description: 'Does the scoped legend have the duration remaining on a given modifier affecting the provinces', supportedScopes: ['legend'], syntax: "has_legend_province_modifier_duration_remaining = name" },
-  { name: 'is_legend_completed', description: 'Is the scoped legend completed?.', supportedScopes: ['legend'], valueType: 'boolean', syntax: "scope:legend = {\nis_legend_completed = yes\n}" },
-  { name: 'legend_completion_date', description: 'Date when the legend was completed.', supportedScopes: ['legend'], valueType: 'comparison' },
-  { name: 'legend_quality', description: 'Get the quality of this legend.', supportedScopes: ['legend'], syntax: "legend_quality = famed" },
-  { name: 'legend_start_date', description: 'Date when the legend was created.', supportedScopes: ['legend'], valueType: 'comparison' },
-];
-
-/**
- * Triggers for accolade scope (8 triggers)
- */
-export const accoladeTriggers: TriggerDefinition[] = [
-  { name: 'accolade_rank', description: 'How many ranks does this Accolade have unlocked?', supportedScopes: ['accolade'], valueType: 'comparison', syntax: "accolade_rank > 2" },
-  { name: 'has_accolade_category', description: 'Does any of the Accolades types have the given category flag?', supportedScopes: ['accolade'], syntax: "has_accolade_category = flag" },
-  { name: 'has_accolade_parameter', description: 'Does any of the Accolades unlocked ranks have the given parameter flag?', supportedScopes: ['accolade'], syntax: "has_accolade_parameter = flag" },
-  { name: 'has_accolade_type', description: 'Does the Accolade have the given type?', supportedScopes: ['accolade'], syntax: "has_accolade_type = key" },
-  { name: 'has_potential_accolade_successors', description: 'Does the given Accolade\'s Owner have any character in their court ( including guests ) that could act as Successor of this Accolade if made into a Knight?', supportedScopes: ['accolade'], valueType: 'boolean' },
-  { name: 'is_accolade_active', description: 'Is the scoped Accolade active, i.e. assinged by their Liege?', supportedScopes: ['accolade'], valueType: 'boolean' },
-  { name: 'primary_tier', description: 'Is the scoped Accolade\'s primary type tier equal to?', supportedScopes: ['accolade'] },
-  { name: 'secondary_tier', description: 'Is the scoped Accolade\'s secondary type tier equal to?', supportedScopes: ['accolade'] },
-];
-
-/**
- * Triggers for epidemic scope (5 triggers)
- */
-export const epidemicTriggers: TriggerDefinition[] = [
-  { name: 'any_infected_province', description: 'Gets all provinces infected by the scoped epidemic', supportedScopes: ['epidemic'], supportedTargets: ['province'], outputScope: 'province', isIterator: true, valueType: 'block', syntax: "any_infected_province = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'days_since_outbreak_start', description: 'Number of days since the epidemic outbreak started.', supportedScopes: ['epidemic'], valueType: 'comparison', syntax: "days_since_outbreak_start >= 20" },
-  { name: 'outbreak_intensity', description: 'Get the outbreak intensity of this epidemic.', supportedScopes: ['epidemic'], syntax: "outbreak_intensity = major" },
-  { name: 'outbreak_start_date', description: 'Date when the epidemic outbreak began.', supportedScopes: ['epidemic'], valueType: 'comparison' },
-  { name: 'total_infected_provinces', description: 'Get the total number of provinces infected over the lifetime of this epidemic.', supportedScopes: ['epidemic'], valueType: 'comparison', syntax: "total_infected_provinces >= 20" },
-];
-
-/**
- * Triggers for task_contract scope (6 triggers)
- */
-export const taskcontractTriggers: TriggerDefinition[] = [
-  { name: 'has_task_contract_group', description: 'Has task contract of the group', supportedScopes: ['task_contract'], syntax: "scope:character = { has_task_contract_group = group }" },
-  { name: 'has_task_contract_type', description: 'has task contract with type', supportedScopes: ['task_contract'], syntax: "scope:task_contract = { has_task_contract_type = type_name }" },
-  { name: 'is_criminal', description: 'Is the contract type of criminal nature?', supportedScopes: ['task_contract'], valueType: 'boolean' },
-  { name: 'is_valid_to_keep', description: 'Is contract valid to keep?', supportedScopes: ['task_contract'], valueType: 'boolean' },
-  { name: 'task_contract_tier', description: 'Tier value for task contract', supportedScopes: ['task_contract'], valueType: 'comparison', syntax: "scope:task_contract = { task_contract_tier = num }" },
-  { name: 'time_since_contract_taken', description: 'Days since the task contract was accepted.', supportedScopes: ['task_contract'], valueType: 'comparison' },
-];
-
-/**
- * Triggers for situation scope (21 triggers)
- */
-export const situationTriggers: TriggerDefinition[] = [
-  { name: 'any_participant_group', description: 'Iterate through all participant groups of the situation (in all sub-regions)', supportedScopes: ['situation'], supportedTargets: ['situation_participant_group'], outputScope: 'situation_participant_group', isIterator: true, valueType: 'block', syntax: "any_participant_group = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_situation_county', description: 'Iterate through all counties that are involved in a situation', supportedScopes: ['situation'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, valueType: 'block', syntax: "any_situation_county = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_situation_participant', description: 'Iterate through all characters that are participating in a situation.', supportedScopes: ['situation'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_situation_participant = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_situation_sub_region', description: 'Iterate through all sub-regions of a situation', supportedScopes: ['situation'], supportedTargets: ['situation_sub_region'], outputScope: 'situation_sub_region', isIterator: true, valueType: 'block', syntax: "any_situation_sub_region = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'has_situation_top_phase_parameter', description: 'Checks if top sub-region has phase parameter or not', supportedScopes: ['situation'], syntax: "has_situation_top_phase_parameter = parameter_key" },
-  { name: 'is_manual_participant', description: 'Is this character considered a manual participant candidate in this situation?', supportedScopes: ['situation'], supportedTargets: ['character'], syntax: "is_manual_participant = yes/no" },
-  { name: 'is_situation_unique', description: 'Is the type of scoped situation unique.', supportedScopes: ['situation'], valueType: 'boolean', syntax: "is_situation_unique = yes/no" },
-  { name: 'situation_current_phase', description: 'Checks if situation current phase equals phase_type_key (will take first sub-region)', supportedScopes: ['situation'], syntax: "situation_current_phase = phase_type_key" },
-  { name: 'situation_days_since_end_date', description: 'Days since when the situation was completed.', supportedScopes: ['situation'], valueType: 'comparison' },
-  { name: 'situation_days_since_start_date', description: 'Days since the situation started.', supportedScopes: ['situation'], valueType: 'comparison' },
-  { name: 'situation_end_date', description: 'Date when the situation was completed.', supportedScopes: ['situation'], valueType: 'comparison' },
-  { name: 'situation_has_catalyst', description: 'Checks if any sub-region of the situation has any of their future phases affected by the given catalyst.', supportedScopes: ['situation'], syntax: "has_situation_top_catalyst = situation_catalyst_key", parameters: ['has_situation_top_catalyst'] },
-  { name: 'situation_start_date', description: 'Date when the situation started.', supportedScopes: ['situation'], valueType: 'comparison' },
-  { name: 'situation_top_has_catalyst', description: 'Checks if top sub-region of situation has any of the future phases affected by the given catalyst', supportedScopes: ['situation'], syntax: "has_situation_top_catalyst = situation_catalyst_key", parameters: ['has_situation_top_catalyst'] },
-  { name: 'situation_top_has_county', description: 'Checks if top sub-region of situation contains county', supportedScopes: ['situation'], supportedTargets: ['province'], syntax: "situation_top_has_county = scope:county" },
-  { name: 'situation_top_has_province', description: 'Checks if top sub-region of situation contains province', supportedScopes: ['situation'], supportedTargets: ['province'], syntax: "situation_top_has_province = scope:province" },
-  { name: 'situation_top_phase_days_since_start_date', description: 'Days since the situation top phase started.', supportedScopes: ['situation'], valueType: 'comparison' },
-  { name: 'situation_top_phase_days_until_end_date', description: 'Days until the situation top phase completes.', supportedScopes: ['situation'], valueType: 'comparison' },
-  { name: 'situation_top_phase_end_date', description: 'Date when the situation top phase Ended.', supportedScopes: ['situation'], valueType: 'comparison' },
-  { name: 'situation_top_phase_start_date', description: 'Date when the situation top phase started.', supportedScopes: ['situation'], valueType: 'comparison' },
-  { name: 'situation_type', description: 'Is the scoped situation of a specific situation type?', supportedScopes: ['situation'], syntax: "situation_type = situation_key" },
-];
-
-/**
- * Triggers for situation_sub_region scope (15 triggers)
- */
-export const situationsubregionTriggers: TriggerDefinition[] = [
-  { name: 'any_situation_sub_region_county', description: 'Iterate through all counties of a situation sub-region (warning: not fast)', supportedScopes: ['situation_sub_region'], supportedTargets: ['landed_title'], outputScope: 'landed_title', isIterator: true, valueType: 'block', syntax: "any_situation_sub_region_county = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_situation_sub_region_geographical_region', description: 'Iterate through all geographical regions of a situation sub-region', supportedScopes: ['situation_sub_region'], supportedTargets: ['geographical_region'], outputScope: 'geographical_region', isIterator: true, valueType: 'block', syntax: "any_situation_sub_region_geographical_region = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_situation_sub_region_participant', description: 'Iterate through all characters that are participating in a situation, in a specific subregion', supportedScopes: ['situation_sub_region'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_situation_sub_region_participant = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_situation_sub_region_participant_group', description: 'Iterate through all participant groups of the situation sub-region', supportedScopes: ['situation_sub_region'], supportedTargets: ['situation_participant_group'], outputScope: 'situation_participant_group', isIterator: true, valueType: 'block', syntax: "any_situation_sub_region_participant_group = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'has_sub_region_phase_parameter', description: 'Checks if sub-region has phase parameter or not', supportedScopes: ['situation_sub_region'], syntax: "has_sub_region_phase_parameter = parameter_key" },
-  { name: 'phase_takeover_duration_days', description: 'Checks the takeover days left of a future phase in this sub-region.', supportedScopes: ['situation_sub_region'], valueType: 'comparison', syntax: "phase_takeover_duration_days:future_phase_key <= scripted_value" },
-  { name: 'phase_takeover_points', description: 'Checks the takeover points of a future phase in this sub-region.', supportedScopes: ['situation_sub_region'], valueType: 'comparison', syntax: "phase_takeover_points:future_phase_key <= scripted_value" },
-  { name: 'situation_sub_region_has_county', description: 'Checks if scoped sub-region of a situation contains county', supportedScopes: ['situation_sub_region'], supportedTargets: ['landed_title'], syntax: "situation_sub_region_has_county = scope:county" },
-  { name: 'situation_sub_region_has_geographical_region', description: 'Is geographical region part of situation sub-region?', supportedScopes: ['situation_sub_region'], supportedTargets: ['geographical_region'], syntax: "situation_sub_region_has_geographical_region = scope:geographical_region" },
-  { name: 'situation_sub_region_has_province', description: 'Checks if scoped sub-region of a situation contains province', supportedScopes: ['situation_sub_region'], supportedTargets: ['province'], syntax: "situation_sub_region_has_province = scope:province" },
-  { name: 'sub_region_current_phase', description: 'Checks if sub-region current phase equals phase_type', supportedScopes: ['situation_sub_region'], syntax: "sub_region_current_phase = phase_type" },
-  { name: 'sub_region_current_phase_days_since_start_date', description: 'Days since the sub region current situation phase started.', supportedScopes: ['situation_sub_region'], valueType: 'comparison' },
-  { name: 'sub_region_current_phase_days_until_end_date', description: 'Days until the sub region current situation phase ends.', supportedScopes: ['situation_sub_region'], valueType: 'comparison' },
-  { name: 'sub_region_current_phase_end_date', description: 'Date when the sub region current situation phase ends.', supportedScopes: ['situation_sub_region'], valueType: 'comparison' },
-  { name: 'sub_region_current_phase_start_date', description: 'Date when the sub region current situation phase started.', supportedScopes: ['situation_sub_region'], valueType: 'comparison' },
-];
-
-/**
- * Triggers for tax_slot scope (4 triggers)
- */
-export const taxslotTriggers: TriggerDefinition[] = [
-  { name: 'any_tax_slot_vassal', description: 'Iterates through all Vassals assigned to the scoped Tax Slot', supportedScopes: ['tax_slot'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_tax_slot_vassal = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'available_taxpayer_slots', description: 'How many slots for taxpayers are available in scoped tax slot?', supportedScopes: ['tax_slot'], valueType: 'comparison', syntax: "scope:tax_slot = { available_tax_player_slots > 2 }" },
-  { name: 'has_tax_collector', description: 'has_tax_collector = yes', supportedScopes: ['tax_slot'], valueType: 'boolean', syntax: "Does the scoped Tax Slot have any Tax Collector employed?" },
-  { name: 'is_active_obligation', description: 'Is this the current active tax obligation?', supportedScopes: ['tax_slot'], syntax: "scope:tax_slot = { is_active_obligation = obligation_key }" },
-];
-
-/**
- * Triggers for domicile scope (18 triggers)
- */
-export const domicileTriggers: TriggerDefinition[] = [
-  { name: 'domicile_building_has_free_internal_slot', description: 'Does scoped domicile have building with any free internal building slots?', supportedScopes: ['domicile'], syntax: "scope:domicile = { domicile_building_has_free_internal_slot = domicile building key }" },
-  { name: 'domicile_uses_culture_and_faith', description: 'Does the scoped domicile use culture and faith?', supportedScopes: ['domicile'], valueType: 'boolean' },
-  { name: 'domicile_uses_provisions', description: 'Does the scoped domicile use provisions?', supportedScopes: ['domicile'], valueType: 'boolean' },
-  { name: 'external_domicile_building_slots', description: 'Total amount of external building slots for scoped domicile', supportedScopes: ['domicile'], valueType: 'comparison', syntax: "scope:domicile = { external_domicile_building_slots == 5 }" },
-  { name: 'free_external_domicile_building_slots', description: 'Amount of free external building slots for scoped domicile', supportedScopes: ['domicile'], valueType: 'comparison', syntax: "scope:domicile = { free_external_domicile_building_slots < 1 }" },
-  { name: 'has_domicile_building', description: 'Does scoped domicile have building of specified type?', supportedScopes: ['domicile'], syntax: "scope:domicile = { has_domicile_building = domicile building key }" },
-  { name: 'has_domicile_building_or_higher', description: 'Does scoped domicile have building or one of its upgrades?', supportedScopes: ['domicile'], syntax: "scope:domicile = { has_domicile_building_or_higher = domicile building key }" },
-  { name: 'has_domicile_construction', description: 'Is the scoped domicile currently constructing the specified building?', supportedScopes: ['domicile'], syntax: "scope:domicile = { has_domicile_construction = domicile building key }" },
-  { name: 'has_domicile_parameter', description: 'Does scoped domicile have parameter in one or more of its buildings?', supportedScopes: ['domicile'], syntax: "scope:domicile = { has_domicile_parameter = parameter_name }" },
-  { name: 'has_ongoing_domicile_construction', description: 'Does the scoped domicile have an ongoing construction?)', supportedScopes: ['domicile'], valueType: 'boolean', syntax: "scope:domicile = {\nhas_ongoing_domicile_construction = yes/no\n}" },
-  { name: 'herd', description: 'does the scoped domicile have the required herd?', supportedScopes: ['domicile'], valueType: 'comparison' },
-  { name: 'horde', description: 'what is the amount of currently raised horde (or potential horde if none are raised) of the scoped domicile?', supportedScopes: ['domicile'], valueType: 'comparison' },
-  { name: 'is_domicile_type', description: 'Is the scoped domicile of domicile type?', supportedScopes: ['domicile'], syntax: "scope:domicile = { is_domicile_type = domicile_type_key }" },
-  { name: 'max_herd', description: 'what is the herd limit of the scoped domicile?', supportedScopes: ['domicile'], valueType: 'comparison' },
-  { name: 'max_provisions', description: 'does the scoped domicile have the required max provisions?', supportedScopes: ['domicile'], valueType: 'comparison' },
-  { name: 'num_domicile_buildings', description: 'Amount of buildings constructed for scoped domicile', supportedScopes: ['domicile'], valueType: 'comparison', syntax: "scope:domicile = { num_domicile_buildings > 0 }" },
-  { name: 'provision_cost_to_owner', description: 'Is the provision cost from the domicile\'s current location to it\'s owner.', supportedScopes: ['domicile'], valueType: 'comparison', syntax: "In order to calculate the cost we will operate in three stages:\n1. Check if the from and to provinces are direct neighbours.\n2. Check any travel plan the domicile owner might have and see if the from and\nto are part of the travel plan. This will require domicile's location to be\nthe first entry in the travel plan.\n3. Do a pathfind between the domicile and domicile owner's current location,\nusing that path for the cost.\nscope:domicile = {\nprovision_cost_to_owner < 100\n}" },
-  { name: 'provisions', description: 'does the scoped domicile have the required provisions?', supportedScopes: ['domicile'], valueType: 'comparison' },
-];
-
-/**
- * Triggers for great_project scope (5 triggers)
- */
-export const greatprojectTriggers: TriggerDefinition[] = [
-  { name: 'any_contribution', description: 'Iterate through all Contributions of a given Great Project, regardless of whether they were funded or not.', supportedScopes: ['great_project'], supportedTargets: ['project_contribution'], outputScope: 'project_contribution', isIterator: true, valueType: 'block', syntax: "any_contribution = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'great_project_build_progress', description: 'The project\'s build progress in percentage (from 0 to 1). If the project is not being built this is 0.', supportedScopes: ['great_project'], valueType: 'comparison', syntax: "usage:\n<scope:great_project> = {\ngreat_project_build_progress > 0.5\n}" },
-  { name: 'great_project_construction_phase_is', description: 'Compare against the current construction phase of this project.', supportedScopes: ['great_project'], syntax: "Possible values are:\n* planned = the project is gathering funds\n* in_progress = the project has started\n* completed = the project was completed\nusage:\n<scope:great_project> = {\ngreat_project_construction_phase = in_progress\n}", parameters: ['great_project_construction_phase'] },
-  { name: 'great_project_days_to_completion', description: 'The number of days until the project is built, taking into account the current province holder for progress bonuses. If the project is not being built this is -1.', supportedScopes: ['great_project'], valueType: 'comparison', syntax: "usage:\n<scope:great_project> = {\ngreat_project_days_to_completion > 365\n}" },
-  { name: 'great_project_type', description: 'Check if the project is of the given type. Use the key from the project definition to compare.', supportedScopes: ['great_project'], syntax: "usage:\n<scope:great_project> = {\ngreat_project_type = great_wall\n}" },
-];
-
-/**
- * Triggers for confederation scope (9 triggers)
- */
-export const confederationTriggers: TriggerDefinition[] = [
-  { name: 'any_confederation_member', description: 'Iterates through all member characters of the scoped confederation', supportedScopes: ['confederation'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_confederation_member = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'any_confederation_member_house', description: 'Iterates through all member houses of the scoped confederation', supportedScopes: ['confederation'], supportedTargets: ['dynasty_house'], outputScope: 'dynasty_house', isIterator: true, valueType: 'block', syntax: "any_confederation_member_house = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'cohesion', description: 'Current total cohesion of the confederation/bloc.', supportedScopes: ['confederation'], valueType: 'comparison' },
-  { name: 'combined_military_strength', description: 'Current combined military power of the confederation/bloc.', supportedScopes: ['confederation'], valueType: 'comparison' },
-  { name: 'has_cohesion', description: 'Does the confederation/bloc have a cohesion?', supportedScopes: ['confederation'], valueType: 'boolean' },
-  { name: 'has_cohesion_level_parameter', description: 'Does current cohesion level of the given confederation/bloc have the given parameter?', supportedScopes: ['confederation'], syntax: "usage:\n<bloc> = {\nhas_house_power_parameter = <parameter_key>\n}", parameters: ['has_house_power_parameter'] },
-  { name: 'has_leading_house', description: 'Does the confederation have a leading house?', supportedScopes: ['confederation'], valueType: 'boolean' },
-  { name: 'is_house_based', description: 'Is the confederation house based? i.e bloc', supportedScopes: ['confederation'], valueType: 'boolean' },
-  { name: 'member_count', description: 'Number of members in the scoped confederation', supportedScopes: ['confederation'], valueType: 'comparison' },
-];
-
-/**
- * Triggers for house_relation scope (3 triggers)
- */
-export const houserelationTriggers: TriggerDefinition[] = [
-  { name: 'any_relation_house', description: 'Iterate over both houses in the given relation', supportedScopes: ['house_relation'], supportedTargets: ['dynasty_house'], outputScope: 'dynasty_house', isIterator: true, valueType: 'block', syntax: "any_relation_house = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
-  { name: 'has_house_relation_level', description: 'Does this house relation have the given level?', supportedScopes: ['house_relation'], syntax: "usage:\n<house_relation> = {\nhas_house_relation_level = <level>\n}" },
-  { name: 'has_house_relation_parameter', description: 'Does this house relation have the given parameter?', supportedScopes: ['house_relation'], syntax: "usage:\n<house_relation> = {\nhas_house_relation_parameter = <parameter>\n}" },
-];
-
-/**
- * Triggers for agent_slot scope (4 triggers)
- */
-export const agentslotTriggers: TriggerDefinition[] = [
-  { name: 'agent_slot_contribution', description: 'The contribution value given by the scoped filled agent slot.', supportedScopes: ['agent_slot'], valueType: 'comparison' },
-  { name: 'agent_slot_has_contribution_type', description: 'Does the agent slot have provide the given type of contribution?', supportedScopes: ['agent_slot'], syntax: "Supported types: 'secrecy', 'success_chance', 'success_chance_growth', 'success_chance_max' and 'speed'\nagent_slot_has_contribution_type = <type>" },
-  { name: 'is_agent_slot_type', description: 'Does the Agent Slot have the given type?', supportedScopes: ['agent_slot'], syntax: "is_agent_slot_type = key" },
-  { name: 'is_filled', description: 'Is this agent slot filled?', supportedScopes: ['agent_slot'], valueType: 'boolean' },
+export const warTriggers: TriggerDefinition[] = [
+  { name: 'any_war_attacker', description: 'Iterate through all attackers in the war', supportedScopes: ['war'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_war_attacker = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_war_defender', description: 'Iterate through all defenders in the war', supportedScopes: ['war'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_war_defender = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_war_participant', description: 'Iterate through all participants in the war', supportedScopes: ['war'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_war_participant = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'attacker_war_score', description: 'compares the attacker war score', supportedScopes: ['war'], valueType: 'comparison' },
+  { name: 'days_since_max_war_score', description: 'Number of days since the war score has been at max (+100 or -100). Returns -1 if the war score is not +100 or -100', supportedScopes: ['war'], valueType: 'comparison' },
+  { name: 'defender_war_score', description: 'compares the defender war score', supportedScopes: ['war'], valueType: 'comparison' },
+  { name: 'has_valid_casus_belli', description: 'does the war interaction still have a valid casus belli (those should be automatically removed on daily tick, but can exist for a tick)', supportedScopes: ['war'], valueType: 'boolean' },
+  { name: 'is_attacker', description: 'is the target character in the scope war as an attacker?', supportedScopes: ['war'] },
+  { name: 'is_civil_war', description: 'Check if the scope war is a civil war or not', supportedScopes: ['war'], valueType: 'boolean' },
+  { name: 'is_defender', description: 'is the target character in the scope war as a defender?', supportedScopes: ['war'] },
+  { name: 'is_participant', description: 'is the target character participating in the scope war as an attacker or defender?', supportedScopes: ['war'] },
+  { name: 'is_war_leader', description: 'is the target character leading one of the sides in the scope war?', supportedScopes: ['war'] },
+  { name: 'is_white_peace_possible', description: 'Check if the scoped war\'s CB has is_white_peace_possible = yes', supportedScopes: ['war'], valueType: 'boolean' },
+  { name: 'using_cb', description: 'is the scope war using the specified CB? using_cb = religious_war', supportedScopes: ['war'] },
+  { name: 'war_contribution', description: 'Checks how much a character has contributed to the scoped war', supportedScopes: ['war'], valueType: 'comparison', syntax: "war_contribution = {\ntarget = some character\nvalue > 5\n}", parameters: ['target'] },
+  { name: 'war_days', description: 'compares the number of days the war is going on for', supportedScopes: ['war'], valueType: 'comparison' },
+  { name: 'was_called', description: 'has the target character been called to the scope war already?', supportedScopes: ['war'] },
 ];
 
 /**
@@ -1973,44 +2100,56 @@ export const generalTriggers: TriggerDefinition[] = [
  * All triggers combined
  */
 export const allTriggers: TriggerDefinition[] = [
+  ...accoladeTriggers,
+  ...accoladetypeTriggers,
+  ...activityTriggers,
+  ...agentslotTriggers,
+  ...armyTriggers,
+  ...artifactTriggers,
+  ...casusbelliTriggers,
   ...characterTriggers,
-  ...landedtitleTriggers,
-  ...provinceTriggers,
-  ...dynastyTriggers,
-  ...dynastyhouseTriggers,
+  ...charactermemoryTriggers,
+  ...combatTriggers,
+  ...combatsideTriggers,
+  ...confederationTriggers,
+  ...counciltaskTriggers,
   ...cultureTriggers,
   ...cultureinnovationTriggers,
-  ...faithTriggers,
-  ...religionTriggers,
-  ...armyTriggers,
-  ...regimentTriggers,
-  ...schemeTriggers,
-  ...warTriggers,
-  ...activityTriggers,
-  ...artifactTriggers,
-  ...secretTriggers,
-  ...factionTriggers,
-  ...holyorderTriggers,
-  ...mercenarycompanyTriggers,
-  ...inspirationTriggers,
-  ...storyTriggers,
-  ...casusbelliTriggers,
-  ...travelplanTriggers,
-  ...counciltaskTriggers,
-  ...greatholywarTriggers,
-  ...struggleTriggers,
-  ...legendTriggers,
-  ...accoladeTriggers,
-  ...epidemicTriggers,
-  ...taskcontractTriggers,
-  ...situationTriggers,
-  ...situationsubregionTriggers,
-  ...taxslotTriggers,
+  ...culturetraditionTriggers,
   ...domicileTriggers,
+  ...dynastyTriggers,
+  ...dynastyhouseTriggers,
+  ...epidemicTriggers,
+  ...factionTriggers,
+  ...faithTriggers,
+  ...geographicalregionTriggers,
+  ...greatholywarTriggers,
   ...greatprojectTriggers,
-  ...confederationTriggers,
+  ...greatprojecttypeTriggers,
+  ...holdingtypeTriggers,
+  ...holyorderTriggers,
   ...houserelationTriggers,
-  ...agentslotTriggers,
+  ...inspirationTriggers,
+  ...landedtitleTriggers,
+  ...legendTriggers,
+  ...mercenarycompanyTriggers,
+  ...projectcontributionTriggers,
+  ...provinceTriggers,
+  ...regimentTriggers,
+  ...religionTriggers,
+  ...schemeTriggers,
+  ...secretTriggers,
+  ...situationTriggers,
+  ...situationparticipantgroupTriggers,
+  ...situationsubregionTriggers,
+  ...storyTriggers,
+  ...struggleTriggers,
+  ...taskcontractTriggers,
+  ...taxslotTriggers,
+  ...traitTriggers,
+  ...travelplanTriggers,
+  ...vassalcontractobligationlevelTriggers,
+  ...warTriggers,
   ...generalTriggers,
 ];
 

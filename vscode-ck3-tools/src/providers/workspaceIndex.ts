@@ -214,6 +214,7 @@ export class CK3WorkspaceIndex {
       return;
     }
 
+    // Index standard entity folders
     for (const [entityType, pathPattern] of Object.entries(ENTITY_TYPE_PATHS)) {
       const folder = path.join(gamePath, 'game', pathPattern.replace(/\//g, path.sep));
       if (!fs.existsSync(folder)) {
@@ -221,6 +222,97 @@ export class CK3WorkspaceIndex {
       }
 
       await this.indexFolder(folder, entityType as EntityType);
+    }
+
+    // Also scan for inline scripted_trigger/scripted_effect definitions in event files
+    // These are defined with syntax: scripted_trigger name = { ... } or scripted_effect name = { ... }
+    const eventsFolder = path.join(gamePath, 'game', 'events');
+    if (fs.existsSync(eventsFolder)) {
+      await this.indexInlineScriptedDefinitions(eventsFolder);
+    }
+
+    // Also check common folder for any inline definitions
+    const commonFolder = path.join(gamePath, 'game', 'common');
+    if (fs.existsSync(commonFolder)) {
+      await this.indexInlineScriptedDefinitions(commonFolder);
+    }
+  }
+
+  /**
+   * Scan a folder recursively for inline scripted_trigger and scripted_effect definitions
+   */
+  private async indexInlineScriptedDefinitions(folder: string): Promise<void> {
+    const entries = fs.readdirSync(folder, { withFileTypes: true });
+
+    for (const entry of entries) {
+      const fullPath = path.join(folder, entry.name);
+
+      if (entry.isDirectory()) {
+        // Skip the dedicated folders - they're already indexed with proper parsing
+        const normalizedPath = fullPath.replace(/\\/g, '/');
+        if (normalizedPath.includes('/scripted_effects/') ||
+            normalizedPath.includes('/scripted_triggers/')) {
+          continue;
+        }
+        await this.indexInlineScriptedDefinitions(fullPath);
+      } else if (entry.name.endsWith('.txt')) {
+        await this.indexInlineScriptedFromFile(fullPath);
+      }
+    }
+  }
+
+  /**
+   * Parse a file for inline scripted_trigger and scripted_effect definitions
+   */
+  private async indexInlineScriptedFromFile(filePath: string): Promise<void> {
+    let text: string;
+    try {
+      text = fs.readFileSync(filePath, 'utf-8');
+    } catch {
+      return;
+    }
+
+    const lines = text.split('\n');
+    const uri = vscode.Uri.file(filePath);
+    const uriString = uri.toString();
+
+    // Pattern: scripted_trigger name = { or scripted_effect name = {
+    const inlinePattern = /^(scripted_trigger|scripted_effect)\s+(\w+)\s*=/;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const trimmed = line.trim();
+
+      // Skip comments
+      if (trimmed.startsWith('#')) continue;
+
+      const match = trimmed.match(inlinePattern);
+      if (match) {
+        const [, type, name] = match;
+        const entityType = type === 'scripted_trigger' ? 'scripted_trigger' : 'scripted_effect';
+
+        const location: EntityLocation = {
+          uri: uriString,
+          line: i,
+          name: name,
+        };
+
+        // Add to index (mod files override, but game files don't override each other)
+        const index = this.indices.get(entityType)!;
+        if (!index.has(name)) {
+          index.set(name, location);
+        }
+
+        // Track file->entities mapping for cleanup
+        if (!this.fileToEntities.has(uriString)) {
+          this.fileToEntities.set(uriString, new Map());
+        }
+        const fileEntities = this.fileToEntities.get(uriString)!;
+        if (!fileEntities.has(entityType)) {
+          fileEntities.set(entityType, new Set());
+        }
+        fileEntities.get(entityType)!.add(name);
+      }
     }
   }
 

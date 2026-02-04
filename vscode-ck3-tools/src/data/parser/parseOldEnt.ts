@@ -354,19 +354,13 @@ function generateEffectsCode(effects: ParsedEffect[]): string {
   }
 
   // Generate arrays for each scope category
-  const scopeOrder = [
-    'character', 'landed_title', 'province', 'dynasty', 'dynasty_house',
-    'culture', 'culture_innovation', 'faith', 'religion', 'army', 'regiment', 'scheme', 'war', 'activity',
-    'artifact', 'secret', 'faction', 'holy_order', 'mercenary_company',
-    'inspiration', 'story', 'casus_belli', 'travel_plan', 'council_task',
-    'great_holy_war', 'struggle', 'legend', 'accolade', 'epidemic',
-    // Roads to Power scopes
-    'task_contract', 'situation', 'situation_sub_region', 'tax_slot',
-    'domicile', 'great_project', 'confederation', 'house_relation', 'agent_slot',
-    'none'
-  ];
+  // Use all scopes found in the data, sorted alphabetically, with 'none' last
+  const allScopesInData = Object.keys(byScope).filter(s => s !== 'none').sort();
+  if (byScope['none']) {
+    allScopesInData.push('none');
+  }
 
-  for (const scope of scopeOrder) {
+  for (const scope of allScopesInData) {
     const scopeEffects = byScope[scope];
     if (!scopeEffects || scopeEffects.length === 0) continue;
 
@@ -403,7 +397,7 @@ function generateEffectsCode(effects: ParsedEffect[]): string {
   }
 
   // Generate allEffects
-  const allArrays = scopeOrder
+  const allArrays = allScopesInData
     .filter(s => byScope[s] && byScope[s].length > 0)
     .map(s => s === 'none' ? 'generalEffects' : `${s.replace(/_/g, '')}Effects`);
 
@@ -483,19 +477,13 @@ function generateTriggersCode(triggers: ParsedTrigger[]): string {
   }
 
   // Generate arrays for each scope category
-  const scopeOrder = [
-    'character', 'landed_title', 'province', 'dynasty', 'dynasty_house',
-    'culture', 'culture_innovation', 'faith', 'religion', 'army', 'regiment', 'scheme', 'war', 'activity',
-    'artifact', 'secret', 'faction', 'holy_order', 'mercenary_company',
-    'inspiration', 'story', 'casus_belli', 'travel_plan', 'council_task',
-    'great_holy_war', 'struggle', 'legend', 'accolade', 'epidemic',
-    // Roads to Power scopes
-    'task_contract', 'situation', 'situation_sub_region', 'tax_slot',
-    'domicile', 'great_project', 'confederation', 'house_relation', 'agent_slot',
-    'none'
-  ];
+  // Use all scopes found in the data, sorted alphabetically, with 'none' last
+  const allScopesInData = Object.keys(byScope).filter(s => s !== 'none').sort();
+  if (byScope['none']) {
+    allScopesInData.push('none');
+  }
 
-  for (const scope of scopeOrder) {
+  for (const scope of allScopesInData) {
     const scopeTriggers = byScope[scope];
     if (!scopeTriggers || scopeTriggers.length === 0) continue;
 
@@ -545,7 +533,7 @@ function generateTriggersCode(triggers: ParsedTrigger[]): string {
   }
 
   // Generate allTriggers
-  const allArrays = scopeOrder
+  const allArrays = allScopesInData
     .filter(s => byScope[s] && byScope[s].length > 0)
     .map(s => s === 'none' ? 'generalTriggers' : `${s.replace(/_/g, '')}Triggers`);
 

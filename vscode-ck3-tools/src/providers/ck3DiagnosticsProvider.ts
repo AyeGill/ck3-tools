@@ -64,6 +64,7 @@ interface ParsedField {
 const CONTROL_FLOW_FIELDS = new Set([
   'if', 'else', 'else_if', 'switch', 'trigger_if', 'trigger_else',
   'random', 'random_list', 'while', 'break', 'continue',
+  'first_valid',  // Picks first valid option from a list
   'limit', 'modifier', 'weight', 'factor', 'add', 'multiply',
   'save_scope_as', 'save_scope_value_as', 'save_temporary_scope_as',
   'custom_description', 'custom_tooltip', 'show_as_tooltip',
@@ -1532,7 +1533,7 @@ export class CK3DiagnosticsProvider {
           );
         }
         // Unknown - could be a scripted effect
-        if (!this.couldBeScriptedEffectOrTrigger(fieldName)) {
+        if (!this.isKnownScriptedEffectOrTrigger(fieldName)) {
           const fieldStart = cleanLine.indexOf(fieldName);
           const range = new vscode.Range(
             new vscode.Position(lineNum, fieldStart >= 0 ? fieldStart : 0),
@@ -1564,7 +1565,7 @@ export class CK3DiagnosticsProvider {
           );
         }
         // Unknown - could be a scripted trigger
-        if (!this.couldBeScriptedEffectOrTrigger(fieldName)) {
+        if (!this.isKnownScriptedEffectOrTrigger(fieldName)) {
           const fieldStart = cleanLine.indexOf(fieldName);
           const range = new vscode.Range(
             new vscode.Position(lineNum, fieldStart >= 0 ? fieldStart : 0),
@@ -1749,48 +1750,15 @@ export class CK3DiagnosticsProvider {
   }
 
   /**
-   * Check if a name could be a scripted effect or trigger
-   * Scripted effects/triggers are user-defined and can have any name
-   * We use heuristics to avoid false positives
+   * Check if a name is a known scripted effect or trigger in the workspace index
+   * Returns true only if the name is actually registered as a scripted effect/trigger
    */
-  private couldBeScriptedEffectOrTrigger(name: string): boolean {
-    // Common patterns for scripted effects/triggers
-    const scriptedPatterns = [
-      /_effect$/,
-      /_trigger$/,
-      /^trigger_/,
-      /^effect_/,
-      /^scripted_/,
-      /^has_/,
-      /^is_/,
-      /^can_/,
-      /^get_/,
-      /^set_/,
-      /^add_/,
-      /^remove_/,
-      /^check_/,
-      /^calculate_/,
-      /^apply_/,
-      /^grant_/,
-      /^create_/,
-      /^destroy_/,
-      /^update_/,
-      /^validate_/,
-    ];
-
-    for (const pattern of scriptedPatterns) {
-      if (pattern.test(name)) {
-        return true;
-      }
+  private isKnownScriptedEffectOrTrigger(name: string): boolean {
+    if (!this.workspaceIndex) {
+      return false;
     }
-
-    // Also allow anything with underscores (likely a scripted thing)
-    // This is very permissive to avoid false positives
-    if (name.includes('_') && name.length > 3) {
-      return true;
-    }
-
-    return false;
+    return this.workspaceIndex.has('scripted_effect', name) ||
+           this.workspaceIndex.has('scripted_trigger', name);
   }
 
   /**
