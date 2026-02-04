@@ -302,6 +302,7 @@ function normalizeScope(scope: string): string {
     'title': 'landed_title',
     'county': 'landed_title',
     'house': 'dynasty_house',
+    'ghw': 'great_holy_war',
   };
 
   const lower = scope.toLowerCase().replace(/\s+/g, '_');
@@ -345,7 +346,7 @@ function generateEffectsCode(effects: ParsedEffect[]): string {
   const byScope: Record<string, ParsedEffect[]> = {};
 
   for (const effect of effects) {
-    const primaryScope = effect.supportedScopes[0] || 'none';
+    const primaryScope = normalizeScope(effect.supportedScopes[0] || 'none');
     if (!byScope[primaryScope]) {
       byScope[primaryScope] = [];
     }
@@ -355,7 +356,7 @@ function generateEffectsCode(effects: ParsedEffect[]): string {
   // Generate arrays for each scope category
   const scopeOrder = [
     'character', 'landed_title', 'province', 'dynasty', 'dynasty_house',
-    'culture', 'culture_innovation', 'faith', 'religion', 'army', 'scheme', 'war', 'activity',
+    'culture', 'culture_innovation', 'faith', 'religion', 'army', 'regiment', 'scheme', 'war', 'activity',
     'artifact', 'secret', 'faction', 'holy_order', 'mercenary_company',
     'inspiration', 'story', 'casus_belli', 'travel_plan', 'council_task',
     'great_holy_war', 'struggle', 'legend', 'accolade', 'epidemic',
@@ -474,7 +475,7 @@ function generateTriggersCode(triggers: ParsedTrigger[]): string {
   const byScope: Record<string, ParsedTrigger[]> = {};
 
   for (const trigger of triggers) {
-    const primaryScope = trigger.supportedScopes[0] || 'none';
+    const primaryScope = normalizeScope(trigger.supportedScopes[0] || 'none');
     if (!byScope[primaryScope]) {
       byScope[primaryScope] = [];
     }
@@ -484,7 +485,7 @@ function generateTriggersCode(triggers: ParsedTrigger[]): string {
   // Generate arrays for each scope category
   const scopeOrder = [
     'character', 'landed_title', 'province', 'dynasty', 'dynasty_house',
-    'culture', 'culture_innovation', 'faith', 'religion', 'army', 'scheme', 'war', 'activity',
+    'culture', 'culture_innovation', 'faith', 'religion', 'army', 'regiment', 'scheme', 'war', 'activity',
     'artifact', 'secret', 'faction', 'holy_order', 'mercenary_company',
     'inspiration', 'story', 'casus_belli', 'travel_plan', 'council_task',
     'great_holy_war', 'struggle', 'legend', 'accolade', 'epidemic',

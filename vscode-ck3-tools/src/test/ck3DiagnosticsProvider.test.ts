@@ -880,4 +880,297 @@ test.0001 = {
       expect(wrongContextDiag).toBeUndefined();
     });
   });
+
+  describe('Operator handling', () => {
+    describe('Standard assignment operator (=)', () => {
+      it('should handle standard = assignment in effect context', () => {
+        const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		add_prestige = 100
+	}
+}`;
+        const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+        const prestigeDiag = diagnostics.find((d: any) =>
+          d.message.includes('add_prestige')
+        );
+
+        expect(prestigeDiag).toBeUndefined();
+      });
+
+      it('should flag unknown effects with = operator', () => {
+        const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		fakeff = 100
+	}
+}`;
+        const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+        const unknownDiag = diagnostics.find((d: any) =>
+          d.message.includes('Unknown effect') && d.message.includes('fakeff')
+        );
+
+        expect(unknownDiag).toBeDefined();
+      });
+    });
+
+    describe('Conditional scope changer operator (?=)', () => {
+      it('should accept valid scope changers with ?= operator', () => {
+        const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		liege ?= {
+			add_prestige = 100
+		}
+	}
+}`;
+        const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+        const liegeDiag = diagnostics.find((d: any) =>
+          d.message.includes('liege')
+        );
+
+        expect(liegeDiag).toBeUndefined();
+      });
+
+      it('should accept capital_barony with ?= operator', () => {
+        const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		capital_barony ?= {
+			add_prestige = 100
+		}
+	}
+}`;
+        const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+        const baronyDiag = diagnostics.find((d: any) =>
+          d.message.includes('capital_barony')
+        );
+
+        expect(baronyDiag).toBeUndefined();
+      });
+
+      it('should flag invalid scope changers with ?= operator', () => {
+        const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		not_a_scope ?= {
+			add_prestige = 100
+		}
+	}
+}`;
+        const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+        const unknownDiag = diagnostics.find((d: any) =>
+          d.message.includes('not_a_scope') && d.message.includes('Invalid ?= usage')
+        );
+
+        expect(unknownDiag).toBeDefined();
+      });
+
+      it('should allow scope:X references with ?= operator', () => {
+        const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		scope:my_target ?= {
+			add_prestige = 100
+		}
+	}
+}`;
+        const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+        const scopeDiag = diagnostics.find((d: any) =>
+          d.message.includes('scope:my_target')
+        );
+
+        expect(scopeDiag).toBeUndefined();
+      });
+    });
+
+    describe('Comparison operators (>, <, >=, <=)', () => {
+      it('should track blocks opened with > operator correctly', () => {
+        // Comparison operators open script value blocks
+        // Triggers inside should NOT be flagged
+        const content = `namespace = test
+test.0001 = {
+	type = character_event
+	trigger = {
+		ai_boldness > {
+			value = 50
+		}
+	}
+}`;
+        const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+        // Should not have unmatched brace errors
+        const braceDiag = diagnostics.find((d: any) =>
+          d.message.includes('brace')
+        );
+
+        expect(braceDiag).toBeUndefined();
+      });
+
+      it('should track blocks opened with < operator correctly', () => {
+        const content = `namespace = test
+test.0001 = {
+	type = character_event
+	trigger = {
+		ai_rationality < {
+			value = 25
+		}
+	}
+}`;
+        const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+        const braceDiag = diagnostics.find((d: any) =>
+          d.message.includes('brace')
+        );
+
+        expect(braceDiag).toBeUndefined();
+      });
+
+      it('should track blocks opened with >= operator correctly', () => {
+        const content = `namespace = test
+test.0001 = {
+	type = character_event
+	trigger = {
+		gold >= {
+			value = 100
+			multiply = 2
+		}
+	}
+}`;
+        const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+        const braceDiag = diagnostics.find((d: any) =>
+          d.message.includes('brace')
+        );
+
+        expect(braceDiag).toBeUndefined();
+      });
+
+      it('should track blocks opened with <= operator correctly', () => {
+        const content = `namespace = test
+test.0001 = {
+	type = character_event
+	trigger = {
+		age <= {
+			value = 65
+		}
+	}
+}`;
+        const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+        const braceDiag = diagnostics.find((d: any) =>
+          d.message.includes('brace')
+        );
+
+        expect(braceDiag).toBeUndefined();
+      });
+
+      it('should correctly handle comparison operator after control flow', () => {
+        // This was a bug: comparison operators weren't tracked,
+        // causing stack mismatch when following control flow
+        const content = `namespace = test
+test.0001 = {
+	type = character_event
+	trigger = {
+		if = {
+			limit = { is_adult = yes }
+		}
+		gold > {
+			value = 100
+		}
+	}
+}`;
+        const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+        const braceDiag = diagnostics.find((d: any) =>
+          d.message.includes('brace')
+        );
+
+        expect(braceDiag).toBeUndefined();
+      });
+
+      it('should NOT treat comparison operators as scope changers', () => {
+        // Comparison operators should create weight/script value context,
+        // not be treated as effects or triggers
+        const content = `namespace = test
+test.0001 = {
+	type = character_event
+	trigger = {
+		prestige > {
+			value = 500
+		}
+	}
+}`;
+        const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+        // prestige should not be flagged as unknown
+        const prestigeDiag = diagnostics.find((d: any) =>
+          d.message.includes('prestige') && d.message.includes('Unknown')
+        );
+
+        expect(prestigeDiag).toBeUndefined();
+      });
+    });
+  });
+
+  describe('Effect parameter validation', () => {
+    it('should NOT flag text as unknown effect inside custom_tooltip', () => {
+      // text is a parameter of custom_tooltip, not an effect
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		custom_tooltip = {
+			text = my_tooltip_key
+		}
+	}
+}`;
+      const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+      const textDiag = diagnostics.find((d: any) =>
+        d.message.includes('"text"')
+      );
+
+      expect(textDiag).toBeUndefined();
+    });
+
+    it('should NOT flag type/stacks as unknown effects inside men_at_arms', () => {
+      // type and stacks are parameters of men_at_arms (inside spawn_army)
+      const content = `namespace = test
+test.0001 = {
+	type = character_event
+	immediate = {
+		spawn_army = {
+			men_at_arms = {
+				type = light_cavalry
+				stacks = 5
+			}
+		}
+	}
+}`;
+      const diagnostics = getDiagnostics(content, '/mod/events/test.txt');
+
+      const typeDiag = diagnostics.find((d: any) =>
+        d.message.includes('"type"') && d.message.includes('men_at_arms')
+      );
+      const stacksDiag = diagnostics.find((d: any) =>
+        d.message.includes('"stacks"')
+      );
+
+      expect(typeDiag).toBeUndefined();
+      expect(stacksDiag).toBeUndefined();
+    });
+  });
 });

@@ -23,6 +23,7 @@ export const TRIGGER_BLOCKS = new Set([
   'trigger', 'is_shown', 'is_valid', 'is_valid_showing_failures_only',
   'ai_potential', 'can_be_picked', 'can_pick',
   'is_highlighted', 'auto_accept', 'can_send', 'can_be_picked_artifact',
+  'show_as_unavailable', // Shows option but grayed out when triggers fail
   'limit', 'alternative_limit', // Trigger blocks that can appear inside effects
   'modifier', // Contains triggers for conditional weight modification
   // Boolean operators - these contain triggers
@@ -197,6 +198,7 @@ export const KNOWN_SCOPE_CHANGERS: Map<string, ScopeType> = new Map([
   ['location', 'province'],
   ['capital_province', 'province'],
   ['capital_county', 'landed_title'],
+  ['capital_barony', 'landed_title'],
   ['primary_title', 'landed_title'],
   ['home_court', 'province'],
 
@@ -237,6 +239,7 @@ export const KNOWN_SCOPE_CHANGERS: Map<string, ScopeType> = new Map([
   ['artifact_owner', 'character'],
 
   // Combat scope changers
+  ['combat', 'combat'],
   ['combat_side', 'combat_side'],
   ['enemy_side', 'combat_side'],
 

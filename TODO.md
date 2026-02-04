@@ -81,7 +81,7 @@ So for example prompting for skill modifications in a trait template makes littl
 - [ ] Simple linting. If we have a comprehensive list of items that are valid in each space (that is, a proper, complete schema) we can mark any invalid ones. (I guess there should be a "ignore this particular invalid field forever" button). We can also detect name collisions (especially useful for events that are just named by numbers), at least within the same mod.
   - **IN PROGRESS**: `CK3DiagnosticsProvider` implemented with schema-based validation
   - Run `npx vitest run src/test/validateGameFiles.test.ts` to validate against vanilla game files (1,522 files)
-  - **Current output: 4,917 diagnostics** (down from 41,889 originally)
+  - **Current output: 109 diagnostics** (down from 41,889 originally)
   - [x] **Unknown effects/triggers base recognition** - All effects/triggers recognized via generated data + parameter overrides + scripted pattern heuristics
   - [x] **Sibling block misattribution** - Fixed regex and control flow bugs that caused false positives
   - [ ] **Effect parameters flagged as unknown (4,542)** - Effects like `men_at_arms`, `name`, `create_task_contract` have parameters that get flagged as unknown effects. Need to add missing parameters to `effectParameterOverrides` in `src/data/index.ts`
@@ -94,7 +94,8 @@ So for example prompting for skill modifications in a trait template makes littl
   - **DONE**: Added hover provider tests (`ck3HoverProvider.test.ts` - 17 tests)
   - **DONE**: Added diagnostics provider tests and context detection tests
   - **DONE**: Added target validation tests (6 tests for trait reference validation)
-  - Total: 125 tests passing
+  - **DONE**: Added operator handling tests (12 tests for =, ?=, >, <, >=, <= operators)
+  - Total: 145 tests passing
 
 
 - What's up with accessory and artifact both being schemae? Should look in the game files and figure this out.
@@ -145,54 +146,48 @@ So for example prompting for skill modifications in a trait template makes littl
 
   # CK3 Diagnostics - Remaining Issues
 
-**Status:** 4,917 diagnostics remain
+**Status:** 109 diagnostics remain (down from 4,917 after adding nested schema blocks to DYNAMIC_KEY_BLOCKS)
 
 ## Top Issues by Identifier Count
 
 | Identifier | Count | Category | Notes |
 |------------|-------|----------|-------|
-| `text` | 3005 | Missing parameter | Used in `custom_description`, `custom_tooltip`, etc. |
-| `type` | 558 | Missing parameter | Used in `men_at_arms`, `history`, etc. |
-| `stacks` | 332 | Missing parameter | Used in `men_at_arms` |
-| `custom` | 232 | Missing parameter | Various effects |
-| `task_contract_tier` | 177 | Trigger in effect context | Parameter to `create_task_contract` |
-| `origin` | 157 | Missing parameter | Various effects |
-| `men` | 77 | Missing parameter | Likely `men_at_arms` related |
+| `type` | 74 | Missing parameter | Various effect contexts |
 | `cb` | 41 | Missing parameter | Casus belli related |
-| `level` | 37 | Missing parameter | `tributary_contract_set_obligation_level` |
-| `always` | 30 | Trigger in effect context | May be false positive |
+| `always` | 30 | Trigger in effect context | Valid trigger used in effect blocks |
+| `article` | 27 | Missing parameter | Localization related |
+| `key` | 23 | Missing parameter | Various effects |
+| `size`, `reinforce` | 17 each | Missing parameter | Army-related |
 | `matchmaker` | 10 | Unknown trigger | Game-specific, may need adding |
 
 ## Issue Categories
 
-### A: Missing Effect Parameters (~4,500)
-Most diagnostics are parameters to effects that aren't in `effectParameterOverrides`:
+### A: Missing Effect Parameters (~150)
+Parameters to effects that aren't in `effectParameterOverrides`:
 ```
-Unknown effect: "type" in "men_at_arms"
-Unknown effect: "stacks" in "men_at_arms"
-Unknown effect: "level" in "tributary_contract_set_obligation_level"
-Unknown effect: "text" in "custom_tooltip"
+Unknown effect: "type" in "some_effect"
+Unknown effect: "cb" in "start_war"
 ```
 **Fix:** Add missing parameters to `effectParameterOverrides` in `src/data/index.ts`
 
-### B: Triggers Used in Effect Context (~200)
+### B: Triggers Used in Effect Context (~100)
 ```
-Trigger "task_contract_tier" used in effect context (in "create_task_contract")
+Trigger "always" used in effect context (in "show_as_unavailable")
 Trigger "gold" used in effect context (in "create_inspiration")
 ```
-These are often parameters to effects, not actual triggers. Need to add to parameter overrides.
+Some are valid (e.g., `show_as_unavailable` takes triggers), others are effect parameters.
 
-### C: Unknown Triggers (~10)
+### C: Unknown Triggers (~20)
 ```
 Unknown trigger: "matchmaker" in "any_child"
 ```
 Some game-specific triggers may be missing from our generated data.
 
-### D: Invalid ?= Usage (~36)
+### D: Invalid ?= Usage (~13)
 ```
-Invalid ?= usage: "add_courtier" is not a valid scope.
+Invalid ?= usage: "obedience_target" is not a valid scope.
 ```
-Effects incorrectly used with the `?=` scope operator.
+Non-scope-changers used with the `?=` operator. May need to add more scope changers.
 
 ## Effect/Trigger Context Validation - False Positives
 

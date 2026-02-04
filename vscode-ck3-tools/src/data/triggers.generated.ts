@@ -1285,7 +1285,7 @@ export const cultureinnovationTriggers: TriggerDefinition[] = [
  */
 export const faithTriggers: TriggerDefinition[] = [
   { name: 'is_in_family', description: 'Is the scoped faith/religion in a given religious family', supportedScopes: ['faith', 'religion'], syntax: "is_in_family = abrhamic" },
-  { name: 'any_defensive_great_holy_wars', description: 'Iterate through all great holy wars this faith is defending against', supportedScopes: ['faith'], supportedTargets: ['ghw'], outputScope: 'ghw', isIterator: true, valueType: 'block', syntax: "any_defensive_great_holy_wars = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_defensive_great_holy_wars', description: 'Iterate through all great holy wars this faith is defending against', supportedScopes: ['faith'], supportedTargets: ['great_holy_war'], outputScope: 'great_holy_war', isIterator: true, valueType: 'block', syntax: "any_defensive_great_holy_wars = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
   { name: 'any_faith_character', description: 'Iterate through characters of the scoped faith', supportedScopes: ['faith'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_faith_character = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
   { name: 'any_faith_holy_order', description: 'Iterate through all holy orders of the faith', supportedScopes: ['faith'], supportedTargets: ['holy_order'], outputScope: 'holy_order', isIterator: true, valueType: 'block', syntax: "any_faith_holy_order = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
   { name: 'any_faith_playable_ruler', description: 'Iterate through playable rulers of the scoped faith', supportedScopes: ['faith'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_faith_playable_ruler = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
@@ -1343,6 +1343,25 @@ export const armyTriggers: TriggerDefinition[] = [
   { name: 'total_army_screen', description: 'What is the army\'s total screen stat in its current location?', supportedScopes: ['army'], valueType: 'comparison' },
   { name: 'total_army_siege_value', description: 'What is the army\'s total siege value stat in its current location?', supportedScopes: ['army'], valueType: 'comparison' },
   { name: 'total_army_toughness', description: 'What is the army\'s total toughness stat in its current location?', supportedScopes: ['army'], valueType: 'comparison' },
+];
+
+/**
+ * Triggers for regiment scope (13 triggers)
+ */
+export const regimentTriggers: TriggerDefinition[] = [
+  { name: 'can_upgrade_maa', description: 'Can target MaA regiment be upgraded', supportedScopes: ['regiment'], valueType: 'boolean' },
+  { name: 'is_event_maa_regiment', description: 'Is target MaA regiment part of event troops', supportedScopes: ['regiment'], valueType: 'boolean' },
+  { name: 'is_hired_maa_regiment', description: 'Was target MaA regiment hired from merc or holy order', supportedScopes: ['regiment'], valueType: 'boolean' },
+  { name: 'is_maa_in_combat', description: 'Is target MaA regiment engaged in combat', supportedScopes: ['regiment'], valueType: 'boolean' },
+  { name: 'is_maa_type', description: 'Check MaA type of a regiment', supportedScopes: ['regiment'], syntax: "scope:regiment = { is_maa_type = light_footmen }" },
+  { name: 'is_personal_maa_regiment', description: 'Is target MaA regiment personal', supportedScopes: ['regiment'], valueType: 'boolean' },
+  { name: 'is_raised', description: 'Is target MaA regiment raised', supportedScopes: ['regiment'], valueType: 'boolean' },
+  { name: 'is_regular_maa_regiment', description: 'Is target MaA regiment just a normal one recruited by a ruler', supportedScopes: ['regiment'], valueType: 'boolean' },
+  { name: 'is_title_maa_regiment', description: 'Is target MaA regiment belongs to a title', supportedScopes: ['regiment'], valueType: 'boolean' },
+  { name: 'is_unit_type', description: 'Check base MaA type of a regiment', supportedScopes: ['regiment'], syntax: "scope:regiment = { is_unit_type = skirmishers }" },
+  { name: 'maa_current_troops_count', description: 'Get current number of soldiers in MaA regiment', supportedScopes: ['regiment'], valueType: 'comparison' },
+  { name: 'maa_max_troops_count', description: 'Get max number of soldiers in MaA regiment', supportedScopes: ['regiment'], valueType: 'comparison' },
+  { name: 'maa_size', description: 'Get regiment size - number of subregiments in it', supportedScopes: ['regiment'], valueType: 'comparison' },
 ];
 
 /**
@@ -1567,6 +1586,24 @@ export const travelplanTriggers: TriggerDefinition[] = [
  */
 export const counciltaskTriggers: TriggerDefinition[] = [
   { name: 'can_fire_position', description: 'Check if the scope task\'s councillor can be fired. Will check both can_fire and things like it being illegal to reassing the position', supportedScopes: ['council_task'], valueType: 'boolean', syntax: "scope:task = { position_can_be_fired = yes }", parameters: ['position_can_be_fired'] },
+];
+
+/**
+ * Triggers for great_holy_war scope (12 triggers)
+ */
+export const greatholywarTriggers: TriggerDefinition[] = [
+  { name: 'any_pledged_attacker', description: 'Iterate through all pledged attackers within a great holy war', supportedScopes: ['great_holy_war'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_pledged_attacker = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'any_pledged_defender', description: 'Iterate through all pledged defenders within a great holy war', supportedScopes: ['great_holy_war'], supportedTargets: ['character'], outputScope: 'character', isIterator: true, valueType: 'block', syntax: "any_pledged_defender = { <count=num/all> / <percent=fixed_point> <triggers> }", parameters: ['count', 'percent'] },
+  { name: 'days_until_ghw_launch', description: 'How many days is it until the given GHW launches its war?', supportedScopes: ['great_holy_war'], valueType: 'comparison' },
+  { name: 'ghw_attackers_strength', description: 'What is the max (if all levies were fully reinforced) military strength of the pledged attackers in the given Great Holy War?', supportedScopes: ['great_holy_war'], valueType: 'comparison' },
+  { name: 'ghw_defenders_strength', description: 'What is the max (if all levies were fully reinforced) military strength of the pledged defenders in the given Great Holy War?', supportedScopes: ['great_holy_war'], valueType: 'comparison' },
+  { name: 'ghw_war_chest_gold', description: 'How much gold is in the great holy war\'s war chest?', supportedScopes: ['great_holy_war'], valueType: 'comparison' },
+  { name: 'ghw_war_chest_piety', description: 'How much piety is in the great holy war\'s war chest?', supportedScopes: ['great_holy_war'], valueType: 'comparison' },
+  { name: 'ghw_war_chest_prestige', description: 'How much prestige is in the great holy war\'s war chest?', supportedScopes: ['great_holy_war'], valueType: 'comparison' },
+  { name: 'has_forced_defender', description: 'Is the target character forced to be a defender in the given Great Holy War?', supportedScopes: ['great_holy_war'], supportedTargets: ['character'] },
+  { name: 'has_pledged_attacker', description: 'Is the target character pledged as an attacker in the given Great Holy War?', supportedScopes: ['great_holy_war'], supportedTargets: ['character'] },
+  { name: 'has_pledged_defender', description: 'Is the target character pledged as a defender in the given Great Holy War?', supportedScopes: ['great_holy_war'], supportedTargets: ['character'] },
+  { name: 'is_directed_ghw', description: 'Is the scoped GHW a directed GHW?', supportedScopes: ['great_holy_war'], valueType: 'boolean' },
 ];
 
 /**
@@ -1946,6 +1983,7 @@ export const allTriggers: TriggerDefinition[] = [
   ...faithTriggers,
   ...religionTriggers,
   ...armyTriggers,
+  ...regimentTriggers,
   ...schemeTriggers,
   ...warTriggers,
   ...activityTriggers,
@@ -1959,6 +1997,7 @@ export const allTriggers: TriggerDefinition[] = [
   ...casusbelliTriggers,
   ...travelplanTriggers,
   ...counciltaskTriggers,
+  ...greatholywarTriggers,
   ...struggleTriggers,
   ...legendTriggers,
   ...accoladeTriggers,

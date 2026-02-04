@@ -48,6 +48,7 @@ const scopeChangeEffects: EffectDefinition[] = [
   { name: 'primary_heir', description: 'Change scope to primary heir', supportedScopes: ['character'], outputScope: 'character', syntax: 'primary_heir = { <effects> }' },
   { name: 'primary_title', description: 'Change scope to primary title', supportedScopes: ['character'], outputScope: 'landed_title', syntax: 'primary_title = { <effects> }' },
   { name: 'capital_county', description: 'Change scope to capital county', supportedScopes: ['character'], outputScope: 'landed_title', syntax: 'capital_county = { <effects> }' },
+  { name: 'capital_barony', description: 'Change scope to capital barony', supportedScopes: ['character'], outputScope: 'landed_title', syntax: 'capital_barony = { <effects> }' },
   { name: 'capital_province', description: 'Change scope to capital province', supportedScopes: ['character'], outputScope: 'province', syntax: 'capital_province = { <effects> }' },
   { name: 'dynasty', description: 'Change scope to dynasty', supportedScopes: ['character'], outputScope: 'dynasty', syntax: 'dynasty = { <effects> }' },
   { name: 'house', description: 'Change scope to house', supportedScopes: ['character'], outputScope: 'dynasty_house', syntax: 'house = { <effects> }' },
@@ -72,7 +73,8 @@ const scopeChangeTriggers: TriggerDefinition[] = [
   { name: 'primary_heir', description: 'Check triggers on primary heir', supportedScopes: ['character'], outputScope: 'character', syntax: 'primary_heir = { <triggers> }' },
   { name: 'primary_title', description: 'Check triggers on primary title', supportedScopes: ['character'], outputScope: 'landed_title', syntax: 'primary_title = { <triggers> }' },
   { name: 'capital_county', description: 'Check triggers on capital county', supportedScopes: ['character'], outputScope: 'landed_title', syntax: 'capital_county = { <triggers> }' },
-  { name: 'capital_province', description: 'Change scope to capital province', supportedScopes: ['character'], outputScope: 'province', syntax: 'capital_province = { <triggers> }' },
+  { name: 'capital_barony', description: 'Check triggers on capital barony', supportedScopes: ['character'], outputScope: 'landed_title', syntax: 'capital_barony = { <triggers> }' },
+  { name: 'capital_province', description: 'Check triggers on capital province', supportedScopes: ['character'], outputScope: 'province', syntax: 'capital_province = { <triggers> }' },
   { name: 'dynasty', description: 'Check triggers on dynasty', supportedScopes: ['character'], outputScope: 'dynasty', syntax: 'dynasty = { <triggers> }' },
   { name: 'house', description: 'Check triggers on house', supportedScopes: ['character'], outputScope: 'dynasty_house', syntax: 'house = { <triggers> }' },
   { name: 'faith', description: 'Check triggers on faith', supportedScopes: ['character'], outputScope: 'faith', syntax: 'faith = { <triggers> }' },
@@ -128,6 +130,10 @@ const effectParameterOverrides: Record<string, string[]> = {
 
   // Death effect
   'death': ['death_reason', 'killer'],
+  'set_death_reason': ['killer', 'death_reason', 'artifact'],
+
+  // Inspiration effects
+  'create_inspiration': ['type', 'gold'],
 
   // Opinion effects
   'add_opinion': ['target', 'modifier', 'opinion', 'years', 'months', 'days', 'weeks'],
@@ -148,7 +154,7 @@ const effectParameterOverrides: Record<string, string[]> = {
   'start_scheme': ['type', 'target'],
 
   // Create character (includes skill names which are also triggers)
-  'create_character': ['template', 'name', 'age', 'gender', 'culture', 'faith', 'dynasty', 'dynasty_house', 'location', 'employer', 'trait', 'save_scope_as', 'save_temporary_scope_as', 'mother', 'father', 'real_father', 'random_traits', 'health', 'fertility', 'ethnicity', 'after_creation', 'martial', 'diplomacy', 'intrigue', 'stewardship', 'learning', 'prowess'],
+  'create_character': ['template', 'name', 'age', 'gender', 'culture', 'faith', 'dynasty', 'dynasty_house', 'location', 'employer', 'trait', 'mother', 'father', 'real_father', 'random_traits', 'health', 'fertility', 'ethnicity', 'after_creation', 'martial', 'diplomacy', 'intrigue', 'stewardship', 'learning', 'prowess'],
 
   // Modifier effects
   'add_scheme_modifier': ['type', 'days', 'months', 'weeks', 'years'],
@@ -175,12 +181,16 @@ const effectParameterOverrides: Record<string, string[]> = {
   'save_temporary_scope_as': [],
   'save_temporary_scope_value_as': ['name', 'value'],
 
-  // Spawn effects
-  'spawn_army': ['name', 'levies', 'men_at_arms', 'location', 'inheritable', 'uses_supply', 'save_scope_as', 'war'],
+  // Spawn effects - supplement the generated parameters
+  // Generated has: levies, men_at_arms, type, location, origin, war, war_keep_on_attacker_victory, inheritable, uses_supply, army, name, men, stacks
+  'spawn_army': ['name', 'levies', 'men_at_arms', 'location', 'inheritable', 'uses_supply', 'war', 'origin', 'war_keep_on_attacker_victory', 'army', 'type', 'men', 'stacks'],
+
+  // Regiment effects
+  'change_maa_regiment_size': ['size', 'reinforce'],
 
   // Truce effects
-  'add_truce_one_way': ['character', 'years', 'months', 'days', 'weeks', 'name'],
-  'add_truce_both_ways': ['character', 'years', 'months', 'days', 'weeks', 'name'],
+  'add_truce_one_way': ['character', 'years', 'months', 'days', 'weeks', 'name', 'result'],
+  'add_truce_both_ways': ['character', 'years', 'months', 'days', 'weeks', 'name', 'result'],
   'remove_truce': ['character'],
 
   // Script value math (used inside script values)
@@ -221,8 +231,8 @@ const effectParameterOverrides: Record<string, string[]> = {
   'set_struggle_phase': ['struggle_type', 'phase'],
 
   // Culture/faith effects
-  'set_culture': ['culture', 'save_scope_as'],
-  'set_faith': ['faith', 'save_scope_as'],
+  'set_culture': ['culture'],
+  'set_faith': ['faith'],
   'convert_family_to_faith': ['faith'],
 
   // Memory effects
@@ -240,11 +250,11 @@ const effectParameterOverrides: Record<string, string[]> = {
   'appoint_court_position': ['recipient', 'court_position'],
 
   // Inventory effects
-  'create_artifact': ['name', 'type', 'template', 'rarity', 'save_scope_as', 'modifier', 'decaying', 'history', 'visuals', 'description', 'wealth', 'quality'],
+  'create_artifact': ['name', 'type', 'template', 'rarity', 'modifier', 'decaying', 'history', 'visuals', 'description', 'wealth', 'quality', 'durability', 'max_durability'],
 
   // Title effects
   'change_title_holder': ['holder', 'change'],
-  'create_title_and_vassal_change': ['type', 'save_scope_as', 'add_claim_on_loss'],
+  'create_title_and_vassal_change': ['type', 'add_claim_on_loss'],
 
   // More list effects
   'every_in_local_list': ['list', 'variable'],
@@ -265,8 +275,9 @@ const effectParameterOverrides: Record<string, string[]> = {
   'add_gold': ['value', 'divide', 'subtract', 'multiply', 'min', 'max'],
   'add_dynasty_prestige': ['value', 'divide', 'subtract', 'multiply', 'min', 'max'],
   'add_scheme_progress': ['value', 'subtract', 'add'],
-  'remove_short_term_gold': ['value', 'divide', 'subtract', 'multiply', 'min', 'max'],
+  'remove_short_term_gold': ['value', 'divide', 'subtract', 'multiply', 'min', 'max', 'gold'],
   'pay_short_term_gold': ['target', 'gold'],
+  'pay_short_term_treasury': ['target', 'treasury'],
   'add_treasury_or_gold': ['value', 'min', 'max'],
   'change_development_level': ['value', 'divide', 'floor', 'subtract', 'multiply'],
   'change_influence': ['value', 'round', 'add', 'subtract'],
@@ -366,6 +377,37 @@ const effectParameterOverrides: Record<string, string[]> = {
 
   // Task contracts (docs have typo "task_task_contract_tier", game uses "task_contract_tier")
   'create_task_contract': ['task_contract_tier', 'employer', 'employee', 'task_contract_target', 'task_contract_destination'],
+
+  // Tributary/vassal contract effects
+  'tributary_contract_set_obligation_level': ['level', 'type'],
+
+  // War-related effects (supplement generated data)
+  'start_great_holy_war': ['target_character', 'target_title', 'delay', 'war'],
+  'divide_war_chest': ['defenders', 'faction', 'gold', 'piety', 'prestige', 'fraction'],
+
+  // AI war effects
+  'ai_start_best_war': ['cb', 'is_valid', 'on_success', 'on_failure', 'recalculate_cb_targets'],
+
+  // Battle events
+  'battle_event': ['key', 'type'],
+
+  // Scheme effects
+  'add_scheme_cooldown': ['type', 'years'],
+  'scheme_freeze': ['days'],
+
+  // Title/realm effects
+  'create_adventurer_title': ['article'],
+  'title_create_faction': ['type'],
+  'change_realm_law_level': ['change'],
+
+  // Amenity effects
+  'add_amenity_level': ['type'],
+
+  // Memory effects
+  'create_character_memory': ['duration'],
+
+  // Global list iteration
+  'ordered_in_global_list': ['list', 'variable', 'order_by', 'position', 'min', 'max', 'check_range_bounds'],
 };
 
 /**
@@ -384,12 +426,29 @@ const logicalTriggers: TriggerDefinition[] = [
 ];
 
 /**
- * All effects combined (generated + manual scope changers + control flow)
+ * Undocumented triggers found in game files but not in script_docs
+ * These may be internal/deprecated - use with caution
+ */
+const undocumentedTriggers: TriggerDefinition[] = [
+  { name: 'can_afford_enact_treasury_budget_costs', description: 'UNDOCUMENTED: Check if character can afford treasury budget costs. Found in game files but not in official documentation - may be internal or deprecated.', supportedScopes: ['character'], valueType: 'boolean' },
+];
+
+/**
+ * Undocumented effects found in game files but not in script_docs
+ * These may be internal/deprecated - use with caution
+ */
+const undocumentedEffects: EffectDefinition[] = [
+  { name: 'battle_event', description: 'UNDOCUMENTED: Triggers a battle event display during combat. Found in game files but not in official documentation.', supportedScopes: ['combat_side'], parameters: ['key', 'type', 'left_portrait', 'right_portrait', 'target_left', 'target_right'] },
+];
+
+/**
+ * All effects combined (generated + manual scope changers + control flow + undocumented)
  */
 export const allEffects: EffectDefinition[] = [
   ...generatedEffects,
   ...scopeChangeEffects,
   ...controlFlowEffects,
+  ...undocumentedEffects,
 ];
 
 /**
@@ -399,6 +458,7 @@ export const allTriggers: TriggerDefinition[] = [
   ...generatedTriggers,
   ...scopeChangeTriggers,
   ...logicalTriggers,
+  ...undocumentedTriggers,
 ];
 
 /**
@@ -429,7 +489,10 @@ export const effectsMap = new Map<string, EffectDefinition>(
   allEffects.map(e => {
     const override = effectParameterOverrides[e.name];
     if (override) {
-      return [e.name, { ...e, parameters: override }];
+      // Merge override with existing parameters (if any) to avoid losing generated data
+      const existingParams = e.parameters || [];
+      const mergedParams = [...new Set([...existingParams, ...override])];
+      return [e.name, { ...e, parameters: mergedParams }];
     }
     return [e.name, e];
   })
@@ -579,6 +642,13 @@ const triggerParameterOverrides: Record<string, string[]> = {
 
   // Court position triggers
   'is_court_position_employer': ['court_position', 'who'],
+
+  // De jure hierarchy triggers
+  'any_in_de_jure_hierarchy': ['filter', 'count', 'percent'],
+  'every_in_de_jure_hierarchy': ['filter'],
+
+  // Casus belli triggers
+  'has_cb_on': ['target', 'cb'],
 };
 
 /**
@@ -588,7 +658,10 @@ export const triggersMap = new Map<string, TriggerDefinition>(
   allTriggers.map(t => {
     const override = triggerParameterOverrides[t.name];
     if (override) {
-      return [t.name, { ...t, parameters: override }];
+      // Merge override with existing parameters (if any) to avoid losing generated data
+      const existingParams = t.parameters || [];
+      const mergedParams = [...new Set([...existingParams, ...override])];
+      return [t.name, { ...t, parameters: mergedParams }];
     }
     return [t.name, t];
   })

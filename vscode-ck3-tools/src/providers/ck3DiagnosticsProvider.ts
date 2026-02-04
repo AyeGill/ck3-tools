@@ -105,6 +105,29 @@ const DYNAMIC_KEY_BLOCKS = new Set([
   'participants',            // children are participant role names
   'properties',              // children are property names
   'ai_frequency_by_tier',    // children are title tier names (barony, county, etc.)
+  // Nested schema blocks that have their own fields (not effects/triggers)
+  'name',                    // conditional name block in options: has trigger, text
+  'desc',                    // conditional desc block: has trigger, desc, first_valid
+  'men_at_arms',             // spawn_army parameter: has type, stacks
+  'levies',                  // spawn_army parameter: has value, multiply, etc.
+  'history',                 // various effects: has type, date, etc.
+  'opinion',                 // opinion blocks: has modifier, etc.
+  'first_valid',             // localization blocks: has trigger, text
+  'sub_region',              // start_situation parameter: has key, start_phase, geographical_regions, map_color
+]);
+
+/**
+ * Control flow blocks that are transparent for parameter validation.
+ * Parameters inside these blocks belong to the enclosing effect/trigger.
+ * E.g., in `start_war = { if = { cb = X } }`, the `cb` belongs to `start_war`.
+ */
+const TRANSPARENT_FOR_PARAMS = new Set([
+  'if', 'else', 'else_if',
+  'switch',
+  'trigger_if', 'trigger_else',
+  'random', 'random_list',
+  'while',
+  'hidden_effect',
 ]);
 
 /**
@@ -978,13 +1001,14 @@ export class CK3DiagnosticsProvider {
       const openBraces = (cleanLine.match(/\{/g) || []).length;
       const closeBraces = (cleanLine.match(/\}/g) || []).length;
 
-      // Check for ALL block starts on this line: name = { or name ?= {
+      // Check for ALL block starts on this line: name = { or name ?= { or name > { etc.
       // A single line may contain multiple inline blocks like: limit = { scope:actor = { is_ai = yes } }
       // We need to push ALL of them to keep the stack balanced with closing braces
-      // The regex captures: (1) identifier, (2) operator (= or ?=)
+      // The regex captures: (1) identifier, (2) operator (=, ?=, >, <, >=, <=)
       // Identifier can include dots, colons for scope paths like faith.religious_head or scope:target
       // Also includes $ for script variables like $CHARACTER$.liege
-      const blockStartRegex = /([\w.:$]+)\s*(\?=|=)\s*\{/g;
+      // Note: >, <, >=, <= are comparison operators that can take script value blocks
+      const blockStartRegex = /([\w.:$]+)\s*(\?=|>=|<=|=|>|<)\s*\{/g;
       const blockStarts = [...cleanLine.matchAll(blockStartRegex)];
       for (const match of blockStarts) {
         const blockName = match[1];
@@ -1013,6 +1037,14 @@ export class CK3DiagnosticsProvider {
           }
           blockStack.push({ name: blockName, context, parentContext });
           continue; // Skip the rest of the block validation for ?= blocks
+        }
+
+        // Comparison operators (>, <, >=, <=) create script value blocks
+        // These are used for comparing values: gold > { value = 100 }
+        if (operator === '>' || operator === '<' || operator === '>=' || operator === '<=') {
+          context = 'weight'; // Script value context
+          blockStack.push({ name: blockName, context, parentContext });
+          continue; // Skip the rest of the block validation for comparison blocks
         }
 
         // Determine context based on block name
@@ -1057,7 +1089,7 @@ export class CK3DiagnosticsProvider {
             const diagnostic = this.validateFieldInContext(
               blockName,
               parentContext,
-              parentBlockName,
+              blockStack,
               lineNum,
               cleanLine,
               document,
@@ -1118,7 +1150,7 @@ export class CK3DiagnosticsProvider {
           const diagnostic = this.validateFieldInContext(
             fieldName,
             currentBlock.context,
-            currentBlock.name,
+            blockStack,
             lineNum,
             cleanLine,
             document,
@@ -1223,12 +1255,14 @@ export class CK3DiagnosticsProvider {
   private validateFieldInContext(
     fieldName: string,
     context: 'trigger' | 'effect' | 'weight',
-    parentBlockName: string,
+    blockStack: Array<{ name: string; context: 'trigger' | 'effect' | 'weight' | 'unknown'; parentContext?: 'trigger' | 'effect' | 'weight' | 'unknown' }>,
     lineNum: number,
     cleanLine: string,
     document: vscode.TextDocument,
     parentContext?: 'trigger' | 'effect' | 'weight' | 'unknown'
   ): vscode.Diagnostic | null {
+    // Get the immediate parent block name for error messages
+    const parentBlockName = blockStack.length > 0 ? blockStack[blockStack.length - 1].name : '';
     // Handle weight context - validate against weight block params
     if (context === 'weight') {
       if (WEIGHT_BLOCK_PARAMS.has(fieldName)) {
@@ -1281,11 +1315,40 @@ export class CK3DiagnosticsProvider {
       return null;
     }
 
-    // Check if it's a known parameter of the parent block
+    // Check if it's a known parameter of the immediate parent block
     const parentEffect = effectsMap.get(parentBlockName);
     const parentTrigger = triggersMap.get(parentBlockName);
     if (parentEffect?.parameters?.includes(fieldName) || parentTrigger?.parameters?.includes(fieldName)) {
       return null;
+    }
+
+    // 'custom' is a valid parameter for all iterator effects (provides custom tooltip header)
+    if (fieldName === 'custom' && (parentEffect?.isIterator || parentTrigger?.isIterator)) {
+      return null;
+    }
+
+    // If the immediate parent is a transparent control flow block, also check enclosing effect/trigger
+    // E.g., in `start_war = { if = { cb = X } }`, cb is a parameter of start_war, not if
+    if (TRANSPARENT_FOR_PARAMS.has(parentBlockName)) {
+      for (let i = blockStack.length - 2; i >= 0; i--) {  // Start from grandparent
+        const block = blockStack[i];
+        // Skip other transparent blocks
+        if (TRANSPARENT_FOR_PARAMS.has(block.name)) {
+          continue;
+        }
+        // Found the enclosing non-transparent block - check its parameters
+        const ownerEffect = effectsMap.get(block.name);
+        const ownerTrigger = triggersMap.get(block.name);
+        if (ownerEffect?.parameters?.includes(fieldName) || ownerTrigger?.parameters?.includes(fieldName)) {
+          return null;
+        }
+        // 'custom' is valid for enclosing iterators too
+        if (fieldName === 'custom' && (ownerEffect?.isIterator || ownerTrigger?.isIterator)) {
+          return null;
+        }
+        // Stop at the first non-transparent block
+        break;
+      }
     }
 
     // Check if it's a scope path like "liege.primary_title.holder"
