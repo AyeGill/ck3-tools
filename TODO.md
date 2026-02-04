@@ -138,3 +138,61 @@ So for example prompting for skill modifications in a trait template makes littl
 - A number of schemas might not be quite right. Specifically:
   - I think the artifact schema just works for all the stuff in the artifacts subfolder. Actually these appear to be a number of different things and we're not really doing the right thing for any of them.
   - A number of schemas have fields that are required sometimes conditional on other fields. Currently these have all been simply marked as not required. This was just done based on inspecting the game files by script and can probably be done more carefully.
+
+
+  # CK3 Diagnostics - Remaining Issues
+
+**Status:** 4,478 diagnostics remain (68% reduction from 14,046)
+
+## Interaction Schema Context Problem
+
+The remaining false positives are mostly about **interaction schema context** - where we're inside an interaction definition and need to distinguish schema fields from trigger/effect commands.
+
+### Issue A: Interaction Parameters When Called as Effects
+```
+Unknown effect: "interface" in "join_vassal_war_interaction"
+Unknown effect: "icon" in "diarch_shift_privileges_interaction"
+Unknown effect: "cooldown" in "diarch_shift_privileges_interaction"
+Unknown effect: "greeting" in "join_vassal_war_interaction"
+```
+When interactions are called inside effect contexts, their schema parameters (`interface`, `icon`, `cooldown`, `greeting`, `flag`) get validated as effects.
+
+### Issue B: `send_option` Block Fields
+```
+Unknown trigger: "flag" in "send_option"
+Unknown trigger: "localization" in "send_option"
+```
+`send_option` is an interaction schema block with fields `flag`, `localization`, `is_valid`.
+
+### Issue C: Weight-like Blocks Not Recognized
+```
+Unknown trigger: "base" in "ai_intermediary_accept"
+```
+`ai_intermediary_accept` is a weight-like block that takes `base` and modifiers.
+
+### Issue D: Nested `cooldown` Block
+```
+Unknown trigger: "cooldown" in "cooldown"
+```
+Self-referential pattern - the `cooldown` block has its own schema fields.
+
+### Issue E: `is_valid` Block Fields
+```
+Unknown trigger: "flag" in "is_valid"
+Unknown trigger: "localization" in "is_valid"
+```
+`is_valid` blocks (in interaction context) can have schema siblings like `flag`, `localization`.
+
+## Possible Solutions
+
+1. **Add more fields to CONTROL_FLOW_FIELDS** (simple but coarse)
+   - Add `flag`, `localization`, `icon`, `interface`, `greeting`, `cooldown`, `base`
+   - Risk: Might hide real errors
+
+2. **Add `send_option` and similar to DYNAMIC_KEY_BLOCKS** (targeted)
+   - Skip validation for children of specific schema blocks
+   - Requires identifying all such blocks
+
+3. **Detect interaction context** (complex but correct)
+   - Recognize when we're inside an interaction definition
+   - Apply interaction schema validation instead of effect/trigger validation
