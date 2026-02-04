@@ -490,19 +490,44 @@ export function getTriggersForScope(scope: ScopeType): TriggerDefinition[] {
 }
 
 /**
+ * Overrides for supportedTargets when missing from generated data
+ */
+const effectSupportedTargetsOverrides: Record<string, string[]> = {
+  // Effects that take entity values but lack supportedTargets in generated data
+};
+
+/**
+ * Maps effect parameters to the entity types they accept
+ * Used for Go to Definition and validation of parameter values
+ */
+export const effectParameterEntityTypes: Record<string, Record<string, string>> = {
+  'trigger_event': { 'id': 'event', 'on_action': 'on_action' },
+  // Add more as needed
+};
+
+/**
  * Build a map for quick lookup (includes scope changers)
- * Apply parameter overrides where needed
+ * Apply parameter and supportedTargets overrides where needed
  */
 export const effectsMap = new Map<string, EffectDefinition>(
   allEffects.map(e => {
-    const override = effectParameterOverrides[e.name];
-    if (override) {
-      // Merge override with existing parameters (if any) to avoid losing generated data
-      const existingParams = e.parameters || [];
-      const mergedParams = [...new Set([...existingParams, ...override])];
-      return [e.name, { ...e, parameters: mergedParams }];
+    let result = e;
+
+    // Apply parameter overrides
+    const paramOverride = effectParameterOverrides[e.name];
+    if (paramOverride) {
+      const existingParams = result.parameters || [];
+      const mergedParams = [...new Set([...existingParams, ...paramOverride])];
+      result = { ...result, parameters: mergedParams };
     }
-    return [e.name, e];
+
+    // Apply supportedTargets overrides
+    const targetOverride = effectSupportedTargetsOverrides[e.name];
+    if (targetOverride) {
+      result = { ...result, supportedTargets: targetOverride as any };
+    }
+
+    return [e.name, result];
   })
 );
 
@@ -669,18 +694,45 @@ const triggerParameterOverrides: Record<string, string[]> = {
 };
 
 /**
+ * Overrides for supportedTargets when missing from generated data
+ */
+const triggerSupportedTargetsOverrides: Record<string, string[]> = {
+  'has_trait': ['trait'],
+  'has_culture': ['culture'],
+  // Add more as discovered
+};
+
+/**
+ * Maps trigger parameters to the entity types they accept
+ * Used for Go to Definition and validation of parameter values
+ */
+export const triggerParameterEntityTypes: Record<string, Record<string, string>> = {
+  // Triggers with typed block parameters (if any)
+};
+
+/**
  * Build a map for quick lookup (includes scope changers)
+ * Apply parameter and supportedTargets overrides where needed
  */
 export const triggersMap = new Map<string, TriggerDefinition>(
   allTriggers.map(t => {
-    const override = triggerParameterOverrides[t.name];
-    if (override) {
-      // Merge override with existing parameters (if any) to avoid losing generated data
-      const existingParams = t.parameters || [];
-      const mergedParams = [...new Set([...existingParams, ...override])];
-      return [t.name, { ...t, parameters: mergedParams }];
+    let result = t;
+
+    // Apply parameter overrides
+    const paramOverride = triggerParameterOverrides[t.name];
+    if (paramOverride) {
+      const existingParams = result.parameters || [];
+      const mergedParams = [...new Set([...existingParams, ...paramOverride])];
+      result = { ...result, parameters: mergedParams };
     }
-    return [t.name, t];
+
+    // Apply supportedTargets overrides
+    const targetOverride = triggerSupportedTargetsOverrides[t.name];
+    if (targetOverride) {
+      result = { ...result, supportedTargets: targetOverride as any };
+    }
+
+    return [t.name, result];
   })
 );
 

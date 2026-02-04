@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import { FieldSchema } from '../schemas/registry/types';
-import { effectsMap, triggersMap, modifiersMap, matchesModifierTemplate, ScopeType } from '../data';
+import { effectsMap, triggersMap, modifiersMap, matchesModifierTemplate, ScopeType, effectParameterEntityTypes, triggerParameterEntityTypes } from '../data';
 import { CK3WorkspaceIndex, EntityType } from './workspaceIndex';
 import {
   TRIGGER_BLOCKS,
@@ -1218,6 +1218,21 @@ export class CK3DiagnosticsProvider {
             if (targetDiag) {
               diagnostics.push(targetDiag);
             }
+
+            // Validate typed parameter values (e.g., id = event_id inside trigger_event block)
+            const parentBlockName = blockStack.length > 0 ? blockStack[blockStack.length - 1].name : '';
+            if (parentBlockName) {
+              const paramDiag = this.validateTypedParameterValue(
+                parentBlockName,
+                fieldName,
+                fieldValue,
+                lineNum,
+                cleanLine
+              );
+              if (paramDiag) {
+                diagnostics.push(paramDiag);
+              }
+            }
           }
         }
       }
@@ -1697,6 +1712,76 @@ export class CK3DiagnosticsProvider {
 
     return null;
   }
+
+  /**
+   * Validate a typed parameter value
+   * For parameters like `id` in `trigger_event = { id = event_id }`, checks that the value is a valid entity
+   */
+  private validateTypedParameterValue(
+    parentBlockName: string,
+    fieldName: string,
+    value: string,
+    lineNum: number,
+    cleanLine: string
+  ): vscode.Diagnostic | null {
+    // Skip if no workspace index
+    if (!this.workspaceIndex) {
+      return null;
+    }
+
+    // Check if there's a type mapping for this parameter
+    const paramTypes = effectParameterEntityTypes[parentBlockName] || triggerParameterEntityTypes[parentBlockName];
+    if (!paramTypes?.[fieldName]) {
+      return null; // No type mapping for this parameter
+    }
+
+    // Skip dynamic values that can't be validated statically
+    if (value.startsWith('scope:') || (value.startsWith('$') && value.endsWith('$')) ||
+        value.startsWith('flag:') || value.startsWith('var:')) {
+      return null;
+    }
+
+    // Skip bare scope references
+    const bareScopes = ['prev', 'this', 'root', 'from', 'yes', 'no'];
+    if (bareScopes.includes(value)) {
+      return null;
+    }
+
+    // Remove quotes if present
+    const cleanValue = value.replace(/^["']|["']$/g, '');
+    if (!cleanValue) {
+      return null;
+    }
+
+    // Skip values with colons (prefixed references like title:k_france)
+    if (cleanValue.includes(':')) {
+      return null;
+    }
+
+    // Get the expected entity type
+    const expectedType = paramTypes[fieldName];
+    const entityType = TARGET_TO_ENTITY_TYPE[expectedType];
+    if (!entityType) {
+      return null; // Unknown entity type mapping
+    }
+
+    // Check if value exists in index
+    if (!this.workspaceIndex.has(entityType, cleanValue)) {
+      const valueStart = cleanLine.lastIndexOf(value);
+      const range = new vscode.Range(
+        new vscode.Position(lineNum, valueStart >= 0 ? valueStart : 0),
+        new vscode.Position(lineNum, valueStart >= 0 ? valueStart + value.length : cleanLine.length)
+      );
+      return new vscode.Diagnostic(
+        range,
+        `Unknown ${entityType}: "${cleanValue}"`,
+        vscode.DiagnosticSeverity.Warning
+      );
+    }
+
+    return null;
+  }
+
 
   /**
    * Check if a name is a known scripted effect or trigger in the workspace index

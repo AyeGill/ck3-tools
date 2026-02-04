@@ -14,6 +14,7 @@ import { registerGoToLocalizationCommand } from './localization/navigationProvid
 import { CK3HoverProvider } from './providers/ck3HoverProvider';
 import { CK3CompletionProvider } from './providers/ck3CompletionProvider';
 import { CK3DiagnosticsProvider } from './providers/ck3DiagnosticsProvider';
+import { CK3DefinitionProvider } from './providers/ck3DefinitionProvider';
 import { CK3WorkspaceIndex } from './providers/workspaceIndex';
 
 let generator: TemplateGenerator;
@@ -112,6 +113,15 @@ export function activate(context: vscode.ExtensionContext) {
   // Register diagnostics provider for linting
   const diagnosticsProvider = new CK3DiagnosticsProvider(workspaceIndex);
   context.subscriptions.push(diagnosticsProvider.getDiagnosticCollection());
+
+  // Register definition provider for Go to Definition
+  const definitionProvider = new CK3DefinitionProvider(workspaceIndex);
+  context.subscriptions.push(
+    vscode.languages.registerDefinitionProvider(
+      { language: 'ck3' },
+      definitionProvider
+    )
+  );
 
   // Register command to validate a directory
   context.subscriptions.push(

@@ -149,7 +149,10 @@ export class MockTextDocument {
     const line = this.lines[position.line];
     if (!line) return undefined;
 
-    const pattern = regex || /[\w_]+/g;
+    // Ensure we have a global regex to avoid infinite loops with exec()
+    const pattern = regex
+      ? new RegExp(regex.source, regex.flags.includes('g') ? regex.flags : regex.flags + 'g')
+      : /[\w_]+/g;
     let match;
 
     // Reset lastIndex for global regex
@@ -296,5 +299,23 @@ export class Uri {
 
   static file(path: string): Uri {
     return new Uri(path);
+  }
+
+  static parse(uriString: string): Uri {
+    // Handle file:// URIs
+    if (uriString.startsWith('file://')) {
+      return new Uri(uriString.substring(7));
+    }
+    return new Uri(uriString);
+  }
+}
+
+// Mock Location for Go to Definition
+export class Location {
+  constructor(public uri: Uri, public range: Range | Position) {
+    // If a Position is passed, convert to a zero-width Range
+    if (range instanceof Position) {
+      this.range = new Range(range, range);
+    }
   }
 }

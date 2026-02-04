@@ -357,7 +357,10 @@ These have nested structures requiring context-aware schema switching:
   - Could verify each pattern is still needed, check for edge cases, or validate more precisely
 
 - [ ] **Workspace Index Extensions**: The `CK3WorkspaceIndex` class now tracks entities across the workspace. Future extensions:
-  - [ ] **Go to Definition**: Click on `add_trait = brave` to jump to trait definition
+  - [x] **Go to Definition**: Click on `add_trait = brave` to jump to trait definition
+    - **DONE**: Created `CK3DefinitionProvider` in `src/providers/ck3DefinitionProvider.ts`
+    - Supports: effect/trigger targets (`add_trait = brave`), scripted effect/trigger calls (`my_effect = yes`), bare identifiers in list blocks
+    - Not supported: prefixed references (`title:k_france`) - only type-checked, not indexed
   - [ ] **Find References**: Find all uses of a trait/event/scripted effect
   - [x] **Autocomplete from index**: Suggest valid trait names when typing `add_trait =`, valid events for `trigger_event =`
     - **DONE**: Implemented `getEntityReferenceCompletions()` in `ck3CompletionProvider.ts`
