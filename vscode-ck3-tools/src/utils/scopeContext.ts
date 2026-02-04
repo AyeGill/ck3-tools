@@ -243,6 +243,77 @@ export const KNOWN_SCOPE_CHANGERS: Map<string, ScopeType> = new Map([
   ['candidate', 'character'],
   ['suzerain', 'character'],
   ['diarch', 'character'],
+
+  // Travel system (EP3)
+  ['current_travel_plan', 'travel_plan'],
+
+  // Court and governance
+  ['liege_or_court_owner', 'character'],
+
+  // Domicile/landless (EP3)
+  ['domicile', 'character'],
+
+  // Councillors
+  ['every_normal_councillor', 'character'],
+  ['any_normal_councillor', 'character'],
+
+  // War/military
+  ['every_pledged_attacker', 'character'],
+  ['regiment_owner', 'character'],
+
+  // Inspiration/artisan (Royal Court)
+  ['inspiration', 'inspiration'],
+
+  // Dynasty/house
+  ['leading_house', 'dynasty_house'],
+
+  // Location/geography
+  ['province_owner', 'character'],
+
+  // Situation/struggle
+  ['ordered_situation_group_participant', 'character'],
+
+  // Feudal relationships
+  ['overlord', 'character'],
+  ['lessee', 'character'],
+
+  // Religion
+  ['secret_faith', 'faith'],
+
+  // Task contracts (EP3)
+  ['task_contract', 'character'],
+  ['task_contract_employer', 'character'],
+  ['task_contract_location', 'province'],
+  ['task_contract_taker', 'character'],
+
+  // Titles
+  ['title', 'landed_title'],
+  ['any_held_county', 'landed_title'],
+
+  // Grand projects
+  ['contribution_is_funded', 'character'],
+  ['contribution_is_required', 'character'],
+
+  // Legends (Roads to Power)
+  ['promoted_legend', 'legend'],
+
+  // Accolades (Tours & Tournaments)
+  ['accolade', 'accolade'],
+  ['accolade_owner', 'character'],
+
+  // Confederations
+  ['confederation', 'character'],
+
+  // Additional iterators that may be missing
+  ['participant', 'character'],
+  ['participants', 'character'],
+
+  // Character collections
+  ['skills', 'none'],
+  ['tags', 'none'],
+  ['theme', 'none'],
+  ['leader', 'character'],
+  ['character', 'character'],
 ]);
 
 /**
