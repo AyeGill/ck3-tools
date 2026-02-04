@@ -11,3 +11,5 @@
 # Task flow
 
 When you finish a task, report the results and wait for the user to tell you what to work on next. When formulating a todo list, just focus on what the user asked you to do right now, don't add any other pending issues.
+
+When encountering a case where an implementation fails on a complex case, it is NEVER appropriate to decide to skip this without checking with the user first.

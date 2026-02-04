@@ -133,6 +133,88 @@ const TARGET_TO_ENTITY_TYPE: Partial<Record<string, EntityType>> = {
 };
 
 /**
+ * Map prefixes to scope types (e.g., 'title' -> 'landed_title')
+ */
+const PREFIX_TO_SCOPE_TYPE: Record<string, ScopeType> = {
+  'title': 'landed_title',
+  'trait': 'trait',
+  'culture': 'culture',
+  'faith': 'faith',
+  'religion': 'religion',
+  'dynasty': 'dynasty',
+  'house': 'dynasty_house',
+  'character': 'character',
+  'province': 'province',
+  'cp': 'character', // Council positions resolve to characters
+};
+
+/**
+ * Resolve a scope path to its final type
+ * e.g., "title:k_england.holder" -> "character"
+ *       "title:k_england" -> "landed_title"
+ *       "cp:councillor_chancellor" -> "character"
+ *
+ * @returns The final scope type, or null if unable to resolve
+ */
+function resolveScopePathType(path: string): ScopeType | null {
+  const colonIndex = path.indexOf(':');
+  if (colonIndex <= 0) {
+    return null; // No prefix
+  }
+
+  const prefix = path.substring(0, colonIndex);
+  const rest = path.substring(colonIndex + 1);
+
+  // Skip if prefix contains dots (e.g., root.var:X)
+  if (prefix.includes('.')) {
+    return null;
+  }
+
+  // Get initial type from prefix
+  const initialType = PREFIX_TO_SCOPE_TYPE[prefix];
+  if (!initialType) {
+    return null; // Unknown prefix
+  }
+
+  // If no dots after the key, return the initial type
+  if (!rest.includes('.')) {
+    return initialType;
+  }
+
+  // Split the path after the colon on dots
+  // e.g., "k_england.holder" -> ["k_england", "holder"]
+  const parts = rest.split('.');
+
+  // Start from the initial type and follow scope changers
+  let currentType: ScopeType = initialType;
+
+  // Skip the first part (that's the database key, e.g., "k_england")
+  for (let i = 1; i < parts.length; i++) {
+    const scopeChanger = parts[i];
+
+    // Look up the scope changer in effects or triggers
+    const effect = effectsMap.get(scopeChanger);
+    const trigger = triggersMap.get(scopeChanger);
+    const definition = effect || trigger;
+
+    if (definition?.outputScope) {
+      // Check if the scope changer can be used from the current scope
+      if (definition.supportedScopes.includes(currentType) || definition.supportedScopes.includes('none')) {
+        currentType = definition.outputScope;
+      } else {
+        // Scope changer can't be used from current type - path is invalid
+        return null;
+      }
+    } else {
+      // Unknown scope changer - we can't resolve further
+      return null;
+    }
+  }
+
+  return currentType;
+}
+
+/**
  * Parsed field with context information
  */
 interface ParsedFieldWithContext extends ParsedField {
@@ -1535,9 +1617,10 @@ export class CK3DiagnosticsProvider {
       return null;
     }
 
-    // Skip prefixed database references (trait:brave, culture:english, faith:catholic, etc.)
-    // These are explicit key references that don't match the expected supportedTargets validation
-    if (value.includes(':') && !value.startsWith('scope:')) {
+    // Skip bare scope references (prev, this, root) - these reference the current/previous scope
+    // whose type depends on context and can't be statically validated
+    const bareScopes = ['prev', 'this', 'root', 'from', 'event_target', 'global_var', 'local_var'];
+    if (bareScopes.includes(value)) {
       return null;
     }
 
@@ -1552,6 +1635,49 @@ export class CK3DiagnosticsProvider {
     // Look up the effect or trigger definition
     const definition = effectsMap.get(effectName) || triggersMap.get(effectName);
     if (!definition?.supportedTargets) {
+      return null;
+    }
+
+    // Check for prefixed database references (trait:brave, title:k_france, etc.)
+    // These are valid only if the resolved type matches the expected target type
+    const colonIndex = cleanValue.indexOf(':');
+    if (colonIndex > 0 && !cleanValue.startsWith('scope:')) {
+      const prefix = cleanValue.substring(0, colonIndex);
+
+      // Skip var: references (variable access)
+      if (prefix === 'var') {
+        return null;
+      }
+
+      // Skip if prefix contains dots (e.g., root.var:X) - can't validate these
+      if (prefix.includes('.')) {
+        return null;
+      }
+
+      // Try to resolve the scope path to its final type
+      // e.g., "title:k_england.holder" -> "character"
+      const resolvedType = resolveScopePathType(cleanValue);
+
+      if (resolvedType) {
+        // We could resolve the type - check if it matches what's expected
+        if (definition.supportedTargets.includes(resolvedType as any)) {
+          return null; // Type matches - valid reference
+        }
+        // Type doesn't match - flag it
+        const expectedType = definition.supportedTargets[0];
+        const valueStart = cleanLine.lastIndexOf(value);
+        const range = new vscode.Range(
+          new vscode.Position(lineNum, valueStart >= 0 ? valueStart : 0),
+          new vscode.Position(lineNum, valueStart >= 0 ? valueStart + value.length : cleanLine.length)
+        );
+        return new vscode.Diagnostic(
+          range,
+          `Expected ${expectedType}, got ${resolvedType}: "${cleanValue}"`,
+          vscode.DiagnosticSeverity.Warning
+        );
+      }
+
+      // Couldn't resolve (unknown prefix or unknown scope changer) - skip validation
       return null;
     }
 
