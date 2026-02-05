@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import { FieldSchema } from '../schemas/registry/types';
-import { effectsMap, triggersMap, modifiersMap, matchesModifierTemplate, ScopeType, effectParameterEntityTypes, triggerParameterEntityTypes } from '../data';
+import { modifiersMap, matchesModifierTemplate, ScopeType, effectParameterEntityTypes, triggerParameterEntityTypes, getEffect, getTrigger, hasEffect, hasTrigger } from '../data';
 import { CK3WorkspaceIndex, EntityType } from './workspaceIndex';
 import {
   TRIGGER_BLOCKS,
@@ -163,8 +163,8 @@ function resolvePrefixedScopePath(path: string): ScopeType | null {
   const parts = rest.split('.');
   const lastPart = parts[parts.length - 1];
 
-  const effect = effectsMap.get(lastPart);
-  const trigger = triggersMap.get(lastPart);
+  const effect = getEffect(lastPart);
+  const trigger = getTrigger(lastPart);
   const definition = effect || trigger;
 
   return definition?.outputScope ?? null;
@@ -190,8 +190,8 @@ function resolveDotScopePath(path: string): ScopeType | null {
   const lastPart = parts[parts.length - 1];
 
   // Look up the last part as a scope changer - its outputScope is the final type
-  const effect = effectsMap.get(lastPart);
-  const trigger = triggersMap.get(lastPart);
+  const effect = getEffect(lastPart);
+  const trigger = getTrigger(lastPart);
   const definition = effect || trigger;
 
   return definition?.outputScope ?? null;
@@ -660,14 +660,14 @@ export class CK3DiagnosticsProvider {
 
       // If schema has trigger wildcard, accept any valid trigger or scripted trigger
       if (hasTriggerWildcard) {
-        if (triggersMap.has(fieldName) || this.workspaceIndex?.has('scripted_trigger', fieldName) || KNOWN_SCOPE_CHANGERS.has(fieldName)) {
+        if (hasTrigger(fieldName) || this.workspaceIndex?.has('scripted_trigger', fieldName) || KNOWN_SCOPE_CHANGERS.has(fieldName)) {
           continue;
         }
       }
 
       // If schema has effect wildcard, accept any valid effect or scripted effect
       if (hasEffectWildcard) {
-        if (effectsMap.has(fieldName) || this.workspaceIndex?.has('scripted_effect', fieldName) || KNOWN_SCOPE_CHANGERS.has(fieldName)) {
+        if (hasEffect(fieldName) || this.workspaceIndex?.has('scripted_effect', fieldName) || KNOWN_SCOPE_CHANGERS.has(fieldName)) {
           continue;
         }
       }
@@ -1042,8 +1042,8 @@ export class CK3DiagnosticsProvider {
           isScopeReference(blockName) ||
           this.isValidScopeChanger(blockName) ||
           this.isValidIterator(blockName, parentContext as 'trigger' | 'effect') ||
-          (parentContext === 'effect' && effectsMap.has(blockName)) ||
-          (parentContext === 'trigger' && triggersMap.has(blockName))
+          (parentContext === 'effect' && hasEffect(blockName)) ||
+          (parentContext === 'trigger' && hasTrigger(blockName))
         );
 
         if (!isExplicitlyRecognized && (parentContext === 'trigger' || parentContext === 'effect')) {
@@ -1339,14 +1339,14 @@ export class CK3DiagnosticsProvider {
     for (const prefix of ITERATOR_PREFIXES) {
       if (name.startsWith(prefix)) {
         // Check if this iterator exists in effects or triggers
-        if (context === 'effect' && effectsMap.has(name)) {
+        if (context === 'effect' && hasEffect(name)) {
           return true;
         }
-        if (context === 'trigger' && triggersMap.has(name)) {
+        if (context === 'trigger' && hasTrigger(name)) {
           return true;
         }
         // Also check the other map since some iterators work in both
-        if (effectsMap.has(name) || triggersMap.has(name)) {
+        if (hasEffect(name) || hasTrigger(name)) {
           return true;
         }
       }
@@ -1430,8 +1430,8 @@ export class CK3DiagnosticsProvider {
     }
 
     // Check if it's a known parameter of the immediate parent block
-    const parentEffect = effectsMap.get(parentBlockName);
-    const parentTrigger = triggersMap.get(parentBlockName);
+    const parentEffect = getEffect(parentBlockName);
+    const parentTrigger = getTrigger(parentBlockName);
     if (parentEffect?.parameters?.includes(fieldName) || parentTrigger?.parameters?.includes(fieldName)) {
       return null;
     }
@@ -1451,8 +1451,8 @@ export class CK3DiagnosticsProvider {
           continue;
         }
         // Found the enclosing non-transparent block - check its parameters
-        const ownerEffect = effectsMap.get(block.name);
-        const ownerTrigger = triggersMap.get(block.name);
+        const ownerEffect = getEffect(block.name);
+        const ownerTrigger = getTrigger(block.name);
         if (ownerEffect?.parameters?.includes(fieldName) || ownerTrigger?.parameters?.includes(fieldName)) {
           return null;
         }
@@ -1488,8 +1488,8 @@ export class CK3DiagnosticsProvider {
 
     // Check if it's a valid effect/trigger for the context
     if (context === 'effect') {
-      const isKnownEffect = effectsMap.has(fieldName);
-      const isKnownTrigger = triggersMap.has(fieldName);
+      const isKnownEffect = hasEffect(fieldName);
+      const isKnownTrigger = hasTrigger(fieldName);
 
       if (!isKnownEffect) {
         // Not a known effect - check if it's a trigger used in wrong context
@@ -1520,8 +1520,8 @@ export class CK3DiagnosticsProvider {
         }
       }
     } else if (context === 'trigger') {
-      const isKnownEffect = effectsMap.has(fieldName);
-      const isKnownTrigger = triggersMap.has(fieldName);
+      const isKnownEffect = hasEffect(fieldName);
+      const isKnownTrigger = hasTrigger(fieldName);
 
       if (!isKnownTrigger) {
         // Not a known trigger - check if it's an effect used in wrong context
@@ -1611,7 +1611,7 @@ export class CK3DiagnosticsProvider {
     }
 
     // Look up the effect or trigger definition
-    const definition = effectsMap.get(effectName) || triggersMap.get(effectName);
+    const definition = getEffect(effectName) || getTrigger(effectName);
     if (!definition?.supportedTargets) {
       return null;
     }
@@ -1689,7 +1689,7 @@ export class CK3DiagnosticsProvider {
 
     // Check if the value is a bare scope changer that outputs the expected type
     // e.g., "primary_title" is a scope changer that outputs landed_title
-    const scopeChangerDef = effectsMap.get(cleanValue) || triggersMap.get(cleanValue);
+    const scopeChangerDef = getEffect(cleanValue) || getTrigger(cleanValue);
     if (scopeChangerDef?.outputScope) {
       // This is a scope changer - check if its output type matches what's expected
       if (definition.supportedTargets.includes(scopeChangerDef.outputScope as any)) {

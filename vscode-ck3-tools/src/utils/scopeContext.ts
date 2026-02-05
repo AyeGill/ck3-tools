@@ -6,7 +6,7 @@
  */
 
 import { ScopeType } from '../data/scopes';
-import { effectsMap, triggersMap } from '../data';
+import { getEffect, getTrigger } from '../data';
 
 /**
  * Block context information - what kind of code we're in and what scope
@@ -155,14 +155,14 @@ export function analyzeBlockContext(
 
     // Check if this block is a scope-changing trigger or effect
     // Look up in triggers first (for any_* iterators in trigger blocks)
-    const trigger = triggersMap.get(block);
+    const trigger = getTrigger(block);
     if (trigger?.outputScope) {
       currentScope = trigger.outputScope;
       continue;
     }
 
     // Look up in effects (for every_* iterators in effect blocks)
-    const effect = effectsMap.get(block);
+    const effect = getEffect(block);
     if (effect?.outputScope) {
       currentScope = effect.outputScope;
     }
@@ -550,8 +550,8 @@ export function validateScopePath(
     }
 
     // Then look up the scope changer in effectsMap/triggersMap
-    const trigger = triggersMap.get(segment);
-    const effect = effectsMap.get(segment);
+    const trigger = getTrigger(segment);
+    const effect = getEffect(segment);
     const scopeChanger = trigger || effect;
 
     if (scopeChanger?.outputScope) {

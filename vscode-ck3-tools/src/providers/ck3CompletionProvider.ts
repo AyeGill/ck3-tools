@@ -14,15 +14,15 @@ import {
   getTriggersForScope,
   EffectDefinition,
   TriggerDefinition,
-  triggersMap,
-  effectsMap,
   ScopeType,
   allEffects,
   allTriggers,
   characterModifiers,
   ModifierDefinition,
-  effectParameterEntityTypes,
-  triggerParameterEntityTypes,
+  getEffect,
+  getTrigger,
+  getEffectParameterEntityTypes,
+  getTriggerParameterEntityTypes,
 } from '../data';
 import {
   TRIGGER_BLOCKS,
@@ -1194,11 +1194,11 @@ function getInternalFieldSchema(blockPath: string[], contextType: 'trigger' | 'e
 
   // Check trigger parameters from data layer
   if (contextType === 'trigger' || contextType === 'unknown') {
-    const triggerDef = triggersMap.get(lastBlock);
+    const triggerDef = getTrigger(lastBlock);
     if (triggerDef?.parameters && triggerDef.parameters.length > 0) {
       // Don't provide field completions for iterators - they take triggers/effects as children
       if (!triggerDef.isIterator) {
-        const entityTypes = triggerParameterEntityTypes[lastBlock] || {};
+        const entityTypes = getTriggerParameterEntityTypes(lastBlock) || {};
         return parametersToFieldSchema(triggerDef.parameters, entityTypes);
       }
     }
@@ -1206,11 +1206,11 @@ function getInternalFieldSchema(blockPath: string[], contextType: 'trigger' | 'e
 
   // Check effect parameters from data layer
   if (contextType === 'effect' || contextType === 'unknown') {
-    const effectDef = effectsMap.get(lastBlock);
+    const effectDef = getEffect(lastBlock);
     if (effectDef?.parameters && effectDef.parameters.length > 0) {
       // Don't provide field completions for iterators - they take triggers/effects as children
       if (!effectDef.isIterator) {
-        const entityTypes = effectParameterEntityTypes[lastBlock] || {};
+        const entityTypes = getEffectParameterEntityTypes(lastBlock) || {};
         return parametersToFieldSchema(effectDef.parameters, entityTypes);
       }
     }
@@ -2935,8 +2935,8 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
     const partialLower = context.partialValue?.toLowerCase() || '';
 
     // Strategy 1: Check if the field name is an effect or trigger with supportedTargets
-    const effectDef = effectsMap.get(context.fieldName);
-    const triggerDef = triggersMap.get(context.fieldName);
+    const effectDef = getEffect(context.fieldName);
+    const triggerDef = getTrigger(context.fieldName);
     const definition = effectDef || triggerDef;
 
     if (definition?.supportedTargets) {
@@ -2961,7 +2961,7 @@ export class CK3CompletionProvider implements vscode.CompletionItemProvider {
     // Strategy 2: Check if this is a typed parameter of a parent block
     if (items.length === 0 && context.blockPath && context.blockPath.length > 0) {
       const parentBlock = context.blockPath[context.blockPath.length - 1];
-      const paramTypes = effectParameterEntityTypes[parentBlock] || triggerParameterEntityTypes[parentBlock];
+      const paramTypes = getEffectParameterEntityTypes(parentBlock) || getTriggerParameterEntityTypes(parentBlock);
 
       if (paramTypes?.[context.fieldName]) {
         const expectedType = paramTypes[context.fieldName];

@@ -440,7 +440,8 @@ const undocumentedTriggers: TriggerDefinition[] = [
  */
 const undocumentedEffects: EffectDefinition[] = [
   { name: 'battle_event', description: 'UNDOCUMENTED: Triggers a battle event display during combat. Found in game files but not in official documentation.', supportedScopes: ['combat_side'], parameters: ['key', 'type', 'left_portrait', 'right_portrait', 'target_left', 'target_right'] },
-  { name: 'set_relation_$RELATION', description: 'UNDOCUMENTED: Sets a relation between the scoped character and the target. Note that the relation "belongs to" the scoped character, so eg set_relation_ward should be called with the guardian in scope, not the ward', supportedScopes: ['character'], parameters: ['target', 'reason', 'copy_reason'], }
+  { name: 'set_relation_$RELATION$', description: 'UNDOCUMENTED: (eg set_relation_friend) Sets a relation between the scoped character and the target. Note that the relation "belongs to" the scoped character, so eg set_relation_ward should be called with the guardian in scope, not the ward', supportedScopes: ['character'], parameters: ['target', 'reason', 'copy_reason'], },
+  { name: 'remove_relation_$RELATION$', description: 'UNDOCUMENTED: (eg remove_relation_friend) Removes a relation between the scoped character and the target. Note that the relation "belongs to" the scoped character, so eg set_relation_ward should be called with the guardian in scope, not the ward', supportedScopes: ['character'], parameters: ['target', 'reason', 'copy_reason'], },
 ];
 
 /**
@@ -487,7 +488,8 @@ export function getTriggersForScope(scope: ScopeType): TriggerDefinition[] {
  * Overrides for supportedTargets when missing from generated data
  */
 const effectSupportedTargetsOverrides: Record<string, string[]> = {
-  "set_relation_$RELATION$": ["character"]
+  "set_relation_$RELATION$": ["character"],
+  "remove_relation_$RELATION$": ["character"]
 };
 
 /**
@@ -496,6 +498,7 @@ const effectSupportedTargetsOverrides: Record<string, string[]> = {
  */
 const effectParameterEntityTypeOverrides: Record<string, Record<string, string>> = {
   "set_relation_$RELATION$": {"target": "character"},
+  "remove_relation_$RELATION$": {"target": "character"},
   // Opinion effects
   "add_opinion": {"target": "character", "modifier": "opinion_modifier"},
   "reverse_add_opinion": {"target": "character", "modifier": "opinion_modifier"},
@@ -797,6 +800,104 @@ export const triggersMap = new Map<string, TriggerDefinition>(
     return [t.name, result];
   })
 );
+
+// Template interfaces for pattern-based effects/triggers
+interface EffectTemplate {
+  pattern: RegExp;
+  original: string;  // e.g., "set_relation_$RELATION$"
+  definition: EffectDefinition;
+}
+
+interface TriggerTemplate {
+  pattern: RegExp;
+  original: string;
+  definition: TriggerDefinition;
+}
+
+// Convert pattern string to regex (e.g., "foo_$X$_bar" -> /^foo_[a-z0-9_]+_bar$/)
+function convertPatternToRegex(name: string): RegExp {
+  const placeholder = '\x00TEMPLATE\x00';
+  const withPlaceholders = name.replace(/\$[A-Z_]+\$/g, placeholder);
+  const escaped = withPlaceholders.replace(/[.*+?^{}()|[\]\\$]/g, '\\$&');
+  const patternStr = escaped.replace(new RegExp(placeholder.replace(/\x00/g, '\\x00'), 'g'), '[a-z0-9_]+');
+  return new RegExp('^' + patternStr + '$');
+}
+
+// Process effect templates at load time
+function processEffectTemplates(): EffectTemplate[] {
+  const result: EffectTemplate[] = [];
+  for (const effect of allEffects) {
+    if (!effect.name.includes('$')) continue;
+    result.push({
+      pattern: convertPatternToRegex(effect.name),
+      original: effect.name,
+      definition: effectsMap.get(effect.name)!,
+    });
+  }
+  return result;
+}
+
+function processTriggerTemplates(): TriggerTemplate[] {
+  const result: TriggerTemplate[] = [];
+  for (const trigger of allTriggers) {
+    if (!trigger.name.includes('$')) continue;
+    result.push({
+      pattern: convertPatternToRegex(trigger.name),
+      original: trigger.name,
+      definition: triggersMap.get(trigger.name)!,
+    });
+  }
+  return result;
+}
+
+export const effectTemplates = processEffectTemplates();
+export const triggerTemplates = processTriggerTemplates();
+
+// Lookup with pattern fallback
+export function getEffect(name: string): EffectDefinition | undefined {
+  const exact = effectsMap.get(name);
+  if (exact) return exact;
+  for (const template of effectTemplates) {
+    if (template.pattern.test(name)) return template.definition;
+  }
+  return undefined;
+}
+
+export function getTrigger(name: string): TriggerDefinition | undefined {
+  const exact = triggersMap.get(name);
+  if (exact) return exact;
+  for (const template of triggerTemplates) {
+    if (template.pattern.test(name)) return template.definition;
+  }
+  return undefined;
+}
+
+export function hasEffect(name: string): boolean {
+  if (effectsMap.has(name)) return true;
+  return effectTemplates.some(t => t.pattern.test(name));
+}
+
+export function hasTrigger(name: string): boolean {
+  if (triggersMap.has(name)) return true;
+  return triggerTemplates.some(t => t.pattern.test(name));
+}
+
+// Get parameter entity types with pattern fallback
+export function getEffectParameterEntityTypes(name: string): Record<string, string> | undefined {
+  if (effectParameterEntityTypes[name]) return effectParameterEntityTypes[name];
+  for (const template of effectTemplates) {
+    if (template.pattern.test(name)) return effectParameterEntityTypes[template.original];
+  }
+  return undefined;
+}
+
+export function getTriggerParameterEntityTypes(name: string): Record<string, string> | undefined {
+  if (triggerParameterEntityTypes[name]) return triggerParameterEntityTypes[name];
+  for (const template of triggerTemplates) {
+    if (template.pattern.test(name)) return triggerParameterEntityTypes[template.original];
+  }
+  return undefined;
+}
 
 // Export modifiers
 export * from './modifiers.generated';

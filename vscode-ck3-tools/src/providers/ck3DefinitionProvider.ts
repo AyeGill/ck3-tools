@@ -7,7 +7,7 @@
 
 import * as vscode from 'vscode';
 import { CK3WorkspaceIndex, EntityType } from './workspaceIndex';
-import { effectsMap, triggersMap, effectParameterEntityTypes, triggerParameterEntityTypes } from '../data';
+import { effectParameterEntityTypes, triggerParameterEntityTypes, getEffect, getTrigger, hasEffect, hasTrigger } from '../data';
 import { LIST_BLOCKS } from '../utils/scopeContext';
 import { parseBlockContext, getImmediateParentBlock } from '../utils/blockParser';
 
@@ -141,7 +141,7 @@ export class CK3DefinitionProvider implements vscode.DefinitionProvider {
     }
 
     // Check if field is an effect/trigger with supportedTargets
-    const definition = effectsMap.get(fieldName) || triggersMap.get(fieldName);
+    const definition = getEffect(fieldName) || getTrigger(fieldName);
     if (definition?.supportedTargets) {
       // Try each supported target type
       for (const target of definition.supportedTargets) {
@@ -208,7 +208,7 @@ export class CK3DefinitionProvider implements vscode.DefinitionProvider {
     }
 
     // Skip if this is a known built-in effect/trigger
-    if (effectsMap.has(fieldName) || triggersMap.has(fieldName)) {
+    if (hasEffect(fieldName) || hasTrigger(fieldName)) {
       return null;
     }
 

@@ -3,8 +3,8 @@ import { FieldSchema } from '../schemas/registry/types';
 import { TRAIT_CATEGORIES, STATS } from '../schemas/traitSchema';
 
 // Import effect and trigger data
-import { effectsMap, EffectDefinition } from '../data';
-import { triggersMap, TriggerDefinition } from '../data';
+import { EffectDefinition, getEffect, getTrigger } from '../data';
+import { TriggerDefinition } from '../data';
 // Import weight block definitions
 import {
   WEIGHT_BLOCKS,
@@ -188,12 +188,13 @@ export class CK3HoverProvider implements vscode.HoverProvider {
    * Get hover documentation for an effect
    */
   private getEffectHover(name: string): vscode.Hover | null {
-    const effect = effectsMap.get(name);
+    const effect = getEffect(name);
     if (!effect) return null;
 
     const markdown = new vscode.MarkdownString();
 
-    markdown.appendMarkdown(`## ${name}\n\n`);
+    // Use the definition's name (shows pattern name like set_relation_$RELATION$ for pattern matches)
+    markdown.appendMarkdown(`## ${effect.name}\n\n`);
     markdown.appendMarkdown(`**Effect** - `);
 
     if (effect.isIterator) {
@@ -231,12 +232,13 @@ export class CK3HoverProvider implements vscode.HoverProvider {
    * Get hover documentation for a trigger
    */
   private getTriggerHover(name: string): vscode.Hover | null {
-    const trigger = triggersMap.get(name);
+    const trigger = getTrigger(name);
     if (!trigger) return null;
 
     const markdown = new vscode.MarkdownString();
 
-    markdown.appendMarkdown(`## ${name}\n\n`);
+    // Use the definition's name (shows pattern name for pattern matches)
+    markdown.appendMarkdown(`## ${trigger.name}\n\n`);
     markdown.appendMarkdown(`**Trigger** - `);
 
     if (trigger.isIterator) {
@@ -384,8 +386,8 @@ export class CK3HoverProvider implements vscode.HoverProvider {
     }
 
     // Check if this word is a parameter of the parent block
-    const effect = effectsMap.get(parentBlock);
-    const trigger = triggersMap.get(parentBlock);
+    const effect = getEffect(parentBlock);
+    const trigger = getTrigger(parentBlock);
 
     const effectDef = effect as EffectDefinition | undefined;
     const triggerDef = trigger as TriggerDefinition | undefined;
